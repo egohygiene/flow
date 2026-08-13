@@ -1,0 +1,79 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-ontology-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "valid-source-set",
+      "description": "Create a valid ONTOLOGY.md from sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary question",
+        "Respects document boundaries",
+        "Preserves provenance and uncertainty",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "conflicting-evidence",
+      "description": "Available sources contain conflicting definitions or assumptions.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not silently reconcile conflicts",
+        "Preserves provenance",
+        "Labels uncertainty",
+        "Reports follow-up work"
+      ]
+    },
+    {
+      "id": "implementation-leak",
+      "description": "Input is dominated by implementation details.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Separates conceptual meaning from implementation",
+        "Excludes accidental technical structure",
+        "Retains relevant evidence",
+        "Explains the boundary"
+      ]
+    },
+    {
+      "id": "ontology-missing-evidence",
+      "description": "Required concept definitions or relationship evidence is absent or self-contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "tags": [
+        "evidence",
+        "blocked"
+      ],
+      "expected": [
+        "Does not invent concept definitions without evidence",
+        "Labels inference and evidence gaps",
+        "Reports provisional or blocked completion",
+        "Requests missing concept or relationship evidence"
+      ],
+      "prohibited": [
+        "Fabricating ontological concepts without evidence"
+      ]
+    },
+    {
+      "id": "ontology-negative-trigger",
+      "description": "The request is to create a database schema or data dictionary rather than define organizational concepts and relationships.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use this skill for database or data schema design",
+        "Identifies the correct artifact for the request",
+        "Avoids producing an ONTOLOGY.md for a data engineering request"
+      ],
+      "prohibited": [
+        "Producing ONTOLOGY.md for a database schema or data model request"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-architecture-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "architecture-sufficient-evidence",
+      "description": "Create a valid ARCHITECTURE.md from sufficient upstream system, foundation, and repository evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary structural question",
+        "Defines structural units, boundaries, and dependency direction",
+        "Respects ownership boundaries with SYSTEM.md and DECISIONS.md",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "architecture-missing-or-contradictory-evidence",
+      "description": "System boundaries are incomplete or conflicting across documents and repository evidence.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent a resolved architecture",
+        "Labels assumptions and contradictions",
+        "Reports blocked or provisional completion",
+        "Requests the missing upstream clarification"
+      ]
+    },
+    {
+      "id": "architecture-update-existing-document",
+      "description": "An existing ARCHITECTURE.md must be updated after a structural refactor while preserving still-valid sections.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Updates only the affected structural model",
+        "Retains valid existing intent where supported",
+        "Revalidates dependency direction and constraints",
+        "Reports downstream documents needing review"
+      ]
+    },
+    {
+      "id": "architecture-boundary-antipattern",
+      "description": "Input material turns ARCHITECTURE.md into a deployment guide, ADR log, or source tree walkthrough.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the boundary violation",
+        "Keeps non-architectural detail out of the canonical document",
+        "Explains the correct owning artifact",
+        "Produces a safe structural-focused revision or follow-up"
+      ]
+    },
+    {
+      "id": "architecture-negative-trigger",
+      "description": "The real task is to decide what systems exist before any structural organization can be justified.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Declines to use this skill as the primary tool",
+        "Directs the work toward SYSTEM.md authoring first",
+        "Avoids fabricating structure without a system model",
+        "Explains why the trigger is negative"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-roadmap-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "roadmap-sufficient-evidence",
+      "description": "Create a valid ROADMAP.md from sufficient vision, architecture, and strategic evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary roadmap question",
+        "Organizes initiatives into clear horizons",
+        "Focuses on capabilities and outcomes rather than tasks",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "roadmap-missing-or-contradictory-evidence",
+      "description": "Strategic priorities are incomplete, contradictory, or not yet supported by upstream vision.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent a settled future direction",
+        "Labels assumptions and contradictions",
+        "Reports blocked or provisional completion",
+        "Requests the missing or resolving evidence"
+      ]
+    },
+    {
+      "id": "roadmap-update-existing-document",
+      "description": "An existing ROADMAP.md must be updated after vision or architectural direction changed.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Revises only the affected horizons or initiatives",
+        "Retains still-valid roadmap structure where supported",
+        "Revalidates sequencing against current architecture and methodology",
+        "Reports downstream planning artifacts needing review"
+      ]
+    },
+    {
+      "id": "roadmap-boundary-antipattern",
+      "description": "Input material tries to turn ROADMAP.md into a task tracker, dated release checklist, or architecture rewrite.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the boundary violation",
+        "Keeps tactical planning and non-roadmap detail out of the canonical document",
+        "Explains the correct owning artifact",
+        "Produces a safe strategy-focused revision or follow-up"
+      ]
+    },
+    {
+      "id": "roadmap-negative-trigger",
+      "description": "The real need is immediate issue execution with no strategic sequencing decision to make.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Declines to use this skill as the primary tool",
+        "Directs the work toward issue execution or another artifact",
+        "Avoids inventing a roadmap for tactical work",
+        "Explains why the trigger is negative"
+      ]
+    }
+  ]
+}

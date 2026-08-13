@@ -1,0 +1,69 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "skill-authoring",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "new-canonical-package",
+      "description": "A new first-party skill needs a stable identity, concise workflow, focused resources, and deterministic evals.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Chooses one canonical skill identity",
+        "Normalizes frontmatter and package structure",
+        "Adds only necessary progressive-disclosure resources",
+        "Defines deterministic eval coverage and validation steps"
+      ]
+    },
+    {
+      "id": "legacy-synonym-review",
+      "description": "An existing canonical skill must be updated after reviewing staged synonyms and overlaps.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "tags": [
+        "update"
+      ],
+      "expected": [
+        "Compares the current skill against legacy variants",
+        "Records source-delta and disposition decisions",
+        "Preserves provenance while avoiding duplicate identities"
+      ]
+    },
+    {
+      "id": "missing-provenance",
+      "description": "The request includes borrowed content but authorship or license evidence is incomplete.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not claim first-party ownership without evidence",
+        "Requests or records the missing provenance details",
+        "Defers adoption or marks the package as blocked when necessary"
+      ]
+    },
+    {
+      "id": "unbounded-resource-growth",
+      "description": "The draft package proposes many scripts and large references that are not justified by repeated use.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Keeps the package lightweight",
+        "Rejects unnecessary resources",
+        "Preserves only resources that reduce repeated work or add determinism"
+      ]
+    },
+    {
+      "id": "one-off-task-negative-trigger",
+      "description": "The request is to complete a single repository task rather than create or maintain a reusable skill package.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Declines to package a one-off task as a skill",
+        "Routes toward direct implementation or an existing skill",
+        "Avoids creating duplicate or unnecessary skill infrastructure"
+      ],
+      "prohibited": [
+        "Creating a new reusable skill package for a one-off request without reuse evidence"
+      ]
+    }
+  ]
+}

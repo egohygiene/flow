@@ -1,0 +1,79 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-purpose-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "purpose-valid",
+      "description": "Create a valid PURPOSE.md from sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary identity question",
+        "Respects document boundaries",
+        "Preserves upstream terminology",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "purpose-missing-evidence",
+      "description": "Required identity evidence is incomplete or contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent intent",
+        "Labels assumptions",
+        "Surfaces contradictions",
+        "Reports blocked or provisional completion"
+      ]
+    },
+    {
+      "id": "purpose-anti-pattern",
+      "description": "Input material is dominated by a known anti-pattern.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the anti-pattern",
+        "Does not preserve it as canonical identity",
+        "Explains the ownership boundary",
+        "Produces a safe revision or follow-up"
+      ]
+    },
+    {
+      "id": "purpose-boundary-antipattern",
+      "description": "Input material turns the purpose document into a feature list, roadmap, or technical overview.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "tags": [
+        "boundary",
+        "scope"
+      ],
+      "expected": [
+        "Identifies the document type confusion",
+        "Keeps feature and implementation detail out of PURPOSE.md",
+        "Explains the correct owning artifact",
+        "Produces an identity-and-value-focused revision"
+      ],
+      "prohibited": [
+        "Embedding feature lists or implementation detail inside PURPOSE.md"
+      ]
+    },
+    {
+      "id": "purpose-negative-trigger",
+      "description": "The request is to produce a product requirements document or a project pitch rather than define enduring organizational identity.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use this skill for a requirements or pitch document",
+        "Identifies the correct artifact for the request",
+        "Avoids producing PURPOSE.md for a non-identity request"
+      ],
+      "prohibited": [
+        "Producing PURPOSE.md for a requirements or pitch-deck request"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-decisions-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "new-accepted-decision",
+      "description": "Document a newly accepted significant architecture decision with sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Creates a stable decision identity",
+        "Records acceptance status and date",
+        "Preserves context, rationale, alternatives, and trade-offs",
+        "Links affected architecture and implementation artifacts"
+      ]
+    },
+    {
+      "id": "historical-reconstruction-with-gaps",
+      "description": "Reconstruct an important historical decision from incomplete repository evidence.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent undocumented rationale",
+        "Labels inference and evidence gaps",
+        "Uses provisional language where necessary",
+        "Requests or records follow-up evidence"
+      ]
+    },
+    {
+      "id": "superseded-decision",
+      "description": "Record a replacement decision that supersedes an earlier accepted decision.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Preserves the original record",
+        "Updates status correctly",
+        "Links supersession in both directions",
+        "Records migration and consequence impact"
+      ]
+    },
+    {
+      "id": "proposal-not-yet-accepted",
+      "description": "Input describes a significant proposal without confirmed approval.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not mark the proposal accepted",
+        "Keeps proposal and decision concerns separate",
+        "Identifies missing authority",
+        "Reports blocked decision-record completion"
+      ]
+    },
+    {
+      "id": "routine-implementation-choice",
+      "description": "Input describes a local, reversible, low-impact coding choice.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Rejects architectural decision-log promotion",
+        "Explains the significance boundary",
+        "Routes the choice to an implementation artifact when appropriate"
+      ]
+    },
+    {
+      "id": "later-outcome-conflicts-with-rationale",
+      "description": "A decision produced worse outcomes than expected.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Preserves the original rationale",
+        "Records the later outcome separately",
+        "Identifies review triggers",
+        "Does not rewrite history using outcome bias"
+      ]
+    }
+  ]
+}

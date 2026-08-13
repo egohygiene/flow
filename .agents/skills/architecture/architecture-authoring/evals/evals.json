@@ -1,0 +1,67 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "architecture-authoring",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "minimal-document-set",
+      "description": "Select only documents justified by a small repository.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "No unnecessary placeholders",
+        "Selection is explained",
+        "Dependency order is used"
+      ]
+    },
+    {
+      "id": "conflicting-ownership",
+      "description": "Two documents claim the same architectural concern.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Conflict is surfaced",
+        "No silent merge occurs",
+        "A safe follow-up is proposed"
+      ]
+    },
+    {
+      "id": "architecture-authoring-insufficient-evidence",
+      "description": "Repository provides no meaningful context for selecting or sequencing architecture documents.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "tags": [
+        "routing",
+        "evidence"
+      ],
+      "expected": [
+        "Does not fabricate document selection rationale",
+        "Labels missing context explicitly",
+        "Requests clarification or defers selection",
+        "Reports provisional or blocked completion"
+      ],
+      "prohibited": [
+        "Inventing a document set without evidence",
+        "Silently selecting documents based on assumption"
+      ]
+    },
+    {
+      "id": "architecture-authoring-negative-trigger",
+      "description": "The request is to evaluate the quality of an existing document, not to select or sequence architecture documents.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use architecture-authoring as the primary skill",
+        "Explains why this skill is not appropriate",
+        "Routes toward an audit or review skill",
+        "Does not fabricate a document selection"
+      ],
+      "prohibited": [
+        "Generating a document selection for an evaluation-only request"
+      ]
+    }
+  ]
+}

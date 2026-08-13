@@ -1,0 +1,61 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-ai-constitution-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "ai-constitution-valid",
+      "description": "Create a valid AI_CONSTITUTION.md from sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary question",
+        "Respects document boundaries",
+        "Preserves upstream terminology",
+        "Passes the governing specification"
+      ]
+    },
+    {
+      "id": "ai-constitution-missing-evidence",
+      "description": "Required evidence is incomplete or contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent facts or authority",
+        "Labels assumptions",
+        "Surfaces contradictions",
+        "Reports provisional or blocked completion"
+      ]
+    },
+    {
+      "id": "ai-constitution-anti-pattern",
+      "description": "Input material is dominated by a known anti-pattern.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the anti-pattern",
+        "Does not preserve it as canonical architecture",
+        "Explains the ownership boundary",
+        "Produces a safe revision or follow-up"
+      ]
+    },
+    {
+      "id": "ai-constitution-negative-trigger",
+      "description": "The request is to write general governance policy prose rather than define AI behavior constraints in a canonical AI_CONSTITUTION.md.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use this skill for general policy writing",
+        "Identifies the document type mismatch",
+        "Routes toward a more appropriate artifact",
+        "Does not produce an AI_CONSTITUTION.md for a non-qualifying request"
+      ],
+      "prohibited": [
+        "Producing AI_CONSTITUTION.md for a request that calls for policy prose only"
+      ]
+    }
+  ]
+}

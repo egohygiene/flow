@@ -1,0 +1,79 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-pillars-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "pillars-valid",
+      "description": "Create a valid PILLARS.md from sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary identity question",
+        "Respects document boundaries",
+        "Preserves upstream terminology",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "pillars-missing-evidence",
+      "description": "Required identity evidence is incomplete or contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent intent",
+        "Labels assumptions",
+        "Surfaces contradictions",
+        "Reports blocked or provisional completion"
+      ]
+    },
+    {
+      "id": "pillars-anti-pattern",
+      "description": "Input material is dominated by a known anti-pattern.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the anti-pattern",
+        "Does not preserve it as canonical identity",
+        "Explains the ownership boundary",
+        "Produces a safe revision or follow-up"
+      ]
+    },
+    {
+      "id": "pillars-boundary-antipattern",
+      "description": "Input material attempts to encode implementation rules or operational procedures as organizational pillars.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "tags": [
+        "boundary",
+        "scope"
+      ],
+      "expected": [
+        "Identifies the boundary violation",
+        "Keeps implementation rules out of the pillars document",
+        "Explains which artifacts own operational procedures",
+        "Produces a value-and-commitment-focused revision"
+      ],
+      "prohibited": [
+        "Embedding implementation rules or operational procedures inside the pillars document"
+      ]
+    },
+    {
+      "id": "pillars-negative-trigger",
+      "description": "The request is to document a project roadmap or feature backlog rather than capture organizational commitments.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use this skill for roadmap or backlog documentation",
+        "Identifies the correct artifact for the request",
+        "Avoids producing PILLARS.md for a planning request"
+      ],
+      "prohibited": [
+        "Producing PILLARS.md for a roadmap or backlog request"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-manifesto-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "manifesto-valid",
+      "description": "Create a valid MANIFESTO.md from sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary identity question",
+        "Respects document boundaries",
+        "Preserves upstream terminology",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "manifesto-missing-evidence",
+      "description": "Required identity evidence is incomplete or contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent intent",
+        "Labels assumptions",
+        "Surfaces contradictions",
+        "Reports blocked or provisional completion"
+      ]
+    },
+    {
+      "id": "manifesto-anti-pattern",
+      "description": "Input material is dominated by a known anti-pattern.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the anti-pattern",
+        "Does not preserve it as canonical identity",
+        "Explains the ownership boundary",
+        "Produces a safe revision or follow-up"
+      ]
+    },
+    {
+      "id": "manifesto-boundary-antipattern",
+      "description": "Input material turns the manifesto into a requirements document, roadmap, or policy directive.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "tags": [
+        "boundary",
+        "scope"
+      ],
+      "expected": [
+        "Identifies the document type confusion",
+        "Keeps operational requirements out of the manifesto",
+        "Explains the correct owning artifact",
+        "Produces a belief-and-commitment-focused revision"
+      ],
+      "prohibited": [
+        "Embedding requirements or policy directives inside the manifesto"
+      ]
+    },
+    {
+      "id": "manifesto-negative-trigger",
+      "description": "The request is to produce a product requirements document rather than a statement of beliefs and commitments.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use this skill for requirements documentation",
+        "Identifies the correct artifact for the request",
+        "Avoids producing a MANIFESTO.md for a non-qualifying request"
+      ],
+      "prohibited": [
+        "Producing MANIFESTO.md for a requirements or planning request"
+      ]
+    }
+  ]
+}

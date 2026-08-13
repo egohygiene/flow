@@ -1,0 +1,80 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-meta-architecture-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "meta-architecture-valid",
+      "description": "Create a valid META.md from sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary question",
+        "Respects document boundaries",
+        "Preserves upstream terminology",
+        "Passes the governing specification"
+      ]
+    },
+    {
+      "id": "meta-architecture-missing-evidence",
+      "description": "Required evidence is incomplete or contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent facts or authority",
+        "Labels assumptions",
+        "Surfaces contradictions",
+        "Reports provisional or blocked completion"
+      ]
+    },
+    {
+      "id": "meta-architecture-anti-pattern",
+      "description": "Input material is dominated by a known anti-pattern.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the anti-pattern",
+        "Does not preserve it as canonical architecture",
+        "Explains the ownership boundary",
+        "Produces a safe revision or follow-up"
+      ]
+    },
+    {
+      "id": "meta-architecture-boundary-antipattern",
+      "description": "Input material conflates meta-architecture decisions with implementation choices or per-system architecture.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "tags": [
+        "boundary",
+        "scope"
+      ],
+      "expected": [
+        "Identifies the conflation with lower-level concerns",
+        "Keeps implementation detail out of the meta-architecture document",
+        "Explains which artifacts own the conflated content",
+        "Produces a cross-cutting-pattern-focused revision"
+      ],
+      "prohibited": [
+        "Embedding per-system architecture in the meta-architecture document"
+      ]
+    },
+    {
+      "id": "meta-architecture-negative-trigger",
+      "description": "The request is to design the architecture of a single repository rather than document patterns that govern how all repositories are structured.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use this skill for per-repository architecture design",
+        "Identifies that META.md captures cross-repository patterns",
+        "Routes single-repository work to the correct skill",
+        "Avoids producing a META.md for a single-repository request"
+      ],
+      "prohibited": [
+        "Producing META.md for a single-repository architecture request"
+      ]
+    }
+  ]
+}

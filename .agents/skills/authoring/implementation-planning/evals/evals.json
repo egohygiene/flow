@@ -1,0 +1,69 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "implementation-planning",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "dependency-aware-plan",
+      "description": "Accepted requirements and architecture need an ordered plan before code changes begin.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Builds phases around independently verifiable outcomes",
+        "Maps requirements to concrete plan steps",
+        "Includes validation and rollback thinking",
+        "Recommends a safe first executable unit"
+      ]
+    },
+    {
+      "id": "update-plan-after-design-change",
+      "description": "A previously accepted plan must be updated after one approved architecture decision changes sequencing.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "tags": [
+        "update"
+      ],
+      "expected": [
+        "Revises dependency order to match the new decision",
+        "Keeps unaffected phases stable",
+        "Explains what changed and why"
+      ]
+    },
+    {
+      "id": "unresolved-architecture-boundary",
+      "description": "The request asks for sequencing across a material architecture choice that has not been accepted yet.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Stops at the unresolved boundary",
+        "Surfaces the blocking decision explicitly",
+        "Avoids presenting speculative sequencing as approved"
+      ]
+    },
+    {
+      "id": "planning-vs-implementation-boundary",
+      "description": "The plan identifies useful code changes that would solve part of the problem immediately.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Keeps the task in planning scope",
+        "Records implementation work as ordered actions rather than executing it",
+        "Separates approved planning from future execution"
+      ]
+    },
+    {
+      "id": "simple-single-edit-negative-trigger",
+      "description": "The request is for one straightforward file edit with no meaningful sequencing problem.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Declines to impose a formal implementation plan on a trivial direct edit",
+        "Routes toward direct execution",
+        "Avoids overhead that does not improve safety or clarity"
+      ],
+      "prohibited": [
+        "Creating a multi-phase implementation plan for a trivial one-step change"
+      ]
+    }
+  ]
+}

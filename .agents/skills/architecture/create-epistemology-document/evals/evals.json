@@ -1,0 +1,79 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-epistemology-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "epistemology-valid",
+      "description": "Create a valid EPISTEMOLOGY.md from sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary question",
+        "Respects document boundaries",
+        "Preserves upstream terminology",
+        "Passes the governing specification"
+      ]
+    },
+    {
+      "id": "epistemology-missing-evidence",
+      "description": "Required evidence is incomplete or contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent facts or authority",
+        "Labels assumptions",
+        "Surfaces contradictions",
+        "Reports provisional or blocked completion"
+      ]
+    },
+    {
+      "id": "epistemology-anti-pattern",
+      "description": "Input material is dominated by a known anti-pattern.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the anti-pattern",
+        "Does not preserve it as canonical architecture",
+        "Explains the ownership boundary",
+        "Produces a safe revision or follow-up"
+      ]
+    },
+    {
+      "id": "epistemology-boundary-pressure",
+      "description": "Input material attempts to embed operational policy or AI tool rules inside the epistemology document.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "tags": [
+        "boundary",
+        "scope"
+      ],
+      "expected": [
+        "Identifies the boundary violation",
+        "Keeps operational rules out of the epistemology document",
+        "Explains the correct owning artifact",
+        "Produces a scope-correct revision or follow-up"
+      ],
+      "prohibited": [
+        "Embedding operational AI policy inside the epistemology document"
+      ]
+    },
+    {
+      "id": "epistemology-negative-trigger",
+      "description": "The request is to enumerate data sources or document tool usage rather than define how the organization validates knowledge.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use this skill for tool-inventory or data-source-listing tasks",
+        "Identifies the correct artifact for the request",
+        "Avoids producing an EPISTEMOLOGY.md for a non-qualifying request"
+      ],
+      "prohibited": [
+        "Producing EPISTEMOLOGY.md for a request about data cataloging or tool inventory"
+      ]
+    }
+  ]
+}
