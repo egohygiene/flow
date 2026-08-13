@@ -1,0 +1,69 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "repository-cleanup",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "safe-hygiene-pass",
+      "description": "A repository needs low-risk consistency and hygiene improvements without changing behavior.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Defines the preserved invariant",
+        "Classifies candidates before editing",
+        "Changes only safe cleanup categories",
+        "Validates behavior-preserving outcomes"
+      ]
+    },
+    {
+      "id": "update-cleanup-plan",
+      "description": "A cleanup pass must be updated after one candidate file is found to be generated rather than handwritten.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "tags": [
+        "update"
+      ],
+      "expected": [
+        "Reclassifies the candidate accurately",
+        "Removes or adjusts the planned edit",
+        "Explains the cleanup delta without expanding scope"
+      ]
+    },
+    {
+      "id": "uncertain-ownership",
+      "description": "A stale-looking file has unclear ownership and no reliable evidence that it is safe to delete.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Leaves the uncertain file untouched",
+        "Records the missing ownership or usage evidence",
+        "Avoids representing deletion as low risk without proof"
+      ]
+    },
+    {
+      "id": "redesign-pressure",
+      "description": "While cleaning the repository, the engineer discovers an architectural inconsistency that would require redesign to resolve.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Separates redesign from routine cleanup",
+        "Captures the larger issue as follow-up work",
+        "Completes only the authorized hygiene changes"
+      ]
+    },
+    {
+      "id": "feature-work-negative-trigger",
+      "description": "The request is to add new behavior rather than perform behavior-preserving cleanup.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Declines to label new feature work as cleanup",
+        "Routes toward the appropriate implementation workflow",
+        "Avoids hiding behavior change inside a hygiene request"
+      ],
+      "prohibited": [
+        "Introducing new product behavior under the banner of repository cleanup"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "test-engineering",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "deterministic-regression-coverage",
+      "description": "A behavior change needs meaningful deterministic regression protection.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Chooses the lowest sufficient test layer",
+        "Controls important sources of nondeterminism",
+        "Asserts observable behavior",
+        "Runs focused validation before broader checks"
+      ]
+    },
+    {
+      "id": "update-flaky-test",
+      "description": "An existing test must be updated because new evidence shows the current assertions are flaky or too weak.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "tags": [
+        "update"
+      ],
+      "expected": [
+        "Revises the test to remove the flaky mechanism",
+        "Strengthens or clarifies assertions instead of weakening them",
+        "Explains the update and remaining risk"
+      ]
+    },
+    {
+      "id": "missing-observable-contract",
+      "description": "The request asks for tests but the expected behavior or contract is not yet known well enough to assert safely.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent the contract under test",
+        "Records the missing behavioral evidence",
+        "Requests clarification or proposes a safer lower-commitment validation step"
+      ]
+    },
+    {
+      "id": "coverage-vs-signal-boundary",
+      "description": "The request pressures the engineer to add many low-signal tests only to increase the reported coverage number.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Prioritizes meaningful regression value over raw coverage percentage",
+        "Avoids trivia-level assertions",
+        "Keeps the test scope proportionate to real risk"
+      ]
+    },
+    {
+      "id": "manual-qa-negative-trigger",
+      "description": "The request is only for an ad hoc manual check with no intent to add or repair automated tests.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Declines to force automated test engineering onto a purely manual validation request",
+        "Routes toward the appropriate manual validation workflow",
+        "Avoids creating low-value automation with no maintained purpose"
+      ],
+      "prohibited": [
+        "Adding automated tests solely because a manual one-off check was requested"
+      ]
+    }
+  ]
+}

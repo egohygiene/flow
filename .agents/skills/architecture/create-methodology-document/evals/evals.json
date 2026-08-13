@@ -1,0 +1,67 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-methodology-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "methodology-sufficient-evidence",
+      "description": "Create a valid METHODOLOGY.md from sufficient upstream intent and observed workflow evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary methodology question",
+        "Defines stages, validation loops, and feedback cycles",
+        "Distinguishes durable method from tactical scheduling",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "methodology-missing-or-contradictory-evidence",
+      "description": "Observed practice and stated process conflict, or the workflow evidence is incomplete.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent a coherent method",
+        "Labels assumptions and contradictions",
+        "Reports blocked or provisional completion",
+        "Requests the missing or resolving evidence"
+      ]
+    },
+    {
+      "id": "methodology-update-existing-document",
+      "description": "An existing METHODOLOGY.md must be updated after the team changed how validation and feedback loops operate.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Updates the affected workflow stages or loops",
+        "Retains still-valid durable method",
+        "Revalidates human and AI collaboration guidance",
+        "Reports downstream automation or docs needing review"
+      ]
+    },
+    {
+      "id": "methodology-boundary-antipattern",
+      "description": "Input material collapses methodology into a backlog, CI YAML, or release checklist.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the boundary violation",
+        "Keeps tactical planning and implementation detail out of the canonical document",
+        "Explains the correct owning artifact",
+        "Produces a safe methodology-focused revision or follow-up"
+      ]
+    },
+    {
+      "id": "methodology-negative-trigger",
+      "description": "The real need is only to schedule roadmap work or edit a CI workflow without changing the operating model.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Declines to use this skill as the primary tool",
+        "Directs the work toward roadmap or automation changes instead",
+        "Avoids treating tooling edits as methodology by default",
+        "Explains why the trigger is negative"
+      ]
+    }
+  ]
+}

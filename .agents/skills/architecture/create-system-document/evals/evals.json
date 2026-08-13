@@ -1,0 +1,67 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-system-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "system-sufficient-evidence",
+      "description": "Create a valid SYSTEM.md from sufficient purpose, foundation, and capability evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary system question",
+        "Identifies major systems and their owned capabilities",
+        "Keeps the decomposition conceptual and implementation-independent",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "system-missing-or-contradictory-evidence",
+      "description": "Major capabilities or ownership boundaries are incomplete or contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent a settled system model",
+        "Labels assumptions and contradictions",
+        "Reports blocked or provisional completion",
+        "Requests the missing or resolving evidence"
+      ]
+    },
+    {
+      "id": "system-update-existing-document",
+      "description": "An existing SYSTEM.md must be updated after capability ownership or external relationships changed.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Updates only the affected system inventory or ownership model",
+        "Retains still-valid decomposition where supported",
+        "Revalidates boundaries and high-level interactions",
+        "Reports downstream architecture documents needing review"
+      ]
+    },
+    {
+      "id": "system-boundary-antipattern",
+      "description": "Input material tries to replace SYSTEM.md with module lists, API docs, or architectural layer diagrams.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the boundary violation",
+        "Keeps implementation and non-system detail out of the canonical document",
+        "Explains the correct owning artifact",
+        "Produces a safe system-focused revision or follow-up"
+      ]
+    },
+    {
+      "id": "system-negative-trigger",
+      "description": "The real need is only to describe structural layering or dependency direction after the system inventory is already known.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Declines to use this skill as the primary tool",
+        "Directs the work toward ARCHITECTURE.md authoring instead",
+        "Avoids duplicating structural concerns inside SYSTEM.md",
+        "Explains why the trigger is negative"
+      ]
+    }
+  ]
+}

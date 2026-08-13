@@ -1,0 +1,129 @@
+{
+  "schema": "aether.agents/v1",
+  "generated": "2026-08-08",
+  "agents": {
+    "architect": {
+      "name": "Architect",
+      "domain": "architecture",
+      "status": "draft",
+      "version": "1.0.0",
+      "skills": ["architecture-authoring"],
+      "specs": ["architecture-document"],
+      "tools": ["read", "search", "edit", "web"],
+      "projections": {
+        "github-repository": "dist/github/repository/.github/agents/architect.agent.md",
+        "github-organization": "dist/github/organization/agents/architect.agent.md"
+      }
+    },
+    "arxiv-publisher": {
+      "name": "arXiv Publisher",
+      "domain": "publishing",
+      "status": "draft",
+      "version": "1.0.0",
+      "skills": ["prepare-arxiv-release"],
+      "specs": ["arxiv-publishing"],
+      "tools": ["read", "search", "edit", "execute", "web"],
+      "projections": {
+        "github-repository": "dist/github/repository/.github/agents/arxiv-publisher.agent.md",
+        "github-organization": "dist/github/organization/agents/arxiv-publisher.agent.md"
+      }
+    },
+    "auditor": {
+      "name": "Auditor",
+      "domain": "quality",
+      "status": "draft",
+      "version": "1.0.0",
+      "skills": ["audit-repository"],
+      "specs": ["auditor"],
+      "tools": ["read", "search"],
+      "projections": {
+        "github-repository": "dist/github/repository/.github/agents/auditor.agent.md",
+        "github-organization": "dist/github/organization/agents/auditor.agent.md"
+      }
+    },
+    "bug-fix-teammate": {
+      "name": "Bug Fix Teammate",
+      "domain": "quality",
+      "status": "draft",
+      "version": "1.0.0",
+      "skills": ["bug-fixing"],
+      "specs": ["auditor"],
+      "tools": ["read", "search", "edit", "execute"],
+      "projections": {
+        "github-repository": "dist/github/repository/.github/agents/bug-fix-teammate.agent.md",
+        "github-organization": "dist/github/organization/agents/bug-fix-teammate.agent.md"
+      }
+    },
+    "cleanup-specialist": {
+      "name": "Cleanup Specialist",
+      "domain": "quality",
+      "status": "draft",
+      "version": "1.0.0",
+      "skills": ["repository-cleanup"],
+      "specs": ["auditor"],
+      "tools": ["read", "search", "edit", "execute"],
+      "projections": {
+        "github-repository": "dist/github/repository/.github/agents/cleanup-specialist.agent.md",
+        "github-organization": "dist/github/organization/agents/cleanup-specialist.agent.md"
+      }
+    },
+    "github-issue-creator": {
+      "name": "GitHub Issue Creator",
+      "domain": "authoring",
+      "status": "draft",
+      "version": "1.0.0",
+      "skills": ["github-issue-authoring"],
+      "specs": ["specfile"],
+      "tools": ["read", "search", "web"],
+      "projections": {
+        "github-repository": "dist/github/repository/.github/agents/github-issue-creator.agent.md",
+        "github-organization": "dist/github/organization/agents/github-issue-creator.agent.md"
+      }
+    },
+    "implementation-planner": {
+      "name": "Implementation Planner",
+      "domain": "authoring",
+      "status": "draft",
+      "version": "1.0.0",
+      "skills": ["implementation-planning"],
+      "specs": ["specfile"],
+      "tools": ["read", "search", "edit", "web"],
+      "projections": {
+        "github-repository": "dist/github/repository/.github/agents/implementation-planner.agent.md",
+        "github-organization": "dist/github/organization/agents/implementation-planner.agent.md"
+      }
+    },
+    "specfile-creator": {
+      "name": "Specfile Creator",
+      "domain": "authoring",
+      "status": "draft",
+      "version": "1.0.0",
+      "skills": ["create-specification-file"],
+      "specs": ["specfile"],
+      "tools": ["read", "search", "edit", "web"],
+      "projections": {
+        "github-repository": "dist/github/repository/.github/agents/specfile-creator.agent.md",
+        "github-organization": "dist/github/organization/agents/specfile-creator.agent.md"
+      }
+    },
+    "test-specialist": {
+      "name": "Test Specialist",
+      "domain": "quality",
+      "status": "draft",
+      "version": "1.0.0",
+      "skills": ["test-engineering"],
+      "specs": ["auditor"],
+      "tools": ["read", "search", "edit", "execute"],
+      "projections": {
+        "github-repository": "dist/github/repository/.github/agents/test-specialist.agent.md",
+        "github-organization": "dist/github/organization/agents/test-specialist.agent.md"
+      }
+    }
+  },
+  "staging-move-out": {
+    "flutter-architect": ".staging/agents/flutter-architect.agent.md",
+    "flutter-engineer": ".staging/agents/flutter-engineer.agent.md",
+    "knowledge-extractor": ".staging/agents/knowledge-extractor.agent.md",
+    "synapse-creator": ".staging/agents/synapse-creator.agent.md"
+  }
+}

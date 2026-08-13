@@ -1,0 +1,79 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-principles-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "principles-valid",
+      "description": "Create a valid PRINCIPLES.md from sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary identity question",
+        "Respects document boundaries",
+        "Preserves upstream terminology",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "principles-missing-evidence",
+      "description": "Required identity evidence is incomplete or contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent intent",
+        "Labels assumptions",
+        "Surfaces contradictions",
+        "Reports blocked or provisional completion"
+      ]
+    },
+    {
+      "id": "principles-anti-pattern",
+      "description": "Input material is dominated by a known anti-pattern.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the anti-pattern",
+        "Does not preserve it as canonical identity",
+        "Explains the ownership boundary",
+        "Produces a safe revision or follow-up"
+      ]
+    },
+    {
+      "id": "principles-boundary-antipattern",
+      "description": "Input material conflates actionable principles with aspirational values or detailed procedures.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "tags": [
+        "boundary",
+        "scope"
+      ],
+      "expected": [
+        "Identifies the conflation between principles, values, and procedures",
+        "Keeps non-actionable material out of the principles document",
+        "Explains the correct owning artifacts",
+        "Produces a decision-guiding-principle-focused revision"
+      ],
+      "prohibited": [
+        "Embedding abstract values or detailed procedures inside the principles document"
+      ]
+    },
+    {
+      "id": "principles-negative-trigger",
+      "description": "The request is to document company values or a code of conduct rather than operational principles that guide decisions.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use this skill for values or conduct documentation",
+        "Identifies the correct artifact for the request",
+        "Avoids producing PRINCIPLES.md for a values-only request"
+      ],
+      "prohibited": [
+        "Producing PRINCIPLES.md for a company values or code of conduct request"
+      ]
+    }
+  ]
+}

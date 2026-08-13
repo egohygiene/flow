@@ -1,0 +1,67 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-foundations-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "foundations-sufficient-evidence",
+      "description": "Create a valid FOUNDATIONS.md from sufficient identity, philosophy, and repository evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary foundations question",
+        "States durable assumptions and invariants clearly",
+        "Avoids duplicating system or methodology concerns",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "foundations-missing-or-contradictory-evidence",
+      "description": "Foundational claims are partly unsupported or contradicted by upstream material.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent certainty",
+        "Labels assumptions and contradictions",
+        "Keeps the document provisional where needed",
+        "Requests the missing or resolving evidence"
+      ]
+    },
+    {
+      "id": "foundations-update-existing-document",
+      "description": "A previously trusted assumption has been falsified and FOUNDATIONS.md must be updated safely.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Makes the old assumption and the revision explicit",
+        "Does not silently rewrite history",
+        "Marks replacements as provisional when appropriate",
+        "Reports downstream documents that require review"
+      ]
+    },
+    {
+      "id": "foundations-boundary-antipattern",
+      "description": "Input material tries to turn FOUNDATIONS.md into a list of technologies, project plans, or architectural layers.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the boundary violation",
+        "Keeps non-foundational content out of the canonical document",
+        "Explains the correct owning artifact",
+        "Produces a safe foundations-focused revision or follow-up"
+      ]
+    },
+    {
+      "id": "foundations-negative-trigger",
+      "description": "The real need is a tactical engineering decision or workflow change rather than an enduring architectural truth.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Declines to use this skill as the primary tool",
+        "Directs the work toward the appropriate document or process",
+        "Avoids elevating temporary choices into foundations",
+        "Explains why the trigger is negative"
+      ]
+    }
+  ]
+}

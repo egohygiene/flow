@@ -1,0 +1,92 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-design-system-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "valid-experience-source-set",
+      "description": "Create a valid DESIGN_SYSTEM.md from sufficient upstream evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary experience question",
+        "Preserves accessibility and agency",
+        "Respects document boundaries",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "implementation-dominated-input",
+      "description": "Input consists primarily of components, token values, or framework code.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Separates semantic intent from implementation",
+        "Excludes accidental framework coupling",
+        "Retains relevant design evidence",
+        "Explains downstream implementation ownership"
+      ]
+    },
+    {
+      "id": "conflicting-product-identities",
+      "description": "Multiple products have distinct visual systems and partially conflicting patterns.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Preserves legitimate product individuality",
+        "Identifies shared human-centered guarantees",
+        "Does not force visual sameness",
+        "Surfaces unresolved canonicalization decisions"
+      ]
+    },
+    {
+      "id": "accessibility-conflict",
+      "description": "A proposed aesthetic or motion rule conflicts with accessibility or user control.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Prioritizes accessibility and meaningful control",
+        "Identifies the conflict explicitly",
+        "Rejects or constrains the unsafe rule",
+        "Records a compliant alternative or open decision"
+      ]
+    },
+    {
+      "id": "design-system-insufficient-evidence",
+      "description": "Required design system evidence across products is incomplete or contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "tags": [
+        "evidence",
+        "blocked"
+      ],
+      "expected": [
+        "Does not invent cross-product patterns without evidence",
+        "Labels missing evidence explicitly",
+        "Reports provisional or blocked completion",
+        "Requests clarification on missing product design intent"
+      ],
+      "prohibited": [
+        "Fabricating shared design system patterns without evidence"
+      ]
+    },
+    {
+      "id": "design-system-negative-trigger",
+      "description": "The request is to build a component library or token dictionary, not to define design system philosophy.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use this skill for a component or token library request",
+        "Identifies that DESIGN_SYSTEM.md captures cross-product philosophy, not component implementations",
+        "Routes implementation work to the appropriate artifact",
+        "Does not produce a DESIGN_SYSTEM.md from implementation-level requests"
+      ],
+      "prohibited": [
+        "Creating DESIGN_SYSTEM.md from component or token library specifications"
+      ]
+    }
+  ]
+}

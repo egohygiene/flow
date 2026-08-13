@@ -1,0 +1,21 @@
+{
+  "schema": "aether.publisher-release/v1",
+  "publisher": "arxiv",
+  "adapter_version": "0.1.0",
+  "source_revision": "replace-with-git-sha",
+  "generated_at": "YYYY-MM-DDTHH:MM:SSZ",
+  "target_verified_at": "YYYY-MM-DD",
+  "build_environment": {
+    "image": "replace-with-image",
+    "texlive_version": "replace-with-version",
+    "processor": "replace-with-processor",
+    "bibliography_backend": "replace-with-backend"
+  },
+  "license": "replace-with-license",
+  "transformations": [],
+  "validation": {
+    "status": "pending",
+    "warnings": []
+  },
+  "artifact_hashes": {}
+}

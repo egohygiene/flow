@@ -1,0 +1,82 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-personal-model-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "valid-source-set",
+      "description": "Create a valid PERSONAL_MODEL.md from sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary question",
+        "Respects document boundaries",
+        "Preserves provenance and uncertainty",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "conflicting-evidence",
+      "description": "Available sources contain conflicting definitions or assumptions.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not silently reconcile conflicts",
+        "Preserves provenance",
+        "Labels uncertainty",
+        "Reports follow-up work"
+      ]
+    },
+    {
+      "id": "implementation-leak",
+      "description": "Input is dominated by implementation details.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Separates conceptual meaning from implementation",
+        "Excludes accidental technical structure",
+        "Retains relevant evidence",
+        "Explains the boundary"
+      ]
+    },
+    {
+      "id": "personal-model-missing-evidence",
+      "description": "Insufficient personal identity evidence is available to model a person's strengths, constraints, or working style.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "tags": [
+        "evidence",
+        "blocked",
+        "privacy"
+      ],
+      "expected": [
+        "Does not invent personal attributes without evidence",
+        "Labels assumptions and evidence gaps",
+        "Applies conservative defaults for sensitive attributes",
+        "Reports provisional or blocked completion"
+      ],
+      "prohibited": [
+        "Fabricating personal attributes or inferred values without evidence",
+        "Exposing sensitive personal information beyond the authorized scope"
+      ]
+    },
+    {
+      "id": "personal-model-negative-trigger",
+      "description": "The request is to produce a general user persona for a product rather than a personal working model for an individual contributor.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing",
+        "privacy"
+      ],
+      "expected": [
+        "Declines to use this skill for product persona design",
+        "Identifies the correct artifact for the request",
+        "Avoids producing a PERSONAL_MODEL.md for a product persona request"
+      ],
+      "prohibited": [
+        "Producing PERSONAL_MODEL.md for a generalized user persona request"
+      ]
+    }
+  ]
+}

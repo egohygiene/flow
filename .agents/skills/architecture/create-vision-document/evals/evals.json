@@ -1,0 +1,79 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "create-vision-document",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "vision-valid",
+      "description": "Create a valid VISION.md from sufficient evidence.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Answers the primary identity question",
+        "Respects document boundaries",
+        "Preserves upstream terminology",
+        "Passes specification acceptance criteria"
+      ]
+    },
+    {
+      "id": "vision-missing-evidence",
+      "description": "Required identity evidence is incomplete or contradictory.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent intent",
+        "Labels assumptions",
+        "Surfaces contradictions",
+        "Reports blocked or provisional completion"
+      ]
+    },
+    {
+      "id": "vision-anti-pattern",
+      "description": "Input material is dominated by a known anti-pattern.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Identifies the anti-pattern",
+        "Does not preserve it as canonical identity",
+        "Explains the ownership boundary",
+        "Produces a safe revision or follow-up"
+      ]
+    },
+    {
+      "id": "vision-boundary-antipattern",
+      "description": "Input material conflates the vision with a roadmap, OKR plan, or strategy document.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "tags": [
+        "boundary",
+        "scope"
+      ],
+      "expected": [
+        "Identifies the conflation with planning artifacts",
+        "Keeps roadmap and OKR detail out of the vision document",
+        "Explains the correct owning artifact",
+        "Produces a future-state-focused revision"
+      ],
+      "prohibited": [
+        "Embedding roadmap items or OKR targets inside the vision document"
+      ]
+    },
+    {
+      "id": "vision-negative-trigger",
+      "description": "The request is to produce a quarterly roadmap or OKR document rather than a compelling future-state narrative.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "tags": [
+        "routing"
+      ],
+      "expected": [
+        "Declines to use this skill for planning or OKR documentation",
+        "Identifies the correct artifact for the request",
+        "Avoids producing VISION.md for a planning-only request"
+      ],
+      "prohibited": [
+        "Producing VISION.md for a roadmap or OKR request"
+      ]
+    }
+  ]
+}

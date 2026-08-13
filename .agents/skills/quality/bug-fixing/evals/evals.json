@@ -1,0 +1,69 @@
+{
+  "schema": "aether.skill-evaluations/v2",
+  "skill": "bug-fixing",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "reproduce-and-fix",
+      "description": "A concrete defect can be reproduced and corrected with a focused code change and regression test.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "expected": [
+        "Captures the failure signal",
+        "Diagnoses the root cause before editing",
+        "Implements the smallest safe fix",
+        "Adds regression protection and validates the result"
+      ]
+    },
+    {
+      "id": "update-existing-fix",
+      "description": "A first attempted fix exists but new evidence shows the regression test or boundary handling is incomplete.",
+      "category": "positive",
+      "trigger": "should-trigger",
+      "tags": [
+        "update"
+      ],
+      "expected": [
+        "Revisits the root cause using the new evidence",
+        "Tightens the fix or regression coverage without broadening scope unnecessarily",
+        "Explains what changed from the earlier attempt"
+      ]
+    },
+    {
+      "id": "cannot-reproduce-yet",
+      "description": "The bug report is incomplete and no reliable reproduction steps or logs are available yet.",
+      "category": "insufficient-evidence",
+      "trigger": "should-trigger",
+      "expected": [
+        "Does not invent a confident root cause",
+        "Records the strongest available proxy signal",
+        "Requests or documents the missing evidence needed to proceed safely"
+      ]
+    },
+    {
+      "id": "diagnosis-only-boundary",
+      "description": "The request authorizes investigation only and explicitly withholds implementation approval.",
+      "category": "boundary",
+      "trigger": "should-trigger",
+      "expected": [
+        "Stops after diagnosis and evidence gathering",
+        "Keeps implementation recommendations separate from execution",
+        "Does not modify production code without authorization"
+      ]
+    },
+    {
+      "id": "feature-request-negative-trigger",
+      "description": "The request is for new behavior rather than correction of broken behavior.",
+      "category": "negative",
+      "trigger": "should-not-trigger",
+      "expected": [
+        "Declines to frame feature implementation as bug fixing",
+        "Routes toward planning or implementation work for new behavior",
+        "Avoids fabricating a defect narrative where none exists"
+      ],
+      "prohibited": [
+        "Treating a new feature request as a bug-fix workflow without evidence of broken behavior"
+      ]
+    }
+  ]
+}
