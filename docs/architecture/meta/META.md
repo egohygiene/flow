@@ -60,6 +60,29 @@ purpose, vocabulary, capability inventory, structure, and decisions.
 | `flow-roadmap` | strategic sequencing | Draft |
 | `<holon>-purpose/ontology/system/architecture/decisions` | local refinement | Draft |
 
+## Canonical materializations
+
+| File | Artifact ID | Repository path |
+| --- | --- | --- |
+| `PURPOSE.md` | `flow-purpose` | `docs/architecture/identity/PURPOSE.md` |
+| `VISION.md` | `flow-vision` | `docs/architecture/identity/VISION.md` |
+| `PRINCIPLES.md` | `flow-principles` | `docs/architecture/identity/PRINCIPLES.md` |
+| `PILLARS.md` | `flow-pillars` | `docs/architecture/identity/PILLARS.md` |
+| `MANIFESTO.md` | `flow-manifesto` | `docs/architecture/identity/MANIFESTO.md` |
+| `EPISTEMOLOGY.md` | `flow-epistemology` | `docs/architecture/meta/EPISTEMOLOGY.md` |
+| `AI_CONSTITUTION.md` | `flow-ai-constitution` | `docs/architecture/meta/AI_CONSTITUTION.md` |
+| `ONTOLOGY.md` | `flow-ontology` | `docs/architecture/domain/ONTOLOGY.md` |
+| `PERSONAL_MODEL.md` | `flow-personal-model` | `docs/architecture/domain/PERSONAL_MODEL.md` |
+| `FOUNDATIONS.md` | `flow-foundations` | `docs/architecture/foundation/FOUNDATIONS.md` |
+| `SYSTEM.md` | `flow-system` | `docs/architecture/foundation/SYSTEM.md` |
+| `ARCHITECTURE.md` | `flow-architecture` | `docs/architecture/foundation/ARCHITECTURE.md` |
+| `METHODOLOGY.md` | `flow-methodology` | `docs/architecture/foundation/METHODOLOGY.md` |
+| `DESIGN.md` | `flow-design` | `docs/architecture/experience/DESIGN.md` |
+| `DESIGN_SYSTEM.md` | `flow-design-system` | `docs/architecture/experience/DESIGN_SYSTEM.md` |
+| `DECISIONS.md` | `flow-decisions` | `docs/architecture/governance/DECISIONS.md` |
+| `ROADMAP.md` | `flow-roadmap` | `ROADMAP.md` |
+| `META.md` | `flow-meta` | `docs/architecture/meta/META.md` |
+
 ## Canonical ownership map
 
 Identity, evidence policy, AI rules, shared foundations, suite ontology, cross-
