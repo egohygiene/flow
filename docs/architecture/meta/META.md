@@ -8,7 +8,7 @@ status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-19
 governed_by:
   - architecture-meta
 depends_on:
@@ -50,9 +50,11 @@ purpose, vocabulary, capability inventory, structure, and decisions.
 | `flow-ai-constitution` | AI authority and safety | Draft |
 | `flow-foundations` | enduring assumptions and invariants | Draft |
 | `flow-ontology` | suite language | Draft |
+| `flow-personal-model` | agency, consent, privacy, and human assumptions | Draft |
 | `flow-system` | capability ownership | Draft |
 | `flow-architecture` | structural and dependency rules | Draft |
 | `flow-design` | interaction philosophy | Draft |
+| `flow-design-system` | semantic language across CLI, docs, reports, and future UI | Draft |
 | `flow-methodology` | evolution method | Draft |
 | `flow-decisions` and ADRs | decision lineage | Draft/accepted records |
 | `flow-roadmap` | strategic sequencing | Draft |
@@ -71,9 +73,10 @@ suite boundary governs unless a newer suite ADR explicitly delegates it.
 ```text
 purpose -> vision -> principles -> pillars -> foundations
                      |                         |
-                     -> epistemology -> ontology -> system -> architecture
+                     -> epistemology -> ontology -> personal model -> system -> architecture
                                       |                    |
                                       -> AI constitution   -> methodology
+personal model -> design -> design system
                                                            -> decisions
 architecture + methodology + vision ----------------------> roadmap
 suite system/architecture -------------------------------> holon contracts
@@ -110,11 +113,13 @@ its downstream contracts and representative implementation evidence agree.
 
 ## Gaps and intentional omissions
 
-`PERSONAL_MODEL.md` is omitted because the product does not model people.
-`DESIGN_SYSTEM.md` is omitted until a reusable visual/interface language exists.
+No suite-level Aether document is intentionally omitted. Personal-model content
+governs human agency without creating a persona or identity schema; design-system
+content governs semantic cross-surface language without selecting a framework.
+
 Tool-specific vision, principles, foundations, experience, AI, methodology, and
-roadmaps inherit suite documents to prevent duplicated policy. Migration and
-capability matrices are roadmap artifacts, not missing architecture nodes.
+roadmaps still inherit suite documents to prevent duplicated policy. Migration
+and capability matrices are roadmap artifacts, not missing architecture nodes.
 
 ## Open questions
 
