@@ -16,13 +16,15 @@ boundaries.
 7. [AI constitution](meta/AI_CONSTITUTION.md)
 8. [Foundations](foundation/FOUNDATIONS.md)
 9. [Ontology](domain/ONTOLOGY.md)
-10. [System](foundation/SYSTEM.md)
-11. [Architecture](foundation/ARCHITECTURE.md)
-12. [Design](experience/DESIGN.md)
-13. [Methodology](foundation/METHODOLOGY.md)
-14. [Decisions](governance/DECISIONS.md)
-15. [Meta architecture](meta/META.md)
-16. [Roadmap](../../ROADMAP.md)
+10. [Personal model](domain/PERSONAL_MODEL.md)
+11. [System](foundation/SYSTEM.md)
+12. [Architecture](foundation/ARCHITECTURE.md)
+13. [Design](experience/DESIGN.md)
+14. [Design system](experience/DESIGN_SYSTEM.md)
+15. [Methodology](foundation/METHODOLOGY.md)
+16. [Decisions](governance/DECISIONS.md)
+17. [Meta architecture](meta/META.md)
+18. [Roadmap](../../ROADMAP.md)
 
 ## Holon contracts
 
@@ -35,12 +37,12 @@ Each contract contains `PURPOSE.md`, `ONTOLOGY.md`, `SYSTEM.md`,
 epistemology, design, methodology, AI governance, and roadmap apply to every
 holon and are not duplicated.
 
-## Intentional omissions
+## Complete-reference applicability
 
-- `PERSONAL_MODEL.md`: Flow processes user-selected local artifacts but does
-  not currently model people, identities, relationships, or inferred intent.
-- `DESIGN_SYSTEM.md`: interaction philosophy is defined, but a reusable visual
-  component/token system would be speculative before an interface exists.
+`PERSONAL_MODEL.md` is applicable even though Flow does not model identity:
+the suite processes user-selected artifacts and must make assumptions about
+agency, consent, attention, privacy, and recovery explicit.
 
-Both omissions must be revisited if the product begins modeling people or gains
-a substantial graphical interface.
+`DESIGN_SYSTEM.md` defines semantic states and cross-surface language for the
+CLI, documentation, plans, reports, diagrams, and future graphical interfaces.
+It does not prematurely select a visual framework or component library.
