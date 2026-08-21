@@ -1,0 +1,17 @@
+{
+  "schema_version": "flow.artifact/v1",
+  "artifact_id": "artifact:restored-master",
+  "role": "temporal-master",
+  "media_type": "video/mp4",
+  "digest": {
+    "algorithm": "sha256",
+    "value": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  },
+  "size_bytes": 1048576,
+  "producer": {
+    "owner": "aniflow",
+    "capability_id": "aniflow/create-master",
+    "provider_version": "0.2.0"
+  },
+  "sources": ["artifact:source-video"]
+}

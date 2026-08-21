@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/artifact.v1.schema.json",
+  "title": "Flow artifact v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_id", "role", "media_type", "digest", "size_bytes", "producer", "sources"],
+  "properties": {
+    "schema_version": { "const": "flow.artifact/v1" },
+    "artifact_id": { "type": "string", "pattern": "^artifact:[a-z0-9][a-z0-9._-]*$" },
+    "role": { "type": "string", "minLength": 1 },
+    "media_type": { "type": "string", "pattern": "^[^/]+/[^/]+$" },
+    "digest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "value": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "size_bytes": { "type": "integer", "minimum": 0 },
+    "producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "capability_id", "provider_version"],
+      "properties": {
+        "owner": { "type": "string", "minLength": 1 },
+        "capability_id": { "type": "string", "minLength": 1 },
+        "provider_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^artifact:[a-z0-9][a-z0-9._-]*$" }
+    }
+  }
+}

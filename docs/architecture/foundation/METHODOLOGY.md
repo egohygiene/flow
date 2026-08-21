@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-methodology
 title: Flow Methodology
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-methodology
 depends_on:
@@ -71,13 +71,13 @@ behavior, remote processing, provenance policy, and release acceptance.
 ## Boundaries and exclusions
 
 This methodology is not a sprint plan, release checklist, coding style guide, or
-permission to rewrite every holon in one change. Large migrations are divided
+permission to rewrite every holon in one change. Large changes are divided
 by independently reviewable architectural outcomes.
 
 ## Assumptions and evidence gaps
 
-The suite has not yet completed a consolidated release. The methodology will be
-revised after the first source import and first integrated vertical slice.
+The suite has not yet completed an integrated release. The methodology will be
+revised after the first released-adapter vertical slice.
 
 ## Open questions
 

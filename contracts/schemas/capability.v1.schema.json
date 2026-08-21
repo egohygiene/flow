@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/capability.v1.schema.json",
+  "title": "Flow capability v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "capability_id", "owner", "provider_version", "interfaces", "accepts", "produces", "effects", "resume"],
+  "properties": {
+    "schema_version": { "const": "flow.capability/v1" },
+    "capability_id": { "type": "string", "pattern": "^[a-z][a-z0-9.-]+/[a-z][a-z0-9.-]+$" },
+    "owner": { "enum": ["flow", "aniflow", "optiflow", "renderflow"] },
+    "provider_version": { "type": "string", "minLength": 1 },
+    "interfaces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "name", "version"],
+        "properties": {
+          "kind": { "enum": ["library", "cli"] },
+          "name": { "type": "string", "minLength": 1 },
+          "version": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "accepts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "produces": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_mutation", "network", "destructive"],
+      "properties": {
+        "source_mutation": { "type": "boolean" },
+        "network": { "type": "boolean" },
+        "destructive": { "type": "boolean" }
+      }
+    },
+    "resume": { "enum": ["none", "provider-checkpoint", "flow-checkpoint"] }
+  }
+}

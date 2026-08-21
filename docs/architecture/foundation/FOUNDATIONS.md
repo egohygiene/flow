@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-foundations
 title: Flow Foundations
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-foundations
 depends_on:
@@ -89,14 +89,14 @@ None yet. Revisions require an ADR and explicit downstream review.
 
 ## Assumptions and evidence gaps
 
-The final monorepo/workspace mechanics and shared-crate boundaries have not been
-validated through migration. Current holons use different Rust editions and
-minimum toolchains.
+The public-library versus CLI adapter choice has not been validated for every
+capability. Current holons use different Rust editions and minimum toolchains,
+which supports keeping release and repository boundaries explicit.
 
 ## Open questions
 
-- Can all holons share one workspace toolchain without delaying independent
-  releases or forcing unnecessary upgrades?
+- Which holon capabilities have stable enough public libraries for in-process
+  adapters, and which should remain process-isolated?
 
 ## Validation
 

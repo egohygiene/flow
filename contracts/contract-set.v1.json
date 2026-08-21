@@ -1,0 +1,22 @@
+{
+  "schema_version": "flow.contract-set/v1",
+  "contract_set_version": "0.1.0",
+  "status": "provisional",
+  "contracts": [
+    {
+      "id": "flow.artifact/v1",
+      "schema": "schemas/artifact.v1.schema.json",
+      "example": "examples/artifact.v1.example.json"
+    },
+    {
+      "id": "flow.capability/v1",
+      "schema": "schemas/capability.v1.schema.json",
+      "example": "examples/capability.v1.example.json"
+    },
+    {
+      "id": "flow.compatibility/v1",
+      "schema": "schemas/compatibility.v1.schema.json",
+      "example": "examples/compatibility.v1.example.json"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 ---
 schema: aether.architecture-decision/v1
 id: adr-0003
-title: Initialize Flow with architecture before source import
+title: Initialize Flow with architecture before implementation
 kind: architecture-decision
 status: accepted
 accepted: 2026-08-13
@@ -17,20 +17,20 @@ related:
   - flow-roadmap
 ---
 
-# ADR-0003 — Initialize Flow with architecture before source import
+# ADR-0003 — Initialize Flow with architecture before implementation
 
 ## Context
 
 The three existing tools overlap in orchestration vocabulary and have different
 levels of maturity, workspace structure, Rust versions, schemas, and release
-automation. Moving source before defining ownership would make accidental layout
-look like intentional architecture.
+automation. Implementing composition before defining ownership would make
+accidental layout look like intentional architecture.
 
 ## Decision
 
 The first Flow pull request contains the repository-local Aether framework,
 suite architecture, focused holon contracts, decision records, and root roadmap.
-It imports no tool source and creates no Cargo workspace.
+It imports no tool source and creates no orchestration implementation.
 
 ## Rationale
 
@@ -45,9 +45,9 @@ inspected at named default-branch revisions on 2026-08-13.
 
 ## Alternatives considered
 
-- Import everything immediately: faster initial motion, poor boundary review.
+- Implement everything immediately: faster initial motion, poor boundary review.
 - Define architecture separately in each old repository: duplicates suite policy
-  and increases drift during consolidation.
+  and increases drift during integration.
 
 ## Trade-offs
 
@@ -56,8 +56,8 @@ deliberately deferred.
 
 ## Expected consequences
 
-The next phase creates a migration plan and capability matrix before source is
-moved.
+The next phase creates versioned suite contracts and a capability matrix before
+provider adapters are implemented.
 
 ## Observed outcomes
 
@@ -66,7 +66,7 @@ them in a premature workspace layout.
 
 ## Review triggers
 
-This decision has served its purpose once architecture is accepted and migration
+This decision has served its purpose once architecture is accepted and adapter
 planning begins; it does not prohibit later implementation PRs.
 
 ## Related artifacts
@@ -75,4 +75,4 @@ planning begins; it does not prohibit later implementation PRs.
 
 ## Validation
 
-The initializing PR contains no Cargo manifest or imported application source.
+The initializing PR contains no Cargo manifest or orchestration implementation.

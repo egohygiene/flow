@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-system
 title: Flow System
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-system
 depends_on:
@@ -49,10 +49,15 @@ probes/adapters; it must not become a duplicate media engine.
 
 ## System boundaries
 
-- Flow may depend on each holon's public library API and CLI contract.
-- Holons may depend on shared contract crates that contain no sibling logic.
+- Flow may depend on a released holon's public library API or invoke its
+  versioned CLI contract through a Flow-owned adapter.
+- Suite interchange schemas are owned and versioned in Flow. Adapters translate
+  holon-native contracts at the repository boundary; holons do not need a Flow
+  package dependency.
 - Holons may not depend on Flow application/orchestration crates.
 - Holons may not depend directly on sibling holons.
+- Flow may not copy sibling source, use path dependencies into sibling
+  checkouts, or depend on mutable branches.
 - External tools are systems behind the owning holon's adapter or, for generic
   provenance inspection, a narrowly scoped Flow adapter.
 
@@ -77,7 +82,7 @@ integration; the capability matrix must verify actual contracts first.
 Aniflow currently has the broadest run orchestration behavior, Optiflow is
 deliberately read-only at v0.1.0, and Renderflow currently centers documents
 plus image/audio conversion rather than general video derivative packaging.
-Migration must preserve reality rather than rename aspiration as capability.
+Integration must preserve reality rather than rename aspiration as capability.
 
 ## Open questions
 

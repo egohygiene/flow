@@ -3,7 +3,7 @@ schema: aether.architecture-decision/v1
 id: adr-0001
 title: Consolidate the suite as nested holons
 kind: architecture-decision
-status: accepted
+status: superseded
 accepted: 2026-08-13
 owners:
   - egohygiene
@@ -15,7 +15,8 @@ scope:
 governed_by:
   - architecture-decisions
 supersedes: []
-superseded_by: []
+superseded_by:
+  - adr-0004
 related:
   - flow-architecture
 ---
@@ -70,7 +71,9 @@ verified.
 
 ## Observed outcomes
 
-None yet; this PR defines architecture only.
+The decision was superseded before source import. Organization architecture now
+requires independently coherent repositories, immutable released integration
+seams, and no sibling source copies. See ADR-0004.
 
 ## Review triggers
 

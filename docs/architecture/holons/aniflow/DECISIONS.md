@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: aniflow-decisions
 title: Aniflow Decisions
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-decisions
 depends_on:
@@ -56,18 +56,18 @@ Proposed, accepted, deprecated, and superseded follow `flow-decisions`.
 Aniflow ends at a validated temporal master and domain evidence. Cross-holon
 selection and handoff belong to Flow. This supersedes the architectural meaning
 of the current optional Renderflow CLI handoff while preserving compatibility
-until migration.
+inside Aniflow until its owning repository changes the public contract.
 
 ### ANIFLOW-002 — Constraints are not foundations
 
 PNG interchange, first-stream processing, CFR targeting, AAC output, and
 run-local caching describe v0.2.0. They must remain documented and tested during
-migration but do not define the target domain model.
+provider evolution but do not define the target domain model.
 
 ## Deprecated and superseded decisions
 
-None removed yet; the optional Renderflow handoff is marked for migration rather
-than silently deleted.
+None removed yet; the optional Renderflow handoff remains provider-owned and is
+excluded from Flow's cross-holon architecture rather than silently deleted.
 
 ## Historical decisions
 

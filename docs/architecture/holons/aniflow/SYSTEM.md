@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: aniflow-system
 title: Aniflow System
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-system
 depends_on:
@@ -47,9 +47,9 @@ Aniflow owns their ordering, media handoff, and result verification.
 ## System boundaries
 
 Flow may invoke Aniflow through its public library or CLI. Aniflow may emit
-shared artifact/events/results but cannot select Optiflow or Renderflow. A former
+native artifact/events/results but cannot select Optiflow or Renderflow. A former
 optional Renderflow handoff is treated as a compatibility seam to remove or move
-into Flow during consolidation.
+into a Flow-owned adapter without copying Aniflow source.
 
 ## Major interactions and runtime flows
 
