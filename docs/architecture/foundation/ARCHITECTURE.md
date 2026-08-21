@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-architecture
 depends_on:
@@ -23,9 +23,10 @@ supersedes: []
 
 ## Purpose and scope
 
-This document defines the intended structural organization of the future Flow
-Rust workspace. It fixes dependency direction and contract seams while leaving
-exact crate names and source-import mechanics to migration decisions.
+This document defines the intended structural organization of the Flow
+orchestrator repository and its released integration seams. It fixes dependency
+direction and contract ownership while leaving exact Flow crate names to
+implementation decisions.
 
 ## Structural units
 
@@ -39,19 +40,20 @@ but not planning or execution logic.
 
 The core owns pipeline loading, capability resolution, deterministic planning,
 run coordination, state transitions, progress, cancellation, recovery, and
-diagnostics. It depends only on shared contracts and public holon interfaces.
+diagnostics. It depends only on Flow-owned contracts and adapter ports.
 
 ### Domain holons
 
-Aniflow, Optiflow, and Renderflow each use a core-library plus thin-CLI shape.
+Aniflow, Optiflow, and Renderflow remain independent repositories and releases.
 Their internal modules remain private. A holon exposes only stable domain types,
 capability descriptors, and operations justified by its contract.
 
 ### Shared contracts
 
-Small, low-dependency crates own schema-versioned artifact identities, events,
-validation results, capability descriptors, and common error categories. They
-must not accumulate orchestration policy or domain algorithms.
+Flow-owned, schema-versioned documents define suite artifact identities,
+capability descriptors, compatibility decisions, events, and results. Holons
+may keep native models; Flow adapters perform explicit translation rather than
+forcing a Flow dependency into a provider repository.
 
 ### External adapters
 
@@ -62,9 +64,14 @@ are constructed as executable plus argv, never as shell strings.
 ## Boundary rules
 
 - CLI crates depend inward on their corresponding libraries.
-- Flow orchestration may depend on public holon libraries and contracts.
-- A holon may depend on shared contracts, never on Flow orchestration.
+- Flow orchestration depends on Flow-owned adapter ports.
+- A library adapter may depend on a released public holon library.
+- A process adapter may invoke a versioned holon CLI and consume its structured
+  output.
+- A holon never depends on Flow orchestration or Flow contracts.
 - No sibling holon dependency is allowed.
+- No copied sibling source, path dependency, Git submodule, or mutable branch
+  dependency is allowed.
 - Schema types are separated from local persistence models.
 - Human console text is never parsed when a supported structured contract
   exists.
@@ -74,8 +81,12 @@ are constructed as executable plus argv, never as shell strings.
 ## Dependency direction
 
 ```text
-flow-cli -> flow-core -> holon public APIs -> holon internals
-                      -> shared contracts <- holon public APIs
+flow-cli -> flow-core -> Flow adapter ports -> Flow-owned contracts
+                             |                    ^
+                             +-> library adapter -+-> released holon library
+                             +-> process adapter ----> versioned holon CLI
+
+holon-cli -> holon library -> holon internals
 
 aniflow -X-> optiflow
 aniflow -X-> renderflow
@@ -97,10 +108,9 @@ direction is unchanged.
 ## Significant constraints
 
 The current repositories use Rust 2021/2024 and minimum versions from 1.85 to
-1.94. One workspace toolchain may be possible but is not assumed. Repository
-history and release identity must be preserved during consolidation. The first
-import may use subtree-style history, archived mirrors, or another reviewed
-method.
+1.94. Release and toolchain independence are architectural constraints. Flow
+pins supported provider releases and records compatibility evidence; it does
+not require a shared workspace toolchain.
 
 ## Relationship to system inventory
 
@@ -110,12 +120,11 @@ structure without overriding suite dependency rules.
 
 ## Assumptions and evidence gaps
 
-No Flow implementation exists yet. Proposed units are constraints for the
-migration and planning phase, not claims about current source layout.
+No Flow implementation exists yet. Proposed units are constraints for adapter
+and orchestration work, not claims about current source layout.
 
 ## Open questions
 
-- One Cargo workspace or coordinated nested workspaces?
 - Which public APIs are stable enough for in-process composition in the first
   integrated release?
 - How will independent holon versioning map onto suite releases?

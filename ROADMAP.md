@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -25,199 +25,130 @@ supersedes: []
 
 ## Strategic context
 
-Flow begins with three working but differently shaped Rust tools and no suite
-orchestrator implementation. The path forward must preserve their useful
-behavior and histories while making capability ownership, public contracts,
-validation, provenance, and composition coherent.
+Flow begins with three independently released Rust tools and no suite
+orchestrator implementation. Flow will integrate named releases through public
+libraries or versioned CLI contracts. It will not consolidate repositories,
+copy sibling source, or hide missing provider capabilities inside the facade.
 
-This roadmap is organized by capability outcomes rather than dates or issue
-queues. A horizon advances only when its exit evidence exists.
+This roadmap advances on capability evidence rather than dates.
 
-## Now — Define and prepare
+## Approved baseline
 
-### Establish the architectural baseline
+The suite ownership table, forbidden dependency edges, federated repository
+model, and first contract set are approved by [ADR-0004](docs/architecture/governance/decisions/ADR-0004-federated-suite-contracts.md).
+Artifact, capability, and compatibility schemas begin as provisional v1
+contracts so real adapter work can refine them without claiming stability.
 
-Accept the suite identity, foundations, ontology, system ownership, structural
-rules, holon contracts, provenance policy, decisions, and roadmap. Install the
-repository-local Aether framework so changes can be validated consistently.
+**Exit evidence:** architecture validation passes; every suite capability has
+one primary owner; contract documents are machine-valid; no mutable or copied
+sibling dependency is permitted.
 
-**Exit evidence:** architecture graph validates; boundaries have no unresolved
-ownership conflicts; accepted ADRs record the monorepo and provenance direction.
+## Now — Prove released integration seams
 
-### Produce a migration and capability record
+### Pin the capability matrix
 
-Inventory each current repository at named revisions, including source history,
-crate/package structure, public APIs, commands, schemas, runtime tools, release
-automation, tests, documentation, and known defects. Produce the first
-`docs/integrations/capability-matrix.md` and a history-preserving import plan.
+Reinspect each provider at named released revisions. Record available public
+libraries, CLI commands, structured formats, side effects, runtime tools, and
+known gaps in `docs/integrations/capability-matrix.md`.
 
-**Exit evidence:** every claimed suite capability has one verified owner; gaps
-and version/toolchain differences are explicit; import rollback is documented.
+**Exit evidence:** every adapter target names a release, interface kind, contract
+version, observed behavior, and compatibility result.
 
-### Consolidate without coupling
+### Build adapter contract tests
 
-Import the three codebases through the accepted history strategy, retain old
-repository references, and establish CI that tests each holon independently.
-Choose coordinated workspace and versioning mechanics only after the inventory.
+Implement Flow-owned fixtures and adapters without changing provider ownership.
+Choose an in-process adapter only for a stable released library; otherwise use
+direct argv invocation with independent stdout/stderr capture, version probing,
+signal forwarding, redacted diagnostics, and declared-output verification.
 
-**Exit evidence:** each original test suite passes in its new location; each CLI
-builds independently; history and license attribution are discoverable; forbidden
-sibling dependency checks pass.
+**Exit evidence:** supported versions pass; unknown versions and malformed
+provider output fail actionably; no human console text is parsed.
 
-## Next — Strengthen the holons
+### Implement the restore-and-assess slice
 
-### Aniflow: temporal engine maturity
+The first slice composes Optiflow and Aniflow:
 
-Separate reusable temporal-domain logic from its CLI, formalize structured
-results/events, harden checkpoint compatibility and cancellation, expand stream
-and timing correctness beyond the current first-stream/CFR constraints, and
-retain its focus on video decomposition, ordered processing, reconstruction, and
-temporal validation.
+1. Optiflow inventories a read-only source collection and emits evidence.
+2. Flow resolves and records one deterministic plan.
+3. Aniflow creates and validates a new temporal master without modifying the
+   source.
+4. Optiflow rescans source plus output and reports relationships and
+   opportunities without applying mutations.
+5. Flow records artifacts, compatibility decisions, stage state, provenance,
+   validation, and exact resume guidance.
 
-**Exit evidence:** public library examples and CLI contract tests pass; resume
-invalidation is deterministic; representative variable-frame-rate and multi-
-stream fixtures have explicit supported or rejected behavior.
+Renderflow is deliberately outside this slice. It joins through its own adapter
+after the first two-provider composition proves the orchestration seam.
 
-### Optiflow: evidence-led optimization
+**Exit evidence:** a redistribution-safe fixture completes with real released
+providers; an induced post-Aniflow failure resumes without repeating compatible
+work; plan, state, report, logs, provenance, and validation agree.
 
-Preserve the read-only v0.1.0 safety boundary while extracting its reusable
-inventory/evidence library. Expand from exact-duplicate observation toward
-reviewable normalization and optimization capabilities only behind immutable
-plans, current-state verification, dry runs, and reversible policies.
+## Next — Strengthen provider seams
 
-**Exit evidence:** scanning/planning are independently reusable; mutation is
-absent or separately gated; adversarial path/filesystem and stale-plan tests
-prove refusal behavior.
+### Aniflow
 
-### Renderflow: transform graph clarity
+Formalize structured capability/result output, retain temporal-domain
+checkpoint semantics, and make unsupported stream/timing behavior explicit.
 
-Preserve the existing core/CLI/plugin split, stabilize graph and plugin APIs,
-clarify document versus image/audio capability boundaries, strengthen structured
-build results, and validate incremental/parallel execution deterministically.
-Do not describe general video derivative packaging as current capability until
-it is intentionally designed and implemented.
+### Optiflow
 
-**Exit evidence:** public API compatibility policy is tested; graph plans and
-build results are serializable; plugin isolation and cache correctness have
-contract evidence.
+Preserve the read-only v0.1 safety boundary. Expose inventory and relationship
+evidence without implying that observation is mutation or optimization.
 
-## Next — Establish suite contracts
+### Renderflow
 
-### Shared vocabulary and schemas
+Stabilize structured build results and the public core/CLI seam. Prove a
+separate Flow adapter for document, image, or audio derivatives; do not describe
+general video packaging as present capability.
 
-Define minimal versioned contracts for artifact identity, capability discovery,
-tool results, events, validation, provenance evidence, plans, and run manifests.
-Adapt existing holon schemas explicitly rather than relabeling them.
+**Exit evidence:** each provider remains independently buildable and releasable;
+Flow compatibility fixtures exercise only public released interfaces.
 
-### Library and process adapters
+## Next — Build orchestration primitives
 
-Choose in-process or subprocess composition per holon capability. Process
-adapters use direct argv invocation, independent stdout/stderr capture, signal
-forwarding, redacted diagnostics, version probing, and declared-output
-verification. Both adapter styles emit the same logical result contract.
+- `flow doctor`: discover provider versions and explain compatibility.
+- `flow inspect`: preserve source observations and artifact identity.
+- `flow plan`: resolve typed capabilities before expensive work and emit a
+  stable plan digest.
+- `flow run`: use isolated workspaces, atomic state, bounded cancellation, and
+  verified outputs.
+- `flow resume`: reuse only checkpoints whose inputs, configuration,
+  implementation, and outputs remain compatible.
 
-### Suite compatibility policy
+## Later
 
-Publish tested version ranges and capability negotiation behavior. Unsupported
-schema or tool versions fail actionably; there is no silent fallback.
-
-**Exit evidence:** producer/consumer contract suites pass across all holons;
-unknown-version rejection and migration behavior are tested.
-
-## Later — Build Flow orchestration
-
-### Deterministic planning
-
-Implement `flow doctor`, `flow inspect`, and `flow plan` over typed pipeline
-definitions and registered capabilities. Resolve complete plans before expensive
-work and produce stable plan digests.
-
-### Recoverable execution
-
-Implement isolated run workspaces, atomic manifests, stage state, unified
-events, bounded cancellation, compatible checkpoints, invalidation, retention,
-diagnostics, and exact resume guidance.
-
-### First honest vertical slice
-
-Select the smallest pipeline justified by the capability matrix. Preserve the
-source, inspect provenance, execute real holon-owned stages, validate final
-artifacts, and demonstrate resume after an induced failure. Do not emulate a
-missing holon capability inside Flow.
-
-**Exit evidence:** one redistribution-safe fixture completes through compatible
-real tools; plan, run, report, logs, provenance, validation, and resume evidence
-agree.
-
-## Later — Provenance and authenticity
-
-### Evidence capture
-
-Integrate verified metadata and provenance probes such as ExifTool, MediaInfo,
-GPAC, and C2PA tooling behind versioned adapters. Preserve raw and normalized
-evidence with privacy-aware retention.
-
-### Detection reporting
-
-Evaluate visible/invisible watermark and synthetic-media detectors for
-reliability, licensing, model availability, and structured output. Report method
-coverage and uncertainty. Do not infer absence or origin beyond evidence.
-
-### Derivative claims
-
-Add opt-in C2PA claim construction and validation for final derivatives,
-including source fingerprints, declared transformations, software identity, and
-signing policy. Key custody and signer trust require explicit design.
-
-**Exit evidence:** fixtures prove source-evidence preservation, truthful
-derivative claims, validation, redaction, and failure behavior.
-
-## Later — Product and ecosystem maturity
-
-- Pipeline authoring with schema-aware tooling and reusable, signed packs.
-- Stable extension contract for third-party holons and adapters.
-- Cross-run content-addressed caching with privacy and invalidation guarantees.
-- Consistent packages, release notes, compatibility matrices, and independent
-  holon versioning within suite releases.
-- Richer interfaces only after the CLI/JSON semantics are stable; introduce a
-  `DESIGN_SYSTEM.md` when reusable visual language becomes real.
+- Versioned events, results, provenance evidence, plans, and run manifests.
+- Opt-in provenance tooling and honest derivative claims under ADR-0002.
+- Reusable signed pipeline packs and third-party adapter contracts.
+- Cross-run content-addressed caching with explicit privacy and invalidation.
+- Richer interfaces after CLI and structured semantics stabilize.
 
 ## Maybe
 
-- Distributed or remote execution with explicit data-residency policy.
-- Hardware-aware scheduling across multiple local accelerators.
+- Distributed execution with explicit data-residency policy.
+- Hardware-aware scheduling across local accelerators.
 - A trust-policy registry for provenance validators.
-- Visual pipeline exploration generated from the same typed plan contract.
-
-These remain possibilities, not commitments, until local correctness and suite
-contracts are mature.
 
 ## Dependencies and risks
 
 | Risk | Strategic response |
 | --- | --- |
-| Rust toolchain/version divergence | Decide after inventory; allow coordinated nested workspaces or process adapters |
-| History loss during consolidation | Use a reviewed import strategy and archive old repositories only after verification |
-| Overlapping orchestration logic | Assign domain versus suite ownership before extraction |
-| Schema churn | Version explicitly; test producers and consumers together |
-| External tool fragility | Probe capabilities; isolate adapters; keep raw diagnostics |
-| Misleading provenance claims | Enforce ADR-0002 and epistemic claim states |
-| Monorepo becomes monolith | Enforce independent builds, public APIs, and forbidden sibling dependencies |
-
-## Assumptions and evidence gaps
-
-The current repository scan is sufficient to define intent, not to select the
-final workspace or adapter layout. Capability matrices and import rehearsals are
-required before implementation commitments.
+| Provider release or toolchain divergence | Pin named releases and prefer process isolation when library compatibility is costly |
+| Schema churn | Version explicitly and reject unsupported versions without silent fallback |
+| Overlapping orchestration logic | Keep domain execution in providers and cross-holon decisions in Flow |
+| External tool fragility | Probe capabilities, isolate adapters, and retain raw diagnostics |
+| Misleading provenance claims | Enforce ADR-0002 and explicit epistemic claim states |
+| Source or history duplication | Keep implementations and history in their owning repositories; consume releases only |
 
 ## Open questions
 
-- What source-import method best preserves history and reviewability?
-- Which shared contracts deserve Rust crates versus JSON Schema only?
-- How should suite releases express independently versioned holons?
+- Which provider APIs are stable enough for library adapters?
+- How should a Flow release publish its tested provider-version matrix?
+- Which provisional JSON contracts should later gain Rust bindings?
 
 ## Validation
 
-Roadmap horizons advance on named evidence, not elapsed time. New initiatives
-must align with the purpose, vision, pillars, system ownership, and accepted
-decisions.
+Roadmap horizons advance on named evidence, not elapsed time. New work must align
+with the ownership table, [suite boundaries](docs/integrations/suite-boundaries.md),
+versioned contracts, and accepted decisions.

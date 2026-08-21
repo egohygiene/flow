@@ -1,0 +1,20 @@
+{
+  "schema_version": "flow.compatibility/v1",
+  "orchestrator_version": "0.1.0",
+  "provider": {
+    "owner": "optiflow",
+    "version": "0.1.0",
+    "interface_kind": "cli",
+    "interface_version": "1"
+  },
+  "capability_id": "optiflow/scan-collection",
+  "required_contracts": ["flow.artifact/v1", "flow.capability/v1"],
+  "result": "compatible",
+  "reasons": [],
+  "evidence": [
+    {
+      "kind": "contract-test",
+      "value": "restore-and-assess/optiflow-scan-v1"
+    }
+  ]
+}

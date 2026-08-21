@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: renderflow-decisions
 title: Renderflow Decisions
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-decisions
 depends_on:
@@ -36,8 +36,8 @@ meaning, or public Renderflow APIs.
 
 ## Storage mode
 
-Inline log until migration can reconcile this index with existing repository
-architecture decisions.
+Inline suite-level summary. Detailed Renderflow decisions remain canonical in
+the owning repository and are referenced rather than copied.
 
 ## Status definitions
 
@@ -47,7 +47,7 @@ Proposed, accepted, deprecated, and superseded follow `flow-decisions`.
 
 | ID | Title | Status | Accepted | Review trigger |
 | --- | --- | --- | --- | --- |
-| RENDERFLOW-001 | Preserve the core/CLI/plugin-SDK split | Accepted | 2026-08-13 | Import reveals an API or dependency cycle that cannot be resolved within the split |
+| RENDERFLOW-001 | Preserve the core/CLI/plugin-SDK split | Accepted | 2026-08-13 | Released integration reveals an API or dependency cycle that cannot be resolved within the split |
 | RENDERFLOW-002 | Describe current capability truthfully | Accepted | 2026-08-13 | A tested general video-derivative capability is intentionally added |
 
 ## Active decisions
@@ -55,8 +55,8 @@ Proposed, accepted, deprecated, and superseded follow `flow-decisions`.
 ### RENDERFLOW-001 — Preserve the workspace boundary
 
 The existing reusable core, thin CLI, and narrow plugin SDK are the target
-starting point. Consolidation may rename paths but does not fold the engine into
-Flow or move graph logic into the CLI.
+starting point. Flow integration does not rename provider paths, fold the engine
+into Flow, or move graph logic into the CLI.
 
 ### RENDERFLOW-002 — Describe current capability truthfully
 
@@ -67,8 +67,8 @@ media packages as existing capabilities until verified implementations land.
 
 ## Deprecated and superseded decisions
 
-None at suite initialization. Existing Renderflow ADRs must be imported and
-reconciled rather than overwritten.
+None at suite initialization. Existing Renderflow ADRs remain in their owning
+repository and must be referenced rather than overwritten.
 
 ## Historical decisions
 

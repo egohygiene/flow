@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: renderflow-system
 title: Renderflow System
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-system
 depends_on:
@@ -72,8 +72,8 @@ suite capability coverage need verification.
 
 ## Open questions
 
-- Which existing public API surfaces are stable enough to retain unchanged
-  during consolidation?
+- Which existing public API surfaces are stable enough for a released Flow
+  library adapter?
 
 ## Validation
 

@@ -1,0 +1,21 @@
+{
+  "schema_version": "flow.capability/v1",
+  "capability_id": "optiflow/scan-collection",
+  "owner": "optiflow",
+  "provider_version": "0.1.0",
+  "interfaces": [
+    {
+      "kind": "cli",
+      "name": "optiflow",
+      "version": "1"
+    }
+  ],
+  "accepts": ["collection-path"],
+  "produces": ["collection-evidence"],
+  "effects": {
+    "source_mutation": false,
+    "network": false,
+    "destructive": false
+  },
+  "resume": "flow-checkpoint"
+}

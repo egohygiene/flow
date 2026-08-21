@@ -17,9 +17,9 @@ compose them through stable public library interfaces or versioned CLI
 contracts, without introducing direct dependencies between sibling holons.
 
 This repository is currently architecture-first. It intentionally contains no
-imported tool source or working orchestrator yet. The first implementation work
-begins only after the boundaries and migration gates in the [roadmap](ROADMAP.md)
-are accepted.
+copied holon source or working orchestrator yet. The approved suite boundaries,
+dependency directions, and first orchestration slice are recorded in the
+[roadmap](ROADMAP.md) and [integration contracts](docs/integrations/README.md).
 
 ## Architecture
 
@@ -27,6 +27,8 @@ are accepted.
 - [Suite system model](docs/architecture/foundation/SYSTEM.md)
 - [Suite structural architecture](docs/architecture/foundation/ARCHITECTURE.md)
 - [Decision index](docs/architecture/governance/DECISIONS.md)
+- [Suite boundaries](docs/integrations/suite-boundaries.md)
+- [Versioned contracts](contracts/README.md)
 - [Roadmap](ROADMAP.md)
 
 The `.agents/` directory contains the repository-local Aether specifications,
@@ -34,10 +36,11 @@ skills, agents, templates, and validators used to maintain these documents.
 
 ## Status
 
-Flow is in the **definition** phase. Current descriptions of Aniflow, Optiflow,
-and Renderflow are grounded in their default branches as inspected on
-2026-08-13. Import mechanics, workspace layout, crate names, and history
-preservation remain intentionally open until the migration phase.
+Flow is in the **contract and adapter definition** phase. Current descriptions
+of Aniflow, Optiflow, and Renderflow are grounded in their default branches as
+inspected on 2026-08-13. The holons remain independently released repositories;
+Flow will compose named releases through public libraries or versioned CLI
+contracts and will not import sibling source.
 
 ## License
 

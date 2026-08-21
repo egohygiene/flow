@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: renderflow-architecture
 title: Renderflow Architecture
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-architecture
 depends_on:
@@ -72,8 +72,8 @@ should strengthen it rather than introduce a suite-specific facade inside core.
 
 ## Assumptions and evidence gaps
 
-Current Rust 1.94 minimum and edition 2021 differ from sibling projects; suite
-workspace mechanics remain undecided.
+Current Rust 1.94 minimum and edition 2021 differ from sibling projects; Flow
+must integrate a named Renderflow release without imposing a shared toolchain.
 
 ## Open questions
 

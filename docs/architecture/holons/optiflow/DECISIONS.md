@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: optiflow-decisions
 title: Optiflow Decisions
 kind: architecture-document
-version: 0.1.0
+version: 0.2.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-21
 governed_by:
   - architecture-decisions
 depends_on:
@@ -53,10 +53,10 @@ Proposed, accepted, deprecated, and superseded follow `flow-decisions`.
 
 ### OPTIFLOW-001 — Preserve the read-only boundary
 
-Import and library extraction do not add mutation. The first mutation capability
-requires typed effects, immutable plans, dry runs, current-state/byte
-revalidation, containment, interruption semantics, recovery evidence, and its
-own review.
+Flow integration and any provider-owned library extraction do not add mutation.
+The first mutation capability requires typed effects, immutable plans, dry runs,
+current-state/byte revalidation, containment, interruption semantics, recovery
+evidence, and its own review.
 
 ### OPTIFLOW-002 — Separate intent from execution
 
