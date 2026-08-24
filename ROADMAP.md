@@ -8,7 +8,7 @@ status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-21
+updated: 2026-08-24
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -22,6 +22,153 @@ supersedes: []
 ---
 
 # Flow Roadmap
+
+<!-- BEGIN ROADMAP EXECUTION SNAPSHOT -->
+<!-- roadmap-manifest
+schema: hygiene.roadmap/v1alpha1
+repository: egohygiene/flow
+visibility: public
+publication: central
+route: /roadmap/flow/
+updated: 2026-08-24
+-->
+## 2026-08-24 execution snapshot
+
+> This evidence-reconciled snapshot is the issue-generation and visual-roadmap handoff. The longer-horizon strategy below remains canonical context; generated HTML, JSON, progress, issue plans, and commit lists are projections.
+
+**Lifecycle:** contract and architecture prototype  
+**Current gate:** Add CI and a minimal executable orchestrator before expanding provider adapters.  
+**North-star outcome:** Federated orchestration across holons with stable provider seams, resumable work, and explicit evidence.
+
+### Visual roadmap publication
+
+**Mode:** `central`  
+**Route:** `/roadmap/flow/`  
+**Current publication evidence:** Architecture and contract source only; no executable release or Pages publication observed.
+
+Publish the public-safe projection through egohygiene.io at /roadmap/flow/. This repository owns intent and acceptance evidence; it does not add a second site deployment.
+
+### Quest line
+
+<!-- roadmap-step
+id: FLO-Q01
+status: complete
+depends_on: []
+issues: []
+-->
+#### FLO-Q01 — Define orchestration contracts
+
+**State:** `complete`  
+**Depends on:** None
+
+**Outcome:** Initial architecture and provider contracts describe the intended orchestration boundary.
+
+**Exit criteria:**
+
+- [x] Core contracts and responsibilities are documented.
+- [x] Renderflow and other provider boundaries are explicitly deferred or scoped.
+
+**Current evidence:**
+
+- The audit observed a contract and architecture prototype.
+
+<!-- roadmap-step
+id: FLO-Q02
+status: active
+depends_on: [FLO-Q01]
+issues: []
+-->
+#### FLO-Q02 — Create a tested executable core
+
+**State:** `active`  
+**Depends on:** `FLO-Q01`
+
+**Outcome:** A minimal orchestrator executes a fixture through one provider seam in CI.
+
+**Exit criteria:**
+
+- [ ] A runnable command or library path exists.
+- [ ] Default-branch CI proves success and failure behavior.
+
+**Current evidence:**
+
+- No executable orchestrator or CI was observed.
+
+<!-- roadmap-step
+id: FLO-Q03
+status: planned
+depends_on: [FLO-Q02]
+issues: []
+-->
+#### FLO-Q03 — Reinspect and implement provider adapters
+
+**State:** `planned`  
+**Depends on:** `FLO-Q02`
+
+**Outcome:** Adapters reflect current provider behavior and share stable error and evidence contracts.
+
+**Exit criteria:**
+
+- [ ] At least two adapters pass contract tests.
+- [ ] Provider-specific behavior does not leak into the core model.
+
+**Current evidence:**
+
+- Provider reinspection and adapters were identified as the next implementation stage.
+
+<!-- roadmap-step
+id: FLO-Q04
+status: planned
+depends_on: [FLO-Q03]
+issues: [3]
+-->
+#### FLO-Q04 — Restore, assess, and resume work
+
+**State:** `planned`  
+**Depends on:** `FLO-Q03`
+
+**Outcome:** Issue #3 proves interruption-safe orchestration and explicit recovery decisions.
+
+**Exit criteria:**
+
+- [ ] A saved run can be assessed and resumed deterministically.
+- [ ] Recovery evidence distinguishes retry, skip, rollback, and terminal failure.
+
+**Current evidence:**
+
+- Issue #3 tracks restore, assess, and resume behavior.
+
+<!-- roadmap-step
+id: FLO-Q05
+status: planned
+depends_on: [FLO-Q04]
+issues: []
+-->
+#### FLO-Q05 — Stabilize primitives and add Renderflow
+
+**State:** `planned`  
+**Depends on:** `FLO-Q04`
+
+**Outcome:** Stable orchestration primitives support Renderflow without coupling the core to rendering.
+
+**Exit criteria:**
+
+- [ ] Primitive contracts are versioned and backward-compatible.
+- [ ] A Renderflow integration passes an end-to-end resumability fixture.
+
+**Current evidence:**
+
+- Renderflow integration is intentionally later than the core seams and primitives.
+
+### Roadmap-to-issue handoff
+
+- A step is complete only when its exit criteria and required evidence are satisfied; commit count never determines progress.
+- Ready or planned steps without an issue are candidates for the private, duplicate-aware roadmap.issue-plan.json dry run.
+- Issue creation or reconciliation requires human approval or an explicitly authorized Pace operation and returns issue references through a reviewable roadmap pull request.
+- Pull requests and commits should include Roadmap-Step: <ID>; historical evidence may be linked through existing issue and pull-request relationships.
+- Public rendering uses only allowlisted build-time evidence and never places a GitHub token or private issue plan in the browser artifact.
+
+<!-- END ROADMAP EXECUTION SNAPSHOT -->
 
 ## Strategic context
 
