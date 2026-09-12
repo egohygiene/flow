@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/extension-event.v1.schema.json",
+  "title": "Flow extension event v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "run_id",
+    "invocation_id",
+    "sequence",
+    "phase",
+    "kind",
+    "state",
+    "progress",
+    "diagnostics",
+    "artifact_refs",
+    "checkpoint_refs"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.extension-event/v1" },
+    "event_id": { "type": "string", "minLength": 1 },
+    "run_id": { "type": "string", "minLength": 1 },
+    "invocation_id": { "type": "string", "minLength": 1 },
+    "sequence": { "type": "integer", "minimum": 0 },
+    "phase": {
+      "enum": [
+        "discover",
+        "inspect",
+        "plan",
+        "authorize",
+        "execute",
+        "validate",
+        "commit-evidence"
+      ]
+    },
+    "kind": {
+      "enum": [
+        "phase-started",
+        "progress",
+        "diagnostic",
+        "artifact-produced",
+        "checkpoint",
+        "phase-completed",
+        "phase-failed",
+        "cancelled"
+      ]
+    },
+    "state": {
+      "enum": [
+        "planned",
+        "running",
+        "validating",
+        "produced",
+        "reused",
+        "skipped",
+        "blocked",
+        "unavailable",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["completed", "total", "unit"],
+      "properties": {
+        "completed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 },
+        "unit": { "type": "string", "minLength": 1 }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "code", "message", "redacted"],
+        "properties": {
+          "severity": { "enum": ["info", "warning", "error"] },
+          "code": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 },
+          "redacted": { "type": "boolean" }
+        }
+      }
+    },
+    "artifact_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "checkpoint_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

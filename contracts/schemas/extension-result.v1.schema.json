@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/extension-result.v1.schema.json",
+  "title": "Flow extension result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "invocation_id",
+    "extension_id",
+    "extension_version",
+    "extension_integrity",
+    "capability_id",
+    "configuration_digest",
+    "authorization_id",
+    "outcome",
+    "partial_result",
+    "consumed_artifacts",
+    "produced_artifacts",
+    "validations",
+    "provenance",
+    "diagnostics",
+    "failure",
+    "checkpoint_refs",
+    "explanation"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.extension-result/v1" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "invocation_id": { "type": "string", "minLength": 1 },
+    "extension_id": { "type": "string", "minLength": 1 },
+    "extension_version": { "type": "string", "minLength": 1 },
+    "extension_integrity": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "capability_id": { "type": "string", "minLength": 1 },
+    "configuration_digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "authorization_id": { "type": "string", "minLength": 1 },
+    "outcome": {
+      "enum": [
+        "produced",
+        "reused",
+        "skipped",
+        "blocked",
+        "unavailable",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "partial_result": { "type": "boolean" },
+    "consumed_artifacts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "produced_artifacts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "validations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["validator", "status", "evidence"],
+        "properties": {
+          "validator": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["passed", "failed", "not-run"] },
+          "evidence": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "provenance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "value"],
+        "properties": {
+          "kind": {
+            "enum": [
+              "extension",
+              "configuration",
+              "authorization",
+              "process",
+              "artifact"
+            ]
+          },
+          "value": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "code", "message", "redacted"],
+        "properties": {
+          "severity": { "enum": ["info", "warning", "error"] },
+          "code": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 },
+          "redacted": { "type": "boolean" }
+        }
+      }
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "code", "message", "retryable"],
+      "properties": {
+        "classification": {
+          "enum": [
+            "none",
+            "malformed",
+            "incompatible",
+            "unauthorized",
+            "unavailable",
+            "timeout",
+            "cancelled",
+            "provider",
+            "validation",
+            "contract",
+            "internal"
+          ]
+        },
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "retryable": { "type": "boolean" }
+      }
+    },
+    "checkpoint_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "explanation": { "type": "string", "minLength": 1 }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": "flow.extension-lock/v1",
+  "flow_version": "0.1.0",
+  "lock_id": "lock:synthetic-suite",
+  "extensions": [
+    {
+      "extension_id": "org.egohygiene.synthetic-adapters",
+      "version": "0.1.0",
+      "publisher_id": "org.egohygiene",
+      "integrity": {
+        "algorithm": "sha256",
+        "value": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "discovery": {
+        "kind": "configured-path",
+        "location": "fixtures/synthetic-adapters"
+      },
+      "enabled": true,
+      "trust": "sandboxed",
+      "granted_permissions": {
+        "filesystem_read": ["input"],
+        "filesystem_write": ["workspace"],
+        "environment_read": [],
+        "subprocesses": ["flow-synthetic-adapter"],
+        "network_hosts": [],
+        "ai_providers": [],
+        "gpu": false,
+        "source_mutation": false,
+        "destructive": false,
+        "sign": false,
+        "publish": false
+      },
+      "precedence": 100
+    }
+  ],
+  "capability_resolution": [
+    {
+      "capability_id": "aniflow/analyze-temporal",
+      "ordered_extensions": ["org.egohygiene.synthetic-adapters"],
+      "fallback": "before-effects"
+    },
+    {
+      "capability_id": "optiflow/inspect-collection",
+      "ordered_extensions": ["org.egohygiene.synthetic-adapters"],
+      "fallback": "before-effects"
+    },
+    {
+      "capability_id": "renderflow/normalize-sonic-dna",
+      "ordered_extensions": ["org.egohygiene.synthetic-adapters"],
+      "fallback": "explicit-resume"
+    }
+  ]
+}

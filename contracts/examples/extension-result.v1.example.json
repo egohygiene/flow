@@ -1,0 +1,41 @@
+{
+  "schema_version": "flow.extension-result/v1",
+  "run_id": "run:synthetic-suite",
+  "invocation_id": "invocation:synthetic-optiflow-scan",
+  "extension_id": "org.egohygiene.synthetic-adapters",
+  "extension_version": "0.1.0",
+  "extension_integrity": "1111111111111111111111111111111111111111111111111111111111111111",
+  "capability_id": "optiflow/inspect-collection",
+  "configuration_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+  "authorization_id": "authorization:synthetic-optiflow-scan",
+  "outcome": "produced",
+  "partial_result": false,
+  "consumed_artifacts": ["artifact:synthetic-collection"],
+  "produced_artifacts": ["artifact:synthetic-collection-evidence"],
+  "validations": [
+    {
+      "validator": "synthetic.collection-evidence/v1",
+      "status": "passed",
+      "evidence": "fixture:collection-evidence-valid"
+    }
+  ],
+  "provenance": [
+    {
+      "kind": "extension",
+      "value": "org.egohygiene.synthetic-adapters@0.1.0#sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "kind": "authorization",
+      "value": "authorization:synthetic-optiflow-scan"
+    }
+  ],
+  "diagnostics": [],
+  "failure": {
+    "classification": "none",
+    "code": "",
+    "message": "",
+    "retryable": false
+  },
+  "checkpoint_refs": ["checkpoint:synthetic-optiflow-scan"],
+  "explanation": "The synthetic collection was inspected without source mutation."
+}

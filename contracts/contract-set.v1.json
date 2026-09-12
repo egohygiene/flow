@@ -1,6 +1,6 @@
 {
   "schema_version": "flow.contract-set/v1",
-  "contract_set_version": "0.1.0",
+  "contract_set_version": "0.2.0",
   "status": "provisional",
   "contracts": [
     {
@@ -17,6 +17,46 @@
       "id": "flow.compatibility/v1",
       "schema": "schemas/compatibility.v1.schema.json",
       "example": "examples/compatibility.v1.example.json"
+    },
+    {
+      "id": "flow.extension-manifest/v1",
+      "schema": "schemas/extension-manifest.v1.schema.json",
+      "example": "examples/extension-manifest.v1.example.json",
+      "invalid_examples": [
+        "fixtures/extensions/malformed-manifest.v1.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.extension-lock/v1",
+      "schema": "schemas/extension-lock.v1.schema.json",
+      "example": "examples/extension-lock.v1.example.json"
+    },
+    {
+      "id": "flow.extension-invocation/v1",
+      "schema": "schemas/extension-invocation.v1.schema.json",
+      "example": "examples/extension-invocation.v1.example.json"
+    },
+    {
+      "id": "flow.extension-event/v1",
+      "schema": "schemas/extension-event.v1.schema.json",
+      "example": "examples/extension-event.v1.example.json"
+    },
+    {
+      "id": "flow.extension-result/v1",
+      "schema": "schemas/extension-result.v1.schema.json",
+      "example": "examples/extension-result.v1.example.json"
+    },
+    {
+      "id": "flow.extension-resolution/v1",
+      "schema": "schemas/extension-resolution.v1.schema.json",
+      "example": "examples/extension-resolution.v1.example.json",
+      "fixtures": [
+        "fixtures/extensions/incompatible-version.v1.fixture.json",
+        "fixtures/extensions/over-permissioned.v1.fixture.json",
+        "fixtures/extensions/duplicate-conflict.v1.fixture.json",
+        "fixtures/extensions/malformed.v1.fixture.json",
+        "fixtures/extensions/fallback.v1.fixture.json"
+      ]
     }
   ]
 }

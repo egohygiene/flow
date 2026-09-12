@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.2.0
+version: 0.3.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-21
+updated: 2026-09-12
 governed_by:
   - architecture-decisions
 depends_on:
@@ -58,6 +58,7 @@ justifies separate ADRs.
 | [ADR-0002](decisions/ADR-0002-provenance-preserving-derivatives.md) | Preserve source evidence and issue honest derivative claims | Accepted | 2026-08-13 | None | Standards, legal requirements, or supported signing model materially change |
 | [ADR-0003](decisions/ADR-0003-docs-first-initialization.md) | Initialize Flow with architecture before implementation | Accepted | 2026-08-13 | None | Architecture is accepted and adapter planning begins |
 | [ADR-0004](decisions/ADR-0004-federated-suite-contracts.md) | Keep holons federated behind versioned contracts | Accepted | 2026-08-21 | ADR-0001 | A required capability cannot be composed through a released interface |
+| [ADR-0005](decisions/ADR-0005-federated-extension-authority.md) | Separate extension declarations from operator authority | Accepted | 2026-09-12 | None | A required execution mode cannot preserve the same trust and evidence boundary |
 
 ## Active decisions
 
@@ -76,5 +77,7 @@ None beyond the superseded issue constraint.
 
 ## Evidence gaps and open questions
 
-Flow crate layout, provider compatibility ranges, shared contract granularity,
-and capability-specific library-versus-process adapters remain undecided.
+Flow crate layout and capability-specific library-versus-process adapter
+selection remain implementation decisions. Provider compatibility ranges and
+shared extension envelope granularity are governed by ADR-0005 and may evolve
+through additive contract-set revisions.

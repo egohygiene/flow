@@ -1,0 +1,22 @@
+{
+  "schema_version": "flow.extension-resolution/v1",
+  "case_id": "over-permissioned",
+  "requested_capability": "renderflow/normalize-sonic-dna",
+  "candidates": [
+    {
+      "extension_id": "org.example.remote-normalizer",
+      "version": "1.0.0",
+      "publisher_id": "org.example",
+      "integrity": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "precedence": 100,
+      "compatible": true,
+      "authorized": false,
+      "available": true,
+      "reasons": ["Requested network and AI access are not granted by the lock."]
+    }
+  ],
+  "result": "blocked",
+  "selected_extension_ids": [],
+  "fallback_order": [],
+  "reasons": ["Compatible candidates exist, but none is authorized."]
+}

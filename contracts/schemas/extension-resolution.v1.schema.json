@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/extension-resolution.v1.schema.json",
+  "title": "Flow extension resolution v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "requested_capability",
+    "candidates",
+    "result",
+    "selected_extension_ids",
+    "fallback_order",
+    "reasons"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.extension-resolution/v1" },
+    "case_id": { "type": "string", "minLength": 1 },
+    "requested_capability": { "type": "string", "minLength": 1 },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "extension_id",
+          "version",
+          "publisher_id",
+          "integrity",
+          "precedence",
+          "compatible",
+          "authorized",
+          "available",
+          "reasons"
+        ],
+        "properties": {
+          "extension_id": { "type": "string", "minLength": 1 },
+          "version": { "type": "string", "minLength": 1 },
+          "publisher_id": { "type": "string", "minLength": 1 },
+          "integrity": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "precedence": { "type": "integer", "minimum": 0 },
+          "compatible": { "type": "boolean" },
+          "authorized": { "type": "boolean" },
+          "available": { "type": "boolean" },
+          "reasons": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "result": {
+      "enum": ["selected", "no-compatible-provider", "blocked", "conflict", "malformed"]
+    },
+    "selected_extension_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "fallback_order": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "reasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

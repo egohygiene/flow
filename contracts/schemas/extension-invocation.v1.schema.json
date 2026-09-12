@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/extension-invocation.v1.schema.json",
+  "title": "Flow extension invocation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "invocation_id",
+    "run_id",
+    "phase",
+    "extension",
+    "capability_id",
+    "interface",
+    "input_artifacts",
+    "expected_output_types",
+    "configuration",
+    "authorization",
+    "limits",
+    "checkpoint_refs",
+    "secret_handles",
+    "cancellation_id"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.extension-invocation/v1" },
+    "invocation_id": { "type": "string", "pattern": "^invocation:[a-z0-9][a-z0-9._-]*$" },
+    "run_id": { "type": "string", "pattern": "^run:[a-z0-9][a-z0-9._-]*$" },
+    "phase": {
+      "enum": ["inspect", "plan", "execute", "validate"]
+    },
+    "extension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["extension_id", "version", "publisher_id", "integrity"],
+      "properties": {
+        "extension_id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "publisher_id": { "type": "string", "minLength": 1 },
+        "integrity": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "capability_id": { "type": "string", "minLength": 1 },
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "name", "protocol"],
+      "properties": {
+        "kind": { "enum": ["in-process", "process"] },
+        "name": { "type": "string", "minLength": 1 },
+        "protocol": { "const": "flow.extension-invocation/v1" }
+      }
+    },
+    "input_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "digest"],
+        "properties": {
+          "artifact_id": { "type": "string", "minLength": 1 },
+          "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "expected_output_types": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_id", "digest", "values"],
+      "properties": {
+        "schema_id": { "type": "string", "minLength": 1 },
+        "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "values": { "type": "object" }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authorization_id", "lock_id", "grants_digest"],
+      "properties": {
+        "authorization_id": { "type": "string", "minLength": 1 },
+        "lock_id": { "type": "string", "minLength": 1 },
+        "grants_digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "timeout_ms",
+        "max_stdout_bytes",
+        "max_stderr_bytes",
+        "cancellation_grace_ms"
+      ],
+      "properties": {
+        "timeout_ms": { "type": "integer", "minimum": 1 },
+        "max_stdout_bytes": { "type": "integer", "minimum": 0 },
+        "max_stderr_bytes": { "type": "integer", "minimum": 0 },
+        "cancellation_grace_ms": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "checkpoint_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "secret_handles": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^secret:[a-z0-9][a-z0-9._-]*$" }
+    },
+    "cancellation_id": { "type": "string", "minLength": 1 }
+  }
+}

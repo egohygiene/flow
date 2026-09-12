@@ -1,0 +1,10 @@
+{
+  "schema_version": "flow.extension-resolution/v1",
+  "case_id": "malformed",
+  "requested_capability": "renderflow/normalize-sonic-dna",
+  "candidates": [],
+  "result": "malformed",
+  "selected_extension_ids": [],
+  "fallback_order": [],
+  "reasons": ["The provider manifest is missing required integrity evidence."]
+}

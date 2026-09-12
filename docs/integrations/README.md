@@ -9,6 +9,8 @@ implementations.
   gates future adapter claims.
 - [First slice](first-slice-restore-and-assess.md) bounds the initial executable
   orchestration outcome.
+- [Federated extension contract](extension-contract.md) defines extension
+  identity, trust, discovery, execution envelopes, hooks, and resolution.
 - [Versioned contracts](../../contracts/README.md) define the provisional suite
   interchange vocabulary.
 

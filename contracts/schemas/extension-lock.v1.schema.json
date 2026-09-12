@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/extension-lock.v1.schema.json",
+  "title": "Flow extension lock v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "flow_version",
+    "lock_id",
+    "extensions",
+    "capability_resolution"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.extension-lock/v1" },
+    "flow_version": { "type": "string", "minLength": 1 },
+    "lock_id": { "type": "string", "pattern": "^lock:[a-z0-9][a-z0-9._-]*$" },
+    "extensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "extension_id",
+          "version",
+          "publisher_id",
+          "integrity",
+          "discovery",
+          "enabled",
+          "trust",
+          "granted_permissions",
+          "precedence"
+        ],
+        "properties": {
+          "extension_id": { "type": "string", "minLength": 1 },
+          "version": { "type": "string", "minLength": 1 },
+          "publisher_id": { "type": "string", "minLength": 1 },
+          "integrity": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["algorithm", "value"],
+            "properties": {
+              "algorithm": { "const": "sha256" },
+              "value": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+            }
+          },
+          "discovery": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "location"],
+            "properties": {
+              "kind": { "enum": ["configured-path", "package", "embedded"] },
+              "location": { "type": "string", "minLength": 1 }
+            }
+          },
+          "enabled": { "type": "boolean" },
+          "trust": { "enum": ["trusted", "sandboxed", "disabled"] },
+          "granted_permissions": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "filesystem_read",
+              "filesystem_write",
+              "environment_read",
+              "subprocesses",
+              "network_hosts",
+              "ai_providers",
+              "gpu",
+              "source_mutation",
+              "destructive",
+              "sign",
+              "publish"
+            ],
+            "properties": {
+              "filesystem_read": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "filesystem_write": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "environment_read": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" }
+              },
+              "subprocesses": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "network_hosts": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "ai_providers": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "gpu": { "type": "boolean" },
+              "source_mutation": { "type": "boolean" },
+              "destructive": { "type": "boolean" },
+              "sign": { "type": "boolean" },
+              "publish": { "type": "boolean" }
+            }
+          },
+          "precedence": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "capability_resolution": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability_id", "ordered_extensions", "fallback"],
+        "properties": {
+          "capability_id": { "type": "string", "minLength": 1 },
+          "ordered_extensions": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "fallback": { "enum": ["forbidden", "before-effects", "explicit-resume"] }
+        }
+      }
+    }
+  }
+}

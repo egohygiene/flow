@@ -1,0 +1,33 @@
+{
+  "schema_version": "flow.extension-resolution/v1",
+  "case_id": "duplicate-conflict",
+  "requested_capability": "optiflow/inspect-collection",
+  "candidates": [
+    {
+      "extension_id": "org.example.adapter-a",
+      "version": "1.0.0",
+      "publisher_id": "org.example",
+      "integrity": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "precedence": 50,
+      "compatible": true,
+      "authorized": true,
+      "available": true,
+      "reasons": []
+    },
+    {
+      "extension_id": "org.example.adapter-b",
+      "version": "1.0.0",
+      "publisher_id": "org.example",
+      "integrity": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "precedence": 50,
+      "compatible": true,
+      "authorized": true,
+      "available": true,
+      "reasons": []
+    }
+  ],
+  "result": "conflict",
+  "selected_extension_ids": [],
+  "fallback_order": [],
+  "reasons": ["Two eligible candidates have equal precedence and no operator resolution."]
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": "flow.extension-invocation/v1",
+  "invocation_id": "invocation:synthetic-optiflow-scan",
+  "run_id": "run:synthetic-suite",
+  "phase": "execute",
+  "extension": {
+    "extension_id": "org.egohygiene.synthetic-adapters",
+    "version": "0.1.0",
+    "publisher_id": "org.egohygiene",
+    "integrity": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "capability_id": "optiflow/inspect-collection",
+  "interface": {
+    "kind": "process",
+    "name": "synthetic-process",
+    "protocol": "flow.extension-invocation/v1"
+  },
+  "input_artifacts": [
+    {
+      "artifact_id": "artifact:synthetic-collection",
+      "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+    }
+  ],
+  "expected_output_types": [
+    "application/vnd.optiflow.collection-evidence+json"
+  ],
+  "configuration": {
+    "schema_id": "synthetic.optiflow-inspect/v1",
+    "digest": "3333333333333333333333333333333333333333333333333333333333333333",
+    "values": {
+      "read_only": true
+    }
+  },
+  "authorization": {
+    "authorization_id": "authorization:synthetic-optiflow-scan",
+    "lock_id": "lock:synthetic-suite",
+    "grants_digest": "4444444444444444444444444444444444444444444444444444444444444444"
+  },
+  "limits": {
+    "timeout_ms": 30000,
+    "max_stdout_bytes": 1048576,
+    "max_stderr_bytes": 1048576,
+    "cancellation_grace_ms": 1000
+  },
+  "checkpoint_refs": [],
+  "secret_handles": [],
+  "cancellation_id": "cancel:synthetic-optiflow-scan"
+}
