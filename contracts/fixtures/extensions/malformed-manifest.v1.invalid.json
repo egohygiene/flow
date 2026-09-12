@@ -1,0 +1,9 @@
+{
+  "schema_version": "flow.extension-manifest/v1",
+  "extension_id": "org.example.malformed",
+  "version": "1.0.0",
+  "publisher": {
+    "id": "org.example",
+    "display_name": "Malformed fixture"
+  }
+}

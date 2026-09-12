@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.2.0
+version: 0.3.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-21
+updated: 2026-09-12
 governed_by:
   - architecture-architecture
 depends_on:
@@ -55,11 +55,39 @@ capability descriptors, compatibility decisions, events, and results. Holons
 may keep native models; Flow adapters perform explicit translation rather than
 forcing a Flow dependency into a provider repository.
 
+The federated extension boundary separates provider declarations from operator
+authority. An extension manifest declares identity, integrity, compatibility,
+domain ownership, capabilities, requested permissions, execution modes, hooks,
+and checkpoint behavior. A Flow-owned lock records discovery location, the
+verified digest, trust mode, granted permissions, capability precedence, and
+fallback order. A manifest can never grant itself authority or precedence.
+
 ### External adapters
 
 Adapters isolate process invocation, version/capability probing, structured
 result parsing, redaction, signal behavior, and output verification. Commands
 are constructed as executable plus argv, never as shell strings.
+
+Pinned in-process adapters and bounded process adapters share the same
+invocation, event, result, validation, and provenance semantics. Process
+adapters additionally enforce declared time, output, cancellation, filesystem,
+environment, subprocess, network, AI, GPU, and side-effect limits outside the
+provider process.
+
+### Extension lifecycle
+
+Flow coordinates extensions through the ordered lifecycle `discover → inspect →
+plan → authorize → execute → validate → commit evidence`. Discovery and
+inspection do not execute extension code merely because a binary is available.
+Planning resolves compatible capabilities and effects without granting
+authority. Execution begins only after the effective lock and requested action
+produce an explicit authorization record. Evidence is committed only after
+declared outputs and validations have been assessed.
+
+Read-only observers may consume redacted lifecycle events. A content-changing
+hook is a declared capability invocation: it consumes immutable artifact
+references and produces a new immutable artifact. Hooks cannot rewrite plans,
+change authorization, bypass validation, or publish implicitly.
 
 ## Boundary rules
 
@@ -77,6 +105,12 @@ are constructed as executable plus argv, never as shell strings.
   exists.
 - Pipeline definitions select registered typed capabilities, not arbitrary
   commands.
+- Extension manifests are inert declarations; explicit configuration and a
+  digest-pinned lock control discovery and authorization.
+- Provider precedence and fallback are operator policy, not self-declared
+  authority.
+- Cancellation, progress, partial results, diagnostics, validation, checkpoint
+  compatibility, and failure classification use versioned envelopes.
 
 ## Dependency direction
 

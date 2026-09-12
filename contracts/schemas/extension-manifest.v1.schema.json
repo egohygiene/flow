@@ -1,0 +1,355 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/extension-manifest.v1.schema.json",
+  "title": "Flow extension manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "extension_id",
+    "version",
+    "publisher",
+    "integrity",
+    "compatibility",
+    "inspection",
+    "domain_ownership",
+    "capabilities",
+    "execution_modes",
+    "requested_permissions",
+    "checkpoint",
+    "replacement",
+    "observer_hooks",
+    "transform_hooks"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.extension-manifest/v1" },
+    "extension_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)+$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "publisher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9.-]+$" },
+        "display_name": { "type": "string", "minLength": 1 }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "value": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["flow_version_requirement", "contract_families"],
+      "properties": {
+        "flow_version_requirement": { "type": "string", "minLength": 1 },
+        "contract_families": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^flow\\.[a-z-]+/v[1-9][0-9]*$"
+          }
+        }
+      }
+    },
+    "inspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version_source",
+        "capability_source",
+        "health_mode",
+        "health_capability_ids"
+      ],
+      "properties": {
+        "version_source": { "const": "manifest" },
+        "capability_source": { "const": "manifest" },
+        "health_mode": { "enum": ["manifest-only", "invocation"] },
+        "health_capability_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "domain_ownership": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["flow", "aniflow", "optiflow", "renderflow", "third-party"]
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability_id",
+          "domain",
+          "configuration_schema",
+          "accepts",
+          "produces",
+          "preconditions",
+          "postconditions",
+          "deterministic",
+          "cacheable",
+          "loss",
+          "content_changes",
+          "effects"
+        ],
+        "properties": {
+          "capability_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9.-]+/[a-z][a-z0-9.-]+$"
+          },
+          "domain": {
+            "enum": ["flow", "aniflow", "optiflow", "renderflow", "third-party"]
+          },
+          "configuration_schema": { "type": "string", "minLength": 1 },
+          "accepts": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "produces": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "preconditions": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "postconditions": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "deterministic": { "type": "boolean" },
+          "cacheable": { "type": "boolean" },
+          "loss": { "enum": ["none", "declared", "unknown"] },
+          "content_changes": { "type": "boolean" },
+          "effects": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "filesystem-read",
+                "filesystem-write",
+                "environment-read",
+                "subprocess",
+                "network",
+                "ai",
+                "gpu",
+                "source-mutation",
+                "destructive",
+                "sign",
+                "publish"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "execution_modes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "kind", "protocol", "entrypoint", "limits"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "kind": { "enum": ["in-process", "process"] },
+          "protocol": { "const": "flow.extension-invocation/v1" },
+          "entrypoint": { "type": "string", "minLength": 1 },
+          "limits": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "timeout_ms",
+              "max_stdout_bytes",
+              "max_stderr_bytes",
+              "cancellation_grace_ms"
+            ],
+            "properties": {
+              "timeout_ms": { "type": "integer", "minimum": 1 },
+              "max_stdout_bytes": { "type": "integer", "minimum": 0 },
+              "max_stderr_bytes": { "type": "integer", "minimum": 0 },
+              "cancellation_grace_ms": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "requested_permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "filesystem_read",
+        "filesystem_write",
+        "environment_read",
+        "subprocesses",
+        "network_hosts",
+        "ai_providers",
+        "gpu",
+        "source_mutation",
+        "destructive",
+        "sign",
+        "publish"
+      ],
+      "properties": {
+        "filesystem_read": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "filesystem_write": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "environment_read": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" }
+        },
+        "subprocesses": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "network_hosts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "ai_providers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "gpu": { "type": "boolean" },
+        "source_mutation": { "type": "boolean" },
+        "destructive": { "type": "boolean" },
+        "sign": { "type": "boolean" },
+        "publish": { "type": "boolean" }
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "contract_family", "compatibility_keys"],
+      "properties": {
+        "mode": { "enum": ["none", "provider", "flow"] },
+        "contract_family": { "type": "string", "minLength": 1 },
+        "compatibility_keys": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "replacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["replaces", "fallbacks_for"],
+      "properties": {
+        "replaces": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "fallbacks_for": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "observer_hooks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["hook_id", "lifecycle_points", "read_only"],
+        "properties": {
+          "hook_id": { "type": "string", "minLength": 1 },
+          "lifecycle_points": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "discover",
+                "inspect",
+                "plan",
+                "authorize",
+                "execute",
+                "validate",
+                "commit-evidence"
+              ]
+            }
+          },
+          "read_only": { "const": true }
+        }
+      }
+    },
+    "transform_hooks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "hook_id",
+          "lifecycle_points",
+          "capability_id",
+          "accepts",
+          "produces",
+          "content_changes"
+        ],
+        "properties": {
+          "hook_id": { "type": "string", "minLength": 1 },
+          "lifecycle_points": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "enum": ["inspect", "execute", "validate"] }
+          },
+          "capability_id": { "type": "string", "minLength": 1 },
+          "accepts": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "produces": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "content_changes": { "const": true }
+        }
+      }
+    }
+  }
+}

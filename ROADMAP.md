@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 0.2.0
+version: 0.3.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-24
+updated: 2026-09-12
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -30,14 +30,15 @@ repository: egohygiene/flow
 visibility: public
 publication: central
 route: /roadmap/flow/
-updated: 2026-08-24
+updated: 2026-09-12
 -->
-## 2026-08-24 execution snapshot
+## 2026-09-12 execution snapshot
 
 > This evidence-reconciled snapshot is the issue-generation and visual-roadmap handoff. The longer-horizon strategy below remains canonical context; generated HTML, JSON, progress, issue plans, and commit lists are projections.
 
 **Lifecycle:** contract and architecture prototype  
-**Current gate:** Add CI and a minimal executable orchestrator before expanding provider adapters.  
+**Current gate:** Freeze Flow #7's federated extension contract before final
+provider SDK mappings, then add CI and a minimal executable orchestrator.
 **North-star outcome:** Federated orchestration across holons with stable provider seams, resumable work, and explicit evidence.
 
 ### Visual roadmap publication
@@ -76,23 +77,29 @@ issues: []
 id: FLO-Q02
 status: active
 depends_on: [FLO-Q01]
-issues: []
+issues: [7]
 -->
-#### FLO-Q02 — Create a tested executable core
+#### FLO-Q02 — Freeze extension seams and create a tested executable core
 
 **State:** `active`  
 **Depends on:** `FLO-Q01`
 
-**Outcome:** A minimal orchestrator executes a fixture through one provider seam in CI.
+**Outcome:** Versioned extension/trust envelopes constrain provider SDK mappings,
+then a minimal orchestrator executes a fixture through one provider seam in CI.
 
 **Exit criteria:**
 
+- [x] Provider declarations and operator authority are separated by versioned
+  manifest and lock contracts.
+- [x] Invocation, event, result, and resolution schemas cover both execution
+  modes and compatibility failures.
 - [ ] A runnable command or library path exists.
 - [ ] Default-branch CI proves success and failure behavior.
 
 **Current evidence:**
 
-- No executable orchestrator or CI was observed.
+- Flow #7 defines the extension/trust schemas, synthetic fixtures, and
+  compatibility outcomes. No executable orchestrator or CI is claimed.
 
 <!-- roadmap-step
 id: FLO-Q03
@@ -183,6 +190,8 @@ This roadmap advances on capability evidence rather than dates.
 
 The suite ownership table, forbidden dependency edges, federated repository
 model, and first contract set are approved by [ADR-0004](docs/architecture/governance/decisions/ADR-0004-federated-suite-contracts.md).
+The extension declaration, trust, and operator-authority split is approved by
+[ADR-0005](docs/architecture/governance/decisions/ADR-0005-federated-extension-authority.md).
 Artifact, capability, and compatibility schemas begin as provisional v1
 contracts so real adapter work can refine them without claiming stability.
 
@@ -191,6 +200,17 @@ one primary owner; contract documents are machine-valid; no mutable or copied
 sibling dependency is permitted.
 
 ## Now — Prove released integration seams
+
+### Freeze the federated extension contract
+
+Use provider-owned manifests plus Flow-owned locks, invocation/event/result
+envelopes, and deterministic resolution evidence. In-process libraries and
+bounded processes share semantic contracts; only the operator lock grants
+permissions, precedence, or fallback.
+
+**Exit evidence:** the contract set validates compatible, incompatible,
+over-permissioned, duplicate, malformed, and fallback fixtures; content-changing
+hooks produce immutable artifacts; observer hooks remain read-only.
 
 ### Pin the capability matrix
 

@@ -38,6 +38,12 @@ Their v1 major identifier names a compatibility family; the manifest's semantic
 version records the provisional contract-set revision. A provider does not claim
 native Flow compatibility merely because an adapter can translate it.
 
+Flow also owns the federated extension manifest, operator lock, invocation,
+event, result, and resolution envelopes. Providers declare requested behavior;
+only the Flow-owned lock grants permissions, trust, precedence, or fallback.
+This split is governed by
+[ADR-0005](../architecture/governance/decisions/ADR-0005-federated-extension-authority.md).
+
 Breaking schema changes require a new major identifier or an explicit migration.
 Unknown versions are rejected; there is no silent downgrade.
 

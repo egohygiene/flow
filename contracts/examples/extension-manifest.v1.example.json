@@ -1,0 +1,153 @@
+{
+  "schema_version": "flow.extension-manifest/v1",
+  "extension_id": "org.egohygiene.synthetic-adapters",
+  "version": "0.1.0",
+  "publisher": {
+    "id": "org.egohygiene",
+    "display_name": "Ego Hygiene synthetic fixtures"
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "value": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "compatibility": {
+    "flow_version_requirement": ">=0.1.0 <0.2.0",
+    "contract_families": [
+      "flow.artifact/v1",
+      "flow.extension-invocation/v1",
+      "flow.extension-event/v1",
+      "flow.extension-result/v1"
+    ]
+  },
+  "inspection": {
+    "version_source": "manifest",
+    "capability_source": "manifest",
+    "health_mode": "manifest-only",
+    "health_capability_ids": []
+  },
+  "domain_ownership": ["aniflow", "optiflow", "renderflow"],
+  "capabilities": [
+    {
+      "capability_id": "aniflow/analyze-temporal",
+      "domain": "aniflow",
+      "configuration_schema": "synthetic.aniflow-analyze/v1",
+      "accepts": ["video/*"],
+      "produces": ["application/vnd.aniflow.temporal-evidence+json"],
+      "preconditions": ["synthetic.source-readable/v1"],
+      "postconditions": ["synthetic.temporal-evidence-valid/v1"],
+      "deterministic": true,
+      "cacheable": true,
+      "loss": "none",
+      "content_changes": false,
+      "effects": ["filesystem-read", "filesystem-write", "subprocess"]
+    },
+    {
+      "capability_id": "optiflow/inspect-collection",
+      "domain": "optiflow",
+      "configuration_schema": "synthetic.optiflow-inspect/v1",
+      "accepts": ["application/vnd.flow.collection-reference+json"],
+      "produces": ["application/vnd.optiflow.collection-evidence+json"],
+      "preconditions": ["synthetic.collection-contained/v1"],
+      "postconditions": ["synthetic.collection-evidence-valid/v1"],
+      "deterministic": true,
+      "cacheable": true,
+      "loss": "none",
+      "content_changes": false,
+      "effects": ["filesystem-read", "filesystem-write", "subprocess"]
+    },
+    {
+      "capability_id": "renderflow/normalize-sonic-dna",
+      "domain": "renderflow",
+      "configuration_schema": "synthetic.renderflow-sonic-dna/v1",
+      "accepts": ["application/vnd.aniflow.audio-evidence+json"],
+      "produces": ["application/vnd.renderflow.sonic-dna+json"],
+      "preconditions": ["synthetic.audio-evidence-valid/v1"],
+      "postconditions": ["synthetic.sonic-dna-valid/v1"],
+      "deterministic": true,
+      "cacheable": true,
+      "loss": "none",
+      "content_changes": true,
+      "effects": ["filesystem-read", "filesystem-write", "subprocess"]
+    }
+  ],
+  "execution_modes": [
+    {
+      "name": "synthetic-library",
+      "kind": "in-process",
+      "protocol": "flow.extension-invocation/v1",
+      "entrypoint": "synthetic_adapters::Extension",
+      "limits": {
+        "timeout_ms": 30000,
+        "max_stdout_bytes": 1048576,
+        "max_stderr_bytes": 1048576,
+        "cancellation_grace_ms": 1000
+      }
+    },
+    {
+      "name": "synthetic-process",
+      "kind": "process",
+      "protocol": "flow.extension-invocation/v1",
+      "entrypoint": "flow-synthetic-adapter",
+      "limits": {
+        "timeout_ms": 30000,
+        "max_stdout_bytes": 1048576,
+        "max_stderr_bytes": 1048576,
+        "cancellation_grace_ms": 1000
+      }
+    }
+  ],
+  "requested_permissions": {
+    "filesystem_read": ["input"],
+    "filesystem_write": ["workspace"],
+    "environment_read": [],
+    "subprocesses": ["flow-synthetic-adapter"],
+    "network_hosts": [],
+    "ai_providers": [],
+    "gpu": false,
+    "source_mutation": false,
+    "destructive": false,
+    "sign": false,
+    "publish": false
+  },
+  "checkpoint": {
+    "mode": "flow",
+    "contract_family": "flow.extension-result/v1",
+    "compatibility_keys": [
+      "input-digests",
+      "extension-integrity",
+      "capability-id",
+      "configuration-digest",
+      "grants-digest",
+      "validated-outputs"
+    ]
+  },
+  "replacement": {
+    "replaces": [],
+    "fallbacks_for": []
+  },
+  "observer_hooks": [
+    {
+      "hook_id": "synthetic-lifecycle-observer",
+      "lifecycle_points": [
+        "discover",
+        "inspect",
+        "plan",
+        "authorize",
+        "execute",
+        "validate",
+        "commit-evidence"
+      ],
+      "read_only": true
+    }
+  ],
+  "transform_hooks": [
+    {
+      "hook_id": "synthetic-sonic-normalizer",
+      "lifecycle_points": ["execute", "validate"],
+      "capability_id": "renderflow/normalize-sonic-dna",
+      "accepts": ["application/vnd.aniflow.audio-evidence+json"],
+      "produces": ["application/vnd.renderflow.sonic-dna+json"],
+      "content_changes": true
+    }
+  ]
+}

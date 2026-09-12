@@ -1,0 +1,18 @@
+{
+  "schema_version": "flow.extension-event/v1",
+  "event_id": "event:synthetic-optiflow-scan-1",
+  "run_id": "run:synthetic-suite",
+  "invocation_id": "invocation:synthetic-optiflow-scan",
+  "sequence": 1,
+  "phase": "execute",
+  "kind": "progress",
+  "state": "running",
+  "progress": {
+    "completed": 1,
+    "total": 3,
+    "unit": "synthetic-artifacts"
+  },
+  "diagnostics": [],
+  "artifact_refs": [],
+  "checkpoint_refs": []
+}

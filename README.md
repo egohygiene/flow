@@ -28,6 +28,7 @@ dependency directions, and first orchestration slice are recorded in the
 - [Suite structural architecture](docs/architecture/foundation/ARCHITECTURE.md)
 - [Decision index](docs/architecture/governance/DECISIONS.md)
 - [Suite boundaries](docs/integrations/suite-boundaries.md)
+- [Federated extension contract](docs/integrations/extension-contract.md)
 - [Versioned contracts](contracts/README.md)
 - [Roadmap](ROADMAP.md)
 

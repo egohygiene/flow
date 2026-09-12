@@ -1,0 +1,36 @@
+{
+  "schema_version": "flow.extension-resolution/v1",
+  "case_id": "fallback",
+  "requested_capability": "aniflow/analyze-temporal",
+  "candidates": [
+    {
+      "extension_id": "org.example.preferred-adapter",
+      "version": "1.0.0",
+      "publisher_id": "org.example",
+      "integrity": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "precedence": 100,
+      "compatible": true,
+      "authorized": true,
+      "available": false,
+      "reasons": ["The pinned executable is unavailable."]
+    },
+    {
+      "extension_id": "org.example.local-fallback",
+      "version": "1.0.0",
+      "publisher_id": "org.example",
+      "integrity": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "precedence": 50,
+      "compatible": true,
+      "authorized": true,
+      "available": true,
+      "reasons": []
+    }
+  ],
+  "result": "selected",
+  "selected_extension_ids": ["org.example.local-fallback"],
+  "fallback_order": [
+    "org.example.preferred-adapter",
+    "org.example.local-fallback"
+  ],
+  "reasons": ["The preferred provider was unavailable before side effects; selected the authorized fallback."]
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "flow.extension-resolution/v1",
+  "case_id": "compatible",
+  "requested_capability": "optiflow/inspect-collection",
+  "candidates": [
+    {
+      "extension_id": "org.egohygiene.synthetic-adapters",
+      "version": "0.1.0",
+      "publisher_id": "org.egohygiene",
+      "integrity": "1111111111111111111111111111111111111111111111111111111111111111",
+      "precedence": 100,
+      "compatible": true,
+      "authorized": true,
+      "available": true,
+      "reasons": []
+    }
+  ],
+  "result": "selected",
+  "selected_extension_ids": ["org.egohygiene.synthetic-adapters"],
+  "fallback_order": [],
+  "reasons": ["Selected the only compatible, authorized, and available candidate."]
+}
