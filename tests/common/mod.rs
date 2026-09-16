@@ -48,12 +48,30 @@ pub fn request() -> ResolutionRequest {
     )
 }
 
+pub fn process_request() -> ResolutionRequest {
+    ResolutionRequest::new(
+        "test-case-process",
+        "optiflow/inspect-collection",
+        Domain::Optiflow,
+        "synthetic-process",
+        ExecutionModeKind::Process,
+    )
+}
+
 pub fn resolved_fixture() -> (ExtensionCatalog, ResolutionRequest) {
     let manifest = manifest();
     let observation = observation(&manifest, true);
     let catalog = ExtensionCatalog::inspect([manifest], lock(), [observation])
         .expect("fixture catalog must inspect");
     (catalog, request())
+}
+
+pub fn resolved_process_fixture() -> (ExtensionCatalog, ResolutionRequest) {
+    let manifest = manifest();
+    let observation = observation(&manifest, true);
+    let catalog = ExtensionCatalog::inspect([manifest], lock(), [observation])
+        .expect("fixture catalog must inspect");
+    (catalog, process_request())
 }
 
 pub fn invocation(resolved: &ResolvedExtension) -> ExtensionInvocation {

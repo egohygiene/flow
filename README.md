@@ -17,12 +17,12 @@ compose them through stable public library interfaces or versioned CLI
 contracts, without introducing direct dependencies between sibling holons.
 
 The repository remains architecture-led, but it is no longer documentation
-only. The current FLO-Q02 candidate adds a small Rust library that validates the
-federated extension contracts, resolves one capability deterministically, and
-executes one caller-injected in-process extension through a seam proven by a
-hermetic reference port. It does not copy holon source or claim a product
-orchestrator, CLI, external process adapter, durable run state, or resume
-support.
+only. FLO-Q02 provides a small Rust library that validates the federated
+extension contracts, resolves one capability deterministically, executes one
+caller-injected in-process extension, and validates a provider-neutral process
+transcript without launching a child process. It does not copy holon source or
+claim a product orchestrator, CLI, production process adapter, durable run
+state, or resume support.
 
 ## Executable checkpoint
 
@@ -33,7 +33,10 @@ The first executable checkpoint is deliberately library-only:
 - `ExtensionCatalog` inspection and resolution retain deterministic selection
   and rejection evidence;
 - `Orchestrator` invokes a matching `ExtensionPort` and returns an execution
-  only after Flow validates event and terminal-result correlation; and
+  only after Flow validates event and terminal-result correlation;
+- the process seam deterministically encodes one JSON Lines invocation and
+  checks bounded, caller-supplied stdout/stderr plus process completion
+  evidence, then routes decoded stdout through the same event/result gate; and
 - a no-effects, no-artifacts hermetic port and example prove the seam without a
   provider binary, filesystem output, network access, or external service.
 
@@ -41,14 +44,16 @@ Run the reference example with:
 
 ```console
 cargo run --example hermetic_extension --locked
+cargo run --example hermetic_process_transport --locked
 ```
 
-`EventSink` is the observation boundary for this checkpoint. A future logging
-or OpenTelemetry adapter can attach there, but observations do not influence
-provider selection or execution identity. `emit` is fallible and its error is
-visible to the provider; rejection makes `Orchestrator` return
-`ExecutionError`. A sink cannot directly mutate provider evidence or grant
-authority. No logging backend or telemetry exporter ships in this slice.
+`EventSink` is a fallible, authoritative execution observer, not a best-effort
+telemetry exporter. Observations do not influence provider selection or
+execution identity, but `emit` rejection makes `Orchestrator` return
+`ExecutionError` and never triggers fallback. A sink cannot directly mutate
+provider evidence or grant authority. The separate observability roadmap owns
+any future non-authoritative logging or OpenTelemetry seam; no such backend or
+exporter ships here.
 
 `ValidatedExecution` means the provider evidence passed Flow's contract,
 identity-correlation, ordering, diagnostic redaction-flag, and
@@ -62,11 +67,12 @@ this checkpoint does not content-scan diagnostics or sanitize unrestricted
 contract strings.
 
 Only `trusted` candidates are resolution-eligible in this checkpoint;
-`Orchestrator` executes only a caller-injected in-process port. `sandboxed`
-candidates fail closed because no sandbox backend exists. Declared execution
-limits are validated and correlated as metadata, not enforced. The injected
-code has no Flow-owned timeout, cancellation, stdout/stderr bound, panic
-isolation, filesystem or network containment, or other side-effect enforcement.
+`Orchestrator` either executes a caller-injected in-process port or validates a
+caller-supplied process transcript. `sandboxed` candidates fail closed because
+no sandbox backend exists. In-process limits remain correlated metadata only.
+The process-transcript seam checks already captured stdout/stderr byte counts
+and completion evidence, but it does not launch, time out, cancel, signal, reap,
+or isolate a process. Neither seam provides filesystem or network containment.
 
 ## Architecture
 
@@ -76,6 +82,7 @@ isolation, filesystem or network containment, or other side-effect enforcement.
 - [Decision index](docs/architecture/governance/DECISIONS.md)
 - [Suite boundaries](docs/integrations/suite-boundaries.md)
 - [Federated extension contract](docs/integrations/extension-contract.md)
+- [Process transport contract](docs/integrations/process-transport.md)
 - [Versioned contracts](contracts/README.md)
 - [Roadmap](ROADMAP.md)
 
@@ -84,13 +91,15 @@ skills, agents, templates, and validators used to maintain these documents.
 
 ## Status
 
-Flow is in the **executable contract seam** phase. Issue #23 supplies the
-candidate library implementation and CI definition for the remaining FLO-Q02
-evidence; FLO-Q02 stays active until that change is merged and exercised by
-default-branch CI. Current descriptions of Aniflow, Optiflow, and Renderflow are
-grounded in their default branches as inspected on 2026-08-13. The holons
-remain independently released repositories; real provider adapters and the
-restore-and-assess workflow remain follow-up work.
+Flow is in the **executable contract seam** phase. Issue #23 / PR #24 is merged,
+and default-branch CI passed at
+`979e033409c823b38591b59eca820522efabfa12`. Issue #26 adds the first bounded
+external-process contract over injected evidence; it does not yet implement a
+runner, artifact binding, executable verification, or host isolation. Current
+descriptions of Aniflow, Optiflow, and Renderflow are grounded in their default
+branches as inspected on 2026-08-13. The holons remain independently released
+repositories; real provider adapters and the restore-and-assess workflow remain
+follow-up work.
 
 ## License
 

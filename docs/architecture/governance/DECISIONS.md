@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.3.0
+version: 0.4.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-12
+updated: 2026-09-16
 governed_by:
   - architecture-decisions
 depends_on:
@@ -59,6 +59,7 @@ justifies separate ADRs.
 | [ADR-0003](decisions/ADR-0003-docs-first-initialization.md) | Initialize Flow with architecture before implementation | Accepted | 2026-08-13 | None | Architecture is accepted and adapter planning begins |
 | [ADR-0004](decisions/ADR-0004-federated-suite-contracts.md) | Keep holons federated behind versioned contracts | Accepted | 2026-08-21 | ADR-0001 | A required capability cannot be composed through a released interface |
 | [ADR-0005](decisions/ADR-0005-federated-extension-authority.md) | Separate extension declarations from operator authority | Accepted | 2026-09-12 | None | A required execution mode cannot preserve the same trust and evidence boundary |
+| [ADR-0006](decisions/ADR-0006-bounded-process-transport.md) | Bound process transport with a deterministic JSON Lines transcript | Accepted | 2026-09-16 | None | A released provider or real runner cannot preserve the profile's framing or termination semantics |
 
 ## Active decisions
 
@@ -77,7 +78,8 @@ None beyond the superseded issue constraint.
 
 ## Evidence gaps and open questions
 
-Flow crate layout and capability-specific library-versus-process adapter
-selection remain implementation decisions. Provider compatibility ranges and
-shared extension envelope granularity are governed by ADR-0005 and may evolve
-through additive contract-set revisions.
+Capability-specific library-versus-process adapter selection remains an
+implementation decision. Provider compatibility ranges and shared extension
+envelope granularity are governed by ADR-0005 and may evolve through additive
+contract-set revisions. Artifact binding, executable integrity, and enforced
+process isolation remain open after ADR-0006's host-neutral transcript profile.

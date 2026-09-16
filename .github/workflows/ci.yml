@@ -52,6 +52,9 @@ jobs:
       - name: Run hermetic extension example
         run: cargo run --example hermetic_extension --locked
 
+      - name: Run hermetic process transport example
+        run: cargo run --example hermetic_process_transport --locked
+
       - name: Verify package contents
         run: cargo package --locked
 
