@@ -11,7 +11,7 @@
     "value": "1111111111111111111111111111111111111111111111111111111111111111"
   },
   "compatibility": {
-    "flow_version_requirement": ">=0.1.0 <0.2.0",
+    "flow_version_requirement": ">=0.1.0, <0.2.0",
     "contract_families": [
       "flow.artifact/v1",
       "flow.extension-invocation/v1",

@@ -1,0 +1,24 @@
+[package]
+name = "flow"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Deterministic orchestration contracts and extension seams for the Ego Hygiene suite"
+license = "MIT"
+repository = "https://github.com/egohygiene/flow"
+publish = false
+
+[dependencies]
+semver = "1.0.26"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+thiserror = "2.0.12"
+
+[dev-dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"

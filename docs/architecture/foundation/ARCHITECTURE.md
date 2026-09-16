@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.3.0
+version: 0.3.1
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-12
+updated: 2026-09-16
 governed_by:
   - architecture-architecture
 depends_on:
@@ -152,9 +152,15 @@ not require a shared workspace toolchain.
 arrangement that realizes it. Holon architecture files refine their private
 structure without overriding suite dependency rules.
 
-## Assumptions and evidence gaps
+## Current implementation boundary
 
-No Flow implementation exists yet. Proposed units are constraints for adapter
+Flow issue #23 supplies a candidate Rust library with closed extension-v1
+models, deterministic single-capability resolution, one caller-injected
+in-process extension port, Flow-owned event/result validation, and a hermetic
+no-effects reference implementation. It does not yet supply the public CLI,
+process adapters, real holon adapters, artifact locators, durable run state,
+checkpoints, cancellation, or resume described elsewhere in this document.
+Structural units beyond that library seam remain constraints for later adapter
 and orchestration work, not claims about current source layout.
 
 ## Open questions
@@ -165,5 +171,8 @@ and orchestration work, not claims about current source layout.
 
 ## Validation
 
-CI will eventually enforce forbidden dependency edges, CLI-thinness, schema
-compatibility, and contract tests for both library and subprocess integration.
+The issue #23 candidate CI validates the Rust 1.85 and stable library builds,
+closed contract models, deterministic resolution, the hermetic in-process seam,
+and repository architecture metadata. Default-branch evidence remains pending
+merge. Forbidden dependency-edge checks, CLI-thinness, and subprocess adapter
+contract tests remain later gates for the corresponding runtime surfaces.

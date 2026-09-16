@@ -11,7 +11,7 @@ family. Provisional means versioned and testable, not stable for production.
 | `flow.compatibility/v1` | deterministic compatibility decision and evidence |
 | `flow.extension-manifest/v1` | provider identity, integrity, compatibility, capabilities, requested permissions, hooks, and checkpoint behavior |
 | `flow.extension-lock/v1` | operator-controlled discovery pins, trust, grants, precedence, and fallback |
-| `flow.extension-invocation/v1` | immutable inputs, effective authorization, execution bounds, and resume references |
+| `flow.extension-invocation/v1` | immutable inputs, authorization identity, declared execution-limit metadata, and resume references |
 | `flow.extension-event/v1` | ordered lifecycle progress, diagnostics, artifacts, checkpoints, and state |
 | `flow.extension-result/v1` | partial/final outcomes, failures, validation, provenance, and explanation |
 | `flow.extension-resolution/v1` | deterministic selection, rejection, conflict, and fallback evidence |
@@ -26,11 +26,30 @@ The extension contracts are described in
 Provider manifests request behavior; only the operator-controlled lock grants
 authority, precedence, or fallback.
 
+`compatibility.flow_version_requirement` is parsed with Rust's `semver`
+`VersionReq` grammar and must use comma-separated comparators. For example,
+`>=0.1.0, <0.2.0` is a bounded range; `>=0.1.0 <0.2.0` is invalid. Invalid or
+unsatisfied requirements are explicit compatibility failures and are never
+silently weakened.
+
 Flow adapters translate provider-native documents into these contracts. Provider
 repositories do not depend on this directory. Breaking changes require a new
 major schema identifier; additive compatible changes increment the contract-set
 semantic version. Consumers reject unknown major identifiers and never silently
 downgrade.
+
+The current Rust checkpoint maps the six extension-v1 documents into closed
+library models and adds semantic checks that JSON Schema alone does not express.
+Its hermetic reference execution is not a provider adapter and does not prove
+process transport, filesystem artifact handling, sandboxing, checkpoints, or
+resume.
+
+For this checkpoint, the caller owns configuration canonicalization and digest
+generation plus authorization issuance, authorization ID, and grants digest.
+Flow shape-checks these values and correlates the identities repeated by the
+provider; `ValidatedExecution` does not authenticate them. Execution-limit
+fields are likewise validated and correlated metadata, not timeout,
+cancellation, output-bound, panic, sandbox, or side-effect enforcement.
 
 Validate the set with:
 
