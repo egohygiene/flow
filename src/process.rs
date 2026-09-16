@@ -172,12 +172,15 @@ pub fn decode_provider_stdout(
     }
 
     let result = result.ok_or(ProcessProtocolError::MissingResult)?;
-    Ok(DecodedProcessTranscript { events, result })
+    Ok(DecodedProcessTranscript {
+        events,
+        result: *result,
+    })
 }
 
 enum ProviderFrame {
     Event(ExtensionEvent),
-    Result(ExtensionResult),
+    Result(Box<ExtensionResult>),
 }
 
 fn decode_provider_frame(
@@ -207,6 +210,7 @@ fn decode_provider_frame(
                 message: error.to_string(),
             }),
         EXTENSION_RESULT_V1 => serde_json::from_str(frame)
+            .map(Box::new)
             .map(ProviderFrame::Result)
             .map_err(|error| ProcessProtocolError::MalformedJson {
                 frame_number,
