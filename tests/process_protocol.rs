@@ -77,7 +77,7 @@ fn provider_transcript_decodes_lf_and_crlf_frames() {
         assert_eq!(decoded.result(), &expected_result);
 
         let (events, decoded_result) = decoded.into_parts();
-        assert_eq!(events, [expected_event.clone()]);
+        assert_eq!(events.as_slice(), std::slice::from_ref(&expected_event));
         assert_eq!(decoded_result, expected_result);
     }
 }
