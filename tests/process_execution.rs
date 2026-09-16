@@ -2,9 +2,8 @@ mod common;
 
 use flow::{
     EventKind, EventSink, EventSinkError, EventState, ExecutionError, ExtensionEvent,
-    ExtensionInvocation, ExtensionPort, ExtensionResult, FailureClassification,
-    HermeticExtension, Orchestrator, Outcome, PortIdentity, ProcessCompletion, ProcessStream,
-    ProcessTranscript,
+    ExtensionInvocation, ExtensionPort, ExtensionResult, FailureClassification, HermeticExtension,
+    Orchestrator, Outcome, PortIdentity, ProcessCompletion, ProcessStream, ProcessTranscript,
 };
 
 use common::{invocation, resolved_fixture, resolved_process_fixture};
@@ -170,10 +169,7 @@ fn abnormal_completion_cannot_promote_provider_success() {
     let provider_stdout = stdout(&events, &result);
 
     let cases = [
-        (
-            ProcessCompletion::Exited { code: Some(7) },
-            "nonzero-exit",
-        ),
+        (ProcessCompletion::Exited { code: Some(7) }, "nonzero-exit"),
         (ProcessCompletion::Exited { code: None }, "signal-exit"),
         (ProcessCompletion::TimedOut, "timeout"),
         (ProcessCompletion::Cancelled, "forced-cancellation"),
@@ -317,13 +313,9 @@ fn successful_observers_do_not_change_authoritative_result_identity() {
         &[],
     );
     let mut no_op = |_event: &ExtensionEvent| Ok::<(), EventSinkError>(());
-    let without_collection = Orchestrator::validate_process_transcript(
-        resolved,
-        &invocation,
-        transcript,
-        &mut no_op,
-    )
-    .unwrap();
+    let without_collection =
+        Orchestrator::validate_process_transcript(resolved, &invocation, transcript, &mut no_op)
+            .unwrap();
     let mut collected = Vec::new();
     let with_collection = Orchestrator::validate_process_transcript(
         resolved,

@@ -22,6 +22,5 @@ pub use execution::{
 };
 pub use hermetic::{HermeticBehavior, HermeticExtension};
 pub use process::{
-    DecodedProcessTranscript, ProcessProtocolError, decode_provider_stdout,
-    encode_invocation_frame,
+    DecodedProcessTranscript, ProcessProtocolError, decode_provider_stdout, encode_invocation_frame,
 };

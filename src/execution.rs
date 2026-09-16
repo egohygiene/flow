@@ -10,8 +10,7 @@ use crate::contracts::{
     InvocationPhase, Outcome, ValidationError,
 };
 use crate::process::{
-    DecodedProcessTranscript, ProcessProtocolError, decode_provider_stdout,
-    encode_invocation_frame,
+    DecodedProcessTranscript, ProcessProtocolError, decode_provider_stdout, encode_invocation_frame,
 };
 
 /// Exact identity advertised by an injected in-process port.
@@ -152,11 +151,7 @@ pub struct ProcessTranscript<'a> {
 
 impl<'a> ProcessTranscript<'a> {
     #[must_use]
-    pub const fn new(
-        completion: ProcessCompletion,
-        stdout: &'a [u8],
-        stderr: &'a [u8],
-    ) -> Self {
+    pub const fn new(completion: ProcessCompletion, stdout: &'a [u8], stderr: &'a [u8]) -> Self {
         Self {
             completion,
             stdout,

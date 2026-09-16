@@ -1,6 +1,4 @@
-use flow::process::{
-    ProcessProtocolError, decode_provider_stdout, encode_invocation_frame,
-};
+use flow::process::{ProcessProtocolError, decode_provider_stdout, encode_invocation_frame};
 use flow::{ExtensionEvent, ExtensionInvocation, ExtensionResult};
 use serde::Serialize;
 use serde_json::json;
@@ -39,10 +37,10 @@ fn transcript(frames: &[Vec<u8>]) -> Vec<u8> {
 #[test]
 fn invocation_encoding_is_deterministic_compact_json_with_one_lf() {
     let mut invocation = invocation();
-    invocation.configuration.values.insert(
-        "multiline".to_owned(),
-        json!("first line\nsecond line"),
-    );
+    invocation
+        .configuration
+        .values
+        .insert("multiline".to_owned(), json!("first line\nsecond line"));
 
     let first = encode_invocation_frame(&invocation).unwrap();
     let second = encode_invocation_frame(&invocation).unwrap();
@@ -202,8 +200,8 @@ fn missing_or_non_string_schema_version_is_rejected() {
 
 #[test]
 fn unknown_schema_version_is_rejected_without_downgrade() {
-    let error = decode_provider_stdout(b"{\"schema_version\":\"flow.extension-event/v2\"}\n")
-        .unwrap_err();
+    let error =
+        decode_provider_stdout(b"{\"schema_version\":\"flow.extension-event/v2\"}\n").unwrap_err();
 
     assert_eq!(
         error,

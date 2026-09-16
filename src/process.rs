@@ -104,11 +104,10 @@ pub enum ProcessProtocolError {
 pub fn encode_invocation_frame(
     invocation: &ExtensionInvocation,
 ) -> Result<Vec<u8>, ProcessProtocolError> {
-    let mut encoded = serde_json::to_vec(invocation).map_err(|error| {
-        ProcessProtocolError::Serialization {
+    let mut encoded =
+        serde_json::to_vec(invocation).map_err(|error| ProcessProtocolError::Serialization {
             message: error.to_string(),
-        }
-    })?;
+        })?;
     encoded.push(b'\n');
     Ok(encoded)
 }
@@ -185,14 +184,13 @@ fn decode_provider_frame(
     frame: &[u8],
     frame_number: usize,
 ) -> Result<ProviderFrame, ProcessProtocolError> {
-    let frame = str::from_utf8(frame)
-        .map_err(|_| ProcessProtocolError::InvalidUtf8 { frame_number })?;
-    let value: Value = serde_json::from_str(frame).map_err(|error| {
-        ProcessProtocolError::MalformedJson {
+    let frame =
+        str::from_utf8(frame).map_err(|_| ProcessProtocolError::InvalidUtf8 { frame_number })?;
+    let value: Value =
+        serde_json::from_str(frame).map_err(|error| ProcessProtocolError::MalformedJson {
             frame_number,
             message: error.to_string(),
-        }
-    })?;
+        })?;
     let schema_value = value
         .as_object()
         .and_then(|object| object.get("schema_version"))
@@ -214,9 +212,7 @@ fn decode_provider_frame(
                 frame_number,
                 message: error.to_string(),
             }),
-        EXTENSION_INVOCATION_V1 => {
-            Err(ProcessProtocolError::InvocationOnStdout { frame_number })
-        }
+        EXTENSION_INVOCATION_V1 => Err(ProcessProtocolError::InvocationOnStdout { frame_number }),
         _ => Err(ProcessProtocolError::UnknownSchemaVersion {
             frame_number,
             schema_version: schema_version.to_owned(),
