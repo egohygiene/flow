@@ -67,6 +67,9 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Install validator dependencies
+        run: python3 -m pip install --disable-pip-version-check --requirement requirements-ci.txt
+
       - name: Validate contracts
         run: python3 tools/validate_contracts.py
 
