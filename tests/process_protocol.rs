@@ -47,7 +47,7 @@ fn invocation_encoding_is_deterministic_compact_json_with_one_lf() {
 
     assert_eq!(first, second);
     assert_eq!(first.last(), Some(&b'\n'));
-    assert_eq!(first.iter().filter(|byte| **byte == b'\n').count(), 1);
+    assert!(!first[..first.len() - 1].contains(&b'\n'));
     assert!(!first[..first.len() - 1].contains(&b'\r'));
     assert_eq!(
         serde_json::from_slice::<ExtensionInvocation>(&first[..first.len() - 1]).unwrap(),
