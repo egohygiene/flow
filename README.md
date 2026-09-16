@@ -16,10 +16,57 @@ Each holon remains usable as both a Rust library and a standalone CLI. Flow may
 compose them through stable public library interfaces or versioned CLI
 contracts, without introducing direct dependencies between sibling holons.
 
-This repository is currently architecture-first. It intentionally contains no
-copied holon source or working orchestrator yet. The approved suite boundaries,
-dependency directions, and first orchestration slice are recorded in the
-[roadmap](ROADMAP.md) and [integration contracts](docs/integrations/README.md).
+The repository remains architecture-led, but it is no longer documentation
+only. The current FLO-Q02 candidate adds a small Rust library that validates the
+federated extension contracts, resolves one capability deterministically, and
+executes one caller-injected in-process extension through a seam proven by a
+hermetic reference port. It does not copy holon source or claim a product
+orchestrator, CLI, external process adapter, durable run state, or resume
+support.
+
+## Executable checkpoint
+
+The first executable checkpoint is deliberately library-only:
+
+- closed Rust models and semantic validation cover the six extension-v1
+  documents;
+- `ExtensionCatalog` inspection and resolution retain deterministic selection
+  and rejection evidence;
+- `Orchestrator` invokes a matching `ExtensionPort` and returns an execution
+  only after Flow validates event and terminal-result correlation; and
+- a no-effects, no-artifacts hermetic port and example prove the seam without a
+  provider binary, filesystem output, network access, or external service.
+
+Run the reference example with:
+
+```console
+cargo run --example hermetic_extension --locked
+```
+
+`EventSink` is the observation boundary for this checkpoint. A future logging
+or OpenTelemetry adapter can attach there, but observations do not influence
+provider selection or execution identity. `emit` is fallible and its error is
+visible to the provider; rejection makes `Orchestrator` return
+`ExecutionError`. A sink cannot directly mutate provider evidence or grant
+authority. No logging backend or telemetry exporter ships in this slice.
+
+`ValidatedExecution` means the provider evidence passed Flow's contract,
+identity-correlation, ordering, diagnostic redaction-flag, and
+terminal-consistency checks. It does not authenticate the caller-issued
+configuration digest, authorization ID, or grants digest; the caller still owns
+configuration canonicalization and authorization issuance. Diagnostics marked
+`redacted: false` and other invalid provider evidence are retained only on
+`ExecutionError` and never reach the caller's `EventSink` or a
+`ValidatedExecution`. A `redacted: true` value remains a provider assertion;
+this checkpoint does not content-scan diagnostics or sanitize unrestricted
+contract strings.
+
+Only `trusted` candidates are resolution-eligible in this checkpoint;
+`Orchestrator` executes only a caller-injected in-process port. `sandboxed`
+candidates fail closed because no sandbox backend exists. Declared execution
+limits are validated and correlated as metadata, not enforced. The injected
+code has no Flow-owned timeout, cancellation, stdout/stderr bound, panic
+isolation, filesystem or network containment, or other side-effect enforcement.
 
 ## Architecture
 
@@ -37,11 +84,13 @@ skills, agents, templates, and validators used to maintain these documents.
 
 ## Status
 
-Flow is in the **contract and adapter definition** phase. Current descriptions
-of Aniflow, Optiflow, and Renderflow are grounded in their default branches as
-inspected on 2026-08-13. The holons remain independently released repositories;
-Flow will compose named releases through public libraries or versioned CLI
-contracts and will not import sibling source.
+Flow is in the **executable contract seam** phase. Issue #23 supplies the
+candidate library implementation and CI definition for the remaining FLO-Q02
+evidence; FLO-Q02 stays active until that change is merged and exercised by
+default-branch CI. Current descriptions of Aniflow, Optiflow, and Renderflow are
+grounded in their default branches as inspected on 2026-08-13. The holons
+remain independently released repositories; real provider adapters and the
+restore-and-assess workflow remain follow-up work.
 
 ## License
 

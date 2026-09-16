@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    name: Rust ${{ matrix.toolchain }}
+    runs-on: ubuntu-latest
+    env:
+      RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - "1.85.0"
+          - stable
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          components: clippy, rustfmt
+
+      - name: Cache Cargo data
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.toolchain }}
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Lint all targets
+        run: cargo clippy --all-targets --all-features --locked -- -D warnings
+
+      - name: Test all targets
+        run: cargo test --all-targets --locked
+
+      - name: Test documentation
+        run: cargo test --doc --locked
+
+      - name: Run hermetic extension example
+        run: cargo run --example hermetic_extension --locked
+
+      - name: Verify package contents
+        run: cargo package --locked
+
+  repository-validators:
+    name: Repository validators
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Validate contracts
+        run: python3 tools/validate_contracts.py
+
+      - name: Validate architecture specifications
+        run: python3 .agents/specs/validate-specs.py
+
+      - name: Validate repository skills
+        run: python3 .agents/skills/validate-skills.py
+
+      - name: Validate repository agents
+        run: python3 .agents/agents/validate-agents.py

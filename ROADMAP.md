@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 0.3.0
+version: 0.4.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-12
+updated: 2026-09-16
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -30,22 +30,27 @@ repository: egohygiene/flow
 visibility: public
 publication: central
 route: /roadmap/flow/
-updated: 2026-09-12
+updated: 2026-09-16
 -->
-## 2026-09-12 execution snapshot
+## 2026-09-16 execution snapshot
 
 > This evidence-reconciled snapshot is the issue-generation and visual-roadmap handoff. The longer-horizon strategy below remains canonical context; generated HTML, JSON, progress, issue plans, and commit lists are projections.
 
-**Lifecycle:** contract and architecture prototype  
-**Current gate:** Freeze Flow #7's federated extension contract before final
-provider SDK mappings, then add CI and a minimal executable orchestrator.
+**Lifecycle:** executable contract prototype
+
+**Current gate:** Merge Flow #23's library-only execution seam and observe its
+success and adversarial cases on default-branch CI before expanding provider
+adapters.
+
 **North-star outcome:** Federated orchestration across holons with stable provider seams, resumable work, and explicit evidence.
 
 ### Visual roadmap publication
 
 **Mode:** `central`  
 **Route:** `/roadmap/flow/`  
-**Current publication evidence:** Architecture and contract source only; no executable release or Pages publication observed.
+**Current publication evidence:** Architecture, contract source, and the Flow
+#23 executable-core candidate; no executable release or Pages publication
+observed.
 
 Publish the public-safe projection through egohygiene.io at /roadmap/flow/. This repository owns intent and acceptance evidence; it does not add a second site deployment.
 
@@ -77,7 +82,7 @@ issues: []
 id: FLO-Q02
 status: active
 depends_on: [FLO-Q01]
-issues: [7]
+issues: [7, 23]
 -->
 #### FLO-Q02 — Freeze extension seams and create a tested executable core
 
@@ -93,13 +98,21 @@ then a minimal orchestrator executes a fixture through one provider seam in CI.
   manifest and lock contracts.
 - [x] Invocation, event, result, and resolution schemas cover both execution
   modes and compatibility failures.
-- [ ] A runnable command or library path exists.
+- [x] A runnable library path and hermetic example exist in the Flow #23
+  candidate revision.
 - [ ] Default-branch CI proves success and failure behavior.
 
 **Current evidence:**
 
 - Flow #7 defines the extension/trust schemas, synthetic fixtures, and
-  compatibility outcomes. No executable orchestrator or CI is claimed.
+  compatibility outcomes.
+- Flow #23 supplies a Rust 1.85 library candidate for deterministic resolution,
+  injected in-process execution, Flow-owned event/result validation, and a
+  no-effects hermetic example. Its CI definition covers Rust 1.85, stable Rust,
+  and every repository validator.
+- FLO-Q02 remains active until #23 is merged and a default-branch CI run proves
+  both success and adversarial behavior. This evidence does not claim a public
+  CLI, process execution, real provider adapters, durable state, or resume.
 
 <!-- roadmap-step
 id: FLO-Q03
@@ -179,10 +192,12 @@ issues: []
 
 ## Strategic context
 
-Flow begins with three independently released Rust tools and no suite
-orchestrator implementation. Flow will integrate named releases through public
-libraries or versioned CLI contracts. It will not consolidate repositories,
-copy sibling source, or hide missing provider capabilities inside the facade.
+Flow begins with three independently released Rust tools. Its first executable
+checkpoint is a bounded, library-only extension resolution and execution seam;
+it is not yet a product orchestrator or provider integration. Flow will
+integrate named releases through public libraries or versioned CLI contracts.
+It will not consolidate repositories, copy sibling source, or hide missing
+provider capabilities inside the facade.
 
 This roadmap advances on capability evidence rather than dates.
 
@@ -205,12 +220,33 @@ sibling dependency is permitted.
 
 Use provider-owned manifests plus Flow-owned locks, invocation/event/result
 envelopes, and deterministic resolution evidence. In-process libraries and
-bounded processes share semantic contracts; only the operator lock grants
-permissions, precedence, or fallback.
+future bounded process adapters share semantic contracts; only the operator
+lock grants permissions, precedence, or fallback.
 
 **Exit evidence:** the contract set validates compatible, incompatible,
 over-permissioned, duplicate, malformed, and fallback fixtures; content-changing
 hooks produce immutable artifacts; observer hooks remain read-only.
+
+### Bootstrap the executable library seam
+
+Implement deterministic inspection and resolution from explicit manifests,
+operator locks, and caller observations. Invoke only a matching,
+caller-injected in-process port and return success only after Flow validates the
+ordered events and terminal result. Keep observation through `EventSink`
+outside selection and result identity so future logging and OpenTelemetry
+adapters cannot rewrite provider evidence. A sink failure rejects the
+checkpoint execution.
+
+**Candidate evidence:** Flow #23 includes a no-effects, no-artifacts hermetic
+port and executable library example, success and adversarial tests, and CI for
+Rust 1.85, stable Rust, and the existing Python validators. Default-branch CI
+after merge remains the final FLO-Q02 gate. Process transport, real provider
+adapters, durable state, cancellation, checkpoints, and resume are deferred.
+Only trusted candidates are resolution-eligible in this checkpoint;
+`Orchestrator` executes only a caller-injected in-process port. Declared limits
+are correlated metadata rather than runtime enforcement. Caller-issued
+configuration and authorization identities are correlated but not
+authenticated.
 
 ### Pin the capability matrix
 
