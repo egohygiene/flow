@@ -26,6 +26,12 @@ The extension contracts are described in
 Provider manifests request behavior; only the operator-controlled lock grants
 authority, precedence, or fallback.
 
+Process framing reuses the existing invocation, event, and result documents
+rather than introducing a wrapper contract. The provisional JSON Lines wire
+rules and host-neutral acceptance boundary are specified in
+[`docs/integrations/process-transport.md`](../docs/integrations/process-transport.md).
+Wire whitespace and caller read chunking are not contract identity.
+
 `compatibility.flow_version_requirement` is parsed with Rust's `semver`
 `VersionReq` grammar and must use comma-separated comparators. For example,
 `>=0.1.0, <0.2.0` is a bounded range; `>=0.1.0 <0.2.0` is invalid. Invalid or
@@ -40,16 +46,18 @@ downgrade.
 
 The current Rust checkpoint maps the six extension-v1 documents into closed
 library models and adds semantic checks that JSON Schema alone does not express.
-Its hermetic reference execution is not a provider adapter and does not prove
-process transport, filesystem artifact handling, sandboxing, checkpoints, or
-resume.
+Its hermetic in-process reference and host-neutral process transcript are not
+provider adapters and do not prove process launch/capture enforcement,
+filesystem artifact handling, executable verification, sandboxing,
+checkpoints, or resume.
 
 For this checkpoint, the caller owns configuration canonicalization and digest
 generation plus authorization issuance, authorization ID, and grants digest.
 Flow shape-checks these values and correlates the identities repeated by the
-provider; `ValidatedExecution` does not authenticate them. Execution-limit
-fields are likewise validated and correlated metadata, not timeout,
-cancellation, output-bound, panic, sandbox, or side-effect enforcement.
+provider; `ValidatedExecution` does not authenticate them. The process
+transcript validator checks already captured stdout/stderr lengths and a caller
+completion observation. That is not runtime timeout, cancellation, capture,
+panic, sandbox, or side-effect enforcement.
 
 Validate the set with:
 

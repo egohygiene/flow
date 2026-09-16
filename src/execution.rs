@@ -9,6 +9,9 @@ use crate::contracts::{
     EventKind, ExecutionModeKind, ExtensionEvent, ExtensionInvocation, ExtensionResult,
     InvocationPhase, Outcome, ValidationError,
 };
+use crate::process::{
+    DecodedProcessTranscript, ProcessProtocolError, decode_provider_stdout, encode_invocation_frame,
+};
 
 /// Exact identity advertised by an injected in-process port.
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -112,6 +115,66 @@ impl PortError {
     }
 }
 
+/// Host-reported completion for one already-captured provider process.
+///
+/// This is an observation supplied by a future runner. It does not launch,
+/// signal, wait for, or otherwise control a process.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ProcessCompletion {
+    /// The process exited. `None` means no portable exit code was available,
+    /// for example after signal termination.
+    Exited { code: Option<i32> },
+    /// The runner reports that the execution deadline elapsed.
+    TimedOut,
+    /// The runner reports that forced cancellation terminated the process.
+    Cancelled,
+}
+
+/// Captured process stream whose configured byte bound was exceeded.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ProcessStream {
+    Stdout,
+    Stderr,
+}
+
+/// Borrowed, host-captured process evidence awaiting Flow validation.
+///
+/// Raw stdout and stderr remain caller-owned sensitive evidence. Flow never
+/// places their bytes in `ValidatedExecution`, portable provenance, or error
+/// display output.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct ProcessTranscript<'a> {
+    completion: ProcessCompletion,
+    stdout: &'a [u8],
+    stderr: &'a [u8],
+}
+
+impl<'a> ProcessTranscript<'a> {
+    #[must_use]
+    pub const fn new(completion: ProcessCompletion, stdout: &'a [u8], stderr: &'a [u8]) -> Self {
+        Self {
+            completion,
+            stdout,
+            stderr,
+        }
+    }
+
+    #[must_use]
+    pub const fn completion(self) -> ProcessCompletion {
+        self.completion
+    }
+
+    #[must_use]
+    pub const fn stdout(self) -> &'a [u8] {
+        self.stdout
+    }
+
+    #[must_use]
+    pub const fn stderr(self) -> &'a [u8] {
+        self.stderr
+    }
+}
+
 /// Execution failed before or after invocation. Provider evidence is retained
 /// for inspection but is never converted into `ValidatedExecution` on error.
 #[derive(Debug, Error)]
@@ -148,6 +211,25 @@ pub enum ExecutionError {
         events: Vec<ExtensionEvent>,
         result: Box<ExtensionResult>,
     },
+    #[error("external process protocol failed: {source}")]
+    ProcessProtocol {
+        #[source]
+        source: ProcessProtocolError,
+    },
+    #[error(
+        "captured process {stream:?} exceeded its byte limit: observed {observed}, limit {limit}"
+    )]
+    ProcessOutputLimit {
+        stream: ProcessStream,
+        limit: u64,
+        observed: u64,
+    },
+    #[error("external process did not exit successfully (portable exit code: {code:?})")]
+    ProcessExit { code: Option<i32> },
+    #[error("external process timed out")]
+    ProcessTimeout,
+    #[error("external process was forcibly cancelled")]
+    ProcessCancelled,
 }
 
 impl ExecutionError {
@@ -155,7 +237,13 @@ impl ExecutionError {
     #[must_use]
     pub fn events(&self) -> &[ExtensionEvent] {
         match self {
-            Self::InvalidInvocation { .. } | Self::Preflight { .. } => &[],
+            Self::InvalidInvocation { .. }
+            | Self::Preflight { .. }
+            | Self::ProcessProtocol { .. }
+            | Self::ProcessOutputLimit { .. }
+            | Self::ProcessExit { .. }
+            | Self::ProcessTimeout
+            | Self::ProcessCancelled => &[],
             Self::Provider { events, .. }
             | Self::InvalidEvent { events, .. }
             | Self::EventSink { events, .. }
@@ -169,7 +257,14 @@ impl ExecutionError {
         match self {
             Self::InvalidEvent { result, .. } | Self::EventSink { result, .. } => result.as_deref(),
             Self::InvalidResult { result, .. } => Some(result.as_ref()),
-            Self::InvalidInvocation { .. } | Self::Preflight { .. } | Self::Provider { .. } => None,
+            Self::InvalidInvocation { .. }
+            | Self::Preflight { .. }
+            | Self::Provider { .. }
+            | Self::ProcessProtocol { .. }
+            | Self::ProcessOutputLimit { .. }
+            | Self::ProcessExit { .. }
+            | Self::ProcessTimeout
+            | Self::ProcessCancelled => None,
         }
     }
 }
@@ -181,6 +276,15 @@ impl ExecutionError {
 /// this checkpoint. Artifact checks correlate provider-reported identifiers
 /// only; they do not resolve locators, verify bytes, or perform domain-output
 /// validation.
+///
+/// The fields remain private so unvalidated provider evidence cannot be
+/// promoted with a struct literal:
+///
+/// ```compile_fail
+/// use flow::ValidatedExecution;
+///
+/// let _unvalidated = ValidatedExecution {};
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ValidatedExecution {
     events: Vec<ExtensionEvent>,
@@ -204,7 +308,7 @@ impl ValidatedExecution {
     }
 }
 
-/// Stateless coordinator for one already-resolved in-process invocation.
+/// Stateless coordinator for one already-resolved invocation.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Orchestrator;
 
@@ -229,7 +333,7 @@ impl Orchestrator {
         invocation
             .validate()
             .map_err(|source| ExecutionError::InvalidInvocation { source })?;
-        validate_preflight(resolved, invocation, port.identity())?;
+        validate_in_process_preflight(resolved, invocation, port.identity())?;
 
         let mut validating_sink = ValidatingEventSink::new(invocation, event_sink);
         let provider_result = port.invoke(invocation, &mut validating_sink);
@@ -265,15 +369,107 @@ impl Orchestrator {
         })?;
         Ok(ValidatedExecution { events, result })
     }
+
+    /// Encode one validated process-mode invocation for provider stdin.
+    ///
+    /// The returned compact JSON document ends with exactly one LF. Its bytes
+    /// are a deterministic transport projection, not execution identity or a
+    /// general canonical-JSON representation.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for an invalid invocation, a process-mode preflight
+    /// mismatch, or serialization failure.
+    pub fn encode_process_request(
+        resolved: &ResolvedExtension,
+        invocation: &ExtensionInvocation,
+    ) -> Result<Vec<u8>, ExecutionError> {
+        invocation
+            .validate()
+            .map_err(|source| ExecutionError::InvalidInvocation { source })?;
+        validate_common_preflight(resolved, invocation, ExecutionModeKind::Process)?;
+        encode_invocation_frame(invocation)
+            .map_err(|source| ExecutionError::ProcessProtocol { source })
+    }
+
+    /// Validate one already-captured provider process transcript.
+    ///
+    /// This method is deliberately host-neutral: it does not launch, capture,
+    /// time out, cancel, signal, or reap a process. The caller owns those
+    /// operations and supplies bounded completion/stdout/stderr observations.
+    /// Flow checks the declared byte limits and completion state, parses the
+    /// protocol-only stdout stream, and routes the decoded evidence through the
+    /// same event/result acceptance gate as in-process execution.
+    ///
+    /// # Errors
+    ///
+    /// Returns a typed error for invalid invocation or preflight evidence,
+    /// output limits, abnormal completion, protocol framing, observer
+    /// rejection, or invalid provider events/results.
+    pub fn validate_process_transcript(
+        resolved: &ResolvedExtension,
+        invocation: &ExtensionInvocation,
+        transcript: ProcessTranscript<'_>,
+        event_sink: &mut dyn EventSink,
+    ) -> Result<ValidatedExecution, ExecutionError> {
+        invocation
+            .validate()
+            .map_err(|source| ExecutionError::InvalidInvocation { source })?;
+        validate_common_preflight(resolved, invocation, ExecutionModeKind::Process)?;
+
+        validate_captured_length(
+            ProcessStream::Stdout,
+            invocation.limits.max_stdout_bytes,
+            transcript.stdout().len(),
+        )?;
+        validate_captured_length(
+            ProcessStream::Stderr,
+            invocation.limits.max_stderr_bytes,
+            transcript.stderr().len(),
+        )?;
+
+        match transcript.completion() {
+            ProcessCompletion::Exited { code: Some(0) } => {}
+            ProcessCompletion::Exited { code } => {
+                return Err(ExecutionError::ProcessExit { code });
+            }
+            ProcessCompletion::TimedOut => return Err(ExecutionError::ProcessTimeout),
+            ProcessCompletion::Cancelled => return Err(ExecutionError::ProcessCancelled),
+        }
+
+        let decoded = decode_provider_stdout(transcript.stdout())
+            .map_err(|source| ExecutionError::ProcessProtocol { source })?;
+        validate_decoded_process_transcript(invocation, decoded, event_sink)
+    }
 }
 
-fn validate_preflight(
+fn validate_in_process_preflight(
     resolved: &ResolvedExtension,
     invocation: &ExtensionInvocation,
     port: &PortIdentity,
 ) -> Result<(), ExecutionError> {
-    if resolved.execution_mode().kind != ExecutionModeKind::InProcess {
-        return preflight("the resolved execution mode is not in-process");
+    validate_common_preflight(resolved, invocation, ExecutionModeKind::InProcess)?;
+    if port.extension_id != resolved.extension_id()
+        || port.version != resolved.version()
+        || port.publisher_id != resolved.publisher_id()
+        || port.integrity != resolved.integrity().value
+        || port.execution_mode_name != resolved.execution_mode().name
+        || port.execution_mode_kind != resolved.execution_mode().kind
+    {
+        return preflight("the injected port identity or execution mode does not match resolution");
+    }
+    Ok(())
+}
+
+fn validate_common_preflight(
+    resolved: &ResolvedExtension,
+    invocation: &ExtensionInvocation,
+    expected_mode: ExecutionModeKind,
+) -> Result<(), ExecutionError> {
+    if resolved.execution_mode().kind != expected_mode {
+        return preflight(format!(
+            "the resolved execution mode is not {expected_mode:?}"
+        ));
     }
     if invocation.phase != InvocationPhase::Execute {
         return preflight("the execution seam requires invocation phase execute");
@@ -290,6 +486,7 @@ fn validate_preflight(
     }
     if invocation.interface.name != resolved.execution_mode().name
         || invocation.interface.kind != resolved.execution_mode().kind
+        || invocation.interface.protocol != resolved.execution_mode().protocol
     {
         return preflight("the invocation interface does not match resolution");
     }
@@ -305,16 +502,62 @@ fn validate_preflight(
     if invocation.limits != resolved.execution_mode().limits {
         return preflight("the invocation limits do not match the resolved execution mode");
     }
-    if port.extension_id != resolved.extension_id()
-        || port.version != resolved.version()
-        || port.publisher_id != resolved.publisher_id()
-        || port.integrity != resolved.integrity().value
-        || port.execution_mode_name != resolved.execution_mode().name
-        || port.execution_mode_kind != resolved.execution_mode().kind
-    {
-        return preflight("the injected port identity or execution mode does not match resolution");
+    Ok(())
+}
+
+fn validate_captured_length(
+    stream: ProcessStream,
+    limit: u64,
+    observed: usize,
+) -> Result<(), ExecutionError> {
+    let observed = u64::try_from(observed).unwrap_or(u64::MAX);
+    if observed > limit {
+        return Err(ExecutionError::ProcessOutputLimit {
+            stream,
+            limit,
+            observed,
+        });
     }
     Ok(())
+}
+
+fn validate_decoded_process_transcript(
+    invocation: &ExtensionInvocation,
+    decoded: DecodedProcessTranscript,
+    event_sink: &mut dyn EventSink,
+) -> Result<ValidatedExecution, ExecutionError> {
+    let (raw_events, result) = decoded.into_parts();
+    let mut validating_sink = ValidatingEventSink::new(invocation, event_sink);
+    for event in &raw_events {
+        let _emission_result = validating_sink.emit(event);
+    }
+    let (events, issue) = validating_sink.finish();
+    match issue {
+        Some(EventIssue::Invalid(message)) => {
+            return Err(ExecutionError::InvalidEvent {
+                message,
+                events,
+                result: Some(Box::new(result)),
+            });
+        }
+        Some(EventIssue::Downstream(source)) => {
+            return Err(ExecutionError::EventSink {
+                source,
+                events,
+                result: Some(Box::new(result)),
+            });
+        }
+        None => {}
+    }
+
+    validate_result(invocation, &events, &result).map_err(|message| {
+        ExecutionError::InvalidResult {
+            message,
+            events: events.clone(),
+            result: Box::new(result.clone()),
+        }
+    })?;
+    Ok(ValidatedExecution { events, result })
 }
 
 fn validate_result(

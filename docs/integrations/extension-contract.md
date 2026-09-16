@@ -6,9 +6,11 @@ This contract defines how Flow discovers, resolves, authorizes, invokes, and
 records independently released extensions. It is the reusable substrate for
 Flow issue #7. Flow issue #23 implements a bounded subset as a Rust library:
 deterministic resolution plus one injected, trusted in-process execution seam
-proven with a hermetic reference port. Product orchestration, real provider
-adapters, a two-holon vertical slice, and runtime CLI commands remain work for
-Flow issue #3 and its later children.
+proven with a hermetic reference port. Flow issue #26 adds deterministic
+process request encoding and host-neutral validation of caller-supplied
+completion, stdout, and stderr evidence; it does not launch a process. Product
+orchestration, real provider adapters, a two-holon vertical slice, and runtime
+CLI commands remain work for Flow issue #3 and its later children.
 
 An extension is an independently versioned provider package. It can expose one
 or more Aniflow, Optiflow, Renderflow, Flow, or third-party domain capabilities
@@ -85,46 +87,52 @@ Any content-changing operation produces a new artifact identity and lineage.
 
 - **In-process:** a version-pinned public library entry point. Flow still binds
   it to the invocation, event, result, authorization, and provenance contracts.
-- **Process (future target):** a version-pinned executable invoked directly
-  with argv. A future process adapter must independently capture stdout/stderr,
-  enforce timeout, output bounds, cancellation grace, permissions, and declared
-  outputs, and never parse human console text as a contract.
+- **Process:** a version-pinned executable invoked directly with argv. The v1
+  host-neutral transport encodes one invocation and validates a caller-supplied
+  JSON Lines event/result transcript, captured-output lengths, and completion
+  observation. A production process adapter must still independently launch
+  the pinned executable, capture stdout/stderr concurrently, enforce timeout,
+  output bounds, cancellation grace, permissions, and declared outputs, and
+  never parse human console text as a contract.
 
 Both modes must produce the same structured semantic result. Flow may choose
 process isolation when toolchains, licensing, trust, or failure containment make
 an in-process edge unsuitable.
 
-The current executable checkpoint resolves only `trusted` candidates and proves
-only a caller-injected in-process library port. It performs no filesystem
-discovery, dynamic loading, external process invocation, executable integrity
-verification, or sandbox enforcement. `sandboxed` candidates fail closed.
-Declared limits are validated and correlated with the resolved mode as policy
-metadata only; Flow does not enforce a timeout, cancellation, stdout/stderr
-bound, panic isolation, filesystem/network containment, or any other side
-effect on the injected code. The process behavior above remains a future
-contract target, not a claim about the implemented runtime.
+The current executable checkpoint resolves only `trusted` candidates. It proves
+a caller-injected in-process library port plus host-neutral process request and
+transcript validation. It performs no filesystem discovery, dynamic loading,
+external process launch/capture, executable integrity verification, or sandbox
+enforcement. `sandboxed` candidates fail closed. In-process limits remain
+policy metadata only. The process seam checks already captured stdout/stderr
+byte counts and completion evidence, but it does not enforce timeout,
+cancellation, output capture, panic isolation, filesystem/network containment,
+or any other side effect while a provider runs.
 
 ## Observation and telemetry
 
 The orchestrator wraps the caller's `EventSink` with Flow-owned validation.
 Only provider events whose schema, identities, unique event ID, and strictly
 increasing sequence pass validation reach the caller sink. The sink is the
-intended attachment point for future human logging, structured logging,
-tracing, metrics, or OpenTelemetry adapters.
+fallible authoritative observer for this execution seam, not a best-effort
+logging, tracing, metrics, or OpenTelemetry exporter.
 
 Diagnostics marked `redacted: false` in events or terminal results are
 rejected. A `redacted: true` value remains a provider assertion: this
 checkpoint does not content-scan diagnostics or sanitize unrestricted contract
 strings such as result explanations, validation evidence, provenance values,
-or artifact, checkpoint, and event references. Rejected raw evidence remains
-available through `ExecutionError`, but it is never forwarded to the caller
-sink or returned in `ValidatedExecution`.
+or artifact, checkpoint, and event references. When `ExecutionError` retains
+structured event or result evidence, it remains caller-inspectable but is never
+promoted to `ValidatedExecution`. Raw process stdout and stderr remain
+caller-owned transcript evidence and are not copied into the error.
 
 Observations are deliberately outside resolution and execution identity. A
 sink cannot select an extension, directly mutate provider evidence, or grant
-authority. `EventSink::emit` is fallible and its error is visible to the
-provider; rejection makes `Orchestrator` return `ExecutionError`. This
-checkpoint includes neither a logging backend nor an OpenTelemetry exporter.
+authority. `EventSink::emit` is fallible and its error is visible to an
+in-process provider; rejection makes either execution seam return
+`ExecutionError` without fallback. A separate best-effort observability seam
+belongs to issue #15. This checkpoint includes neither a logging backend nor an
+OpenTelemetry exporter.
 
 ## Permissions and trust
 
@@ -134,18 +142,19 @@ signing, and publication. The lock grants a subset and selects `trusted`,
 `sandboxed`, or `disabled` operation. No grant is implied by capability
 selection.
 
-Issue #23 makes only `trusted` candidates resolution-eligible, while
-`Orchestrator` accepts only a caller-injected in-process port. It marks
-`sandboxed` candidates unauthorized and unavailable because it has no
-enforceable sandbox backend; `disabled` candidates also fail closed.
+The executable seams make only `trusted` candidates resolution-eligible.
+`Orchestrator` either invokes a caller-injected in-process port or validates a
+caller-supplied process transcript; it does not launch a process. `sandboxed`
+candidates remain unauthorized and unavailable because there is no enforceable
+sandbox backend; `disabled` candidates also fail closed.
 
 Secrets are referenced through runtime handles. Providers and callers are
 responsible for keeping credentials, tokens, private prompt content, and other
 sensitive values out of portable evidence. `discovery.location` is arbitrary
 and may be absolute, so manifests, locks, and resolution inputs must be handled
-according to their actual sensitivity. Issue #23 checks the diagnostic
-`redacted` flag only; it does not verify the provider's `true` assertion,
-inspect diagnostic content, or sanitize other contract strings. Raw
+according to their actual sensitivity. The executable seams check the
+diagnostic `redacted` flag only; they do not verify the provider's `true`
+assertion, inspect diagnostic content, or sanitize other contract strings. Raw
 `ExecutionError` events and results are sensitive, nonportable evidence and
 must not be exported without caller-controlled inspection and redaction.
 
@@ -221,16 +230,20 @@ outcomes. They contain no Ego Hygiene publication content.
 
 ## Current proof and deferred runtime
 
-Issue #23 adds a library-only proof: closed extension-v1 models, semantic
-validation, deterministic single-capability resolution, one injected
-`ExtensionPort`, correlated event/result validation, and a no-effects,
-no-artifacts hermetic reference port. The proof does not promote an extension's
-terminal success report to a validated execution until Flow-owned checks pass.
+Issue #23 / merged PR #24 adds closed extension-v1 models, semantic validation,
+deterministic single-capability resolution, one injected `ExtensionPort`,
+correlated event/result validation, and a no-effects, no-artifacts hermetic
+reference port. Issue #26 reuses that validation for deterministic request
+framing and caller-supplied process transcripts. Neither proof promotes an
+extension's terminal success report to a validated execution until Flow-owned
+checks pass.
 
 Those checks prove contract validity and correlation only. They do not prove
 the authenticity of the caller-issued configuration digest, authorization ID,
-or grants digest, nor do they enforce the declared execution limits or contain
-side effects from the trusted injected code.
+or grants digest. The in-process seam does not enforce declared execution
+limits; the process seam checks only supplied captured byte counts and
+completion evidence. Neither seam contains side effects while provider code
+executes.
 
 For terminal evidence, `produced` and `reused` require every reported
 validation to be `passed`; `skipped` permits `passed` or `not-run` but rejects
@@ -244,8 +257,9 @@ references on `artifact-produced` events must appear in terminal
 not bind identifiers to locators, recompute or verify artifact digests or
 bytes, establish artifact existence, or perform domain-output validation.
 
-`extensions list`, `extensions inspect`, `doctor`, process transport, sandbox
-enforcement, real provider adapters, interruption/cancellation, durable run
-state, checkpoints/resume, and the cross-holon vertical slice remain deferred
-work for Flow #3 after the required holon contracts are available as releases
-or versioned process envelopes.
+`extensions list`, `extensions inspect`, `doctor`, real process launching and
+capture, artifact binding, executable verification, sandbox enforcement, real
+provider adapters, interruption delivery, durable run state,
+checkpoints/resume, and the cross-holon vertical slice remain deferred work for
+Flow #3 after the required holon contracts are available as releases or
+versioned process envelopes.

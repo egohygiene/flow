@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.3.1
+version: 0.4.0
 status: draft
 owners:
   - egohygiene
@@ -70,9 +70,17 @@ are constructed as executable plus argv, never as shell strings.
 
 Pinned in-process adapters and bounded process adapters share the same
 invocation, event, result, validation, and provenance semantics. Process
-adapters additionally enforce declared time, output, cancellation, filesystem,
-environment, subprocess, network, AI, GPU, and side-effect limits outside the
-provider process.
+adapters must additionally enforce every time, output, cancellation,
+filesystem, environment, subprocess, network, AI, GPU, and side-effect
+guarantee they claim outside the provider process. A declaration, grant,
+transcript check, or adapter policy is not by itself sandbox enforcement.
+
+The first process boundary is host-neutral: Flow deterministically encodes one
+versioned invocation and validates a caller-supplied JSON Lines stdout
+transcript, bounded stderr length, and completion observation. That seam reuses
+the same Flow-owned event and result validation as in-process execution. It does
+not spawn, signal, time out, cancel, reap, inspect files from, or isolate a child
+process.
 
 ### Extension lifecycle
 
@@ -154,14 +162,16 @@ structure without overriding suite dependency rules.
 
 ## Current implementation boundary
 
-Flow issue #23 supplies a candidate Rust library with closed extension-v1
-models, deterministic single-capability resolution, one caller-injected
-in-process extension port, Flow-owned event/result validation, and a hermetic
-no-effects reference implementation. It does not yet supply the public CLI,
-process adapters, real holon adapters, artifact locators, durable run state,
-checkpoints, cancellation, or resume described elsewhere in this document.
-Structural units beyond that library seam remain constraints for later adapter
-and orchestration work, not claims about current source layout.
+Flow issue #23 / merged PR #24 supplies closed extension-v1 models,
+deterministic single-capability resolution, one caller-injected in-process
+extension port, Flow-owned event/result validation, and a hermetic no-effects
+reference implementation. Issue #26 adds deterministic process request framing
+and host-neutral transcript validation through that same acceptance gate. It
+does not yet supply the public CLI, a production child-process runner, real
+holon adapters, artifact locators, executable verification, enforceable
+isolation, durable run state, checkpoints, interruption, or resume. Structural
+units beyond these library seams remain constraints for later adapter and
+orchestration work, not claims about current source layout.
 
 ## Open questions
 
@@ -171,8 +181,11 @@ and orchestration work, not claims about current source layout.
 
 ## Validation
 
-The issue #23 candidate CI validates the Rust 1.85 and stable library builds,
-closed contract models, deterministic resolution, the hermetic in-process seam,
-and repository architecture metadata. Default-branch evidence remains pending
-merge. Forbidden dependency-edge checks, CLI-thinness, and subprocess adapter
-contract tests remain later gates for the corresponding runtime surfaces.
+Default-branch CI run 35094682274 validates PR #24's Rust 1.85 and stable
+library builds, closed contract models, deterministic resolution, hermetic
+in-process seam, and repository architecture metadata at
+`979e033409c823b38591b59eca820522efabfa12`. Issue #26 adds deterministic
+request/transcript conformance tests and a hermetic process-transport example
+to the same matrix. Forbidden dependency-edge checks, CLI-thinness, real
+launcher enforcement, artifact acceptance, and sandbox conformance remain
+later gates for their corresponding runtime surfaces.

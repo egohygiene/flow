@@ -196,7 +196,8 @@ pub enum ExecutionModeKind {
 ///
 /// The current injected in-process seam correlates these values with the
 /// resolved declaration but does not enforce time, cancellation, or output
-/// bounds.
+/// bounds. The host-neutral process seam checks captured stdout/stderr lengths;
+/// it does not enforce limits against a running child.
 pub struct ExecutionLimits {
     pub timeout_ms: u64,
     pub max_stdout_bytes: u64,
