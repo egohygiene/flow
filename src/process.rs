@@ -158,7 +158,7 @@ pub fn decode_provider_stdout(
                         schema_version: EXTENSION_EVENT_V1.to_owned(),
                     });
                 }
-                events.push(event);
+                events.push(*event);
             }
             ProviderFrame::Result(decoded_result) => {
                 if result.is_some() {
@@ -179,7 +179,7 @@ pub fn decode_provider_stdout(
 }
 
 enum ProviderFrame {
-    Event(ExtensionEvent),
+    Event(Box<ExtensionEvent>),
     Result(Box<ExtensionResult>),
 }
 
@@ -204,6 +204,7 @@ fn decode_provider_frame(
 
     match schema_version {
         EXTENSION_EVENT_V1 => serde_json::from_str(frame)
+            .map(Box::new)
             .map(ProviderFrame::Event)
             .map_err(|error| ProcessProtocolError::MalformedJson {
                 frame_number,
