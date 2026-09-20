@@ -1,12 +1,28 @@
 {
   "schema_version": "flow.contract-set/v1",
-  "contract_set_version": "0.3.0",
+  "contract_set_version": "0.4.0",
   "status": "provisional",
   "contracts": [
     {
       "id": "flow.artifact/v1",
       "schema": "schemas/artifact.v1.schema.json",
       "example": "examples/artifact.v1.example.json"
+    },
+    {
+      "id": "flow.artifact-bindings/v1",
+      "schema": "schemas/artifact-bindings.v1.schema.json",
+      "example": "examples/artifact-bindings.v1.example.json",
+      "invalid_examples": [
+        "fixtures/artifacts/escaping-bindings.v1.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.artifact-observations/v1",
+      "schema": "schemas/artifact-observations.v1.schema.json",
+      "example": "examples/artifact-observations.v1.example.json",
+      "invalid_examples": [
+        "fixtures/artifacts/unsorted-observations.v1.invalid.json"
+      ]
     },
     {
       "id": "flow.capability/v1",

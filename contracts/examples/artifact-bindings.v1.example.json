@@ -1,0 +1,24 @@
+{
+  "schema_version": "flow.artifact-bindings/v1",
+  "binding_set_id": "bindings:synthetic-optiflow-scan",
+  "digest_algorithm": "sha256",
+  "inputs": [
+    {
+      "artifact_id": "artifact:synthetic-collection",
+      "port": "port:collection",
+      "media_type": "application/vnd.flow.collection-reference+json",
+      "kind": "file",
+      "locator": "inputs/source collection.json",
+      "expected_digest": "2222222222222222222222222222222222222222222222222222222222222222"
+    }
+  ],
+  "outputs": [
+    {
+      "artifact_id": "artifact:synthetic-collection-evidence",
+      "port": "port:evidence",
+      "media_type": "application/vnd.optiflow.collection-evidence+json",
+      "kind": "directory",
+      "locator": "outputs/evidence bundle"
+    }
+  ]
+}

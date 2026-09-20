@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 0.6.0
+version: 0.7.0
 status: draft
 owners:
   - egohygiene
@@ -38,10 +38,10 @@ updated: 2026-09-20
 
 **Lifecycle:** executable contract prototype
 
-**Current gate:** Freeze Flow #28's deterministic orchestration scenario and
-fixture contract. Coordinate its reference-only artifact and evidence fields
-with active #25, but do not wait for #25's later runtime enforcement to define
-the conformance vocabulary.
+**Current gate:** Complete Flow #36, the first bounded child of Flow #25: bind
+immutable inputs and candidate outputs to portable root-relative locators,
+observe their bytes beneath one selected root, and require exact host/provider
+correlation before artifact acceptance.
 
 **North-star outcome:** Federated orchestration across holons with stable provider seams, resumable work, and explicit evidence.
 
@@ -50,8 +50,8 @@ the conformance vocabulary.
 **Mode:** `central`  
 **Route:** `/roadmap/flow/`  
 **Current publication evidence:** Architecture, contract source, merged Flow
-#23 / PR #24, #26 / PR #27, and successful default-branch CI at
-`4599c575a1d0eab46352f900bba47cc97201c426`; no executable release or Pages
+#23 / PR #24, #26 / PR #27, #28 / PR #35, and successful default-branch CI at
+`aac62ab80c18c936e3a7ebd5f4e70b7845f39faa`; no executable release or Pages
 publication observed.
 
 Publish the public-safe projection through egohygiene.io at /roadmap/flow/. This repository owns intent and acceptance evidence; it does not add a second site deployment.
@@ -127,7 +127,7 @@ same acceptance gate validates a deterministic external-process transcript.
 id: FLO-Q03
 status: active
 depends_on: [FLO-Q02]
-issues: [13, 25, 28]
+issues: [13, 25, 28, 36]
 -->
 #### FLO-Q03 — Freeze conformance fixtures and implement provider adapters
 
@@ -140,19 +140,22 @@ behavior through stable error and evidence contracts.
 
 **Exit criteria:**
 
-- [ ] Stable scenario and fixture identities, immutable provenance, typed
+- [x] Stable scenario and fixture identities, immutable provenance, typed
   expectations, execution budgets, and deterministic drift checks are defined.
+- [ ] Bound artifact IDs to root-confined host observations and accept them only
+  after exact invocation, provider, and content correlation.
 - [ ] At least two adapters pass contract tests.
 - [ ] Provider-specific behavior does not leak into the core model.
 
 **Current evidence:**
 
 - Flow #13 decomposes the orchestration and failure corpus into bounded child
-  checkpoints. Flow #28 is executable now and freezes the scenario manifest
-  before the hermetic provider kit or real-provider workflows.
+  checkpoints. Flow #28 / merged PR #35 freezes the scenario manifest before
+  the hermetic provider kit or real-provider workflows.
 - Flow #25 remains the active owner of artifact acceptance, executable/package
-  integrity, authority profiles, and process enforcement. Scenario references
-  do not pre-empt those contracts.
+  integrity, authority profiles, and process enforcement. Flow #36 is its
+  current artifact-binding and host-observation child; scenario references do
+  not pre-empt those runtime contracts.
 
 <!-- roadmap-step
 id: FLO-Q04
@@ -226,8 +229,13 @@ The suite ownership table, forbidden dependency edges, federated repository
 model, and first contract set are approved by [ADR-0004](docs/architecture/governance/decisions/ADR-0004-federated-suite-contracts.md).
 The extension declaration, trust, and operator-authority split is approved by
 [ADR-0005](docs/architecture/governance/decisions/ADR-0005-federated-extension-authority.md).
-Artifact, capability, and compatibility schemas begin as provisional v1
-contracts so real adapter work can refine them without claiming stability.
+The process transcript and artifact-observation boundaries are approved by
+[ADR-0006](docs/architecture/governance/decisions/ADR-0006-bounded-process-transport.md)
+and
+[ADR-0007](docs/architecture/governance/decisions/ADR-0007-root-confined-artifact-acceptance.md).
+Artifact, capability, compatibility, binding, and host-observation schemas
+begin as provisional v1 contracts so real adapter work can refine them without
+claiming stability.
 
 **Exit evidence:** architecture validation passes; every suite capability has
 one primary owner; contract documents are machine-valid; no mutable or copied
@@ -287,11 +295,27 @@ budgets, bounded coverage claims, and deterministic canonical identity. Keep
 real provider execution, durable plan/run/checkpoint semantics, and provider
 algorithm corpora outside this contract.
 
-**Candidate evidence:** Flow #28 adds the closed
+**Delivered evidence:** Flow #28 / merged PR #35 adds the closed
 `flow.scenario-manifest/v1` model, redistribution-safe positive and adversarial
 fixtures, independent Rust/Python canonical digest checks, and explicit
 coverage gaps. It describes conformance intent and does not implement a
 scenario runner.
+
+### Bind and observe artifacts
+
+Bind immutable input and candidate-output IDs to logical ports, media types,
+kinds, and portable locators beneath one caller-selected root. Recompute file
+and deterministic recursive-directory identity with Flow-owned code. Keep
+provider execution validation separate from artifact acceptance, and require a
+complete result plus exact invocation, result, event, binding, and host
+observation correlation.
+
+**Candidate evidence:** Flow #36 adds
+`flow.artifact-bindings/v1`, `flow.artifact-observations/v1`, opaque observed and
+accepted artifact tokens, deterministic file/directory identity, and
+adversarial filesystem/correlation tests. It does not verify executables,
+enforce provider authority, launch a process, or validate provider-native
+artifact semantics.
 
 ### Pin the capability matrix
 

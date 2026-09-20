@@ -38,6 +38,9 @@ The first executable checkpoint is deliberately library-only:
 - the process seam deterministically encodes one JSON Lines invocation and
   checks bounded, caller-supplied stdout/stderr plus process completion
   evidence, then routes decoded stdout through the same event/result gate;
+- artifact bindings map immutable input and candidate-output IDs to portable
+  root-relative locators; Flow observes file/directory bytes beneath one root
+  and returns an accepted set only after exact host/provider correlation;
 - `flow.scenario-manifest/v1` pins synthetic inputs, providers, topology,
   expectations, resource budgets, coverage gaps, and cross-language canonical
   digests without defining plans or runs; and
@@ -71,6 +74,13 @@ configuration canonicalization and authorization issuance. Diagnostics marked
 this checkpoint does not content-scan diagnostics or sanitize unrestricted
 contract strings.
 
+`ValidatedExecution` does not imply artifact acceptance. `observe_artifacts`
+returns an opaque Flow-observation token after root, path, link, node, digest,
+and directory-manifest checks. `accept_artifacts` then requires a complete
+produced/reused result and exact agreement among the resolution, invocation,
+bindings, host observations, result IDs, and artifact-produced events before it
+returns `AcceptedArtifactSet`.
+
 Only `trusted` candidates are resolution-eligible in this checkpoint;
 `Orchestrator` either executes a caller-injected in-process port or validates a
 caller-supplied process transcript. `sandboxed` candidates fail closed because
@@ -88,6 +98,7 @@ or isolate a process. Neither seam provides filesystem or network containment.
 - [Suite boundaries](docs/integrations/suite-boundaries.md)
 - [Federated extension contract](docs/integrations/extension-contract.md)
 - [Process transport contract](docs/integrations/process-transport.md)
+- [Artifact binding contract](docs/integrations/artifact-bindings.md)
 - [Scenario fixture contract](docs/integrations/scenario-fixtures.md)
 - [Versioned contracts](contracts/README.md)
 - [Roadmap](ROADMAP.md)
@@ -97,12 +108,12 @@ skills, agents, templates, and validators used to maintain these documents.
 
 ## Status
 
-Flow is in the **executable contract seam** phase. Issues #23 and #26 are merged
-through PRs #24 and #27, and default-branch CI passed at
-`4599c575a1d0eab46352f900bba47cc97201c426`. Issue #28 freezes the synthetic
-scenario-manifest and fixture identity boundary before real adapter work. The
-process seam still does not implement a runner, artifact binding, executable
-verification, or host isolation, and the scenario contract is not an executor.
+Flow is in the **executable contract seam** phase. Issues #23, #26, and #28 are
+merged through PRs #24, #27, and #35, and default-branch CI passed at
+`aac62ab80c18c936e3a7ebd5f4e70b7845f39faa`. Issue #36 implements the next
+bounded parent-#25 slice: artifact bindings and host observation. The process
+seam still does not implement a runner, executable verification, authority
+enforcement, or host isolation, and the scenario contract is not an executor.
 Current descriptions of Aniflow, Optiflow, and Renderflow are grounded in their default
 branches as inspected on 2026-08-13. The holons remain independently released
 repositories; real provider adapters and the restore-and-assess workflow remain

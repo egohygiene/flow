@@ -47,6 +47,72 @@ def is_contract_family(value: Any) -> bool:
     return match is not None and int(match.group(1)) <= U64_MAX
 
 
+def is_portable_locator(value: Any) -> bool:
+    if not isinstance(value, str) or not value:
+        return False
+    if value.startswith("/") or "\\" in value or ":" in value:
+        return False
+    return all(is_portable_segment(segment) for segment in value.split("/"))
+
+
+def is_portable_segment(segment: str) -> bool:
+    if segment in {"", ".", ".."} or segment.endswith((" ", ".")):
+        return False
+    if any(ord(character) < 32 or ord(character) == 127 for character in segment):
+        return False
+    if any(character in '"*<>?|' for character in segment):
+        return False
+    stem = segment.split(".", maxsplit=1)[0].upper()
+    if stem in {"CON", "PRN", "AUX", "NUL"}:
+        return False
+    return not (
+        len(stem) == 4
+        and stem[:3] in {"COM", "LPT"}
+        and stem[3] in "123456789"
+    )
+
+
+def parent_locator(locator: str) -> str | None:
+    return locator.rsplit("/", maxsplit=1)[0] if "/" in locator else None
+
+
+def directory_manifest_identity(
+    directory: str,
+    entries: dict[str, dict[str, Any]],
+) -> tuple[str, int] | None:
+    children: list[dict[str, Any]] = []
+    size_bytes = 0
+    for locator, entry in entries.items():
+        if (parent_locator(locator) or "") != directory:
+            continue
+        kind = entry.get("kind")
+        digest = entry.get("digest")
+        entry_size = entry.get("size_bytes")
+        if (
+            kind not in {"file", "directory"}
+            or not isinstance(digest, str)
+            or not isinstance(entry_size, int)
+            or isinstance(entry_size, bool)
+            or entry_size < 0
+            or entry_size > U64_MAX
+        ):
+            return None
+        size_bytes += entry_size
+        if size_bytes > U64_MAX:
+            return None
+        children.append(
+            {
+                "name": locator.rsplit("/", maxsplit=1)[-1],
+                "kind": kind,
+                "digest": digest,
+                "size_bytes": entry_size,
+            }
+        )
+    children.sort(key=lambda child: child["name"])
+    encoded = json.dumps(children, ensure_ascii=False, separators=(",", ":")).encode()
+    return hashlib.sha256(encoded).hexdigest(), size_bytes
+
+
 def validate_instance(
     instance: Any,
     schema: dict[str, Any],
@@ -293,6 +359,128 @@ def validate_extension_result(
         require(
             classification not in {None, "none"},
             f"{location}: failed outcomes require a failure classification",
+            errors,
+        )
+
+
+def validate_artifact_bindings(
+    bindings: dict[str, Any],
+    location: str,
+    errors: list[str],
+) -> None:
+    inputs = [
+        value
+        for value in bindings.get("inputs", [])
+        if isinstance(value, dict)
+    ]
+    outputs = [
+        value
+        for value in bindings.get("outputs", [])
+        if isinstance(value, dict)
+    ]
+    all_bindings = [*inputs, *outputs]
+    require(
+        bool(all_bindings),
+        f"{location}: bindings must not be empty",
+        errors,
+    )
+    for field in ("artifact_id", "port", "locator"):
+        values = [binding.get(field) for binding in all_bindings]
+        require(
+            all(isinstance(value, str) for value in values)
+            and len(values) == len(set(values)),
+            f"{location}: {field} values must be unique",
+            errors,
+        )
+    for binding in all_bindings:
+        require(
+            is_portable_locator(binding.get("locator")),
+            f"{location}: binding locators must be portable and root-relative",
+            errors,
+        )
+
+
+def validate_artifact_observations(
+    observations: dict[str, Any],
+    location: str,
+    errors: list[str],
+) -> None:
+    artifacts = [
+        value
+        for value in observations.get("artifacts", [])
+        if isinstance(value, dict)
+    ]
+    require(
+        bool(artifacts),
+        f"{location}: observations must contain at least one artifact",
+        errors,
+    )
+    for field in ("artifact_id", "port", "locator"):
+        values = [artifact.get(field) for artifact in artifacts]
+        require(
+            all(isinstance(value, str) for value in values)
+            and len(values) == len(set(values)),
+            f"{location}: observed {field} values must be unique",
+            errors,
+        )
+    for artifact in artifacts:
+        require(
+            is_portable_locator(artifact.get("locator")),
+            f"{location}: observation locators must be portable and root-relative",
+            errors,
+        )
+        manifest = artifact.get("manifest", [])
+        if artifact.get("kind") == "file":
+            require(
+                manifest == [],
+                f"{location}: file observations cannot contain directory entries",
+                errors,
+            )
+        if not isinstance(manifest, list):
+            continue
+        locators = [
+            entry.get("locator")
+            for entry in manifest
+            if isinstance(entry, dict)
+        ]
+        require(
+            all(is_portable_locator(locator) for locator in locators),
+            f"{location}: manifest locators must be portable and root-relative",
+            errors,
+        )
+        require(
+            locators == sorted(set(locators)),
+            f"{location}: manifest locators must be unique and sorted",
+            errors,
+        )
+        if artifact.get("kind") != "directory" or len(locators) != len(manifest):
+            continue
+        entries = {
+            entry["locator"]: entry
+            for entry in manifest
+            if isinstance(entry, dict) and isinstance(entry.get("locator"), str)
+        }
+        for locator, entry in entries.items():
+            parent = parent_locator(locator)
+            if parent is not None:
+                require(
+                    parent in entries and entries[parent].get("kind") == "directory",
+                    f"{location}: nested manifest entries require a directory parent",
+                    errors,
+                )
+            if entry.get("kind") == "directory":
+                identity = directory_manifest_identity(locator, entries)
+                require(
+                    identity is not None
+                    and identity == (entry.get("digest"), entry.get("size_bytes")),
+                    f"{location}: directory entry identity conflicts with its children",
+                    errors,
+                )
+        identity = directory_manifest_identity("", entries)
+        require(
+            identity is not None
+            and identity == (artifact.get("digest"), artifact.get("size_bytes")),
+            f"{location}: directory observation identity conflicts with its manifest",
             errors,
         )
 
@@ -747,6 +935,8 @@ def validate_contract_semantics(
     errors: list[str],
 ) -> None:
     validators = {
+        "flow.artifact-bindings/v1": validate_artifact_bindings,
+        "flow.artifact-observations/v1": validate_artifact_observations,
         "flow.extension-manifest/v1": validate_extension_manifest,
         "flow.extension-lock/v1": validate_extension_lock,
         "flow.extension-result/v1": validate_extension_result,
@@ -873,6 +1063,8 @@ def main() -> int:
                 rejected_invalid_instances += 1
 
     expected = {
+        "flow.artifact-bindings/v1",
+        "flow.artifact-observations/v1",
         "flow.artifact/v1",
         "flow.capability/v1",
         "flow.compatibility/v1",

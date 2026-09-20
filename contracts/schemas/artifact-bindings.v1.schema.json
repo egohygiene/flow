@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/artifact-bindings.v1.schema.json",
+  "title": "Flow artifact bindings v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "binding_set_id",
+    "digest_algorithm",
+    "inputs",
+    "outputs"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.artifact-bindings/v1" },
+    "binding_set_id": {
+      "type": "string",
+      "pattern": "^bindings:[a-z0-9][a-z0-9._-]*$"
+    },
+    "digest_algorithm": { "const": "sha256" },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifact_id",
+          "port",
+          "media_type",
+          "kind",
+          "locator",
+          "expected_digest"
+        ],
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "pattern": "^artifact:[a-z0-9][a-z0-9._-]*$"
+          },
+          "port": {
+            "type": "string",
+            "pattern": "^port:[a-z0-9][a-z0-9._-]*$"
+          },
+          "media_type": { "type": "string", "pattern": "^[^/\\s*]+/[^/\\s*]+$" },
+          "kind": { "enum": ["file", "directory"] },
+          "locator": { "type": "string", "minLength": 1 },
+          "expected_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "port", "media_type", "kind", "locator"],
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "pattern": "^artifact:[a-z0-9][a-z0-9._-]*$"
+          },
+          "port": {
+            "type": "string",
+            "pattern": "^port:[a-z0-9][a-z0-9._-]*$"
+          },
+          "media_type": { "type": "string", "pattern": "^[^/\\s*]+/[^/\\s*]+$" },
+          "kind": { "enum": ["file", "directory"] },
+          "locator": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.5.0
+version: 0.6.0
 status: draft
 owners:
   - egohygiene
@@ -68,6 +68,14 @@ topology, typed expectations, resource budgets, provenance, and bounded
 coverage claims. It references other versioned documents by schema and digest.
 It does not duplicate provider algorithms or define runtime plans, durable runs,
 checkpoints, or transition storage.
+
+Artifact bindings remain separate from path-independent extension envelopes.
+A Flow-owned binding set maps immutable input and candidate-output identities to
+logical ports, media types, kinds, and portable root-relative locators for one
+run. A Flow observer computes file or recursive directory identity beneath one
+caller-selected root. Only the separate artifact-acceptance gate can correlate
+those observations with resolved capability, invocation, event, and terminal
+result evidence.
 
 ### External adapters
 
@@ -175,11 +183,13 @@ extension port, Flow-owned event/result validation, and a hermetic no-effects
 reference implementation. Issue #26 / merged PR #27 adds deterministic process
 request framing and host-neutral transcript validation through that same
 acceptance gate. Issue #28 adds a closed scenario manifest, synthetic fixtures,
-and canonical digest drift checks; it does not run those scenarios. Flow does
-not yet supply the public CLI, a production child-process runner, real holon
-adapters, artifact locators, executable verification, enforceable isolation,
-durable run state, checkpoints, interruption, or resume. Structural units
-beyond these library seams remain constraints for later adapter and
+and canonical digest drift checks; it does not run those scenarios. Issue #36
+adds explicit artifact bindings, root-confined host observation, deterministic
+file/directory identity, and an opaque accepted artifact set. Flow does not yet
+supply the public CLI, a production child-process runner, real holon adapters,
+executable verification, provider-native artifact validation, enforceable
+isolation, durable run state, checkpoints, interruption, or resume. Structural
+units beyond these library seams remain constraints for later adapter and
 orchestration work, not claims about current source layout.
 
 ## Open questions
@@ -190,12 +200,12 @@ orchestration work, not claims about current source layout.
 
 ## Validation
 
-Default-branch CI run 35138134331 validates Rust 1.85 and stable library builds,
+Default-branch CI run 35510751421 validates Rust 1.85 and stable library builds,
 closed contract models, deterministic resolution, the hermetic in-process and
-process-transcript seams, and repository architecture metadata at
-`4599c575a1d0eab46352f900bba47cc97201c426`. Issue #28 extends that matrix with
-schema, semantic, adversarial, cross-language digest, example, and packaging
-checks for scenario manifests. Forbidden dependency-edge checks, CLI-thinness,
-real launcher enforcement, artifact acceptance, scenario execution, and
-sandbox conformance remain later gates for their corresponding runtime
-surfaces.
+process-transcript seams, scenario-manifest identity, and repository
+architecture metadata at `aac62ab80c18c936e3a7ebd5f4e70b7845f39faa`.
+Issue #36 extends that matrix with artifact schema, semantic, filesystem, and
+adversarial correlation checks. Forbidden dependency-edge checks,
+CLI-thinness, real launcher enforcement, provider-native artifact validation,
+scenario execution, and sandbox conformance remain later gates for their
+corresponding runtime surfaces.
