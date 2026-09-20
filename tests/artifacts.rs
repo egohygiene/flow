@@ -555,11 +555,7 @@ fn duplicate_artifact_events_and_partial_results_are_not_completion() {
         Err(ArtifactAcceptanceError::Mismatch { .. })
     ));
 
-    let partial = execute(
-        resolved,
-        &invocation,
-        ProviderBehavior::PartialResult,
-    );
+    let partial = execute(resolved, &invocation, ProviderBehavior::PartialResult);
     assert!(matches!(
         accept_artifacts(resolved, &invocation, &partial, &bindings, &observations),
         Err(ArtifactAcceptanceError::Mismatch { .. })
@@ -576,22 +572,10 @@ fn provider_artifact_omissions_and_extras_are_rejected_after_execution_validatio
     let invocation = configured_invocation(resolved, &bindings);
 
     let cases = [
-        (
-            "missing consumed input",
-            ProviderBehavior::OmitInput,
-        ),
-        (
-            "missing produced output",
-            ProviderBehavior::OmitOutput,
-        ),
-        (
-            "missing artifact event",
-            ProviderBehavior::OmitOutputEvent,
-        ),
-        (
-            "undeclared output",
-            ProviderBehavior::ExtraOutput,
-        ),
+        ("missing consumed input", ProviderBehavior::OmitInput),
+        ("missing produced output", ProviderBehavior::OmitOutput),
+        ("missing artifact event", ProviderBehavior::OmitOutputEvent),
+        ("undeclared output", ProviderBehavior::ExtraOutput),
     ];
 
     for (case, behavior) in cases {
