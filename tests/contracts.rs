@@ -82,8 +82,7 @@ fn closed_models_reject_unknown_root_and_nested_fields() {
 
 #[test]
 fn artifact_models_reject_unknown_root_and_nested_fields() {
-    let bindings_source =
-        include_str!("../contracts/examples/artifact-bindings.v1.example.json");
+    let bindings_source = include_str!("../contracts/examples/artifact-bindings.v1.example.json");
     let mut bindings: serde_json::Value = serde_json::from_str(bindings_source).unwrap();
     bindings
         .as_object_mut()
@@ -93,12 +92,9 @@ fn artifact_models_reject_unknown_root_and_nested_fields() {
 
     let observations_source =
         include_str!("../contracts/examples/artifact-observations.v1.example.json");
-    let mut observations: serde_json::Value =
-        serde_json::from_str(observations_source).unwrap();
+    let mut observations: serde_json::Value = serde_json::from_str(observations_source).unwrap();
     observations["artifacts"][1]["manifest"][0]["surprise"] = serde_json::json!(true);
-    assert!(
-        serde_json::from_value::<HostArtifactObservationSet>(observations).is_err()
-    );
+    assert!(serde_json::from_value::<HostArtifactObservationSet>(observations).is_err());
 }
 
 #[test]

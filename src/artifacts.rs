@@ -330,11 +330,12 @@ pub fn observe_artifacts(
     bindings
         .validate()
         .map_err(|source| ArtifactObservationError::InvalidBindings { source })?;
-    let root_metadata = fs::symlink_metadata(root).map_err(|source| ArtifactObservationError::Io {
-        operation: "inspect artifact root",
-        path: display_path(root),
-        source,
-    })?;
+    let root_metadata =
+        fs::symlink_metadata(root).map_err(|source| ArtifactObservationError::Io {
+            operation: "inspect artifact root",
+            path: display_path(root),
+            source,
+        })?;
     if root_metadata.file_type().is_symlink() {
         return Err(ArtifactObservationError::RootSymlink {
             path: display_path(root),
@@ -352,12 +353,12 @@ pub fn observe_artifacts(
     })?;
 
     let mut artifacts = Vec::with_capacity(bindings.inputs.len() + bindings.outputs.len());
-    for binding in bindings.inputs.iter().map(BindingView::from).chain(
-        bindings
-            .outputs
-            .iter()
-            .map(BindingView::from),
-    ) {
+    for binding in bindings
+        .inputs
+        .iter()
+        .map(BindingView::from)
+        .chain(bindings.outputs.iter().map(BindingView::from))
+    {
         artifacts.push(observe_binding(root, &canonical_root, binding)?);
     }
 
@@ -408,8 +409,10 @@ pub fn accept_artifacts(
     )?;
     correlate_execution_context(resolved, invocation, execution)?;
     mismatch(
-        matches!(execution.result().outcome, Outcome::Produced | Outcome::Reused)
-            && !execution.result().partial_result,
+        matches!(
+            execution.result().outcome,
+            Outcome::Produced | Outcome::Reused
+        ) && !execution.result().partial_result,
         "artifact acceptance requires a complete produced or reused result",
     )?;
 
@@ -496,11 +499,11 @@ pub fn accept_artifacts(
 
     let mut accepted_inputs = Vec::with_capacity(bindings.inputs.len());
     for binding in &bindings.inputs {
-        let observation = observed
-            .get(binding.artifact_id.as_str())
-            .ok_or_else(|| ArtifactAcceptanceError::Mismatch {
+        let observation = observed.get(binding.artifact_id.as_str()).ok_or_else(|| {
+            ArtifactAcceptanceError::Mismatch {
                 message: "a declared input has no host observation".to_owned(),
-            })?;
+            }
+        })?;
         correlate_observation(
             &binding.artifact_id,
             &binding.port,
@@ -518,11 +521,11 @@ pub fn accept_artifacts(
 
     let mut accepted_outputs = Vec::with_capacity(bindings.outputs.len());
     for binding in &bindings.outputs {
-        let observation = observed
-            .get(binding.artifact_id.as_str())
-            .ok_or_else(|| ArtifactAcceptanceError::Mismatch {
+        let observation = observed.get(binding.artifact_id.as_str()).ok_or_else(|| {
+            ArtifactAcceptanceError::Mismatch {
                 message: "a declared output has no host observation".to_owned(),
-            })?;
+            }
+        })?;
         correlate_observation(
             &binding.artifact_id,
             &binding.port,
@@ -558,10 +561,7 @@ pub enum ArtifactObservationError {
     #[error("artifact root is not a directory: {path}")]
     RootNotDirectory { path: String },
     #[error("artifact {artifact_id} path contains a symlink at {path}")]
-    Symlink {
-        artifact_id: String,
-        path: String,
-    },
+    Symlink { artifact_id: String, path: String },
     #[error("artifact {artifact_id} is missing at {locator}")]
     Missing {
         artifact_id: String,
@@ -574,15 +574,9 @@ pub enum ArtifactObservationError {
         observed: ArtifactKind,
     },
     #[error("artifact {artifact_id} contains unsupported filesystem node {path}")]
-    UnsupportedNode {
-        artifact_id: String,
-        path: String,
-    },
+    UnsupportedNode { artifact_id: String, path: String },
     #[error("artifact {artifact_id} contains a non-UTF-8 path at {path}")]
-    NonUtf8Path {
-        artifact_id: String,
-        path: String,
-    },
+    NonUtf8Path { artifact_id: String, path: String },
     #[error("artifact {artifact_id} resolved outside the selected root: {locator}")]
     PathEscape {
         artifact_id: String,
@@ -811,9 +805,8 @@ fn observe_node(
         } else {
             format!("{relative}/{file_name}")
         };
-        validate_locator("directory manifest locator", &child_relative).map_err(|source| {
-            ArtifactObservationError::InvalidObservations { source }
-        })?;
+        validate_locator("directory manifest locator", &child_relative)
+            .map_err(|source| ArtifactObservationError::InvalidObservations { source })?;
         let observed = observe_node(&child.path(), &child_relative, artifact_id)?;
         size_bytes = size_bytes
             .checked_add(observed.size_bytes)
@@ -866,7 +859,9 @@ fn digest_file(path: &Path) -> Result<String, ArtifactObservationError> {
     Ok(format!("{:x}", hasher.finalize()))
 }
 
-fn digest_directory(entries: &[DirectoryManifestEntry]) -> Result<String, ArtifactObservationError> {
+fn digest_directory(
+    entries: &[DirectoryManifestEntry],
+) -> Result<String, ArtifactObservationError> {
     let mut entries = entries.iter().collect::<Vec<_>>();
     entries.sort_by(|left, right| left.locator.cmp(&right.locator));
     let canonical = entries
@@ -921,9 +916,8 @@ fn validate_directory_manifest(
             )?;
         }
         if entry.kind == ArtifactKind::Directory {
-            let (digest, size) = manifest_directory_identity(locator, &entries).map_err(|message| {
-                ValidationError::new(format!("{path}.manifest"), message)
-            })?;
+            let (digest, size) = manifest_directory_identity(locator, &entries)
+                .map_err(|message| ValidationError::new(format!("{path}.manifest"), message))?;
             expect(
                 entry.digest == digest && entry.size_bytes == size,
                 format!("{path}.manifest"),
@@ -1040,7 +1034,10 @@ fn validate_binding(
 
 fn validate_media_type(path: &str, value: &str) -> Result<(), ValidationError> {
     let Some((top, subtype)) = value.split_once('/') else {
-        return Err(ValidationError::new(path, "must contain one type separator"));
+        return Err(ValidationError::new(
+            path,
+            "must contain one type separator",
+        ));
     };
     expect(
         !top.is_empty()
@@ -1099,9 +1096,7 @@ fn is_windows_device_name(stem: &str) -> bool {
         || upper
             .strip_prefix("COM")
             .or_else(|| upper.strip_prefix("LPT"))
-            .is_some_and(|suffix| {
-                suffix.len() == 1 && matches!(suffix.as_bytes()[0], b'1'..=b'9')
-            })
+            .is_some_and(|suffix| suffix.len() == 1 && matches!(suffix.as_bytes()[0], b'1'..=b'9'))
 }
 
 fn validate_digest(path: &str, digest: &str) -> Result<(), ValidationError> {
@@ -1171,7 +1166,10 @@ where
         .collect::<Vec<_>>();
     let expected = expected.into_iter().collect::<HashSet<_>>();
     let actual_unique = actual.iter().copied().collect::<HashSet<_>>();
-    mismatch(actual.len() == expected.len() && actual_unique == expected, message)
+    mismatch(
+        actual.len() == expected.len() && actual_unique == expected,
+        message,
+    )
 }
 
 fn mismatch(condition: bool, message: &str) -> Result<(), ArtifactAcceptanceError> {

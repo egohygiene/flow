@@ -6,8 +6,8 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 use flow::{
     ARTIFACT_BINDINGS_V1, ArtifactAcceptanceError, ArtifactBindingSet, ArtifactKind,
-    ArtifactObservationError, DIRECTORY_MANIFEST_V1, EventKind, EventSink, EventState,
-    EXTENSION_EVENT_V1, EXTENSION_RESULT_V1, ExtensionEvent, ExtensionInvocation, ExtensionPort,
+    ArtifactObservationError, DIRECTORY_MANIFEST_V1, EXTENSION_EVENT_V1, EXTENSION_RESULT_V1,
+    EventKind, EventSink, EventState, ExtensionEvent, ExtensionInvocation, ExtensionPort,
     ExtensionResult, Failure, FailureClassification, InputArtifact, InputArtifactBinding,
     Orchestrator, Outcome, OutputArtifactBinding, PortError, PortIdentity, Progress, SHA256,
     ValidatedExecution, accept_artifacts, observe_artifacts,
@@ -205,7 +205,11 @@ fn event(
         kind,
         state,
         progress: Progress {
-            completed: if kind == EventKind::PhaseStarted { 0 } else { 1 },
+            completed: if kind == EventKind::PhaseStarted {
+                0
+            } else {
+                1
+            },
             total: 1,
             unit: "artifact-set".to_owned(),
         },
@@ -217,14 +221,16 @@ fn event(
 
 fn fixture() -> (TestRoot, ArtifactBindingSet) {
     let root = TestRoot::new();
-    fs::create_dir_all(root.path().join("inputs"))
-        .expect("input parent directory must be created");
+    fs::create_dir_all(root.path().join("inputs")).expect("input parent directory must be created");
     fs::create_dir_all(root.path().join("outputs/report bundle/nested"))
         .expect("output directory tree must be created");
 
     let input_bytes = br#"{"collection":"synthetic"}"#;
-    fs::write(root.path().join("inputs/source collection.json"), input_bytes)
-        .expect("input fixture must be written");
+    fs::write(
+        root.path().join("inputs/source collection.json"),
+        input_bytes,
+    )
+    .expect("input fixture must be written");
     fs::write(
         root.path().join("outputs/report bundle/alpha.txt"),
         b"alpha\n",
@@ -348,7 +354,10 @@ fn portable_locator_rules_reject_ambiguous_and_escaping_paths() {
     ] {
         let mut invalid = bindings.clone();
         locator.clone_into(&mut invalid.inputs[0].locator);
-        assert!(invalid.validate().is_err(), "locator should fail: {locator}");
+        assert!(
+            invalid.validate().is_err(),
+            "locator should fail: {locator}"
+        );
     }
 }
 
@@ -395,7 +404,10 @@ fn symlinks_are_rejected_without_following_their_targets() {
     let linked_root = root.path().with_extension("link");
     symlink(root.path(), &linked_root).unwrap();
     let error = observe_artifacts(&linked_root, &original_bindings).unwrap_err();
-    assert!(matches!(error, ArtifactObservationError::RootSymlink { .. }));
+    assert!(matches!(
+        error,
+        ArtifactObservationError::RootSymlink { .. }
+    ));
     fs::remove_file(linked_root).unwrap();
 }
 
@@ -619,13 +631,7 @@ fn provider_artifact_omissions_and_extras_are_rejected_after_execution_validatio
         let execution = execute(resolved, &invocation, behavior);
         assert!(
             matches!(
-                accept_artifacts(
-                    resolved,
-                    &invocation,
-                    &execution,
-                    &bindings,
-                    &observations
-                ),
+                accept_artifacts(resolved, &invocation, &execution, &bindings, &observations),
                 Err(ArtifactAcceptanceError::Mismatch { .. })
             ),
             "provider case should fail artifact acceptance: {case}"
