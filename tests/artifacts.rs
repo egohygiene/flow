@@ -49,27 +49,16 @@ impl Drop for TestRoot {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
-struct ProviderBehavior {
-    consume_input: bool,
-    duplicate_output_event: bool,
-    emit_output_event: bool,
-    extra_output: bool,
-    partial_result: bool,
-    produce_output: bool,
-}
-
-impl Default for ProviderBehavior {
-    fn default() -> Self {
-        Self {
-            consume_input: true,
-            duplicate_output_event: false,
-            emit_output_event: true,
-            extra_output: false,
-            partial_result: false,
-            produce_output: true,
-        }
-    }
+#[derive(Clone, Copy, Debug, Default)]
+enum ProviderBehavior {
+    #[default]
+    Complete,
+    DuplicateOutputEvent,
+    ExtraOutput,
+    OmitInput,
+    OmitOutput,
+    OmitOutputEvent,
+    PartialResult,
 }
 
 struct ArtifactPort {
@@ -89,7 +78,7 @@ impl ExtensionPort for ArtifactPort {
     ) -> Result<ExtensionResult, PortError> {
         emit(
             events,
-            event(
+            &event(
                 invocation,
                 "started",
                 0,
@@ -98,20 +87,20 @@ impl ExtensionPort for ArtifactPort {
                 Vec::new(),
             ),
         )?;
-        let mut output_ids = if self.behavior.produce_output {
-            vec![OUTPUT_ID.to_owned()]
-        } else {
+        let mut output_ids = if matches!(self.behavior, ProviderBehavior::OmitOutput) {
             Vec::new()
+        } else {
+            vec![OUTPUT_ID.to_owned()]
         };
-        if self.behavior.extra_output {
+        if matches!(self.behavior, ProviderBehavior::ExtraOutput) {
             output_ids.push("artifact:undeclared".to_owned());
         }
 
         let mut terminal_sequence = 1;
-        if self.behavior.emit_output_event && !output_ids.is_empty() {
+        if !matches!(self.behavior, ProviderBehavior::OmitOutputEvent) && !output_ids.is_empty() {
             emit(
                 events,
-                event(
+                &event(
                     invocation,
                     "artifact",
                     terminal_sequence,
@@ -122,10 +111,10 @@ impl ExtensionPort for ArtifactPort {
             )?;
             terminal_sequence += 1;
         }
-        if self.behavior.duplicate_output_event {
+        if matches!(self.behavior, ProviderBehavior::DuplicateOutputEvent) {
             emit(
                 events,
-                event(
+                &event(
                     invocation,
                     "artifact-duplicate",
                     terminal_sequence,
@@ -138,7 +127,7 @@ impl ExtensionPort for ArtifactPort {
         }
         emit(
             events,
-            event(
+            &event(
                 invocation,
                 "completed",
                 terminal_sequence,
@@ -159,11 +148,11 @@ impl ExtensionPort for ArtifactPort {
             configuration_digest: invocation.configuration.digest.clone(),
             authorization_id: invocation.authorization.authorization_id.clone(),
             outcome: Outcome::Produced,
-            partial_result: self.behavior.partial_result,
-            consumed_artifacts: if self.behavior.consume_input {
-                vec![INPUT_ID.to_owned()]
-            } else {
+            partial_result: matches!(self.behavior, ProviderBehavior::PartialResult),
+            consumed_artifacts: if matches!(self.behavior, ProviderBehavior::OmitInput) {
                 Vec::new()
+            } else {
+                vec![INPUT_ID.to_owned()]
             },
             produced_artifacts: output_ids,
             validations: Vec::new(),
@@ -181,9 +170,9 @@ impl ExtensionPort for ArtifactPort {
     }
 }
 
-fn emit(events: &mut dyn EventSink, event: ExtensionEvent) -> Result<(), PortError> {
+fn emit(events: &mut dyn EventSink, event: &ExtensionEvent) -> Result<(), PortError> {
     events
-        .emit(&event)
+        .emit(event)
         .map_err(|error| PortError::new(error.to_string()))
 }
 
@@ -205,11 +194,7 @@ fn event(
         kind,
         state,
         progress: Progress {
-            completed: if kind == EventKind::PhaseStarted {
-                0
-            } else {
-                1
-            },
+            completed: u64::from(kind != EventKind::PhaseStarted),
             total: 1,
             unit: "artifact-set".to_owned(),
         },
@@ -563,10 +548,7 @@ fn duplicate_artifact_events_and_partial_results_are_not_completion() {
     let duplicate = execute(
         resolved,
         &invocation,
-        ProviderBehavior {
-            duplicate_output_event: true,
-            ..ProviderBehavior::default()
-        },
+        ProviderBehavior::DuplicateOutputEvent,
     );
     assert!(matches!(
         accept_artifacts(resolved, &invocation, &duplicate, &bindings, &observations),
@@ -576,10 +558,7 @@ fn duplicate_artifact_events_and_partial_results_are_not_completion() {
     let partial = execute(
         resolved,
         &invocation,
-        ProviderBehavior {
-            partial_result: true,
-            ..ProviderBehavior::default()
-        },
+        ProviderBehavior::PartialResult,
     );
     assert!(matches!(
         accept_artifacts(resolved, &invocation, &partial, &bindings, &observations),
@@ -599,31 +578,19 @@ fn provider_artifact_omissions_and_extras_are_rejected_after_execution_validatio
     let cases = [
         (
             "missing consumed input",
-            ProviderBehavior {
-                consume_input: false,
-                ..ProviderBehavior::default()
-            },
+            ProviderBehavior::OmitInput,
         ),
         (
             "missing produced output",
-            ProviderBehavior {
-                produce_output: false,
-                ..ProviderBehavior::default()
-            },
+            ProviderBehavior::OmitOutput,
         ),
         (
             "missing artifact event",
-            ProviderBehavior {
-                emit_output_event: false,
-                ..ProviderBehavior::default()
-            },
+            ProviderBehavior::OmitOutputEvent,
         ),
         (
             "undeclared output",
-            ProviderBehavior {
-                extra_output: true,
-                ..ProviderBehavior::default()
-            },
+            ProviderBehavior::ExtraOutput,
         ),
     ];
 
