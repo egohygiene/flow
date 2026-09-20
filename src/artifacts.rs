@@ -1160,10 +1160,7 @@ where
     T: AsRef<str>,
     I: IntoIterator<Item = &'a str>,
 {
-    let actual = actual
-        .iter()
-        .map(AsRef::as_ref)
-        .collect::<Vec<_>>();
+    let actual = actual.iter().map(AsRef::as_ref).collect::<Vec<_>>();
     let expected = expected.into_iter().collect::<HashSet<_>>();
     let actual_unique = actual.iter().copied().collect::<HashSet<_>>();
     mismatch(
