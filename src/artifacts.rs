@@ -842,7 +842,7 @@ fn digest_file(path: &Path) -> Result<String, ArtifactObservationError> {
         source,
     })?;
     let mut hasher = Sha256::new();
-    let mut buffer = [0_u8; 64 * 1024];
+    let mut buffer = [0_u8; 16 * 1024];
     loop {
         let count = file
             .read(&mut buffer)
@@ -1162,7 +1162,7 @@ where
 {
     let actual = actual
         .iter()
-        .map(|value| value.as_ref())
+        .map(AsRef::as_ref)
         .collect::<Vec<_>>();
     let expected = expected.into_iter().collect::<HashSet<_>>();
     let actual_unique = actual.iter().copied().collect::<HashSet<_>>();
