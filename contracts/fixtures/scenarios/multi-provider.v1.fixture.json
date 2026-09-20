@@ -1,0 +1,137 @@
+{
+  "schema_version": "flow.scenario-manifest/v1",
+  "scenario_id": "scenario:multi-provider-handoff",
+  "fixture_id": "fixture:multi-provider-handoff-v1",
+  "fixture_version": "1.0.0",
+  "title": "Hermetic multi-provider handoff",
+  "description": "Describes an ordered inspect-then-render handoff through two independently identified synthetic providers.",
+  "fixture_class": "valid",
+  "tags": ["clean-room", "multi-provider", "success"],
+  "inputs": [
+    {
+      "artifact_id": "source-document",
+      "media_type": "application/vnd.egohygiene.synthetic-document+json",
+      "artifact_contract": {
+        "schema_version": "flow.artifact/v1",
+        "digest": "1010101010101010101010101010101010101010101010101010101010101010"
+      },
+      "source": {
+        "kind": "generated",
+        "locator": "contracts/fixtures/scenarios/sources/synthetic-document.json",
+        "revision": "sha256:5bfe759813eb9ce719cf28e03f192e8703818caf4f803011006273a388c0c320",
+        "digest": "5bfe759813eb9ce719cf28e03f192e8703818caf4f803011006273a388c0c320",
+        "license": "CC0-1.0",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "multi-provider-handoff-v1",
+          "parameters_digest": "5f5f5dfedeb1e12c5fde4c98b4f1fe4da5a9b56015ee09343a68a1ea7398083a"
+        }
+      }
+    }
+  ],
+  "providers": [
+    {
+      "provider_id": "org.egohygiene.synthetic-inspector",
+      "version": "0.1.0",
+      "interface": "process",
+      "manifest": {
+        "schema_version": "flow.extension-manifest/v1",
+        "digest": "5050505050505050505050505050505050505050505050505050505050505050"
+      },
+      "package": {
+        "kind": "generated",
+        "locator": "flow::scenario::fixtures::multi_provider_inspector",
+        "revision": "sha256:6060606060606060606060606060606060606060606060606060606060606060",
+        "digest": "7070707070707070707070707070707070707070707070707070707070707070",
+        "license": "MIT",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "multi-provider-inspector-v1",
+          "parameters_digest": "6161616161616161616161616161616161616161616161616161616161616161"
+        }
+      },
+      "required_capabilities": ["optiflow/inspect-artifact"]
+    },
+    {
+      "provider_id": "org.egohygiene.synthetic-renderer",
+      "version": "0.1.0",
+      "interface": "process",
+      "manifest": {
+        "schema_version": "flow.extension-manifest/v1",
+        "digest": "8080808080808080808080808080808080808080808080808080808080808080"
+      },
+      "package": {
+        "kind": "generated",
+        "locator": "flow::scenario::fixtures::multi_provider_renderer",
+        "revision": "sha256:9090909090909090909090909090909090909090909090909090909090909090",
+        "digest": "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+        "license": "MIT",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "multi-provider-renderer-v1",
+          "parameters_digest": "9191919191919191919191919191919191919191919191919191919191919191"
+        }
+      },
+      "required_capabilities": ["renderflow/render-synthetic-document"]
+    }
+  ],
+  "stages": [
+    {
+      "stage_id": "inspect",
+      "provider_id": "org.egohygiene.synthetic-inspector",
+      "capability_id": "optiflow/inspect-artifact",
+      "depends_on": [],
+      "consumes": ["source-document"],
+      "produces": ["inspection-evidence"],
+      "required": true
+    },
+    {
+      "stage_id": "render",
+      "provider_id": "org.egohygiene.synthetic-renderer",
+      "capability_id": "renderflow/render-synthetic-document",
+      "depends_on": ["inspect"],
+      "consumes": ["inspection-evidence", "source-document"],
+      "produces": ["rendered-document"],
+      "required": true
+    }
+  ],
+  "expectation": {
+    "terminal_state": "complete",
+    "evidence_state": "complete",
+    "expected_artifacts": ["inspection-evidence", "rendered-document"],
+    "expected_diagnostics": [],
+    "evidence_refs": [
+      {
+        "schema_version": "flow.extension-result/v1",
+        "digest": "b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0"
+      }
+    ],
+    "state_trace_refs": []
+  },
+  "execution": {
+    "tier": "pull-request",
+    "clean_room": true,
+    "network_mode": "denied",
+    "external_services": [],
+    "budget": {
+      "timeout_ms": 10000,
+      "max_memory_bytes": 134217728,
+      "max_stdout_bytes": 131072,
+      "max_stderr_bytes": 131072,
+      "max_artifact_bytes": 2097152,
+      "max_artifacts": 8
+    }
+  },
+  "coverage": {
+    "claim": "scenario-only",
+    "covered_behaviors": [
+      "cross-provider immutable artifact handoff",
+      "deterministic topological stage order",
+      "two-provider capability references"
+    ],
+    "known_gaps": ["Uses synthetic package references rather than released holon binaries."]
+  }
+}

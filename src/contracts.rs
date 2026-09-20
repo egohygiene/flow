@@ -1723,7 +1723,7 @@ where
     requested.iter().all(|item| granted.contains(item))
 }
 
-fn is_extension_id(value: &str) -> bool {
+pub(crate) fn is_extension_id(value: &str) -> bool {
     let mut segments = value.split('.');
     let Some(first) = segments.next() else {
         return false;
@@ -1752,7 +1752,7 @@ fn is_identifier_segment(value: &str, allow_hyphen: bool) -> bool {
         })
 }
 
-fn is_capability_id(value: &str) -> bool {
+pub(crate) fn is_capability_id(value: &str) -> bool {
     let Some((owner, name)) = value.split_once('/') else {
         return false;
     };

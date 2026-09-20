@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import sys
@@ -13,7 +14,11 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACTS = ROOT / "contracts"
 MANIFEST = CONTRACTS / "contract-set.v1.json"
+SCENARIO_DIGESTS = CONTRACTS / "fixtures" / "scenarios" / "canonical-digests.v1.json"
 SEMVER = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
+CONTRACT_FAMILY = re.compile(r"^flow\.[a-z-]+/v([1-9][0-9]{0,19})$")
+LOWER_SHA256 = re.compile(r"^[a-f0-9]{64}$")
+U64_MAX = 18_446_744_073_709_551_615
 
 
 def load_object(path: Path) -> dict[str, Any]:
@@ -27,6 +32,19 @@ def load_object(path: Path) -> dict[str, Any]:
 def require(condition: bool, message: str, errors: list[str]) -> None:
     if not condition:
         errors.append(message)
+
+
+def is_strict_semver(value: Any) -> bool:
+    if not isinstance(value, str) or SEMVER.fullmatch(value) is None:
+        return False
+    return all(int(component) <= U64_MAX for component in value.split("."))
+
+
+def is_contract_family(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    match = CONTRACT_FAMILY.fullmatch(value)
+    return match is not None and int(match.group(1)) <= U64_MAX
 
 
 def validate_instance(
@@ -59,6 +77,8 @@ def validate_instance(
             require(bool(re.search(schema["pattern"], instance)), f"{location}: does not match pattern", errors)
     if isinstance(instance, int) and not isinstance(instance, bool) and "minimum" in schema:
         require(instance >= schema["minimum"], f"{location}: below minimum", errors)
+    if isinstance(instance, int) and not isinstance(instance, bool) and "maximum" in schema:
+        require(instance <= schema["maximum"], f"{location}: above maximum", errors)
 
     if isinstance(instance, dict):
         required = schema.get("required", [])
@@ -350,6 +370,376 @@ def validate_extension_resolution(
         )
 
 
+def validate_scenario_manifest(
+    scenario: dict[str, Any],
+    location: str,
+    errors: list[str],
+) -> None:
+    """Validate scenario graph, evidence, and execution invariants."""
+    require(
+        is_strict_semver(scenario.get("fixture_version")),
+        f"{location}: fixture_version exceeds strict semantic-version bounds",
+        errors,
+    )
+    raw_inputs = scenario.get("inputs", [])
+    raw_providers = scenario.get("providers", [])
+    raw_stages = scenario.get("stages", [])
+    inputs = [
+        value
+        for value in (raw_inputs if isinstance(raw_inputs, list) else [])
+        if isinstance(value, dict)
+    ]
+    providers = [
+        value
+        for value in (raw_providers if isinstance(raw_providers, list) else [])
+        if isinstance(value, dict)
+    ]
+    stages = [
+        value
+        for value in (raw_stages if isinstance(raw_stages, list) else [])
+        if isinstance(value, dict)
+    ]
+
+    input_ids = [
+        value.get("artifact_id")
+        for value in inputs
+        if isinstance(value.get("artifact_id"), str)
+    ]
+    provider_ids = [
+        value.get("provider_id")
+        for value in providers
+        if isinstance(value.get("provider_id"), str)
+    ]
+    stage_ids = [
+        value.get("stage_id")
+        for value in stages
+        if isinstance(value.get("stage_id"), str)
+    ]
+    require(
+        len(input_ids) == len(set(input_ids)),
+        f"{location}: input artifact identifiers must be unique",
+        errors,
+    )
+    require(
+        len(provider_ids) == len(set(provider_ids)),
+        f"{location}: provider identifiers must be unique",
+        errors,
+    )
+    require(
+        len(stage_ids) == len(set(stage_ids)),
+        f"{location}: stage identifiers must be unique",
+        errors,
+    )
+
+    for owner, source in [
+        *[(f"input {value.get('artifact_id')}", value.get("source")) for value in inputs],
+        *[(f"provider {value.get('provider_id')}", value.get("package")) for value in providers],
+    ]:
+        if not isinstance(source, dict):
+            continue
+        kind = source.get("kind")
+        generator = source.get("generator")
+        require(
+            (kind == "generated" and isinstance(generator, dict))
+            or (
+                isinstance(kind, str)
+                and kind in {"vendored", "released"}
+                and generator is None
+            ),
+            f"{location}: {owner} source kind and generator provenance disagree",
+            errors,
+        )
+        if isinstance(generator, dict):
+            require(
+                is_strict_semver(generator.get("version")),
+                f"{location}: {owner} generator version exceeds semantic-version bounds",
+                errors,
+            )
+
+    for provider in providers:
+        require(
+            is_strict_semver(provider.get("version")),
+            f"{location}: provider version exceeds strict semantic-version bounds",
+            errors,
+        )
+
+    providers_by_id = {
+        provider.get("provider_id"): provider
+        for provider in providers
+        if isinstance(provider.get("provider_id"), str)
+    }
+    known_stages: set[str] = set()
+    ancestors: dict[str, set[str]] = {}
+    available_artifacts: dict[str, str | None] = {
+        artifact_id: None for artifact_id in input_ids if isinstance(artifact_id, str)
+    }
+    for index, stage in enumerate(stages):
+        stage_id = stage.get("stage_id")
+        provider_id = stage.get("provider_id")
+        capability_id = stage.get("capability_id")
+        provider = (
+            providers_by_id.get(provider_id)
+            if isinstance(provider_id, str)
+            else None
+        )
+        require(
+            provider is not None,
+            f"{location}: stage {stage_id} references unknown provider {provider_id}",
+            errors,
+        )
+        if isinstance(provider, dict):
+            required_capabilities = provider.get("required_capabilities", [])
+            require(
+                isinstance(required_capabilities, list)
+                and capability_id in required_capabilities,
+                f"{location}: stage {stage_id} capability is not declared by its provider",
+                errors,
+            )
+
+        stage_ancestors: set[str] = set()
+        dependencies = stage.get("depends_on", [])
+        for dependency in dependencies if isinstance(dependencies, list) else []:
+            if not isinstance(dependency, str):
+                continue
+            require(
+                dependency in known_stages,
+                f"{location}: stage {stage_id} dependency {dependency} must be earlier",
+                errors,
+            )
+            if dependency in known_stages:
+                stage_ancestors.add(dependency)
+                stage_ancestors.update(ancestors.get(dependency, set()))
+
+        consumed = stage.get("consumes", [])
+        for artifact_id in consumed if isinstance(consumed, list) else []:
+            if not isinstance(artifact_id, str):
+                continue
+            require(
+                artifact_id in available_artifacts,
+                f"{location}: stage {stage_id} consumes unknown artifact {artifact_id}",
+                errors,
+            )
+            producer = available_artifacts.get(artifact_id)
+            require(
+                producer is None or producer in stage_ancestors,
+                f"{location}: stage {stage_id} must depend on producer {producer}",
+                errors,
+            )
+        produced = stage.get("produces", [])
+        for artifact_id in produced if isinstance(produced, list) else []:
+            if not isinstance(artifact_id, str):
+                continue
+            require(
+                artifact_id not in available_artifacts,
+                f"{location}: artifact {artifact_id} is declared more than once",
+                errors,
+            )
+            if isinstance(artifact_id, str):
+                available_artifacts[artifact_id] = stage_id
+        if isinstance(stage_id, str):
+            known_stages.add(stage_id)
+            ancestors[stage_id] = stage_ancestors
+
+    expectation = scenario.get("expectation", {})
+    if isinstance(expectation, dict):
+        terminal_state = expectation.get("terminal_state")
+        evidence_state = expectation.get("evidence_state")
+        allowed_states = {
+            "complete": {"complete", "observed-empty"},
+            "partial": {"incomplete"},
+            "unavailable": {"unavailable"},
+            "unsupported": {"unsupported"},
+            "invalid": {"invalid"},
+            "failed": {"failed"},
+            "interrupted": {"incomplete"},
+        }
+        require(
+            evidence_state
+            in (
+                allowed_states.get(terminal_state, set())
+                if isinstance(terminal_state, str)
+                else set()
+            ),
+            f"{location}: terminal and evidence states are contradictory",
+            errors,
+        )
+        raw_expected_artifacts = expectation.get("expected_artifacts", [])
+        expected_artifacts = (
+            raw_expected_artifacts
+            if isinstance(raw_expected_artifacts, list)
+            else []
+        )
+        require(
+            all(
+                isinstance(artifact_id, str) and artifact_id in available_artifacts
+                for artifact_id in expected_artifacts
+            ),
+            f"{location}: expected artifacts must reference declared artifacts",
+            errors,
+        )
+        require(
+            evidence_state != "observed-empty" or expected_artifacts == [],
+            f"{location}: observed-empty evidence cannot claim artifacts",
+            errors,
+        )
+        for field in ("evidence_refs", "state_trace_refs"):
+            raw_references = expectation.get(field, [])
+            for reference in raw_references if isinstance(raw_references, list) else []:
+                if isinstance(reference, dict):
+                    require(
+                        is_contract_family(reference.get("schema_version")),
+                        f"{location}: {field} contains an invalid contract family",
+                        errors,
+                    )
+
+    execution = scenario.get("execution", {})
+    if isinstance(execution, dict):
+        network_mode = execution.get("network_mode")
+        external_services = execution.get("external_services", [])
+        clean_room = execution.get("clean_room")
+        require(
+            network_mode != "denied" or external_services == [],
+            f"{location}: network-denied execution cannot declare external services",
+            errors,
+        )
+        require(
+            network_mode != "allowlisted" or bool(external_services),
+            f"{location}: allowlisted network execution must name services",
+            errors,
+        )
+        require(
+            not clean_room or (network_mode == "denied" and external_services == []),
+            f"{location}: clean-room execution must deny network and services",
+            errors,
+        )
+        require(
+            execution.get("tier") != "pull-request" or clean_room is True,
+            f"{location}: pull-request scenarios must be clean-room",
+            errors,
+        )
+
+    coverage = scenario.get("coverage", {})
+    if isinstance(coverage, dict):
+        require(
+            bool(coverage.get("covered_behaviors")),
+            f"{location}: covered_behaviors must not be empty",
+            errors,
+        )
+
+
+def normalize_scenario(scenario: dict[str, Any]) -> dict[str, Any]:
+    """Normalize set-like arrays while preserving contract-significant stages."""
+    normalized = json.loads(json.dumps(scenario))
+    normalized["tags"] = sorted(normalized.get("tags", []))
+    normalized["inputs"] = sorted(
+        normalized.get("inputs", []), key=lambda value: value.get("artifact_id", "")
+    )
+    normalized["providers"] = sorted(
+        normalized.get("providers", []), key=lambda value: value.get("provider_id", "")
+    )
+    for provider in normalized.get("providers", []):
+        provider["required_capabilities"] = sorted(
+            provider.get("required_capabilities", [])
+        )
+    for stage in normalized.get("stages", []):
+        for field in ("depends_on", "consumes", "produces"):
+            stage[field] = sorted(stage.get(field, []))
+    expectation = normalized.get("expectation", {})
+    for field in ("expected_artifacts", "expected_diagnostics"):
+        expectation[field] = sorted(expectation.get(field, []))
+    for field in ("evidence_refs", "state_trace_refs"):
+        expectation[field] = sorted(
+            expectation.get(field, []),
+            key=lambda value: (value.get("schema_version", ""), value.get("digest", "")),
+        )
+    execution = normalized.get("execution", {})
+    execution["external_services"] = sorted(execution.get("external_services", []))
+    coverage = normalized.get("coverage", {})
+    coverage["covered_behaviors"] = sorted(coverage.get("covered_behaviors", []))
+    coverage["known_gaps"] = sorted(coverage.get("known_gaps", []))
+    return normalized
+
+
+def canonical_scenario_digest(scenario: dict[str, Any]) -> str:
+    payload = json.dumps(
+        normalize_scenario(scenario),
+        ensure_ascii=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def validate_scenario_digests(
+    scenario_paths: list[Path],
+    errors: list[str],
+) -> None:
+    require(SCENARIO_DIGESTS.is_file(), "missing scenario canonical digest catalog", errors)
+    if not SCENARIO_DIGESTS.is_file():
+        return
+    catalog = load_object(SCENARIO_DIGESTS)
+    require(
+        set(catalog) == {"schema_version", "canonicalization", "algorithm", "entries"},
+        "scenario canonical digest catalog has unexpected fields",
+        errors,
+    )
+    require(
+        catalog.get("schema_version") == "flow.scenario-digests/v1",
+        "scenario canonical digest catalog has the wrong schema version",
+        errors,
+    )
+    require(
+        catalog.get("canonicalization") == "flow.canonical-json/v1",
+        "scenario canonical digest catalog has the wrong canonicalization",
+        errors,
+    )
+    require(catalog.get("algorithm") == "sha256", "scenario digests must use sha256", errors)
+    entries = catalog.get("entries", [])
+    require(isinstance(entries, list), "scenario digest entries must be an array", errors)
+    entry_values = entries if isinstance(entries, list) else []
+    expected_paths = {str(path.relative_to(CONTRACTS)) for path in scenario_paths}
+    entry_paths = [
+        entry.get("path")
+        for entry in entry_values
+        if isinstance(entry, dict) and isinstance(entry.get("path"), str)
+    ]
+    actual_paths = set(entry_paths)
+    require(
+        len(entry_paths) == len(actual_paths),
+        "scenario canonical digest catalog cannot contain duplicate paths",
+        errors,
+    )
+    require(
+        actual_paths == expected_paths,
+        "scenario canonical digest catalog must cover every positive scenario exactly",
+        errors,
+    )
+    for entry in entry_values:
+        if not isinstance(entry, dict):
+            errors.append("every scenario digest entry must be an object")
+            continue
+        require(
+            set(entry) == {"path", "digest"},
+            "scenario digest entry has unexpected fields",
+            errors,
+        )
+        relative = entry.get("path")
+        digest = entry.get("digest")
+        require(
+            isinstance(digest, str) and LOWER_SHA256.fullmatch(digest) is not None,
+            "scenario digest must be 64 lowercase hexadecimal characters",
+            errors,
+        )
+        if not isinstance(relative, str) or relative not in expected_paths:
+            continue
+        actual = canonical_scenario_digest(load_object(CONTRACTS / relative))
+        require(
+            digest == actual,
+            f"{relative}: canonical digest drift (expected {digest}, actual {actual})",
+            errors,
+        )
+
+
 def validate_contract_semantics(
     contract_id: str,
     instance: dict[str, Any],
@@ -361,6 +751,7 @@ def validate_contract_semantics(
         "flow.extension-lock/v1": validate_extension_lock,
         "flow.extension-result/v1": validate_extension_result,
         "flow.extension-resolution/v1": validate_extension_resolution,
+        "flow.scenario-manifest/v1": validate_scenario_manifest,
     }
     validator = validators.get(contract_id)
     if validator is not None:
@@ -371,6 +762,7 @@ def main() -> int:
     errors: list[str] = []
     positive_instances = 0
     rejected_invalid_instances = 0
+    scenario_paths: list[Path] = []
     manifest = load_object(MANIFEST)
     require(manifest.get("schema_version") == "flow.contract-set/v1", "manifest schema_version must be flow.contract-set/v1", errors)
     require(bool(SEMVER.fullmatch(str(manifest.get("contract_set_version", "")))), "contract_set_version must be semantic versioning", errors)
@@ -401,9 +793,15 @@ def main() -> int:
         require(schema.get("$schema") == "https://json-schema.org/draft/2020-12/schema", f"{schema_path.name}: unsupported JSON Schema draft", errors)
         require(schema.get("type") == "object", f"{schema_path.name}: root type must be object", errors)
         require(schema.get("additionalProperties") is False, f"{schema_path.name}: root must reject unknown properties", errors)
+        errors_before_instance = len(errors)
         require(example.get("schema_version") == contract_id, f"{example_path.name}: schema_version must match {contract_id}", errors)
         validate_instance(example, schema, example_path.name, errors)
         validate_contract_semantics(contract_id, example, example_path.name, errors)
+        if (
+            contract_id == "flow.scenario-manifest/v1"
+            and len(errors) == errors_before_instance
+        ):
+            scenario_paths.append(example_path)
         positive_instances += 1
 
         fixtures = entry.get("fixtures", [])
@@ -422,6 +820,7 @@ def main() -> int:
             if not fixture_path.is_file():
                 continue
             fixture = load_object(fixture_path)
+            errors_before_instance = len(errors)
             require(
                 fixture.get("schema_version") == contract_id,
                 f"{fixture_path.name}: schema_version must match {contract_id}",
@@ -434,6 +833,11 @@ def main() -> int:
                 fixture_path.name,
                 errors,
             )
+            if (
+                contract_id == "flow.scenario-manifest/v1"
+                and len(errors) == errors_before_instance
+            ):
+                scenario_paths.append(fixture_path)
             positive_instances += 1
 
         invalid_examples = entry.get("invalid_examples", [])
@@ -478,8 +882,10 @@ def main() -> int:
         "flow.extension-manifest/v1",
         "flow.extension-resolution/v1",
         "flow.extension-result/v1",
+        "flow.scenario-manifest/v1",
     }
     require(seen == expected, f"contract ids must be exactly {sorted(expected)}", errors)
+    validate_scenario_digests(scenario_paths, errors)
 
     if errors:
         for error in errors:

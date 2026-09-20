@@ -55,6 +55,9 @@ jobs:
       - name: Run hermetic process transport example
         run: cargo run --example hermetic_process_transport --locked
 
+      - name: Run scenario manifest example
+        run: cargo run --example scenario_manifest --locked
+
       - name: Verify package contents
         run: cargo package --locked
 
@@ -75,6 +78,9 @@ jobs:
 
       - name: Validate contracts
         run: python3 tools/validate_contracts.py
+
+      - name: Check deterministic scenario sources
+        run: python3 tools/generate_scenario_sources.py --check
 
       - name: Validate architecture specifications
         run: python3 .agents/specs/validate-specs.py

@@ -1,7 +1,7 @@
 # Flow contract set
 
 This directory contains Flow-owned suite interchange contracts. The initial
-contract set is version `0.2.0`, status `provisional`, in the v1 compatibility
+contract set is version `0.3.0`, status `provisional`, in the v1 compatibility
 family. Provisional means versioned and testable, not stable for production.
 
 | Contract | Purpose |
@@ -15,11 +15,13 @@ family. Provisional means versioned and testable, not stable for production.
 | `flow.extension-event/v1` | ordered lifecycle progress, diagnostics, artifacts, checkpoints, and state |
 | `flow.extension-result/v1` | partial/final outcomes, failures, validation, provenance, and explanation |
 | `flow.extension-resolution/v1` | deterministic selection, rejection, conflict, and fallback evidence |
+| `flow.scenario-manifest/v1` | stable scenario identity, immutable fixture topology, typed expectations, execution budgets, and bounded coverage claims |
 
 `contract-set.v1.json` is the machine-readable index. Schemas live in
-`schemas/`, deterministic examples live in `examples/`, and extension
-compatibility fixtures live in `fixtures/extensions/`. Invalid fixtures are
-expected to fail their target schema and are checked by the validator.
+`schemas/`; deterministic examples live in `examples/`; extension compatibility
+fixtures live in `fixtures/extensions/`; and orchestration fixtures live in
+`fixtures/scenarios/`. Invalid fixtures are expected to fail their target schema
+or semantic invariants and are checked by the validator.
 
 The extension contracts are described in
 [`docs/integrations/extension-contract.md`](../docs/integrations/extension-contract.md).
@@ -31,6 +33,12 @@ rather than introducing a wrapper contract. The provisional JSON Lines wire
 rules and host-neutral acceptance boundary are specified in
 [`docs/integrations/process-transport.md`](../docs/integrations/process-transport.md).
 Wire whitespace and caller read chunking are not contract identity.
+
+The scenario manifest and its canonical identity profile are described in
+[`docs/integrations/scenario-fixtures.md`](../docs/integrations/scenario-fixtures.md).
+The Rust and Python implementations independently reproduce the checked-in
+SHA-256 catalog. CI validates drift but never regenerates or rewrites canonical
+fixtures.
 
 `compatibility.flow_version_requirement` is parsed with Rust's `semver`
 `VersionReq` grammar and must use comma-separated comparators. For example,
@@ -44,9 +52,10 @@ major schema identifier; additive compatible changes increment the contract-set
 semantic version. Consumers reject unknown major identifiers and never silently
 downgrade.
 
-The current Rust checkpoint maps the six extension-v1 documents into closed
-library models and adds semantic checks that JSON Schema alone does not express.
-Its hermetic in-process reference and host-neutral process transcript are not
+The current Rust checkpoint maps the six extension-v1 documents and the
+scenario manifest into closed library models and adds semantic checks that JSON
+Schema alone does not express. Its hermetic in-process reference and
+host-neutral process transcript are not
 provider adapters and do not prove process launch/capture enforcement,
 filesystem artifact handling, executable verification, sandboxing,
 checkpoints, or resume.
@@ -63,4 +72,5 @@ Validate the set with:
 
 ```console
 python3 tools/validate_contracts.py
+python3 tools/generate_scenario_sources.py --check
 ```

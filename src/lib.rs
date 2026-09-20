@@ -10,6 +10,7 @@ pub mod contracts;
 pub mod execution;
 pub mod hermetic;
 pub mod process;
+pub mod scenario;
 
 pub use catalog::{
     CatalogError, ExtensionCatalog, ExtensionObservation, ResolutionOutcome, ResolutionRequest,
@@ -24,3 +25,4 @@ pub use hermetic::{HermeticBehavior, HermeticExtension};
 pub use process::{
     DecodedProcessTranscript, ProcessProtocolError, decode_provider_stdout, encode_invocation_frame,
 };
+pub use scenario::*;

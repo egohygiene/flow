@@ -1,0 +1,62 @@
+{
+  "schema_version": "flow.scenario-manifest/v1",
+  "scenario_id": "scenario:mutable-reference",
+  "fixture_id": "fixture:mutable-reference-v1",
+  "fixture_version": "1.0.0",
+  "title": "Mutable branch reference",
+  "description": "A branch name cannot serve as an immutable source revision.",
+  "fixture_class": "malformed",
+  "tags": ["invalid-reference"],
+  "inputs": [
+    {
+      "artifact_id": "mutable-source",
+      "media_type": "text/plain",
+      "artifact_contract": {
+        "schema_version": "flow.artifact/v1",
+        "digest": "1414141414141414141414141414141414141414141414141414141414141414"
+      },
+      "source": {
+        "kind": "generated",
+        "locator": "https://example.invalid/repository/main/source.txt",
+        "revision": "main",
+        "digest": "2525252525252525252525252525252525252525252525252525252525252525",
+        "license": "CC0-1.0",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "mutable-reference-v1",
+          "parameters_digest": "3636363636363636363636363636363636363636363636363636363636363636"
+        }
+      }
+    }
+  ],
+  "providers": [],
+  "stages": [],
+  "expectation": {
+    "terminal_state": "complete",
+    "evidence_state": "observed-empty",
+    "expected_artifacts": [],
+    "expected_diagnostics": [],
+    "evidence_refs": [],
+    "state_trace_refs": []
+  },
+  "execution": {
+    "tier": "pull-request",
+    "clean_room": true,
+    "network_mode": "denied",
+    "external_services": [],
+    "budget": {
+      "timeout_ms": 1000,
+      "max_memory_bytes": 1048576,
+      "max_stdout_bytes": 1024,
+      "max_stderr_bytes": 1024,
+      "max_artifact_bytes": 1024,
+      "max_artifacts": 1
+    }
+  },
+  "coverage": {
+    "claim": "scenario-only",
+    "covered_behaviors": ["mutable revision rejection"],
+    "known_gaps": []
+  }
+}

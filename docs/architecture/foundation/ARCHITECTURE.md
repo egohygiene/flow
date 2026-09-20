@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.4.0
+version: 0.5.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-16
+updated: 2026-09-20
 governed_by:
   - architecture-architecture
 depends_on:
@@ -51,9 +51,10 @@ capability descriptors, and operations justified by its contract.
 ### Shared contracts
 
 Flow-owned, schema-versioned documents define suite artifact identities,
-capability descriptors, compatibility decisions, events, and results. Holons
-may keep native models; Flow adapters perform explicit translation rather than
-forcing a Flow dependency into a provider repository.
+capability descriptors, compatibility decisions, events, results, and
+orchestration conformance scenarios. Holons may keep native models; Flow
+adapters perform explicit translation rather than forcing a Flow dependency
+into a provider repository.
 
 The federated extension boundary separates provider declarations from operator
 authority. An extension manifest declares identity, integrity, compatibility,
@@ -61,6 +62,12 @@ domain ownership, capabilities, requested permissions, execution modes, hooks,
 and checkpoint behavior. A Flow-owned lock records discovery location, the
 verified digest, trust mode, granted permissions, capability precedence, and
 fallback order. A manifest can never grant itself authority or precedence.
+
+The scenario manifest pins redistribution-safe inputs and providers, ordered
+topology, typed expectations, resource budgets, provenance, and bounded
+coverage claims. It references other versioned documents by schema and digest.
+It does not duplicate provider algorithms or define runtime plans, durable runs,
+checkpoints, or transition storage.
 
 ### External adapters
 
@@ -165,12 +172,14 @@ structure without overriding suite dependency rules.
 Flow issue #23 / merged PR #24 supplies closed extension-v1 models,
 deterministic single-capability resolution, one caller-injected in-process
 extension port, Flow-owned event/result validation, and a hermetic no-effects
-reference implementation. Issue #26 adds deterministic process request framing
-and host-neutral transcript validation through that same acceptance gate. It
-does not yet supply the public CLI, a production child-process runner, real
-holon adapters, artifact locators, executable verification, enforceable
-isolation, durable run state, checkpoints, interruption, or resume. Structural
-units beyond these library seams remain constraints for later adapter and
+reference implementation. Issue #26 / merged PR #27 adds deterministic process
+request framing and host-neutral transcript validation through that same
+acceptance gate. Issue #28 adds a closed scenario manifest, synthetic fixtures,
+and canonical digest drift checks; it does not run those scenarios. Flow does
+not yet supply the public CLI, a production child-process runner, real holon
+adapters, artifact locators, executable verification, enforceable isolation,
+durable run state, checkpoints, interruption, or resume. Structural units
+beyond these library seams remain constraints for later adapter and
 orchestration work, not claims about current source layout.
 
 ## Open questions
@@ -181,11 +190,12 @@ orchestration work, not claims about current source layout.
 
 ## Validation
 
-Default-branch CI run 35094682274 validates PR #24's Rust 1.85 and stable
-library builds, closed contract models, deterministic resolution, hermetic
-in-process seam, and repository architecture metadata at
-`979e033409c823b38591b59eca820522efabfa12`. Issue #26 adds deterministic
-request/transcript conformance tests and a hermetic process-transport example
-to the same matrix. Forbidden dependency-edge checks, CLI-thinness, real
-launcher enforcement, artifact acceptance, and sandbox conformance remain
-later gates for their corresponding runtime surfaces.
+Default-branch CI run 35138134331 validates Rust 1.85 and stable library builds,
+closed contract models, deterministic resolution, the hermetic in-process and
+process-transcript seams, and repository architecture metadata at
+`4599c575a1d0eab46352f900bba47cc97201c426`. Issue #28 extends that matrix with
+schema, semantic, adversarial, cross-language digest, example, and packaging
+checks for scenario manifests. Forbidden dependency-edge checks, CLI-thinness,
+real launcher enforcement, artifact acceptance, scenario execution, and
+sandbox conformance remain later gates for their corresponding runtime
+surfaces.

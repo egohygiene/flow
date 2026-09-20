@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 0.5.0
+version: 0.6.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-16
+updated: 2026-09-20
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -30,17 +30,18 @@ repository: egohygiene/flow
 visibility: public
 publication: central
 route: /roadmap/flow/
-updated: 2026-09-16
+updated: 2026-09-20
 -->
-## 2026-09-16 execution snapshot
+## 2026-09-20 execution snapshot
 
 > This evidence-reconciled snapshot is the issue-generation and visual-roadmap handoff. The longer-horizon strategy below remains canonical context; generated HTML, JSON, progress, issue plans, and commit lists are projections.
 
 **Lifecycle:** executable contract prototype
 
-**Current gate:** Finish Flow #26's deterministic process framing and transcript
-validation, then observe its success and adversarial cases on default-branch CI
-before implementing a real provider adapter.
+**Current gate:** Freeze Flow #28's deterministic orchestration scenario and
+fixture contract. Coordinate its reference-only artifact and evidence fields
+with active #25, but do not wait for #25's later runtime enforcement to define
+the conformance vocabulary.
 
 **North-star outcome:** Federated orchestration across holons with stable provider seams, resumable work, and explicit evidence.
 
@@ -49,8 +50,8 @@ before implementing a real provider adapter.
 **Mode:** `central`  
 **Route:** `/roadmap/flow/`  
 **Current publication evidence:** Architecture, contract source, merged Flow
-#23 / PR #24, and successful default-branch CI at
-`979e033409c823b38591b59eca820522efabfa12`; no executable release or Pages
+#23 / PR #24, #26 / PR #27, and successful default-branch CI at
+`4599c575a1d0eab46352f900bba47cc97201c426`; no executable release or Pages
 publication observed.
 
 Publish the public-safe projection through egohygiene.io at /roadmap/flow/. This repository owns intent and acceptance evidence; it does not add a second site deployment.
@@ -65,7 +66,7 @@ issues: []
 -->
 #### FLO-Q01 — Define orchestration contracts
 
-**State:** `complete`  
+**State:** `complete`
 **Depends on:** None
 
 **Outcome:** Initial architecture and provider contracts describe the intended orchestration boundary.
@@ -81,13 +82,13 @@ issues: []
 
 <!-- roadmap-step
 id: FLO-Q02
-status: active
+status: complete
 depends_on: [FLO-Q01]
 issues: [7, 23, 26]
 -->
 #### FLO-Q02 — Freeze extension seams and create a tested executable core
 
-**State:** `active`  
+**State:** `complete`
 **Depends on:** `FLO-Q01`
 
 **Outcome:** Versioned extension/trust envelopes constrain provider SDK mappings,
@@ -103,7 +104,7 @@ same acceptance gate validates a deterministic external-process transcript.
 - [x] A runnable library path and hermetic example exist in merged Flow #23 /
   PR #24.
 - [x] Default-branch CI proves the in-process success and failure behavior.
-- [ ] A deterministic process request/transcript seam reuses Flow-owned event
+- [x] A deterministic process request/transcript seam reuses Flow-owned event
   and result validation without claiming a production runner or sandbox.
 
 **Current evidence:**
@@ -113,35 +114,45 @@ same acceptance gate validates a deterministic external-process transcript.
 - Flow #23 / PR #24 supplies deterministic resolution, injected in-process
   execution, Flow-owned event/result validation, and a no-effects hermetic
   example.
-- Default-branch CI run 35094682274 passed on Rust 1.85, stable Rust, and every
-  repository validator at `979e033409c823b38591b59eca820522efabfa12`.
-- Flow #26 is the focused next slice. FLO-Q02 remains active until its
-  host-neutral process framing and transcript conformance are merged and proven
-  on default-branch CI. This evidence does not claim a public CLI, a production
+- Flow #26 / merged PR #27 supplies deterministic invocation framing,
+  host-neutral transcript validation, and a hermetic process example through
+  the existing acceptance gate.
+- Default-branch CI run 35138134331 passed on Rust 1.85, stable Rust, and every
+  repository validator at `4599c575a1d0eab46352f900bba47cc97201c426`.
+- This evidence does not claim a public CLI, a production
   child-process runner, artifact acceptance, executable verification, sandbox
   enforcement, real provider adapters, durable state, or resume.
 
 <!-- roadmap-step
 id: FLO-Q03
-status: planned
+status: active
 depends_on: [FLO-Q02]
-issues: []
+issues: [13, 25, 28]
 -->
-#### FLO-Q03 — Reinspect and implement provider adapters
+#### FLO-Q03 — Freeze conformance fixtures and implement provider adapters
 
-**State:** `planned`  
+**State:** `active`
 **Depends on:** `FLO-Q02`
 
-**Outcome:** Adapters reflect current provider behavior and share stable error and evidence contracts.
+**Outcome:** Flow-owned scenarios describe bounded cross-provider behavior
+without embedding provider algorithms, and adapters reflect current provider
+behavior through stable error and evidence contracts.
 
 **Exit criteria:**
 
+- [ ] Stable scenario and fixture identities, immutable provenance, typed
+  expectations, execution budgets, and deterministic drift checks are defined.
 - [ ] At least two adapters pass contract tests.
 - [ ] Provider-specific behavior does not leak into the core model.
 
 **Current evidence:**
 
-- Provider reinspection and adapters were identified as the next implementation stage.
+- Flow #13 decomposes the orchestration and failure corpus into bounded child
+  checkpoints. Flow #28 is executable now and freezes the scenario manifest
+  before the hermetic provider kit or real-provider workflows.
+- Flow #25 remains the active owner of artifact acceptance, executable/package
+  integrity, authority profiles, and process enforcement. Scenario references
+  do not pre-empt those contracts.
 
 <!-- roadmap-step
 id: FLO-Q04
@@ -263,10 +274,24 @@ terminal-consistency, and observer checks. Treat stdout as protocol-only,
 stderr as opaque operational evidence, and exit zero as transport evidence
 rather than semantic success.
 
-**Candidate evidence:** Flow #26 adds the pure framing decoder, hermetic
+**Delivered evidence:** Flow #26 / merged PR #27 adds the pure framing decoder, hermetic
 transcript example, typed framing/output/completion failures, and adversarial
 tests. It does not launch or isolate a process, bind filesystem artifacts,
 verify executable bytes, deliver cancellation, or authenticate a publisher.
+
+### Freeze the orchestration scenario contract
+
+Define stable scenario and fixture IDs, immutable input and provider references,
+ordered topology, typed outcomes and evidence, PR/scheduled/release resource
+budgets, bounded coverage claims, and deterministic canonical identity. Keep
+real provider execution, durable plan/run/checkpoint semantics, and provider
+algorithm corpora outside this contract.
+
+**Candidate evidence:** Flow #28 adds the closed
+`flow.scenario-manifest/v1` model, redistribution-safe positive and adversarial
+fixtures, independent Rust/Python canonical digest checks, and explicit
+coverage gaps. It describes conformance intent and does not implement a
+scenario runner.
 
 ### Pin the capability matrix
 

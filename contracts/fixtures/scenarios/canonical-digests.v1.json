@@ -1,0 +1,27 @@
+{
+  "schema_version": "flow.scenario-digests/v1",
+  "canonicalization": "flow.canonical-json/v1",
+  "algorithm": "sha256",
+  "entries": [
+    {
+      "path": "examples/scenario-manifest.v1.example.json",
+      "digest": "182708d91965c9e3b2d911eef42e5f200907dac380a0ae4eb0f9a1c15b9ab7cd"
+    },
+    {
+      "path": "fixtures/scenarios/interrupted.v1.fixture.json",
+      "digest": "8ec6ced28b6faa2f4869d592047f6ef76340b15c9c856ddfdc4a375cd66291c1"
+    },
+    {
+      "path": "fixtures/scenarios/multi-provider.v1.fixture.json",
+      "digest": "cbf8a6e6b436a20438661abb9f0b17206e720b08027f7efc1cd3c19b21493e2c"
+    },
+    {
+      "path": "fixtures/scenarios/observed-empty.v1.fixture.json",
+      "digest": "e90ff010f4b3ed38c11cbcf59916dd584bbdb6bd6237ac319d3c5529c7c146ff"
+    },
+    {
+      "path": "fixtures/scenarios/unavailable.v1.fixture.json",
+      "digest": "476a72b94f7cf0f507d2eca73c1d23d4d08c29a021cc118eae0f14b373300a6d"
+    }
+  ]
+}

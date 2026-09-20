@@ -1,6 +1,6 @@
 {
   "schema_version": "flow.contract-set/v1",
-  "contract_set_version": "0.2.0",
+  "contract_set_version": "0.3.0",
   "status": "provisional",
   "contracts": [
     {
@@ -56,6 +56,24 @@
         "fixtures/extensions/duplicate-conflict.v1.fixture.json",
         "fixtures/extensions/malformed.v1.fixture.json",
         "fixtures/extensions/fallback.v1.fixture.json"
+      ]
+    },
+    {
+      "id": "flow.scenario-manifest/v1",
+      "schema": "schemas/scenario-manifest.v1.schema.json",
+      "example": "examples/scenario-manifest.v1.example.json",
+      "fixtures": [
+        "fixtures/scenarios/interrupted.v1.fixture.json",
+        "fixtures/scenarios/multi-provider.v1.fixture.json",
+        "fixtures/scenarios/observed-empty.v1.fixture.json",
+        "fixtures/scenarios/unavailable.v1.fixture.json"
+      ],
+      "invalid_examples": [
+        "fixtures/scenarios/contradictory-expectation.v1.invalid.json",
+        "fixtures/scenarios/invalid-budget.v1.invalid.json",
+        "fixtures/scenarios/missing-identity.v1.invalid.json",
+        "fixtures/scenarios/mutable-reference.v1.invalid.json",
+        "fixtures/scenarios/unknown-version.v1.invalid.json"
       ]
     }
   ]

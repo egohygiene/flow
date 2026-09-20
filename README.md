@@ -20,9 +20,10 @@ The repository remains architecture-led, but it is no longer documentation
 only. FLO-Q02 provides a small Rust library that validates the federated
 extension contracts, resolves one capability deterministically, executes one
 caller-injected in-process extension, and validates a provider-neutral process
-transcript without launching a child process. It does not copy holon source or
-claim a product orchestrator, CLI, production process adapter, durable run
-state, or resume support.
+transcript without launching a child process. It also validates a closed,
+deterministic scenario manifest for synthetic orchestration fixtures. It does
+not copy holon source or claim a product orchestrator, CLI, production process
+adapter, scenario runner, durable run state, or resume support.
 
 ## Executable checkpoint
 
@@ -36,7 +37,10 @@ The first executable checkpoint is deliberately library-only:
   only after Flow validates event and terminal-result correlation;
 - the process seam deterministically encodes one JSON Lines invocation and
   checks bounded, caller-supplied stdout/stderr plus process completion
-  evidence, then routes decoded stdout through the same event/result gate; and
+  evidence, then routes decoded stdout through the same event/result gate;
+- `flow.scenario-manifest/v1` pins synthetic inputs, providers, topology,
+  expectations, resource budgets, coverage gaps, and cross-language canonical
+  digests without defining plans or runs; and
 - a no-effects, no-artifacts hermetic port and example prove the seam without a
   provider binary, filesystem output, network access, or external service.
 
@@ -45,6 +49,7 @@ Run the reference example with:
 ```console
 cargo run --example hermetic_extension --locked
 cargo run --example hermetic_process_transport --locked
+cargo run --example scenario_manifest --locked
 ```
 
 `EventSink` is a fallible, authoritative execution observer, not a best-effort
@@ -83,6 +88,7 @@ or isolate a process. Neither seam provides filesystem or network containment.
 - [Suite boundaries](docs/integrations/suite-boundaries.md)
 - [Federated extension contract](docs/integrations/extension-contract.md)
 - [Process transport contract](docs/integrations/process-transport.md)
+- [Scenario fixture contract](docs/integrations/scenario-fixtures.md)
 - [Versioned contracts](contracts/README.md)
 - [Roadmap](ROADMAP.md)
 
@@ -91,12 +97,13 @@ skills, agents, templates, and validators used to maintain these documents.
 
 ## Status
 
-Flow is in the **executable contract seam** phase. Issue #23 / PR #24 is merged,
-and default-branch CI passed at
-`979e033409c823b38591b59eca820522efabfa12`. Issue #26 adds the first bounded
-external-process contract over injected evidence; it does not yet implement a
-runner, artifact binding, executable verification, or host isolation. Current
-descriptions of Aniflow, Optiflow, and Renderflow are grounded in their default
+Flow is in the **executable contract seam** phase. Issues #23 and #26 are merged
+through PRs #24 and #27, and default-branch CI passed at
+`4599c575a1d0eab46352f900bba47cc97201c426`. Issue #28 freezes the synthetic
+scenario-manifest and fixture identity boundary before real adapter work. The
+process seam still does not implement a runner, artifact binding, executable
+verification, or host isolation, and the scenario contract is not an executor.
+Current descriptions of Aniflow, Optiflow, and Renderflow are grounded in their default
 branches as inspected on 2026-08-13. The holons remain independently released
 repositories; real provider adapters and the restore-and-assess workflow remain
 follow-up work.

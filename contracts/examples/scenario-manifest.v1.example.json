@@ -1,0 +1,105 @@
+{
+  "schema_version": "flow.scenario-manifest/v1",
+  "scenario_id": "scenario:single-provider-success",
+  "fixture_id": "fixture:single-provider-success-v1",
+  "fixture_version": "1.0.0",
+  "title": "Hermetic single-provider success",
+  "description": "Proves that one generated input can cross one synthetic provider boundary and produce validated evidence without external services.",
+  "fixture_class": "valid",
+  "tags": ["clean-room", "single-provider", "success"],
+  "inputs": [
+    {
+      "artifact_id": "source-text",
+      "media_type": "text/plain",
+      "artifact_contract": {
+        "schema_version": "flow.artifact/v1",
+        "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "source": {
+        "kind": "generated",
+        "locator": "contracts/fixtures/scenarios/sources/source-text.txt",
+        "revision": "sha256:90fe85c978713a909a2c233385fb64796b4fd45c9216b6e0c81d69858c7e639f",
+        "digest": "90fe85c978713a909a2c233385fb64796b4fd45c9216b6e0c81d69858c7e639f",
+        "license": "CC0-1.0",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "single-provider-success-v1",
+          "parameters_digest": "6272a15947ab1fdf9c69aab4e41486054f869265ee048f2c3eeaee279738e3f0"
+        }
+      }
+    }
+  ],
+  "providers": [
+    {
+      "provider_id": "org.egohygiene.synthetic-scenario-provider",
+      "version": "0.1.0",
+      "interface": "in-process",
+      "manifest": {
+        "schema_version": "flow.extension-manifest/v1",
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      "package": {
+        "kind": "generated",
+        "locator": "flow::scenario::fixtures::single_provider",
+        "revision": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+        "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "license": "MIT",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "synthetic-provider-v1",
+          "parameters_digest": "8888888888888888888888888888888888888888888888888888888888888888"
+        }
+      },
+      "required_capabilities": ["flow/inspect-fixture"]
+    }
+  ],
+  "stages": [
+    {
+      "stage_id": "inspect",
+      "provider_id": "org.egohygiene.synthetic-scenario-provider",
+      "capability_id": "flow/inspect-fixture",
+      "depends_on": [],
+      "consumes": ["source-text"],
+      "produces": ["inspection-report"],
+      "required": true
+    }
+  ],
+  "expectation": {
+    "terminal_state": "complete",
+    "evidence_state": "complete",
+    "expected_artifacts": ["inspection-report"],
+    "expected_diagnostics": [],
+    "evidence_refs": [
+      {
+        "schema_version": "flow.extension-result/v1",
+        "digest": "9999999999999999999999999999999999999999999999999999999999999999"
+      }
+    ],
+    "state_trace_refs": []
+  },
+  "execution": {
+    "tier": "pull-request",
+    "clean_room": true,
+    "network_mode": "denied",
+    "external_services": [],
+    "budget": {
+      "timeout_ms": 5000,
+      "max_memory_bytes": 67108864,
+      "max_stdout_bytes": 65536,
+      "max_stderr_bytes": 65536,
+      "max_artifact_bytes": 1048576,
+      "max_artifacts": 4
+    }
+  },
+  "coverage": {
+    "claim": "scenario-only",
+    "covered_behaviors": [
+      "immutable generated input reference",
+      "single-provider topology",
+      "validated complete evidence"
+    ],
+    "known_gaps": ["Does not execute a real provider process."]
+  }
+}
