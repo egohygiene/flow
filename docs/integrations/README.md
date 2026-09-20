@@ -14,6 +14,9 @@ implementations.
 - [Process transport](process-transport.md) defines deterministic JSON Lines
   request framing and host-neutral transcript acceptance without claiming a
   production process runner.
+- [Scenario fixtures](scenario-fixtures.md) define stable scenario identity,
+  immutable topology, typed expectations, resource tiers, canonicalization,
+  and honest coverage boundaries.
 - [Versioned contracts](../../contracts/README.md) define the provisional suite
   interchange vocabulary.
 
@@ -28,10 +31,12 @@ and
 Merged PR #24 implements the in-process library seam described by the extension
 contract. It validates closed extension-v1 models, resolves one capability from
 explicit caller input, invokes a caller-supplied `ExtensionPort`, and validates
-correlated events and the terminal result. Issue #26 adds deterministic process
-request encoding and validation of caller-supplied completion, stdout, and
-stderr evidence through the same Flow-owned acceptance gate. Both reference
-paths are hermetic and produce no effects or artifacts.
+correlated events and the terminal result. Merged PR #27 adds deterministic
+process request encoding and validation of caller-supplied completion, stdout,
+and stderr evidence through the same Flow-owned acceptance gate. Issue #28 adds
+a closed scenario-manifest model and a synthetic conformance corpus; it
+describes test intent and does not execute those scenarios. The executable
+reference paths are hermetic and produce no effects or artifacts.
 
 Only lock entries with `trusted` trust are resolution-eligible.
 `Orchestrator` either invokes a caller-injected in-process port or validates a

@@ -1,0 +1,96 @@
+{
+  "schema_version": "flow.scenario-manifest/v1",
+  "scenario_id": "scenario:observed-empty-inspection",
+  "fixture_id": "fixture:observed-empty-inspection-v1",
+  "fixture_version": "1.0.0",
+  "title": "Successful inspection with no findings",
+  "description": "Keeps a complete observed-empty result distinct from unavailable, unsupported, incomplete, invalid, or failed evidence.",
+  "fixture_class": "boundary",
+  "tags": ["clean-room", "observed-empty", "single-provider"],
+  "inputs": [
+    {
+      "artifact_id": "empty-collection",
+      "media_type": "application/vnd.egohygiene.synthetic-collection+json",
+      "artifact_contract": {
+        "schema_version": "flow.artifact/v1",
+        "digest": "1313131313131313131313131313131313131313131313131313131313131313"
+      },
+      "source": {
+        "kind": "generated",
+        "locator": "contracts/fixtures/scenarios/sources/empty-collection.json",
+        "revision": "sha256:e813d564bccbeefe1db875d1c9abb55d63c52b639acc61134a5f1d19cc489b67",
+        "digest": "e813d564bccbeefe1db875d1c9abb55d63c52b639acc61134a5f1d19cc489b67",
+        "license": "CC0-1.0",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "observed-empty-v1",
+          "parameters_digest": "eef46741adfc3a9f76294d3b78f37a45f113092ac9d44ee77c7a038a88ff09a1"
+        }
+      }
+    }
+  ],
+  "providers": [
+    {
+      "provider_id": "org.egohygiene.synthetic-empty-inspector",
+      "version": "0.1.0",
+      "interface": "in-process",
+      "manifest": {
+        "schema_version": "flow.extension-manifest/v1",
+        "digest": "5757575757575757575757575757575757575757575757575757575757575757"
+      },
+      "package": {
+        "kind": "generated",
+        "locator": "flow::scenario::fixtures::empty_inspector",
+        "revision": "sha256:6868686868686868686868686868686868686868686868686868686868686868",
+        "digest": "7979797979797979797979797979797979797979797979797979797979797979",
+        "license": "MIT",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "synthetic-empty-inspector-v1",
+          "parameters_digest": "8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a"
+        }
+      },
+      "required_capabilities": ["optiflow/inspect-empty-collection"]
+    }
+  ],
+  "stages": [
+    {
+      "stage_id": "inspect",
+      "provider_id": "org.egohygiene.synthetic-empty-inspector",
+      "capability_id": "optiflow/inspect-empty-collection",
+      "depends_on": [],
+      "consumes": ["empty-collection"],
+      "produces": [],
+      "required": true
+    }
+  ],
+  "expectation": {
+    "terminal_state": "complete",
+    "evidence_state": "observed-empty",
+    "expected_artifacts": [],
+    "expected_diagnostics": [],
+    "evidence_refs": [],
+    "state_trace_refs": []
+  },
+  "execution": {
+    "tier": "pull-request",
+    "clean_room": true,
+    "network_mode": "denied",
+    "external_services": [],
+    "budget": {
+      "timeout_ms": 5000,
+      "max_memory_bytes": 67108864,
+      "max_stdout_bytes": 65536,
+      "max_stderr_bytes": 65536,
+      "max_artifact_bytes": 1048576,
+      "max_artifacts": 2
+    }
+  },
+  "coverage": {
+    "claim": "scenario-only",
+    "covered_behaviors": ["complete inspection with zero findings"],
+    "known_gaps": ["Does not establish provider or raw-format coverage beyond this fixture."]
+  }
+}

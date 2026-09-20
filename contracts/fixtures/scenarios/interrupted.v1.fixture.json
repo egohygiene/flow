@@ -1,0 +1,105 @@
+{
+  "schema_version": "flow.scenario-manifest/v1",
+  "scenario_id": "scenario:interrupted-after-output",
+  "fixture_id": "fixture:interrupted-after-output-v1",
+  "fixture_version": "1.0.0",
+  "title": "Interrupted after one accepted output",
+  "description": "Describes incomplete evidence after a synthetic provider produced one bounded candidate artifact.",
+  "fixture_class": "boundary",
+  "tags": ["clean-room", "interrupted", "partial-evidence"],
+  "inputs": [
+    {
+      "artifact_id": "source-audio",
+      "media_type": "application/vnd.egohygiene.synthetic-tone+json",
+      "artifact_contract": {
+        "schema_version": "flow.artifact/v1",
+        "digest": "1212121212121212121212121212121212121212121212121212121212121212"
+      },
+      "source": {
+        "kind": "generated",
+        "locator": "contracts/fixtures/scenarios/sources/synthetic-tone.json",
+        "revision": "sha256:106e8b6cb43cda6ef8ce68f9752161a2373f12b179c7181d1a5dc655d81cd6ab",
+        "digest": "106e8b6cb43cda6ef8ce68f9752161a2373f12b179c7181d1a5dc655d81cd6ab",
+        "license": "CC0-1.0",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "interrupted-after-output-v1",
+          "parameters_digest": "c3da36c4dcef3742d91fbbed3f69b626e8120826eb5683eab8aa5dd63c9447a9"
+        }
+      }
+    }
+  ],
+  "providers": [
+    {
+      "provider_id": "org.egohygiene.synthetic-temporal-provider",
+      "version": "0.1.0",
+      "interface": "in-process",
+      "manifest": {
+        "schema_version": "flow.extension-manifest/v1",
+        "digest": "5656565656565656565656565656565656565656565656565656565656565656"
+      },
+      "package": {
+        "kind": "generated",
+        "locator": "flow::scenario::fixtures::temporal_provider",
+        "revision": "sha256:6767676767676767676767676767676767676767676767676767676767676767",
+        "digest": "7878787878787878787878787878787878787878787878787878787878787878",
+        "license": "MIT",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "synthetic-temporal-provider-v1",
+          "parameters_digest": "8989898989898989898989898989898989898989898989898989898989898989"
+        }
+      },
+      "required_capabilities": ["aniflow/analyze-audio"]
+    }
+  ],
+  "stages": [
+    {
+      "stage_id": "analyze",
+      "provider_id": "org.egohygiene.synthetic-temporal-provider",
+      "capability_id": "aniflow/analyze-audio",
+      "depends_on": [],
+      "consumes": ["source-audio"],
+      "produces": ["partial-analysis"],
+      "required": true
+    }
+  ],
+  "expectation": {
+    "terminal_state": "interrupted",
+    "evidence_state": "incomplete",
+    "expected_artifacts": ["partial-analysis"],
+    "expected_diagnostics": ["flow.scenario.interrupted"],
+    "evidence_refs": [],
+    "state_trace_refs": [
+      {
+        "schema_version": "flow.transition-trace/v1",
+        "digest": "edededededededededededededededededededededededededededededededed"
+      }
+    ]
+  },
+  "execution": {
+    "tier": "pull-request",
+    "clean_room": true,
+    "network_mode": "denied",
+    "external_services": [],
+    "budget": {
+      "timeout_ms": 5000,
+      "max_memory_bytes": 67108864,
+      "max_stdout_bytes": 65536,
+      "max_stderr_bytes": 65536,
+      "max_artifact_bytes": 1048576,
+      "max_artifacts": 4
+    }
+  },
+  "coverage": {
+    "claim": "scenario-only",
+    "covered_behaviors": [
+      "explicit interrupted terminal state",
+      "incomplete evidence remains distinct from failure",
+      "partial artifact expectation"
+    ],
+    "known_gaps": ["Does not define checkpoint or resume semantics owned by Flow issue 3."]
+  }
+}

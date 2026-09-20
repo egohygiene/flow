@@ -1,0 +1,40 @@
+{
+  "schema_version": "flow.scenario-manifest/v2",
+  "scenario_id": "scenario:unknown-contract-version",
+  "fixture_id": "fixture:unknown-contract-version-v1",
+  "fixture_version": "1.0.0",
+  "title": "Unknown contract version",
+  "description": "This fixture must fail closed instead of silently downgrading.",
+  "fixture_class": "unsupported",
+  "tags": ["invalid-contract"],
+  "inputs": [],
+  "providers": [],
+  "stages": [],
+  "expectation": {
+    "terminal_state": "unsupported",
+    "evidence_state": "unsupported",
+    "expected_artifacts": [],
+    "expected_diagnostics": ["flow.scenario.unknown-version"],
+    "evidence_refs": [],
+    "state_trace_refs": []
+  },
+  "execution": {
+    "tier": "pull-request",
+    "clean_room": true,
+    "network_mode": "denied",
+    "external_services": [],
+    "budget": {
+      "timeout_ms": 1000,
+      "max_memory_bytes": 1048576,
+      "max_stdout_bytes": 1024,
+      "max_stderr_bytes": 1024,
+      "max_artifact_bytes": 1024,
+      "max_artifacts": 1
+    }
+  },
+  "coverage": {
+    "claim": "scenario-only",
+    "covered_behaviors": ["unknown contract rejection"],
+    "known_gaps": []
+  }
+}

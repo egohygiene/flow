@@ -1,0 +1,39 @@
+{
+  "schema_version": "flow.scenario-manifest/v1",
+  "fixture_id": "fixture:missing-identity-v1",
+  "fixture_version": "1.0.0",
+  "title": "Missing scenario identity",
+  "description": "This fixture intentionally omits scenario_id.",
+  "fixture_class": "malformed",
+  "tags": ["invalid-identity"],
+  "inputs": [],
+  "providers": [],
+  "stages": [],
+  "expectation": {
+    "terminal_state": "invalid",
+    "evidence_state": "invalid",
+    "expected_artifacts": [],
+    "expected_diagnostics": ["flow.scenario.missing-identity"],
+    "evidence_refs": [],
+    "state_trace_refs": []
+  },
+  "execution": {
+    "tier": "pull-request",
+    "clean_room": true,
+    "network_mode": "denied",
+    "external_services": [],
+    "budget": {
+      "timeout_ms": 1000,
+      "max_memory_bytes": 1048576,
+      "max_stdout_bytes": 1024,
+      "max_stderr_bytes": 1024,
+      "max_artifact_bytes": 1024,
+      "max_artifacts": 1
+    }
+  },
+  "coverage": {
+    "claim": "scenario-only",
+    "covered_behaviors": ["missing identity rejection"],
+    "known_gaps": []
+  }
+}

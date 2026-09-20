@@ -44,6 +44,12 @@ only the Flow-owned lock grants permissions, trust, precedence, or fallback.
 This split is governed by
 [ADR-0005](../architecture/governance/decisions/ADR-0005-federated-extension-authority.md).
 
+Flow owns the orchestration scenario manifest used by its conformance corpus.
+That manifest references provider declarations and future evidence, transition,
+plan, run, and checkpoint documents by schema identity and digest. It does not
+copy provider algorithms, native corpora, or provider-owned result models, and
+it does not grant runtime authority.
+
 Breaking schema changes require a new major identifier or an explicit migration.
 Unknown versions are rejected; there is no silent downgrade.
 
@@ -51,6 +57,8 @@ Unknown versions are rejected; there is no silent downgrade.
 
 - Architecture documents and ADRs declare the same dependency graph.
 - Contract validation checks manifest/schema/example consistency.
+- Scenario drift validation reproduces canonical digests without rewriting the
+  checked-in fixtures.
 - Adapter tests pin provider releases and exercise structured outputs.
 - Dependency audits reject copied source, path dependencies, submodules, and
   holon-to-holon or holon-to-Flow edges.

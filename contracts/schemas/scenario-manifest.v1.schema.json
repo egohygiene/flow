@@ -1,0 +1,409 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/scenario-manifest.v1.schema.json",
+  "title": "Flow orchestration scenario manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "scenario_id",
+    "fixture_id",
+    "fixture_version",
+    "title",
+    "description",
+    "fixture_class",
+    "tags",
+    "inputs",
+    "providers",
+    "stages",
+    "expectation",
+    "execution",
+    "coverage"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.scenario-manifest/v1" },
+    "scenario_id": {
+      "type": "string",
+      "pattern": "^scenario:[a-z0-9][a-z0-9._-]*$"
+    },
+    "fixture_id": {
+      "type": "string",
+      "pattern": "^fixture:[a-z0-9][a-z0-9._-]*$"
+    },
+    "fixture_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "fixture_class": {
+      "enum": ["valid", "boundary", "malformed", "unsupported", "resource-stress"]
+    },
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "media_type", "artifact_contract", "source"],
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]*$"
+          },
+          "media_type": { "type": "string", "minLength": 1 },
+          "artifact_contract": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["schema_version", "digest"],
+            "properties": {
+              "schema_version": { "const": "flow.artifact/v1" },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "locator", "revision", "digest", "license"],
+            "properties": {
+              "kind": { "enum": ["generated", "vendored", "released"] },
+              "locator": { "type": "string", "minLength": 1 },
+              "revision": {
+                "type": "string",
+                "pattern": "^(git:[a-f0-9]{40}|sha256:[a-f0-9]{64})$"
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "license": { "type": "string", "minLength": 1 },
+              "generator": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["generator_id", "version", "seed", "parameters_digest"],
+                "properties": {
+                  "generator_id": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)+$"
+                  },
+                  "version": {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+                  },
+                  "seed": { "type": "string", "minLength": 1 },
+                  "parameters_digest": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "provider_id",
+          "version",
+          "interface",
+          "manifest",
+          "package",
+          "required_capabilities"
+        ],
+        "properties": {
+          "provider_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)+$"
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+          },
+          "interface": { "enum": ["in-process", "process"] },
+          "manifest": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["schema_version", "digest"],
+            "properties": {
+              "schema_version": { "const": "flow.extension-manifest/v1" },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          "package": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "locator", "revision", "digest", "license"],
+            "properties": {
+              "kind": { "enum": ["generated", "vendored", "released"] },
+              "locator": { "type": "string", "minLength": 1 },
+              "revision": {
+                "type": "string",
+                "pattern": "^(git:[a-f0-9]{40}|sha256:[a-f0-9]{64})$"
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "license": { "type": "string", "minLength": 1 },
+              "generator": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["generator_id", "version", "seed", "parameters_digest"],
+                "properties": {
+                  "generator_id": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)+$"
+                  },
+                  "version": {
+                    "type": "string",
+                    "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+                  },
+                  "seed": { "type": "string", "minLength": 1 },
+                  "parameters_digest": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          },
+          "required_capabilities": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9.-]+/[a-z][a-z0-9.-]+$"
+            }
+          }
+        }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stage_id",
+          "provider_id",
+          "capability_id",
+          "depends_on",
+          "consumes",
+          "produces",
+          "required"
+        ],
+        "properties": {
+          "stage_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]*$"
+          },
+          "provider_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)+$"
+          },
+          "capability_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9.-]+/[a-z][a-z0-9.-]+$"
+          },
+          "depends_on": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "consumes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "produces": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._-]*$"
+            }
+          },
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "expectation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terminal_state",
+        "evidence_state",
+        "expected_artifacts",
+        "expected_diagnostics",
+        "evidence_refs",
+        "state_trace_refs"
+      ],
+      "properties": {
+        "terminal_state": {
+          "enum": [
+            "complete",
+            "partial",
+            "unavailable",
+            "unsupported",
+            "invalid",
+            "failed",
+            "interrupted"
+          ]
+        },
+        "evidence_state": {
+          "enum": [
+            "complete",
+            "observed-empty",
+            "unavailable",
+            "incomplete",
+            "unsupported",
+            "invalid",
+            "failed"
+          ]
+        },
+        "expected_artifacts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "expected_diagnostics": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["schema_version", "digest"],
+            "properties": {
+              "schema_version": {
+                "type": "string",
+                "pattern": "^flow\\.[a-z-]+/v[1-9][0-9]{0,19}$"
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        },
+        "state_trace_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["schema_version", "digest"],
+            "properties": {
+              "schema_version": {
+                "type": "string",
+                "pattern": "^flow\\.[a-z-]+/v[1-9][0-9]{0,19}$"
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier", "clean_room", "network_mode", "external_services", "budget"],
+      "properties": {
+        "tier": { "enum": ["pull-request", "scheduled", "release"] },
+        "clean_room": { "type": "boolean" },
+        "network_mode": { "enum": ["denied", "allowlisted"] },
+        "external_services": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "timeout_ms",
+            "max_memory_bytes",
+            "max_stdout_bytes",
+            "max_stderr_bytes",
+            "max_artifact_bytes",
+            "max_artifacts"
+          ],
+          "properties": {
+            "timeout_ms": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 18446744073709551615
+            },
+            "max_memory_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 18446744073709551615
+            },
+            "max_stdout_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 18446744073709551615
+            },
+            "max_stderr_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 18446744073709551615
+            },
+            "max_artifact_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 18446744073709551615
+            },
+            "max_artifacts": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 18446744073709551615
+            }
+          }
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim", "covered_behaviors", "known_gaps"],
+      "properties": {
+        "claim": { "const": "scenario-only" },
+        "covered_behaviors": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "known_gaps": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

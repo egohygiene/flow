@@ -1,0 +1,101 @@
+{
+  "schema_version": "flow.scenario-manifest/v1",
+  "scenario_id": "scenario:required-provider-unavailable",
+  "fixture_id": "fixture:required-provider-unavailable-v1",
+  "fixture_version": "1.0.0",
+  "title": "Required provider is unavailable",
+  "description": "Proves that an unavailable required provider remains typed negative evidence rather than observed-empty, incomplete, unsupported, or successful completion.",
+  "fixture_class": "boundary",
+  "tags": ["clean-room", "negative", "single-provider", "unavailable"],
+  "inputs": [
+    {
+      "artifact_id": "synthetic-request",
+      "media_type": "application/vnd.egohygiene.synthetic-request+json",
+      "artifact_contract": {
+        "schema_version": "flow.artifact/v1",
+        "digest": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1"
+      },
+      "source": {
+        "kind": "generated",
+        "locator": "contracts/fixtures/scenarios/sources/synthetic-request.json",
+        "revision": "sha256:8894999b67b6098996210f85587736e6474fe8f9455822a186ba83b69c1e8c61",
+        "digest": "8894999b67b6098996210f85587736e6474fe8f9455822a186ba83b69c1e8c61",
+        "license": "CC0-1.0",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "required-provider-unavailable-v1",
+          "parameters_digest": "f7fa2f4a182d9ce8dfb8c7be63e5b24a53d2c19bf9da6b9dcd447b2bdb57e60b"
+        }
+      }
+    }
+  ],
+  "providers": [
+    {
+      "provider_id": "org.egohygiene.synthetic-unavailable-provider",
+      "version": "0.1.0",
+      "interface": "process",
+      "manifest": {
+        "schema_version": "flow.extension-manifest/v1",
+        "digest": "c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5"
+      },
+      "package": {
+        "kind": "generated",
+        "locator": "flow::scenario::fixtures::unavailable_provider",
+        "revision": "sha256:c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6",
+        "digest": "c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7",
+        "license": "MIT",
+        "generator": {
+          "generator_id": "org.egohygiene.fixture-generator",
+          "version": "1.0.0",
+          "seed": "synthetic-unavailable-provider-v1",
+          "parameters_digest": "c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8"
+        }
+      },
+      "required_capabilities": ["flow/inspect-fixture"]
+    }
+  ],
+  "stages": [
+    {
+      "stage_id": "inspect",
+      "provider_id": "org.egohygiene.synthetic-unavailable-provider",
+      "capability_id": "flow/inspect-fixture",
+      "depends_on": [],
+      "consumes": ["synthetic-request"],
+      "produces": [],
+      "required": true
+    }
+  ],
+  "expectation": {
+    "terminal_state": "unavailable",
+    "evidence_state": "unavailable",
+    "expected_artifacts": [],
+    "expected_diagnostics": ["provider.unavailable"],
+    "evidence_refs": [
+      {
+        "schema_version": "flow.extension-resolution/v1",
+        "digest": "c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9"
+      }
+    ],
+    "state_trace_refs": []
+  },
+  "execution": {
+    "tier": "pull-request",
+    "clean_room": true,
+    "network_mode": "denied",
+    "external_services": [],
+    "budget": {
+      "timeout_ms": 5000,
+      "max_memory_bytes": 67108864,
+      "max_stdout_bytes": 65536,
+      "max_stderr_bytes": 65536,
+      "max_artifact_bytes": 1048576,
+      "max_artifacts": 2
+    }
+  },
+  "coverage": {
+    "claim": "scenario-only",
+    "covered_behaviors": ["typed required-provider unavailability"],
+    "known_gaps": ["Does not launch a process or prove why a real provider is unavailable."]
+  }
+}

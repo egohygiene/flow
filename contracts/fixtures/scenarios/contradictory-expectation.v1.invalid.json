@@ -1,0 +1,40 @@
+{
+  "schema_version": "flow.scenario-manifest/v1",
+  "scenario_id": "scenario:contradictory-expectation",
+  "fixture_id": "fixture:contradictory-expectation-v1",
+  "fixture_version": "1.0.0",
+  "title": "Contradictory terminal and evidence states",
+  "description": "Complete work cannot simultaneously claim failed evidence.",
+  "fixture_class": "malformed",
+  "tags": ["invalid-expectation"],
+  "inputs": [],
+  "providers": [],
+  "stages": [],
+  "expectation": {
+    "terminal_state": "complete",
+    "evidence_state": "failed",
+    "expected_artifacts": [],
+    "expected_diagnostics": ["flow.scenario.contradictory-expectation"],
+    "evidence_refs": [],
+    "state_trace_refs": []
+  },
+  "execution": {
+    "tier": "pull-request",
+    "clean_room": true,
+    "network_mode": "denied",
+    "external_services": [],
+    "budget": {
+      "timeout_ms": 1000,
+      "max_memory_bytes": 1048576,
+      "max_stdout_bytes": 1024,
+      "max_stderr_bytes": 1024,
+      "max_artifact_bytes": 1024,
+      "max_artifacts": 1
+    }
+  },
+  "coverage": {
+    "claim": "scenario-only",
+    "covered_behaviors": ["contradictory expectation rejection"],
+    "known_gaps": []
+  }
+}
