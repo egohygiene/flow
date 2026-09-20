@@ -317,8 +317,7 @@ impl ScenarioManifest {
                 &format!("scenario.providers[{index}].required_capabilities"),
                 &provider.required_capabilities,
             )?;
-            for (capability_index, capability) in
-                provider.required_capabilities.iter().enumerate()
+            for (capability_index, capability) in provider.required_capabilities.iter().enumerate()
             {
                 capability_id(
                     &format!(
@@ -365,12 +364,12 @@ impl ScenarioManifest {
     fn normalized(&self) -> Self {
         let mut normalized = self.clone();
         normalized.tags.sort();
-        normalized.inputs.sort_by(|left, right| {
-            left.artifact_id.cmp(&right.artifact_id)
-        });
-        normalized.providers.sort_by(|left, right| {
-            left.provider_id.cmp(&right.provider_id)
-        });
+        normalized
+            .inputs
+            .sort_by(|left, right| left.artifact_id.cmp(&right.artifact_id));
+        normalized
+            .providers
+            .sort_by(|left, right| left.provider_id.cmp(&right.provider_id));
         for provider in &mut normalized.providers {
             provider.required_capabilities.sort();
         }
@@ -462,12 +461,14 @@ impl ScenarioManifest {
             }
 
             for artifact_id in &stage.consumes {
-                let producer = available_artifacts.get(artifact_id.as_str()).ok_or_else(|| {
-                    ValidationError::new(
-                        format!("scenario.stages[{index}].consumes"),
-                        format!("references unknown artifact {artifact_id}"),
-                    )
-                })?;
+                let producer = available_artifacts
+                    .get(artifact_id.as_str())
+                    .ok_or_else(|| {
+                        ValidationError::new(
+                            format!("scenario.stages[{index}].consumes"),
+                            format!("references unknown artifact {artifact_id}"),
+                        )
+                    })?;
                 if let Some(producer) = producer {
                     if !stage_ancestors.contains(producer) {
                         return Err(ValidationError::new(
@@ -480,10 +481,7 @@ impl ScenarioManifest {
                 }
             }
             for artifact_id in &stage.produces {
-                identifier(
-                    &format!("scenario.stages[{index}].produces"),
-                    artifact_id,
-                )?;
+                identifier(&format!("scenario.stages[{index}].produces"), artifact_id)?;
                 if available_artifacts
                     .insert(artifact_id.as_str(), Some(stage.stage_id.as_str()))
                     .is_some()
@@ -556,10 +554,7 @@ impl ScenarioManifest {
             ) | (
                 ScenarioTerminalState::Invalid,
                 ScenarioEvidenceState::Invalid
-            ) | (
-                ScenarioTerminalState::Failed,
-                ScenarioEvidenceState::Failed
-            )
+            ) | (ScenarioTerminalState::Failed, ScenarioEvidenceState::Failed)
         );
         if !coherent {
             return Err(ValidationError::new(
@@ -659,10 +654,7 @@ fn source(path: &str, value: &ImmutableSource) -> Result<(), ValidationError> {
                 &format!("{path}.generator.generator_id"),
                 &generator.generator_id,
             )?;
-            strict_version(
-                &format!("{path}.generator.version"),
-                &generator.version,
-            )?;
+            strict_version(&format!("{path}.generator.version"), &generator.version)?;
             nonempty(format!("{path}.generator.seed"), &generator.seed)?;
             digest(
                 &format!("{path}.generator.parameters_digest"),
@@ -749,8 +741,9 @@ fn references(path: &str, values: &[ContractDocumentReference]) -> Result<(), Va
 }
 
 fn strict_version(path: &str, value: &str) -> Result<(), ValidationError> {
-    let parsed = Version::parse(value)
-        .map_err(|error| ValidationError::new(path, format!("invalid semantic version: {error}")))?;
+    let parsed = Version::parse(value).map_err(|error| {
+        ValidationError::new(path, format!("invalid semantic version: {error}"))
+    })?;
     if parsed.pre.is_empty() && parsed.build.is_empty() && parsed.to_string() == value {
         Ok(())
     } else {
@@ -791,7 +784,10 @@ fn digest(path: &str, value: &str) -> Result<(), ValidationError> {
 
 fn prefixed_id(path: &str, value: &str, prefix: &str) -> Result<(), ValidationError> {
     let Some(rest) = value.strip_prefix(prefix) else {
-        return Err(ValidationError::new(path, format!("must start with {prefix}")));
+        return Err(ValidationError::new(
+            path,
+            format!("must start with {prefix}"),
+        ));
     };
     identifier(path, rest)
 }
@@ -800,17 +796,12 @@ fn identifier(path: &str, value: &str) -> Result<(), ValidationError> {
     let mut bytes = value.bytes();
     let valid = matches!(bytes.next(), Some(byte) if byte.is_ascii_lowercase() || byte.is_ascii_digit())
         && bytes.all(|byte| {
-            byte.is_ascii_lowercase()
-                || byte.is_ascii_digit()
-                || matches!(byte, b'.' | b'_' | b'-')
+            byte.is_ascii_lowercase() || byte.is_ascii_digit() || matches!(byte, b'.' | b'_' | b'-')
         });
     if valid {
         Ok(())
     } else {
-        Err(ValidationError::new(
-            path,
-            "must be a lowercase identifier",
-        ))
+        Err(ValidationError::new(path, "must be a lowercase identifier"))
     }
 }
 
@@ -876,10 +867,7 @@ fn expect(path: &str, actual: &str, expected: &str) -> Result<(), ValidationErro
     if actual == expected {
         Ok(())
     } else {
-        Err(ValidationError::new(
-            path,
-            format!("must equal {expected}"),
-        ))
+        Err(ValidationError::new(path, format!("must equal {expected}")))
     }
 }
 

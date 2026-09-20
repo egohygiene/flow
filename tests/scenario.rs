@@ -20,7 +20,10 @@ fn manifest(source: &str) -> ScenarioManifest {
 fn assert_rejected(source: &str) {
     let value: serde_json::Value = serde_json::from_str(source).expect("fixture JSON must parse");
     if let Ok(manifest) = serde_json::from_value::<ScenarioManifest>(value) {
-        assert!(manifest.validate().is_err(), "invalid scenario was accepted");
+        assert!(
+            manifest.validate().is_err(),
+            "invalid scenario was accepted"
+        );
     }
 }
 
@@ -45,9 +48,7 @@ fn invalid_scenarios_are_rejected() {
     for source in [
         include_str!("../contracts/fixtures/scenarios/unknown-version.v1.invalid.json"),
         include_str!("../contracts/fixtures/scenarios/missing-identity.v1.invalid.json"),
-        include_str!(
-            "../contracts/fixtures/scenarios/contradictory-expectation.v1.invalid.json"
-        ),
+        include_str!("../contracts/fixtures/scenarios/contradictory-expectation.v1.invalid.json"),
         include_str!("../contracts/fixtures/scenarios/mutable-reference.v1.invalid.json"),
         include_str!("../contracts/fixtures/scenarios/invalid-budget.v1.invalid.json"),
     ] {
