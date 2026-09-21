@@ -3,9 +3,11 @@
 //! Flow treats extension manifests as declarations, operator locks as authority,
 //! and provider events and results as untrusted evidence until validation has
 //! completed. It can invoke a caller-supplied in-process port or validate an
-//! already-captured external-process transcript; it does not launch processes.
+//! already-captured external-process transcript after exact subject and
+//! authority/isolation preflight; it does not launch or sandbox processes.
 
 pub mod artifacts;
+pub mod authority;
 pub mod catalog;
 pub mod contracts;
 pub mod execution;
@@ -15,6 +17,7 @@ pub mod process;
 pub mod scenario;
 
 pub use artifacts::*;
+pub use authority::*;
 pub use catalog::{
     CatalogError, ExtensionCatalog, ExtensionObservation, ResolutionOutcome, ResolutionRequest,
     ResolvedExtension,

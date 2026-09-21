@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.7.0
+version: 0.8.0
 status: draft
 owners:
   - egohygiene
@@ -87,6 +87,16 @@ declaration, configured operator trust, cryptographic verification, and
 transparency-log verification remain separate evidence claims; digest equality
 does not imply authenticity.
 
+Process authority and isolation are a fourth distinct boundary. A closed
+profile translates broad manifest permissions and operator grants into exact
+per-invocation argv, opaque secret handles, resource allowlists, telemetry
+propagation, operator trust, and selected isolation. Separate host evidence
+states which exact profile a named backend reports enforcing. Flow issues an
+opaque authorization token only after the resolution, invocation, matched
+execution subjects, profile, and evidence agree. The evidence is caller-
+attested: correlation is implemented, while operating-system enforcement and
+evidence authentication are not.
+
 ### External adapters
 
 Adapters isolate process invocation, version/capability probing, structured
@@ -99,6 +109,11 @@ adapters must additionally enforce every time, output, cancellation,
 filesystem, environment, subprocess, network, AI, GPU, and side-effect
 guarantee they claim outside the provider process. A declaration, grant,
 transcript check, or adapter policy is not by itself sandbox enforcement.
+
+A sandbox-required process candidate may resolve to the downstream authority
+gate, where only a complete `sandboxed` profile and exact caller-attested
+enforcement statement can construct the process authorization token. The
+unconfined in-process seam remains restricted to operator-`trusted` providers.
 
 The first process boundary is host-neutral: Flow deterministically encodes one
 versioned invocation and validates a caller-supplied JSON Lines stdout
@@ -199,12 +214,15 @@ and canonical digest drift checks; it does not run those scenarios. Issue #36 /
 merged PR #37 adds explicit artifact bindings, root-confined host observation,
 deterministic file/directory identity, and an opaque accepted artifact set.
 Issue #38 adds exact locked package/executable observation and an opaque token
-required by both process seams. Flow does not yet supply the public CLI, a
-production child-process runner, real holon adapters, signature or transparency
-verification, provider-native artifact validation, enforceable isolation,
-durable run state, checkpoints, interruption, or resume. Structural units
-beyond these library seams remain constraints for later adapter and
-orchestration work, not claims about current source layout.
+required by both process seams. Issue #40 adds exact process authority and
+isolation profiles, caller-attested enforcement evidence, and a second opaque
+token required by both process seams. Flow does not yet supply the public CLI,
+a production child-process runner, real holon adapters, signature or
+transparency verification, provider-native artifact validation, an operating-
+system sandbox or authenticated enforcement evidence, durable run state,
+checkpoints, interruption, or resume. Structural units beyond these library
+seams remain constraints for later adapter and orchestration work, not claims
+about current source layout.
 
 ## Open questions
 
@@ -214,14 +232,18 @@ orchestration work, not claims about current source layout.
 
 ## Validation
 
-Default-branch CI run 35546410096 validates Rust 1.85 and stable library builds,
+Default-branch CI run 35558851556 validates Rust 1.85 and stable library builds,
 closed contract models, deterministic resolution, the hermetic in-process and
 process-transcript seams, scenario-manifest identity, and repository
-architecture metadata plus artifact acceptance at
-`55341605968d3343e74d8bdd2b188c99a855aca0`. Issue #38 extends that matrix with
+architecture metadata plus artifact acceptance and exact execution subjects at
+`9cbe58eff5174faa9511a64211e8119e5c7bda6d`. Issue #40 extends that matrix with
+authority/isolation schema and semantic validation, canonical identity,
+request/grant coverage, every explicit authority dimension, trust routing,
+exact sandbox enforcement correlation, context replay, contradictory evidence,
+and unsupported-claim checks. Issue #38 previously added
 execution-subject schema, canonical identity, filesystem, content-mismatch,
 context-replay, contradictory-evidence, and unsupported-claim checks. Forbidden
 dependency-edge checks, CLI-thinness, signature/transparency verification,
-real launcher enforcement, provider-native artifact validation, scenario
-execution, and sandbox conformance remain later gates for their corresponding
-runtime surfaces.
+real launcher enforcement, authenticated sandbox conformance, provider-native
+artifact validation, and scenario execution remain later gates for their
+corresponding runtime surfaces.

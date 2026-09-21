@@ -5,7 +5,7 @@ use flow::{
     FallbackPolicy, ResolutionResult, Trust,
 };
 
-use common::{lock, manifest, observation, request, variant};
+use common::{lock, manifest, observation, process_request, request, variant};
 
 type CatalogMutation = Box<dyn Fn(&mut ExtensionManifest, &mut ExtensionLock)>;
 
@@ -557,7 +557,29 @@ fn disabled_missing_and_integrity_mismatched_observations_are_unavailable() {
         sandboxed.evidence().candidates[0]
             .reasons
             .iter()
-            .any(|reason| reason.contains("Sandboxed trust"))
+            .any(|reason| reason.contains("Sandbox-required operator trust"))
+    );
+
+    let mut sandboxed_process_lock = lock();
+    sandboxed_process_lock.extensions[0].trust = Trust::Sandboxed;
+    let sandboxed_process = ExtensionCatalog::inspect(
+        [base_manifest.clone()],
+        sandboxed_process_lock,
+        [observation(&base_manifest, true)],
+    )
+    .unwrap()
+    .resolve(&process_request());
+    assert_eq!(
+        sandboxed_process.evidence().result,
+        ResolutionResult::Selected
+    );
+    assert!(sandboxed_process.evidence().candidates[0].authorized);
+    assert!(sandboxed_process.evidence().candidates[0].available);
+    assert!(
+        sandboxed_process.evidence().candidates[0]
+            .reasons
+            .iter()
+            .any(|reason| reason.contains("downstream authority and enforcement preflight"))
     );
 
     let missing = ExtensionCatalog::inspect([base_manifest.clone()], lock(), []).unwrap();

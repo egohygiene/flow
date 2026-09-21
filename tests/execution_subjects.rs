@@ -11,7 +11,7 @@ use flow::{
 
 #[cfg(unix)]
 use common::create_unsupported_node;
-use common::{invocation, process_subject_fixture};
+use common::{authorized_process, invocation, process_subject_fixture};
 
 #[test]
 fn exact_package_and_executable_bytes_produce_stable_separated_evidence() {
@@ -295,6 +295,7 @@ fn matched_subject_tokens_are_bound_to_the_exact_lock_and_invocation() {
         &fixture.subject_lock,
     )
     .unwrap();
+    let authority = authorized_process(resolved, &invocation, &fixture.subject_lock, &matched);
 
     let mut different_invocation = invocation.clone();
     different_invocation.invocation_id = "invocation:different".to_owned();
@@ -303,6 +304,7 @@ fn matched_subject_tokens_are_bound_to_the_exact_lock_and_invocation() {
         &different_invocation,
         &fixture.subject_lock,
         &matched,
+        &authority,
     )
     .unwrap_err();
     assert!(matches!(error, ExecutionError::Preflight { .. }));
@@ -314,6 +316,7 @@ fn matched_subject_tokens_are_bound_to_the_exact_lock_and_invocation() {
         &different_run,
         &fixture.subject_lock,
         &matched,
+        &authority,
         ProcessTranscript::new(ProcessCompletion::Exited { code: Some(0) }, &[], &[]),
         &mut Vec::new(),
     )
@@ -322,9 +325,14 @@ fn matched_subject_tokens_are_bound_to_the_exact_lock_and_invocation() {
 
     let mut different_lock = fixture.subject_lock.clone();
     different_lock.subject_lock_id = "subject-lock:different".to_owned();
-    let error =
-        Orchestrator::encode_process_request(resolved, &invocation, &different_lock, &matched)
-            .unwrap_err();
+    let error = Orchestrator::encode_process_request(
+        resolved,
+        &invocation,
+        &different_lock,
+        &matched,
+        &authority,
+    )
+    .unwrap_err();
     assert!(matches!(error, ExecutionError::Preflight { .. }));
 }
 

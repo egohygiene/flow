@@ -21,11 +21,12 @@ only. The executable checkpoints provide a small Rust library that validates
 the federated extension contracts, resolves one capability deterministically,
 executes one caller-injected in-process extension, and validates a provider-
 neutral process transcript without launching a child process. Flow can also
-observe exact locked package/executable subjects, accept explicitly bound
-artifacts, and validate a closed scenario manifest for synthetic orchestration
-fixtures. It does not copy holon source or claim a product orchestrator, CLI,
-production process adapter, scenario runner, durable run state, or resume
-support.
+observe exact locked package/executable subjects, require exact correlated
+process authority/isolation evidence, accept explicitly bound artifacts, and
+validate a closed scenario manifest for synthetic orchestration fixtures. It
+does not copy holon source or claim a product orchestrator, CLI, production
+process adapter, operating-system sandbox, scenario runner, durable run state,
+or resume support.
 
 ## Executable checkpoint
 
@@ -45,6 +46,9 @@ The first executable checkpoint is deliberately library-only:
   `flow.execution-subject-observations/v1` keep content equality, lock match,
   publisher declaration, operator trust, cryptographic verification, and
   transparency-log status as separate claims;
+- `flow.process-authority-profile/v1` and
+  `flow.process-enforcement-evidence/v1` bind exact requested/granted authority,
+  trust, isolation, and caller-attested enforcement to the matched subjects;
 - artifact bindings map immutable input and candidate-output IDs to portable
   root-relative locators; Flow observes file/directory bytes beneath one root
   and returns an accepted set only after exact host/provider correlation;
@@ -96,13 +100,22 @@ that invocation. It does not prove a publisher signature, authentic publisher
 identity, transparency-log inclusion, trustworthy operator policy, or that a
 later launcher opened the same unchanged file object.
 
-Only `trusted` candidates are resolution-eligible in this checkpoint;
+Process mode also requires `AuthorizedProcess`, an opaque token constructed only
+after an exact authority profile and host-enforcement statement agree with the
+resolution, invocation, operator grants, trust, and freshly matched subjects.
+The profile makes argv, secret handles, resource allowlists, denied ambient
+authority, and isolation explicit. For `sandboxed`, every dimension must be
+reported enforced exactly as requested. This evidence is caller-attested; it
+does not prove that a sandbox ran.
+
+Only `trusted` candidates may use the unconfined in-process seam. A `sandboxed`
+process candidate may resolve only to the downstream authority/isolation gate.
 `Orchestrator` either executes a caller-injected in-process port or validates a
-caller-supplied process transcript. `sandboxed` candidates fail closed because
-no sandbox backend exists. In-process limits remain correlated metadata only.
-The process-transcript seam checks already captured stdout/stderr byte counts
-and completion evidence, but it does not launch, time out, cancel, signal, reap,
-or isolate a process. Neither seam provides filesystem or network containment.
+caller-supplied process transcript. In-process limits remain correlated metadata
+only. The process-transcript seam checks already captured stdout/stderr byte
+counts and completion evidence, but it does not launch, time out, cancel,
+signal, reap, or isolate a process. Neither seam itself provides filesystem or
+network containment.
 
 ## Architecture
 
@@ -114,6 +127,7 @@ or isolate a process. Neither seam provides filesystem or network containment.
 - [Federated extension contract](docs/integrations/extension-contract.md)
 - [Process transport contract](docs/integrations/process-transport.md)
 - [Execution-subject integrity](docs/integrations/execution-subjects.md)
+- [Process authority and isolation](docs/integrations/authority-isolation.md)
 - [Artifact binding contract](docs/integrations/artifact-bindings.md)
 - [Scenario fixture contract](docs/integrations/scenario-fixtures.md)
 - [Versioned contracts](contracts/README.md)
@@ -124,14 +138,14 @@ skills, agents, templates, and validators used to maintain these documents.
 
 ## Status
 
-Flow is in the **executable contract seam** phase. Issues #23, #26, #28, and
-#36 are merged through PRs #24, #27, #35, and #37. Default-branch CI run
-35546410096 passed at `55341605968d3343e74d8bdd2b188c99a855aca0`.
-Issue #38 adds the next bounded parent-#25 slice: exact locked package and
-executable observation before process request or transcript acceptance. The
-process seam still does not implement a runner, authenticity verification,
-authority enforcement, or host isolation, and the scenario contract is not an
-executor.
+Flow is in the **executable contract seam** phase. Issues #23, #26, #28, #36,
+and #38 are merged through PRs #24, #27, #35, #37, and #39. Default-branch CI
+run 35558851556 passed at `9cbe58eff5174faa9511a64211e8119e5c7bda6d`.
+Issue #40 / PR #41 adds the next bounded parent-#25 slice: exact process
+authority and isolation evidence required before request or transcript
+acceptance. The process seam still does not implement a runner, authenticity
+verification, operating-system enforcement, or authenticated host evidence,
+and the scenario contract is not an executor.
 Current descriptions of Aniflow, Optiflow, and Renderflow are grounded in their default
 branches as inspected on 2026-08-13. The holons remain independently released
 repositories; real provider adapters and the restore-and-assess workflow remain

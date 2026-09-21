@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 0.8.0
+version: 0.9.0
 status: draft
 owners:
   - egohygiene
@@ -38,10 +38,10 @@ updated: 2026-09-21
 
 **Lifecycle:** executable contract prototype
 
-**Current gate:** Complete Flow #38, the next bounded child of Flow #25: pin one
-exact package directory and executable file to a process context, observe both
-beneath one selected root, and reject request/transcript evidence unless both
-subjects exactly match the lock without overstating authenticity.
+**Current gate:** Complete Flow #40, the next bounded child of Flow #25: bind one
+process invocation to exact requested/granted authority, explicit trust and
+isolation, and correlated host-enforcement evidence without claiming that
+caller attestation is operating-system proof.
 
 **North-star outcome:** Federated orchestration across holons with stable provider seams, resumable work, and explicit evidence.
 
@@ -50,9 +50,9 @@ subjects exactly match the lock without overstating authenticity.
 **Mode:** `central`  
 **Route:** `/roadmap/flow/`  
 **Current publication evidence:** Architecture, contract source, merged Flow
-#23 / PR #24, #26 / PR #27, #28 / PR #35, #36 / PR #37, and successful
-default-branch CI run 35546410096 at
-`55341605968d3343e74d8bdd2b188c99a855aca0`; no executable release or Pages
+#23 / PR #24, #26 / PR #27, #28 / PR #35, #36 / PR #37, #38 / PR #39, and
+successful default-branch CI run 35558851556 at
+`9cbe58eff5174faa9511a64211e8119e5c7bda6d`; no executable release or Pages
 publication observed.
 
 Publish the public-safe projection through egohygiene.io at /roadmap/flow/. This repository owns intent and acceptance evidence; it does not add a second site deployment.
@@ -128,7 +128,7 @@ same acceptance gate validates a deterministic external-process transcript.
 id: FLO-Q03
 status: active
 depends_on: [FLO-Q02]
-issues: [13, 25, 28, 36, 38]
+issues: [13, 25, 28, 36, 38, 40]
 -->
 #### FLO-Q03 — Freeze conformance fixtures and implement provider adapters
 
@@ -147,6 +147,8 @@ behavior through stable error and evidence contracts.
   after exact invocation, provider, and content correlation.
 - [x] Require exact locked package and executable observations before process
   request or transcript acceptance while keeping authenticity claims separate.
+- [x] Require exact requested/granted process authority and explicit isolation
+  evidence before request or transcript acceptance.
 - [ ] At least two adapters pass contract tests.
 - [ ] Provider-specific behavior does not leak into the core model.
 
@@ -158,8 +160,11 @@ behavior through stable error and evidence contracts.
 - Flow #36 / merged PR #37 supplies the artifact-binding and host-observation
   boundary with green default-branch CI at
   `55341605968d3343e74d8bdd2b188c99a855aca0`.
-- Flow #25 remains the active owner of package/executable integrity, authority
-  profiles, and process enforcement. Flow #38 is its current bounded integrity
+- Flow #38 / merged PR #39 supplies exact locked package/executable observation
+  with green default-branch CI at
+  `9cbe58eff5174faa9511a64211e8119e5c7bda6d`.
+- Flow #25 remains the active owner of authority profiles and process
+  enforcement. Flow #40 / PR #41 is its current bounded authority/isolation
   child; scenario references do not pre-empt those runtime contracts.
 
 <!-- roadmap-step
@@ -240,9 +245,11 @@ and
 [ADR-0007](docs/architecture/governance/decisions/ADR-0007-root-confined-artifact-acceptance.md),
 and
 [ADR-0008](docs/architecture/governance/decisions/ADR-0008-locked-execution-subjects.md).
-Artifact, capability, compatibility, binding, host-observation, and execution-
-subject schemas begin as provisional v1 contracts so real adapter work can
-refine them without claiming stability.
+Exact process authority and isolation evidence is approved by
+[ADR-0009](docs/architecture/governance/decisions/ADR-0009-process-authority-isolation.md).
+Artifact, capability, compatibility, binding, host-observation, execution-
+subject, and authority/isolation schemas begin as provisional v1 contracts so
+real adapter work can refine them without claiming stability.
 
 **Exit evidence:** architecture validation passes; every suite capability has
 one primary owner; contract documents are machine-valid; no mutable or copied
@@ -334,7 +341,7 @@ request encoding and transcript validation. Keep content equality, publisher
 declaration, configured operator trust, cryptographic verification, and
 transparency-log status as distinct claims.
 
-**Candidate evidence:** Flow #38 adds
+**Delivered evidence:** Flow #38 / merged PR #39 adds
 `flow.execution-subject-lock/v1`,
 `flow.execution-subject-observations/v1`, deterministic canonical lock and
 observation identity, fresh package/executable matching, closed unsupported-
@@ -342,6 +349,25 @@ claim rejection, and adversarial context/content tests. It does not authenticate
 a publisher, verify signatures or transparency proofs, bind observation to a
 later launched file object, enforce authority/isolation, launch a process,
 persist state, or implement a real provider adapter.
+
+### Enforce authority and isolation profiles
+
+Translate broad provider permission declarations and operator grants into one
+closed, exact process-authority profile. Bind ordered argv, opaque secret
+handles, every resource and side-effect allowlist, denied ambient authority,
+operator trust, and selected isolation to the exact invocation and already-
+matched execution subjects. Require separate host evidence to identify the
+canonical profile, subject observation, backend, and enforcement status for
+every authority dimension.
+
+**Candidate evidence:** Flow #40 / PR #41 adds
+`flow.process-authority-profile/v1`,
+`flow.process-enforcement-evidence/v1`, deterministic canonical identities,
+opaque `AuthorizedProcess` preflight, sandbox-required process routing, and
+positive/adversarial authority and evidence tests. It validates caller-attested
+host evidence; it does not launch a process, implement an operating-system
+sandbox, authenticate the evidence source, persist run state, or implement a
+real provider adapter.
 
 ### Pin the capability matrix
 

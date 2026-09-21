@@ -4,11 +4,12 @@ use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use flow::{
-    ArtifactKind, Authorization, Configuration, Domain, EXTENSION_INVOCATION_V1, ExecutionModeKind,
-    ExecutionSubjectLock, ExtensionCatalog, ExtensionInvocation, ExtensionLock, ExtensionManifest,
-    ExtensionObservation, ExtensionPort, HermeticExtension, InvocationExtension,
-    InvocationInterface, InvocationPhase, Orchestrator, PortIdentity, ProcessCompletion,
-    ProcessTranscript, ResolutionRequest, ResolvedExtension, Trust, observe_execution_subjects,
+    ArtifactKind, Authorization, AuthorizedProcess, Configuration, Domain, EXTENSION_INVOCATION_V1,
+    ExecutionModeKind, ExecutionSubjectLock, ExtensionCatalog, ExtensionInvocation, ExtensionLock,
+    ExtensionManifest, ExtensionObservation, ExtensionPort, HermeticExtension, InvocationExtension,
+    InvocationInterface, InvocationPhase, MatchedExecutionSubjects, Orchestrator, PortIdentity,
+    ProcessAuthorityProfile, ProcessCompletion, ProcessEnforcementEvidence, ProcessTranscript,
+    ResolutionRequest, ResolvedExtension, Trust, authorize_process, observe_execution_subjects,
 };
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -156,6 +157,81 @@ fn fixture_stdout(
     Ok(stdout)
 }
 
+fn process_authorization(
+    resolved: &ResolvedExtension,
+    invocation: &ExtensionInvocation,
+    subject_lock: &ExecutionSubjectLock,
+    subjects: &MatchedExecutionSubjects,
+) -> Result<AuthorizedProcess, Box<dyn std::error::Error>> {
+    let mut profile: ProcessAuthorityProfile = serde_json::from_str(include_str!(
+        "../contracts/examples/process-authority-profile.v1.example.json"
+    ))?;
+    resolved
+        .lock_id()
+        .clone_into(&mut profile.extension_lock_id);
+    invocation
+        .authorization
+        .authorization_id
+        .clone_into(&mut profile.authorization_id);
+    invocation
+        .authorization
+        .grants_digest
+        .clone_into(&mut profile.grants_digest);
+    invocation
+        .invocation_id
+        .clone_into(&mut profile.invocation_id);
+    invocation.run_id.clone_into(&mut profile.run_id);
+    profile.extension = invocation.extension.clone();
+    invocation
+        .capability_id
+        .clone_into(&mut profile.capability_id);
+    profile.interface = invocation.interface.clone();
+    subject_lock
+        .subject_lock_id
+        .clone_into(&mut profile.subject_lock_id);
+    subjects
+        .lock_digest()
+        .clone_into(&mut profile.subject_lock_digest);
+    profile.operator_trust = resolved.trust();
+
+    let mut evidence: ProcessEnforcementEvidence = serde_json::from_str(include_str!(
+        "../contracts/examples/process-enforcement-evidence.v1.example.json"
+    ))?;
+    profile
+        .authority_profile_id
+        .clone_into(&mut evidence.authority_profile_id);
+    profile
+        .canonical_digest()?
+        .clone_into(&mut evidence.authority_profile_digest);
+    profile
+        .invocation_id
+        .clone_into(&mut evidence.invocation_id);
+    profile.run_id.clone_into(&mut evidence.run_id);
+    evidence.extension = profile.extension.clone();
+    profile
+        .capability_id
+        .clone_into(&mut evidence.capability_id);
+    evidence.interface = profile.interface.clone();
+    profile
+        .subject_lock_id
+        .clone_into(&mut evidence.subject_lock_id);
+    profile
+        .subject_lock_digest
+        .clone_into(&mut evidence.subject_lock_digest);
+    subjects
+        .observation_digest()
+        .clone_into(&mut evidence.subject_observation_digest);
+
+    Ok(authorize_process(
+        resolved,
+        invocation,
+        subject_lock,
+        subjects,
+        &profile,
+        &evidence,
+    )?)
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root = ExampleRoot::new()?;
     let (package_digest, executable_digest) = package_identity()?;
@@ -173,9 +249,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let invocation = invocation(resolved);
     let subject_lock = subject_lock(&package_digest, &executable_digest)?;
     let subjects = observe_execution_subjects(root.path(), resolved, &invocation, &subject_lock)?;
+    let authority = process_authorization(resolved, &invocation, &subject_lock, &subjects)?;
 
-    let request =
-        Orchestrator::encode_process_request(resolved, &invocation, &subject_lock, &subjects)?;
+    let request = Orchestrator::encode_process_request(
+        resolved,
+        &invocation,
+        &subject_lock,
+        &subjects,
+        &authority,
+    )?;
 
     // The hermetic port only manufactures deterministic fixture evidence. No
     // operating-system child is launched by this example or the Flow library.
@@ -187,6 +269,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         &invocation,
         &subject_lock,
         &subjects,
+        &authority,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
