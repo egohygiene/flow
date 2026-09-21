@@ -10,9 +10,10 @@ proven with a hermetic reference port. Flow issue #26 adds deterministic
 process request encoding and host-neutral validation of caller-supplied
 completion, stdout, and stderr evidence; it does not launch a process. Product
 Flow issue #36 adds a separate Flow-owned artifact-binding, host-observation,
-and acceptance boundary. Product orchestration, real provider adapters, a
-two-holon vertical slice, and runtime CLI commands remain work for Flow issue
-#3 and its later children.
+and acceptance boundary. Flow issue #38 adds exact package/executable subject
+observation before process request or transcript acceptance. Product
+orchestration, real provider adapters, a two-holon vertical slice, and runtime
+CLI commands remain work for Flow issue #3 and its later children.
 
 An extension is an independently versioned provider package. It can expose one
 or more Aniflow, Optiflow, Renderflow, Flow, or third-party domain capabilities
@@ -29,6 +30,8 @@ without importing sibling source or moving domain logic into Flow.
 | Resolution evidence | Flow | Explains selection, rejection, conflict, replacement, and fallback |
 | Artifact bindings | Flow | Bind immutable input and candidate-output IDs to logical ports, media types, kinds, and root-relative locators |
 | Host artifact observations | Flow observer | Recompute file/directory content identity beneath one selected root; cannot be supplied by the provider as an acceptance token |
+| Execution-subject lock | Flow operator | Pins one exact package directory and executable file to a process provider context |
+| Execution-subject observations | Flow observer | Recompute package/executable identities and report digest, lock, publisher-declaration, operator-trust, cryptographic, and transparency claims separately |
 
 Manifests are inert data. Flow reads manifests only from explicitly configured
 locations and never executes a binary merely because it is on `PATH`.
@@ -68,6 +71,10 @@ success field is evidence, not suite completion.
   `flow.extension-result/v1` runtime families.
 - Capability IDs are globally qualified and name one primary domain owner.
 - The lock must match the inspected identity, version, publisher, and digest.
+- Process execution additionally requires the package-directory digest to
+  equal extension integrity and a separately locked executable-file digest to
+  match the selected entrypoint subject. Digest equality is content evidence,
+  not publisher authentication.
 
 ## Capability and artifact declarations
 
@@ -94,6 +101,11 @@ file or directory identity. Inputs carry an expected SHA-256 digest; outputs
 acquire their digest from host observation. The complete profile is specified
 in [Artifact bindings](artifact-bindings.md).
 
+Process package and executable identity uses the same root-confined observer
+but a separate operator-owned lock and opaque match token. Its exact subject
+definitions and non-authenticity claims are specified in
+[Execution subjects](execution-subjects.md).
+
 ## Execution modes
 
 - **In-process:** a version-pinned public library entry point. Flow still binds
@@ -101,10 +113,13 @@ in [Artifact bindings](artifact-bindings.md).
 - **Process:** a version-pinned executable invoked directly with argv. The v1
   host-neutral transport encodes one invocation and validates a caller-supplied
   JSON Lines event/result transcript, captured-output lengths, and completion
-  observation. A production process adapter must still independently launch
-  the pinned executable, capture stdout/stderr concurrently, enforce timeout,
-  output bounds, cancellation grace, permissions, and declared outputs, and
-  never parse human console text as a contract.
+  observation. Before request encoding or transcript validation, Flow requires
+  a fresh opaque token proving exact observation of the locked package and
+  executable subjects for that invocation. A production process adapter must
+  still independently bind those observed bytes to launch, invoke the pinned
+  executable, capture stdout/stderr concurrently, enforce timeout, output
+  bounds, cancellation grace, permissions, and declared outputs, and never
+  parse human console text as a contract.
 
 Both modes must produce the same structured semantic result. Flow may choose
 process isolation when toolchains, licensing, trust, or failure containment make
@@ -112,12 +127,14 @@ an in-process edge unsuitable.
 
 The current executable checkpoint resolves only `trusted` candidates. It proves
 a caller-injected in-process library port plus host-neutral process request and
-transcript validation. A post-execution library seam can observe explicitly
+transcript validation. Process mode also observes the exact locked package and
+executable content before either process seam. A post-execution library seam
+can observe explicitly
 bound files and directories beneath a caller-selected root and construct an
 opaque accepted artifact set only after binding, host, invocation, event, and
 result correlation. It performs no filesystem discovery, dynamic loading,
-external process launch/capture, executable integrity verification, or sandbox
-enforcement. `sandboxed` candidates fail closed. In-process limits remain
+external process launch/capture, signature or transparency verification, or
+sandbox enforcement. `sandboxed` candidates fail closed. In-process limits remain
 policy metadata only. The process seam checks already captured stdout/stderr
 byte counts and completion evidence, but it does not enforce timeout,
 cancellation, output capture, panic isolation, filesystem/network containment,
@@ -239,6 +256,8 @@ The machine-readable schemas live in `contracts/schemas/`:
 - `flow.extension-resolution/v1`
 - `flow.artifact-bindings/v1`
 - `flow.artifact-observations/v1`
+- `flow.execution-subject-lock/v1`
+- `flow.execution-subject-observations/v1`
 
 Synthetic examples and compatibility fixtures cover all three holon domains and
 explicit compatible, incompatible, over-permissioned, duplicate, and malformed
@@ -252,8 +271,11 @@ correlated event/result validation, and a no-effects, no-artifacts hermetic
 reference port. Issue #26 reuses that validation for deterministic request
 framing and caller-supplied process transcripts. Issue #36 adds portable
 artifact bindings, deterministic host observation, immutable input verification,
-and a separate artifact-acceptance token. No proof promotes an extension's
-terminal success report until its applicable Flow-owned checks pass.
+and a separate artifact-acceptance token. Issue #38 adds a closed execution-
+subject lock, fresh package/executable observation, deterministic canonical
+identity, separated evidence claims, and an opaque match token required by both
+process seams. No proof promotes an extension's terminal success report until
+its applicable Flow-owned checks pass.
 
 Those checks prove contract validity and correlation only. They do not prove
 the authenticity of the caller-issued configuration digest, authorization ID,
@@ -277,7 +299,8 @@ byte identity beneath the selected root, not provider-native domain validity,
 publisher authenticity, or sandbox enforcement.
 
 `extensions list`, `extensions inspect`, `doctor`, real process launching and
-capture, executable verification, sandbox enforcement, real provider adapters,
+capture, launch-time binding to the observed file object, signature and
+transparency verification, sandbox enforcement, real provider adapters,
 domain-output validation, interruption delivery, durable run state,
 checkpoints/resume, and the cross-holon vertical slice remain deferred work for
 Flow #3 after the required holon contracts are available as releases or

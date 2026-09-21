@@ -1654,7 +1654,10 @@ fn validate_digest(path: &str, digest: &str) -> Result<(), ValidationError> {
     )
 }
 
-fn validate_strict_version(path: &str, version: &str) -> Result<Version, ValidationError> {
+pub(crate) fn validate_strict_version(
+    path: &str,
+    version: &str,
+) -> Result<Version, ValidationError> {
     let parsed = Version::parse(version).map_err(|error| {
         ValidationError::new(path, format!("invalid semantic version: {error}"))
     })?;
@@ -1736,7 +1739,7 @@ pub(crate) fn is_extension_id(value: &str) -> bool {
             .all(|segment| is_identifier_segment(segment, true))
 }
 
-fn is_publisher_id(value: &str) -> bool {
+pub(crate) fn is_publisher_id(value: &str) -> bool {
     let mut bytes = value.bytes();
     matches!(bytes.next(), Some(byte) if byte.is_ascii_lowercase())
         && bytes.clone().next().is_some()

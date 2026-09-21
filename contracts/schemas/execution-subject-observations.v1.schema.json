@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/execution-subject-observations.v1.schema.json",
+  "title": "Flow execution subject observations v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "canonicalization",
+    "subject_lock_id",
+    "extension_lock_id",
+    "invocation_id",
+    "run_id",
+    "extension",
+    "capability_id",
+    "interface",
+    "declared_entrypoint",
+    "directory_manifest_profile",
+    "subjects",
+    "claims"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.execution-subject-observations/v1" },
+    "canonicalization": { "const": "flow.canonical-json/v1" },
+    "subject_lock_id": {
+      "type": "string",
+      "pattern": "^subject-lock:[a-z0-9][a-z0-9._-]*$"
+    },
+    "extension_lock_id": {
+      "type": "string",
+      "pattern": "^lock:[a-z0-9][a-z0-9._-]*$"
+    },
+    "invocation_id": {
+      "type": "string",
+      "pattern": "^invocation:[a-z0-9][a-z0-9._-]*$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^run:[a-z0-9][a-z0-9._-]*$"
+    },
+    "extension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["extension_id", "version", "publisher_id", "integrity"],
+      "properties": {
+        "extension_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)+$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "publisher_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9.-]+$"
+        },
+        "integrity": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "capability_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9.-]+/[a-z][a-z0-9.-]+$"
+    },
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "name", "protocol"],
+      "properties": {
+        "kind": { "const": "process" },
+        "name": { "type": "string", "minLength": 1 },
+        "protocol": { "const": "flow.extension-invocation/v1" }
+      }
+    },
+    "declared_entrypoint": { "type": "string", "minLength": 1 },
+    "directory_manifest_profile": { "const": "flow.directory-manifest/v1" },
+    "subjects": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "subject_id",
+          "role",
+          "kind",
+          "locator",
+          "digest",
+          "size_bytes",
+          "manifest"
+        ],
+        "properties": {
+          "subject_id": {
+            "type": "string",
+            "pattern": "^(package|executable):[a-z0-9][a-z0-9._-]*$"
+          },
+          "role": { "enum": ["package", "executable"] },
+          "kind": { "enum": ["file", "directory"] },
+          "locator": { "type": "string", "minLength": 1 },
+          "digest": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["algorithm", "value"],
+            "properties": {
+              "algorithm": { "const": "sha256" },
+              "value": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+            }
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          },
+          "manifest": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["locator", "kind", "digest", "size_bytes"],
+              "properties": {
+                "locator": { "type": "string", "minLength": 1 },
+                "kind": { "enum": ["file", "directory"] },
+                "digest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "size_bytes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "content_digest",
+        "lock_equality",
+        "cryptographic_verification",
+        "publisher_identity",
+        "operator_trust",
+        "transparency_log"
+      ],
+      "properties": {
+        "content_digest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "algorithm"],
+          "properties": {
+            "status": { "const": "observed" },
+            "algorithm": { "const": "sha256" }
+          }
+        },
+        "lock_equality": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "subject_lock_digest"],
+          "properties": {
+            "status": { "const": "matched" },
+            "subject_lock_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "cryptographic_verification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "evidence"],
+          "properties": {
+            "status": { "const": "not-performed" },
+            "evidence": { "type": "array", "maxItems": 0 }
+          }
+        },
+        "publisher_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "publisher_id"],
+          "properties": {
+            "status": { "const": "declared-and-correlated" },
+            "publisher_id": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9.-]+$"
+            }
+          }
+        },
+        "operator_trust": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "trust"],
+          "properties": {
+            "status": { "const": "configured" },
+            "trust": { "enum": ["trusted", "sandboxed", "disabled"] }
+          }
+        },
+        "transparency_log": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "evidence"],
+          "properties": {
+            "status": { "const": "not-checked" },
+            "evidence": { "type": "array", "maxItems": 0 }
+          }
+        }
+      }
+    }
+  }
+}

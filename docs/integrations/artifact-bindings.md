@@ -10,9 +10,10 @@ and result evidence.
 It is governed by
 [ADR-0007](../architecture/governance/decisions/ADR-0007-root-confined-artifact-acceptance.md).
 The implementation is a library boundary for Flow issue #36. It does not launch
-a provider, grant filesystem authority, verify an executable, enforce a
-sandbox, validate provider-native document semantics, or commit durable run
-state.
+a provider, grant filesystem authority, enforce a sandbox, validate provider-
+native document semantics, or commit durable run state. Exact package and
+executable content is a separate pre-execution boundary documented in
+[Execution subjects](execution-subjects.md).
 
 ## Evidence layers
 
@@ -203,9 +204,11 @@ python3 tools/generate_scenario_sources.py --check
 
 ## Deferred boundaries
 
-This profile does not provide executable/package integrity, publisher or
-signature verification, operating-system permission enforcement, sandboxing,
-process launch/supervision, resource quotas during directory traversal,
-domain-specific artifact validation, durable provenance/state commit,
-checkpoint compatibility, retry, or resume. Those claims require their own
-Flow #25 and orchestration checkpoints.
+This profile does not itself provide executable/package integrity. The separate
+execution-subject profile provides exact digest matching but not publisher
+authentication, signature or transparency verification, launch-time file
+binding, operating-system permission enforcement, sandboxing, process
+launch/supervision, resource quotas during directory traversal, domain-specific
+artifact validation, durable provenance/state commit, checkpoint compatibility,
+retry, or resume. Those claims require their own Flow #25 and orchestration
+checkpoints.

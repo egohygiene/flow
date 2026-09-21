@@ -163,6 +163,8 @@ def validate_instance(
     if isinstance(instance, list):
         if "minItems" in schema:
             require(len(instance) >= schema["minItems"], f"{location}: too few items", errors)
+        if "maxItems" in schema:
+            require(len(instance) <= schema["maxItems"], f"{location}: too many items", errors)
         if schema.get("uniqueItems"):
             normalized = [json.dumps(value, sort_keys=True) for value in instance]
             require(len(normalized) == len(set(normalized)), f"{location}: items are not unique", errors)
@@ -483,6 +485,188 @@ def validate_artifact_observations(
             f"{location}: directory observation identity conflicts with its manifest",
             errors,
         )
+
+
+def validate_execution_subject_lock(
+    lock: dict[str, Any],
+    location: str,
+    errors: list[str],
+) -> None:
+    extension = lock.get("extension", {})
+    package = lock.get("package", {})
+    executable = lock.get("executable", {})
+    if isinstance(extension, dict):
+        require(
+            is_strict_semver(extension.get("version")),
+            f"{location}: extension version must use strict semantic versioning",
+            errors,
+        )
+    if not isinstance(package, dict) or not isinstance(executable, dict):
+        return
+    require(
+        package.get("subject_id") != executable.get("subject_id"),
+        f"{location}: package and executable subjects must be distinct",
+        errors,
+    )
+    require(
+        is_portable_locator(package.get("locator")),
+        f"{location}: package locator must be portable and root-relative",
+        errors,
+    )
+    require(
+        is_portable_locator(executable.get("locator")),
+        f"{location}: executable locator must be portable and package-relative",
+        errors,
+    )
+    package_digest = package.get("digest", {})
+    package_digest_value = (
+        package_digest.get("value") if isinstance(package_digest, dict) else None
+    )
+    require(
+        isinstance(extension, dict)
+        and package_digest_value == extension.get("integrity"),
+        f"{location}: package digest must equal extension integrity",
+        errors,
+    )
+    package_locator = package.get("locator")
+    executable_locator = executable.get("locator")
+    if isinstance(package_locator, str) and isinstance(executable_locator, str):
+        require(
+            is_portable_locator(f"{package_locator}/{executable_locator}"),
+            f"{location}: joined executable locator must remain portable",
+            errors,
+        )
+
+
+def validate_execution_subject_observations(
+    observations: dict[str, Any],
+    location: str,
+    errors: list[str],
+) -> None:
+    raw_subjects = observations.get("subjects", [])
+    subjects = (
+        [subject for subject in raw_subjects if isinstance(subject, dict)]
+        if isinstance(raw_subjects, list)
+        else []
+    )
+    require(
+        len(subjects) == 2,
+        f"{location}: exactly one package and one executable are required",
+        errors,
+    )
+    if len(subjects) != 2:
+        return
+    package, executable = subjects
+    require(
+        package.get("role") == "package" and executable.get("role") == "executable",
+        f"{location}: subjects must use canonical package-then-executable order",
+        errors,
+    )
+    require(
+        package.get("kind") == "directory" and executable.get("kind") == "file",
+        f"{location}: package must be a directory and executable must be a file",
+        errors,
+    )
+    require(
+        isinstance(package.get("subject_id"), str)
+        and package["subject_id"].startswith("package:")
+        and isinstance(executable.get("subject_id"), str)
+        and executable["subject_id"].startswith("executable:"),
+        f"{location}: subject identifiers must match their roles",
+        errors,
+    )
+    for field in ("subject_id", "locator"):
+        values = [subject.get(field) for subject in subjects]
+        require(
+            all(isinstance(value, str) for value in values)
+            and len(values) == len(set(values)),
+            f"{location}: observed {field} values must be unique",
+            errors,
+        )
+
+    package_locator = package.get("locator")
+    executable_locator = executable.get("locator")
+    package_digest = package.get("digest", {})
+    extension = observations.get("extension", {})
+    require(
+        isinstance(package_digest, dict)
+        and isinstance(extension, dict)
+        and package_digest.get("value") == extension.get("integrity"),
+        f"{location}: package digest must equal extension integrity",
+        errors,
+    )
+    relative_executable: str | None = None
+    if isinstance(package_locator, str) and isinstance(executable_locator, str):
+        prefix = f"{package_locator}/"
+        require(
+            executable_locator.startswith(prefix),
+            f"{location}: executable must be beneath the package locator",
+            errors,
+        )
+        if executable_locator.startswith(prefix):
+            relative_executable = executable_locator[len(prefix) :]
+
+    artifacts: list[dict[str, Any]] = []
+    for index, subject in enumerate(subjects):
+        digest = subject.get("digest", {})
+        artifacts.append(
+            {
+                "artifact_id": f"artifact:execution-subject-{index}",
+                "port": f"port:execution-subject-{index}",
+                "media_type": "application/vnd.flow.execution-subject",
+                "kind": subject.get("kind"),
+                "locator": subject.get("locator"),
+                "digest": digest.get("value") if isinstance(digest, dict) else None,
+                "size_bytes": subject.get("size_bytes"),
+                "manifest": subject.get("manifest"),
+            }
+        )
+    validate_artifact_observations({"artifacts": artifacts}, location, errors)
+
+    package_manifest = package.get("manifest", [])
+    executable_digest = executable.get("digest", {})
+    matching_entries = (
+        [
+            entry
+            for entry in package_manifest
+            if isinstance(entry, dict) and entry.get("locator") == relative_executable
+        ]
+        if isinstance(package_manifest, list) and relative_executable is not None
+        else []
+    )
+    require(
+        len(matching_entries) == 1,
+        f"{location}: package manifest must contain the executable exactly once",
+        errors,
+    )
+    if len(matching_entries) == 1:
+        entry = matching_entries[0]
+        require(
+            entry.get("kind") == "file"
+            and isinstance(executable_digest, dict)
+            and entry.get("digest") == executable_digest.get("value")
+            and entry.get("size_bytes") == executable.get("size_bytes"),
+            f"{location}: package and executable observations contradict",
+            errors,
+        )
+
+    claims = observations.get("claims", {})
+    if isinstance(claims, dict):
+        publisher = claims.get("publisher_identity", {})
+        require(
+            isinstance(extension, dict)
+            and isinstance(publisher, dict)
+            and publisher.get("publisher_id") == extension.get("publisher_id"),
+            f"{location}: publisher claim must correlate the extension declaration",
+            errors,
+        )
+        for claim_name in ("cryptographic_verification", "transparency_log"):
+            claim = claims.get(claim_name, {})
+            require(
+                isinstance(claim, dict) and claim.get("evidence") == [],
+                f"{location}: v1 does not support {claim_name} evidence",
+                errors,
+            )
 
 
 def validate_extension_resolution(
@@ -858,6 +1042,81 @@ def canonical_scenario_digest(scenario: dict[str, Any]) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+def canonical_flow_json_digest(value: dict[str, Any]) -> str:
+    payload = json.dumps(
+        value,
+        ensure_ascii=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def validate_execution_subject_examples(
+    examples: dict[str, dict[str, Any]],
+    errors: list[str],
+) -> None:
+    lock = examples.get("flow.execution-subject-lock/v1")
+    observations = examples.get("flow.execution-subject-observations/v1")
+    if not isinstance(lock, dict) or not isinstance(observations, dict):
+        return
+
+    for field in (
+        "subject_lock_id",
+        "extension_lock_id",
+        "extension",
+        "capability_id",
+        "interface",
+        "declared_entrypoint",
+    ):
+        require(
+            observations.get(field) == lock.get(field),
+            f"execution-subject examples disagree on {field}",
+            errors,
+        )
+
+    claims = observations.get("claims", {})
+    equality = claims.get("lock_equality", {}) if isinstance(claims, dict) else {}
+    require(
+        isinstance(equality, dict)
+        and equality.get("subject_lock_digest") == canonical_flow_json_digest(lock),
+        "execution-subject observation does not identify the canonical lock bytes",
+        errors,
+    )
+
+    subjects = observations.get("subjects", [])
+    package = lock.get("package", {})
+    executable = lock.get("executable", {})
+    if (
+        not isinstance(subjects, list)
+        or len(subjects) != 2
+        or not isinstance(subjects[0], dict)
+        or not isinstance(subjects[1], dict)
+        or not isinstance(package, dict)
+        or not isinstance(executable, dict)
+    ):
+        return
+    require(
+        all(
+            subjects[0].get(field) == package.get(field)
+            for field in ("subject_id", "kind", "locator", "digest")
+        ),
+        "execution-subject package example does not match its lock",
+        errors,
+    )
+    expected_executable_locator = (
+        f"{package.get('locator')}/{executable.get('locator')}"
+    )
+    require(
+        subjects[1].get("subject_id") == executable.get("subject_id")
+        and subjects[1].get("kind") == executable.get("kind")
+        and subjects[1].get("locator") == expected_executable_locator
+        and subjects[1].get("digest") == executable.get("digest"),
+        "execution-subject executable example does not match its lock",
+        errors,
+    )
+
+
 def validate_scenario_digests(
     scenario_paths: list[Path],
     errors: list[str],
@@ -937,6 +1196,8 @@ def validate_contract_semantics(
     validators = {
         "flow.artifact-bindings/v1": validate_artifact_bindings,
         "flow.artifact-observations/v1": validate_artifact_observations,
+        "flow.execution-subject-lock/v1": validate_execution_subject_lock,
+        "flow.execution-subject-observations/v1": validate_execution_subject_observations,
         "flow.extension-manifest/v1": validate_extension_manifest,
         "flow.extension-lock/v1": validate_extension_lock,
         "flow.extension-result/v1": validate_extension_result,
@@ -953,6 +1214,7 @@ def main() -> int:
     positive_instances = 0
     rejected_invalid_instances = 0
     scenario_paths: list[Path] = []
+    examples_by_id: dict[str, dict[str, Any]] = {}
     manifest = load_object(MANIFEST)
     require(manifest.get("schema_version") == "flow.contract-set/v1", "manifest schema_version must be flow.contract-set/v1", errors)
     require(bool(SEMVER.fullmatch(str(manifest.get("contract_set_version", "")))), "contract_set_version must be semantic versioning", errors)
@@ -980,6 +1242,8 @@ def main() -> int:
 
         schema = load_object(schema_path)
         example = load_object(example_path)
+        if isinstance(contract_id, str):
+            examples_by_id[contract_id] = example
         require(schema.get("$schema") == "https://json-schema.org/draft/2020-12/schema", f"{schema_path.name}: unsupported JSON Schema draft", errors)
         require(schema.get("type") == "object", f"{schema_path.name}: root type must be object", errors)
         require(schema.get("additionalProperties") is False, f"{schema_path.name}: root must reject unknown properties", errors)
@@ -1068,6 +1332,8 @@ def main() -> int:
         "flow.artifact/v1",
         "flow.capability/v1",
         "flow.compatibility/v1",
+        "flow.execution-subject-lock/v1",
+        "flow.execution-subject-observations/v1",
         "flow.extension-event/v1",
         "flow.extension-invocation/v1",
         "flow.extension-lock/v1",
@@ -1077,6 +1343,7 @@ def main() -> int:
         "flow.scenario-manifest/v1",
     }
     require(seen == expected, f"contract ids must be exactly {sorted(expected)}", errors)
+    validate_execution_subject_examples(examples_by_id, errors)
     validate_scenario_digests(scenario_paths, errors)
 
     if errors:

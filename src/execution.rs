@@ -9,6 +9,7 @@ use crate::contracts::{
     EventKind, ExecutionModeKind, ExtensionEvent, ExtensionInvocation, ExtensionResult,
     InvocationPhase, Outcome, ValidationError,
 };
+use crate::execution_subjects::{ExecutionSubjectLock, MatchedExecutionSubjects};
 use crate::process::{
     DecodedProcessTranscript, ProcessProtocolError, decode_provider_stdout, encode_invocation_frame,
 };
@@ -372,22 +373,29 @@ impl Orchestrator {
 
     /// Encode one validated process-mode invocation for provider stdin.
     ///
+    /// Encoding requires a fresh opaque package/executable match for the exact
+    /// subject lock and invocation context. The token proves digest equality
+    /// to that lock, not publisher authenticity or launch-time file identity.
+    ///
     /// The returned compact JSON document ends with exactly one LF. Its bytes
     /// are a deterministic transport projection, not execution identity or a
     /// general canonical-JSON representation.
     ///
     /// # Errors
     ///
-    /// Returns an error for an invalid invocation, a process-mode preflight
-    /// mismatch, or serialization failure.
+    /// Returns an error for an invalid invocation, process or execution-subject
+    /// preflight mismatch, or serialization failure.
     pub fn encode_process_request(
         resolved: &ResolvedExtension,
         invocation: &ExtensionInvocation,
+        subject_lock: &ExecutionSubjectLock,
+        subjects: &MatchedExecutionSubjects,
     ) -> Result<Vec<u8>, ExecutionError> {
         invocation
             .validate()
             .map_err(|source| ExecutionError::InvalidInvocation { source })?;
         validate_common_preflight(resolved, invocation, ExecutionModeKind::Process)?;
+        validate_process_subject_preflight(resolved, invocation, subject_lock, subjects)?;
         encode_invocation_frame(invocation)
             .map_err(|source| ExecutionError::ProcessProtocol { source })
     }
@@ -400,6 +408,8 @@ impl Orchestrator {
     /// Flow checks the declared byte limits and completion state, parses the
     /// protocol-only stdout stream, and routes the decoded evidence through the
     /// same event/result acceptance gate as in-process execution.
+    /// A matching package/executable token is required before any supplied
+    /// transcript can enter that gate.
     ///
     /// # Errors
     ///
@@ -409,6 +419,8 @@ impl Orchestrator {
     pub fn validate_process_transcript(
         resolved: &ResolvedExtension,
         invocation: &ExtensionInvocation,
+        subject_lock: &ExecutionSubjectLock,
+        subjects: &MatchedExecutionSubjects,
         transcript: ProcessTranscript<'_>,
         event_sink: &mut dyn EventSink,
     ) -> Result<ValidatedExecution, ExecutionError> {
@@ -416,6 +428,7 @@ impl Orchestrator {
             .validate()
             .map_err(|source| ExecutionError::InvalidInvocation { source })?;
         validate_common_preflight(resolved, invocation, ExecutionModeKind::Process)?;
+        validate_process_subject_preflight(resolved, invocation, subject_lock, subjects)?;
 
         validate_captured_length(
             ProcessStream::Stdout,
@@ -441,6 +454,17 @@ impl Orchestrator {
             .map_err(|source| ExecutionError::ProcessProtocol { source })?;
         validate_decoded_process_transcript(invocation, decoded, event_sink)
     }
+}
+
+fn validate_process_subject_preflight(
+    resolved: &ResolvedExtension,
+    invocation: &ExtensionInvocation,
+    subject_lock: &ExecutionSubjectLock,
+    subjects: &MatchedExecutionSubjects,
+) -> Result<(), ExecutionError> {
+    subjects
+        .matches_context(resolved, invocation, subject_lock)
+        .map_err(|message| ExecutionError::Preflight { message })
 }
 
 fn validate_in_process_preflight(

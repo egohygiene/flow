@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.5.0
+version: 0.6.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-20
+updated: 2026-09-21
 governed_by:
   - architecture-decisions
 depends_on:
@@ -61,6 +61,7 @@ justifies separate ADRs.
 | [ADR-0005](decisions/ADR-0005-federated-extension-authority.md) | Separate extension declarations from operator authority | Accepted | 2026-09-12 | None | A required execution mode cannot preserve the same trust and evidence boundary |
 | [ADR-0006](decisions/ADR-0006-bounded-process-transport.md) | Bound process transport with a deterministic JSON Lines transcript | Accepted | 2026-09-16 | None | A released provider or real runner cannot preserve the profile's framing or termination semantics |
 | [ADR-0007](decisions/ADR-0007-root-confined-artifact-acceptance.md) | Accept artifacts through root-confined host observations | Accepted | 2026-09-20 | None | A released adapter cannot preserve the root, locator, or deterministic content-identity profile |
+| [ADR-0008](decisions/ADR-0008-locked-execution-subjects.md) | Require exact locked package and executable subjects | Accepted | 2026-09-21 | None | Authenticity evidence, launch-time file binding, or transitive runtime identity changes the subject boundary |
 
 ## Active decisions
 
@@ -83,6 +84,8 @@ Capability-specific library-versus-process adapter selection remains an
 implementation decision. Provider compatibility ranges and shared extension
 envelope granularity are governed by ADR-0005 and may evolve through additive
 contract-set revisions. ADR-0007 closes the portable artifact-binding and
-host-observation decision; executable integrity, enforced process isolation,
-and real process supervision remain open after ADR-0006's host-neutral
+host-observation decision. ADR-0008 closes exact package/executable content
+matching while explicitly leaving signatures, publisher authentication,
+transparency verification, launch-time file binding, enforced process
+isolation, and real process supervision open after ADR-0006's host-neutral
 transcript profile.

@@ -736,6 +736,12 @@ impl ResolvedExtension {
     pub fn granted_permissions(&self) -> &crate::contracts::Permissions {
         &self.locked.granted_permissions
     }
+
+    /// Return the operator-selected trust mode retained from the extension lock.
+    #[must_use]
+    pub const fn trust(&self) -> Trust {
+        self.locked.trust
+    }
 }
 
 /// Versioned resolution evidence plus an opaque successful decision, if any.

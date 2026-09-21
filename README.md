@@ -17,13 +17,15 @@ compose them through stable public library interfaces or versioned CLI
 contracts, without introducing direct dependencies between sibling holons.
 
 The repository remains architecture-led, but it is no longer documentation
-only. FLO-Q02 provides a small Rust library that validates the federated
-extension contracts, resolves one capability deterministically, executes one
-caller-injected in-process extension, and validates a provider-neutral process
-transcript without launching a child process. It also validates a closed,
-deterministic scenario manifest for synthetic orchestration fixtures. It does
-not copy holon source or claim a product orchestrator, CLI, production process
-adapter, scenario runner, durable run state, or resume support.
+only. The executable checkpoints provide a small Rust library that validates
+the federated extension contracts, resolves one capability deterministically,
+executes one caller-injected in-process extension, and validates a provider-
+neutral process transcript without launching a child process. Flow can also
+observe exact locked package/executable subjects, accept explicitly bound
+artifacts, and validate a closed scenario manifest for synthetic orchestration
+fixtures. It does not copy holon source or claim a product orchestrator, CLI,
+production process adapter, scenario runner, durable run state, or resume
+support.
 
 ## Executable checkpoint
 
@@ -36,8 +38,13 @@ The first executable checkpoint is deliberately library-only:
 - `Orchestrator` invokes a matching `ExtensionPort` and returns an execution
   only after Flow validates event and terminal-result correlation;
 - the process seam deterministically encodes one JSON Lines invocation and
-  checks bounded, caller-supplied stdout/stderr plus process completion
-  evidence, then routes decoded stdout through the same event/result gate;
+  requires a fresh opaque match for the exact locked package and executable,
+  checks bounded caller-supplied stdout/stderr plus process completion evidence,
+  then routes decoded stdout through the same event/result gate;
+- `flow.execution-subject-lock/v1` and
+  `flow.execution-subject-observations/v1` keep content equality, lock match,
+  publisher declaration, operator trust, cryptographic verification, and
+  transparency-log status as separate claims;
 - artifact bindings map immutable input and candidate-output IDs to portable
   root-relative locators; Flow observes file/directory bytes beneath one root
   and returns an accepted set only after exact host/provider correlation;
@@ -81,6 +88,14 @@ produced/reused result and exact agreement among the resolution, invocation,
 bindings, host observations, result IDs, and artifact-produced events before it
 returns `AcceptedArtifactSet`.
 
+Process-mode `ValidatedExecution` additionally requires
+`MatchedExecutionSubjects`, an opaque token created only after Flow observes
+the locked package directory and executable file and both SHA-256 identities
+match exactly. This proves content equality to the supplied operator lock for
+that invocation. It does not prove a publisher signature, authentic publisher
+identity, transparency-log inclusion, trustworthy operator policy, or that a
+later launcher opened the same unchanged file object.
+
 Only `trusted` candidates are resolution-eligible in this checkpoint;
 `Orchestrator` either executes a caller-injected in-process port or validates a
 caller-supplied process transcript. `sandboxed` candidates fail closed because
@@ -98,6 +113,7 @@ or isolate a process. Neither seam provides filesystem or network containment.
 - [Suite boundaries](docs/integrations/suite-boundaries.md)
 - [Federated extension contract](docs/integrations/extension-contract.md)
 - [Process transport contract](docs/integrations/process-transport.md)
+- [Execution-subject integrity](docs/integrations/execution-subjects.md)
 - [Artifact binding contract](docs/integrations/artifact-bindings.md)
 - [Scenario fixture contract](docs/integrations/scenario-fixtures.md)
 - [Versioned contracts](contracts/README.md)
@@ -108,12 +124,14 @@ skills, agents, templates, and validators used to maintain these documents.
 
 ## Status
 
-Flow is in the **executable contract seam** phase. Issues #23, #26, and #28 are
-merged through PRs #24, #27, and #35, and default-branch CI passed at
-`aac62ab80c18c936e3a7ebd5f4e70b7845f39faa`. Issue #36 implements the next
-bounded parent-#25 slice: artifact bindings and host observation. The process
-seam still does not implement a runner, executable verification, authority
-enforcement, or host isolation, and the scenario contract is not an executor.
+Flow is in the **executable contract seam** phase. Issues #23, #26, #28, and
+#36 are merged through PRs #24, #27, #35, and #37. Default-branch CI run
+35546410096 passed at `55341605968d3343e74d8bdd2b188c99a855aca0`.
+Issue #38 adds the next bounded parent-#25 slice: exact locked package and
+executable observation before process request or transcript acceptance. The
+process seam still does not implement a runner, authenticity verification,
+authority enforcement, or host isolation, and the scenario contract is not an
+executor.
 Current descriptions of Aniflow, Optiflow, and Renderflow are grounded in their default
 branches as inspected on 2026-08-13. The holons remain independently released
 repositories; real provider adapters and the restore-and-assess workflow remain
