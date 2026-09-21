@@ -55,19 +55,74 @@ At runtime the host passes only literal long-form arguments:
 - `--artifact-root <host path>` selects the explicit workspace root.
 - `--artifact-bindings <portable locator>` selects one
   `flow.artifact-bindings/v1` document beneath that root.
+- `--lifecycle-control <portable locator>` is optional and is accepted only by
+  the `await-interruption` lifecycle mode. The conformance harness uses
+  `outputs/lifecycle-control.json`.
 
 The provider accepts one LF-terminated `flow.extension-invocation/v1` document
-on standard input. It validates the invocation, binding set, configuration
-digest, and actual input digest; creates exactly one new declared output; then
-emits three events and one terminal result as compact JSON Lines. Artifact
+on standard input. It validates the invocation and configuration identity
+before selecting one closed behavior. Artifact-producing modes additionally
+validate the binding set and actual input digest. Successful candidate artifact
 bytes depend only on the capability, configuration, and immutable input
 identity. They contain no time, hostname, process ID, temporary path, random
 value, environment value, or external-service result.
+
+## Closed behavior vocabulary
+
+Configuration always contains exactly the `mode` and `seed` string fields. The
+runtime `mode` values are:
+
+| Mode | Provider contribution |
+| --- | --- |
+| `success` | Writes one deterministic candidate artifact and a complete valid transcript. |
+| `warning` | Writes the same complete evidence with a redacted warning diagnostic; warning is not a distinct terminal outcome. |
+| `partial-result` | Writes a complete candidate and a protocol-valid produced result whose `partial_result` flag is true. |
+| `nonzero-after-success` | Flushes success-shaped stdout, then exits with code `7`. |
+| `await-interruption` | Creates the explicit lifecycle control record, then waits for host timeout or cancellation. |
+| `stdout-overflow` | Emits deterministic stdout beyond the invocation limit. |
+| `stderr-overflow` | Emits deterministic stderr beyond the invocation limit. |
+| `invalid-event` | Emits a duplicate/non-increasing event sequence. |
+| `invalid-result` | Emits a result with an authorization identity that conflicts with the invocation. |
+| `success-with-host-rejection` | Emits valid success-shaped evidence so a rejecting caller-owned `EventSink` can exercise the host boundary. |
+
+`unavailable` and `incompatible` are harness-only resolution cases. They are
+not runtime modes because both reject selection before an invocation exists.
+The unavailable case marks the exact observation unavailable. The incompatible
+case applies a case-local external manifest requirement of Flow `>=9.0.0`.
+Neither change mutates the hashed provider package.
+
+For `await-interruption`, the provider writes and syncs this compact record to
+a sibling temporary file, then atomically publishes it with one line feed at
+the explicit control locator:
+
+```json
+{"state":"ready","pid":1234}
+```
+
+The PID is host-specific test control data. The record is not named by the
+artifact binding set, is not observed or accepted as an artifact, and is
+excluded from normalized portable evidence. Cancellation begins only after the
+record is readable. On Unix the test also uses the PID to prove the runner
+reaped that direct child before returning. This proves neither descendant
+cleanup nor process-tree containment, and it does not turn an undeclared file
+into an automatically discovered artifact.
+
+The runner drains overflow streams but retains only the configured limit plus
+one byte. That retained length proves overflow; it is not a count of every byte
+the provider emitted. Invalid-event, invalid-result, and host-rejection cases
+may retain decoded provider evidence for inspection. Event delivery is not
+transactional, so an earlier valid event can reach the authoritative sink
+before later evidence rejects execution.
 
 The provider reads no ambient environment, opens no network connection, starts
 no subprocess, mutates no source, and performs no destructive, signing, or
 publication action. `trusted-unconfined` remains an explicit test profile, not
 a sandbox or containment claim.
+
+Artifact missing/extra/corrupt/stale/contradictory cases, host physical-
+artifact observation and acceptance failures after complete protocol success,
+graph fixtures, and the final parent requirement matrix remain outside this
+checkpoint and are owned by issue #46.
 
 The source and generated package are distributed under the repository's MIT
 license. Do not redistribute a materialized package without its license or

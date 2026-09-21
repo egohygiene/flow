@@ -29,8 +29,9 @@ implementations.
   immutable topology, typed expectations, resource tiers, canonicalization,
   and honest coverage boundaries.
 - [Hermetic provider kit](hermetic-provider-kit.md) defines the immutable
-  synthetic package, stable capability IDs, deterministic success profile, and
-  full process-to-artifact acceptance proof used by orchestration conformance.
+  synthetic package, stable capability IDs, deterministic success profile,
+  bounded lifecycle/protocol outcome matrix, and process-to-artifact
+  acceptance proof used by orchestration conformance.
 - [Versioned contracts](../../contracts/README.md) define the provisional suite
   interchange vocabulary.
 
@@ -103,8 +104,12 @@ compiled synthetic provider declares four stable Flow-owned capabilities and
 drives the inspection success path through catalog resolution, exact subject
 matching, authority preflight, `LocalProcessRunner`, host artifact observation,
 and `AcceptedArtifactSet`. Two fresh roots prove identical semantic and content
-evidence while package, input, and binding bytes remain unchanged. Lifecycle
-failures, artifact adversaries, and graph fixtures remain with #45 and #46.
+evidence while package, input, and binding bytes remain unchanged. Flow #45
+adds prelaunch rejection, warning/partial evidence, bounded process lifecycle,
+stream overflow, invalid protocol evidence, and authoritative host-rejection
+cases without weakening the immutable-package or success baseline. Physical
+artifact adversaries, graph fixtures, and the final parent matrix remain with
+#46.
 
 The following remain deferred: provider discovery from the filesystem, dynamic
 loading, cryptographic authenticity and transparency verification,
