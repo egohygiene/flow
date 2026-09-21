@@ -1,0 +1,58 @@
+{
+  "schema_version": "flow.extension-lock/v1",
+  "flow_version": "0.1.0",
+  "lock_id": "lock:hermetic-provider-kit",
+  "extensions": [
+    {
+      "extension_id": "org.egohygiene.synthetic-scenario-provider",
+      "version": "0.1.0",
+      "publisher_id": "org.egohygiene",
+      "integrity": {
+        "algorithm": "sha256",
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "discovery": {
+        "kind": "configured-path",
+        "location": "packages/hermetic-provider"
+      },
+      "enabled": true,
+      "trust": "trusted",
+      "granted_permissions": {
+        "filesystem_read": ["workspace/artifact-bindings", "workspace/inputs"],
+        "filesystem_write": ["workspace/outputs"],
+        "environment_read": [],
+        "subprocesses": [],
+        "network_hosts": [],
+        "ai_providers": [],
+        "gpu": false,
+        "source_mutation": false,
+        "destructive": false,
+        "sign": false,
+        "publish": false
+      },
+      "precedence": 100
+    }
+  ],
+  "capability_resolution": [
+    {
+      "capability_id": "flow/inspect-fixture",
+      "ordered_extensions": ["org.egohygiene.synthetic-scenario-provider"],
+      "fallback": "forbidden"
+    },
+    {
+      "capability_id": "flow/transform-fixture",
+      "ordered_extensions": ["org.egohygiene.synthetic-scenario-provider"],
+      "fallback": "forbidden"
+    },
+    {
+      "capability_id": "flow/validate-fixture",
+      "ordered_extensions": ["org.egohygiene.synthetic-scenario-provider"],
+      "fallback": "forbidden"
+    },
+    {
+      "capability_id": "flow/observe-fixture",
+      "ordered_extensions": ["org.egohygiene.synthetic-scenario-provider"],
+      "fallback": "forbidden"
+    }
+  ]
+}

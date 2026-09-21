@@ -28,6 +28,9 @@ implementations.
 - [Scenario fixtures](scenario-fixtures.md) define stable scenario identity,
   immutable topology, typed expectations, resource tiers, canonicalization,
   and honest coverage boundaries.
+- [Hermetic provider kit](hermetic-provider-kit.md) defines the immutable
+  synthetic package, stable capability IDs, deterministic success profile, and
+  full process-to-artifact acceptance proof used by orchestration conformance.
 - [Versioned contracts](../../contracts/README.md) define the provisional suite
   interchange vocabulary.
 
@@ -94,6 +97,14 @@ escalation, reaps the direct child, and sends normal evidence through the
 existing transcript gate. The in-process path provides no isolation. The local
 runner accepts only `trusted-unconfined` and does not provide filesystem,
 network, subprocess, or descendant containment.
+
+Flow #44 adds the first real hermetic provider-kit checkpoint. A separately
+compiled synthetic provider declares four stable Flow-owned capabilities and
+drives the inspection success path through catalog resolution, exact subject
+matching, authority preflight, `LocalProcessRunner`, host artifact observation,
+and `AcceptedArtifactSet`. Two fresh roots prove identical semantic and content
+evidence while package, input, and binding bytes remain unchanged. Lifecycle
+failures, artifact adversaries, and graph fixtures remain with #45 and #46.
 
 The following remain deferred: provider discovery from the filesystem, dynamic
 loading, cryptographic authenticity and transparency verification,

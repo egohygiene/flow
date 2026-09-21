@@ -31,7 +31,8 @@ scenario runner, durable run state, or resume support.
 
 ## Executable checkpoint
 
-The first executable checkpoint is deliberately library-only:
+The executable contract surface remains library-led. The only repository
+binary is a synthetic conformance provider; it is not a public Flow CLI:
 
 - closed Rust models and semantic validation cover the six extension-v1
   documents;
@@ -61,7 +62,11 @@ The first executable checkpoint is deliberately library-only:
   expectations, resource budgets, coverage gaps, and cross-language canonical
   digests without defining plans or runs; and
 - a no-effects, no-artifacts hermetic port and example prove the seam without a
-  provider binary, filesystem output, network access, or external service.
+  provider binary, filesystem output, network access, or external service;
+- a separately compiled hermetic provider fixture freezes four synthetic
+  capability IDs and proves a real deterministic process-to-artifact success
+  path without sibling source, ambient environment, network access, or an
+  external service.
 
 Run the reference example with:
 
@@ -69,6 +74,7 @@ Run the reference example with:
 cargo run --example hermetic_extension --locked
 cargo run --example hermetic_process_transport --locked
 cargo run --example scenario_manifest --locked
+cargo test --test hermetic_provider_kit --locked
 ```
 
 `EventSink` is a fallible, authoritative execution observer, not a best-effort
@@ -149,7 +155,10 @@ Flow is in the **executable contract seam** phase. Issues #23, #26, #28, #36,
 #38, and #40 are merged through PRs #24, #27, #35, #37, #39, and #41. Issue
 #42 / PR #43 adds the final bounded parent-#25 slice: real
 `trusted-unconfined` direct launch and supervision through the existing
-subject, authority, and transcript gates. The process seam still does not
+subject, authority, and transcript gates. Issue #44 begins the parent-#29
+hermetic provider kit with an immutable package and deterministic accepted
+inspection artifact; #45 and #46 retain the failure and graph matrices. The
+process seam still does not
 implement authenticity verification, operating-system sandbox enforcement,
 authenticated host evidence, descriptor-bound launch, or process-tree
 containment, and the scenario contract is not an executor.
