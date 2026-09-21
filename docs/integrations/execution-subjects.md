@@ -107,11 +107,14 @@ The intended order is:
 3. Observe the package directory and executable file beneath the selected
    root, rejecting unsafe nodes and any digest mismatch.
 4. Construct `MatchedExecutionSubjects` only after exact correlation.
-5. Require the same lock and token when encoding the process request.
-6. Require the same lock and token again before validating a supplied process
-   transcript.
+5. Correlate the separate exact authority/isolation profile and enforcement
+   evidence, constructing `AuthorizedProcess` only after both agree with these
+   matched subjects.
+6. Require the same lock and both tokens when encoding the process request.
+7. Require the same lock and both tokens again before validating a supplied
+   process transcript.
 
-The current library performs steps 1–6 without implementing the operating-
+The current library performs steps 1–7 without implementing the operating-
 system actions between request encoding and transcript validation. The caller
 still supplies the transcript and completion observation.
 
@@ -152,7 +155,9 @@ It does not guarantee:
 - real Aniflow, Optiflow, or Renderflow adapters.
 
 A production runner must close the observation-to-launch race and apply the
-later authority/isolation contracts without weakening this evidence boundary.
+[authority/isolation profile](authority-isolation.md) without weakening this
+evidence boundary. The current profile validates caller-attested enforcement
+evidence but does not itself launch or sandbox the executable.
 
 ## Conformance
 

@@ -22,6 +22,7 @@ related:
   - adr-0005
   - adr-0006
   - adr-0007
+  - adr-0009
 ---
 
 # ADR-0008 — Require exact locked package and executable subjects
@@ -240,7 +241,7 @@ Review this decision if:
 
 ## Related artifacts
 
-ADR-0005, ADR-0006, ADR-0007, `flow-architecture`, `flow-roadmap`,
+ADR-0005, ADR-0006, ADR-0007, ADR-0009, `flow-architecture`, `flow-roadmap`,
 `docs/integrations/execution-subjects.md`,
 `docs/integrations/process-transport.md`, Flow issue #25, Flow issue #38, and
 Flow issue #11.

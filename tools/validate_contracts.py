@@ -414,10 +414,6 @@ def validate_extension_result(
         )
 
 
-def canonical_authority_item(value: Any) -> str:
-    return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
-
-
 def validate_authority(
     authority: Any,
     location: str,
@@ -426,27 +422,69 @@ def validate_authority(
     if not isinstance(authority, dict):
         return
 
-    set_fields = (
-        "environment",
+    string_set_fields = (
         "filesystem_read",
         "filesystem_write",
         "network_endpoints",
         "subprocesses",
         "ai_providers",
-        "gpus",
         "source_mutation_targets",
         "destructive_operations",
         "publication_destinations",
         "signing_key_handles",
     )
-    for field in set_fields:
+    for field in string_set_fields:
         values = authority.get(field, [])
         if not isinstance(values, list):
             continue
-        normalized = [canonical_authority_item(value) for value in values]
         require(
-            normalized == sorted(set(normalized)),
+            values == sorted(set(values))
+            if all(isinstance(value, str) for value in values)
+            else False,
             f"{location}.{field}: must be strictly sorted and contain no duplicates",
+            errors,
+        )
+
+    environment = authority.get("environment", [])
+    if isinstance(environment, list):
+        environment_well_formed = all(
+            isinstance(binding, dict)
+            and isinstance(binding.get("name"), str)
+            and isinstance(binding.get("source_handle"), str)
+            for binding in environment
+        )
+        environment_keys = [
+            (binding.get("name"), binding.get("source_handle"))
+            for binding in environment
+            if isinstance(binding, dict)
+        ]
+        require(
+            environment_well_formed
+            and environment_keys == sorted(set(environment_keys)),
+            f"{location}.environment: must be strictly sorted and contain no duplicates",
+            errors,
+        )
+
+    gpus = authority.get("gpus", [])
+    if isinstance(gpus, list):
+        gpus_well_formed = all(
+            isinstance(gpu, dict)
+            and isinstance(gpu.get("device_id"), str)
+            and isinstance(gpu.get("capabilities"), list)
+            and all(
+                isinstance(capability, str)
+                for capability in gpu.get("capabilities", [])
+            )
+            for gpu in gpus
+        )
+        gpu_keys = [
+            (gpu.get("device_id"), tuple(gpu.get("capabilities", [])))
+            for gpu in gpus
+            if isinstance(gpu, dict) and isinstance(gpu.get("capabilities", []), list)
+        ]
+        require(
+            gpus_well_formed and gpu_keys == sorted(set(gpu_keys)),
+            f"{location}.gpus: must be strictly sorted and contain no duplicates",
             errors,
         )
 
@@ -456,19 +494,24 @@ def validate_authority(
             values = telemetry.get(field, [])
             if not isinstance(values, list):
                 continue
-            normalized = [canonical_authority_item(value) for value in values]
             require(
-                normalized == sorted(set(normalized)),
+                values == sorted(set(values))
+                if all(isinstance(value, str) for value in values)
+                else False,
                 f"{location}.telemetry.{field}: must be strictly sorted and contain no duplicates",
                 errors,
             )
 
-    explicit_values: list[Any] = [*authority.get("argv", [])]
-    for field in set_fields:
-        if field not in {"environment", "gpus"}:
-            explicit_values.extend(authority.get(field, []))
+    argv = authority.get("argv", [])
+    explicit_values: list[Any] = list(argv) if isinstance(argv, list) else []
+    for field in string_set_fields:
+        values = authority.get(field, [])
+        if isinstance(values, list):
+            explicit_values.extend(values)
     if isinstance(telemetry, dict):
-        explicit_values.extend(telemetry.get("targets", []))
+        targets = telemetry.get("targets", [])
+        if isinstance(targets, list):
+            explicit_values.extend(targets)
     require(
         all(
             isinstance(value, str)
@@ -481,7 +524,6 @@ def validate_authority(
         errors,
     )
 
-    environment = authority.get("environment", [])
     if isinstance(environment, list):
         handles = [
             binding.get("source_handle")
@@ -494,7 +536,6 @@ def validate_authority(
             errors,
         )
 
-    gpus = authority.get("gpus", [])
     for index, gpu in enumerate(gpus if isinstance(gpus, list) else []):
         if not isinstance(gpu, dict):
             continue

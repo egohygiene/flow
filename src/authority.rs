@@ -220,6 +220,15 @@ pub enum EnforcementStatus {
 /// This value authorizes only Flow's request/transcript evidence seams. It is
 /// not an OS capability and does not prove that a process was launched or that
 /// caller-attested enforcement happened.
+///
+/// The fields remain private so portable evidence cannot be promoted with a
+/// struct literal:
+///
+/// ```compile_fail
+/// use flow::AuthorizedProcess;
+///
+/// let _unvalidated = AuthorizedProcess {};
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AuthorizedProcess {
     profile: ProcessAuthorityProfile,
@@ -884,11 +893,11 @@ fn requested_matches_permissions(authority: &ProcessAuthority, permissions: &Per
         && same_members(&authority.subprocesses, &permissions.subprocesses)
         && same_members(&authority.network_endpoints, &permissions.network_hosts)
         && same_members(&authority.ai_providers, &permissions.ai_providers)
-        && permissions.gpu == !authority.gpus.is_empty()
-        && permissions.source_mutation == !authority.source_mutation_targets.is_empty()
-        && permissions.destructive == !authority.destructive_operations.is_empty()
-        && permissions.sign == !authority.signing_key_handles.is_empty()
-        && permissions.publish == !authority.publication_destinations.is_empty()
+        && permissions.gpu != authority.gpus.is_empty()
+        && permissions.source_mutation != authority.source_mutation_targets.is_empty()
+        && permissions.destructive != authority.destructive_operations.is_empty()
+        && permissions.sign != authority.signing_key_handles.is_empty()
+        && permissions.publish != authority.publication_destinations.is_empty()
 }
 
 fn granted_within_permissions(authority: &ProcessAuthority, permissions: &Permissions) -> bool {

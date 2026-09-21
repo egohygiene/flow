@@ -11,7 +11,9 @@ process request encoding and host-neutral validation of caller-supplied
 completion, stdout, and stderr evidence; it does not launch a process. Product
 Flow issue #36 adds a separate Flow-owned artifact-binding, host-observation,
 and acceptance boundary. Flow issue #38 adds exact package/executable subject
-observation before process request or transcript acceptance. Product
+observation before process request or transcript acceptance. Flow issue #40
+adds exact per-invocation authority and isolation evidence before either
+process seam. Product
 orchestration, real provider adapters, a two-holon vertical slice, and runtime
 CLI commands remain work for Flow issue #3 and its later children.
 
@@ -32,6 +34,8 @@ without importing sibling source or moving domain logic into Flow.
 | Host artifact observations | Flow observer | Recompute file/directory content identity beneath one selected root; cannot be supplied by the provider as an acceptance token |
 | Execution-subject lock | Flow operator | Pins one exact package directory and executable file to a process provider context |
 | Execution-subject observations | Flow observer | Recompute package/executable identities and report digest, lock, publisher-declaration, operator-trust, cryptographic, and transparency claims separately |
+| Process-authority profile | Flow caller/operator boundary | Select exact requested/granted authority, trust, and isolation for one invocation |
+| Process-enforcement evidence | Future runner/host | Report the exact profile and authority a named backend claims to enforce; not self-authenticating proof |
 
 Manifests are inert data. Flow reads manifests only from explicitly configured
 locations and never executes a binary merely because it is on `PATH`.
@@ -106,6 +110,11 @@ but a separate operator-owned lock and opaque match token. Its exact subject
 definitions and non-authenticity claims are specified in
 [Execution subjects](execution-subjects.md).
 
+Exact per-invocation authority and isolation evidence remain separate from
+subject identity. Their request/grant split, canonical identity, closed
+dimensions, and caller-attested evidence boundary are specified in
+[Process authority and isolation](authority-isolation.md).
+
 ## Execution modes
 
 - **In-process:** a version-pinned public library entry point. Flow still binds
@@ -115,7 +124,9 @@ definitions and non-authenticity claims are specified in
   JSON Lines event/result transcript, captured-output lengths, and completion
   observation. Before request encoding or transcript validation, Flow requires
   a fresh opaque token proving exact observation of the locked package and
-  executable subjects for that invocation. A production process adapter must
+  executable subjects for that invocation, plus a second opaque token proving
+  exact correlation of its authority profile and isolation evidence. A
+  production process adapter must
   still independently bind those observed bytes to launch, invoke the pinned
   executable, capture stdout/stderr concurrently, enforce timeout, output
   bounds, cancellation grace, permissions, and declared outputs, and never
@@ -125,16 +136,20 @@ Both modes must produce the same structured semantic result. Flow may choose
 process isolation when toolchains, licensing, trust, or failure containment make
 an in-process edge unsuitable.
 
-The current executable checkpoint resolves only `trusted` candidates. It proves
-a caller-injected in-process library port plus host-neutral process request and
-transcript validation. Process mode also observes the exact locked package and
-executable content before either process seam. A post-execution library seam
-can observe explicitly
+The current executable checkpoint restricts the unconfined in-process seam to
+`trusted` candidates. A `sandboxed` process candidate may resolve only to the
+downstream authority/isolation preflight, where incomplete or contradictory
+evidence fails closed. The checkpoint proves a caller-injected in-process
+library port plus host-neutral process request and transcript validation.
+Process mode also observes the exact locked package and executable content and
+correlates exact authority/isolation evidence before either process seam. A
+post-execution library seam can observe explicitly
 bound files and directories beneath a caller-selected root and construct an
 opaque accepted artifact set only after binding, host, invocation, event, and
 result correlation. It performs no filesystem discovery, dynamic loading,
 external process launch/capture, signature or transparency verification, or
-sandbox enforcement. `sandboxed` candidates fail closed. In-process limits remain
+operating-system sandbox enforcement. Caller-attested sandbox evidence is not
+authenticated proof. In-process limits remain
 policy metadata only. The process seam checks already captured stdout/stderr
 byte counts and completion evidence, but it does not enforce timeout,
 cancellation, output capture, panic isolation, filesystem/network containment,
@@ -173,11 +188,21 @@ signing, and publication. The lock grants a subset and selects `trusted`,
 `sandboxed`, or `disabled` operation. No grant is implied by capability
 selection.
 
-The executable seams make only `trusted` candidates resolution-eligible.
-`Orchestrator` either invokes a caller-injected in-process port or validates a
-caller-supplied process transcript; it does not launch a process. `sandboxed`
-candidates remain unauthorized and unavailable because there is no enforceable
-sandbox backend; `disabled` candidates also fail closed.
+The executable in-process seam makes only `trusted` candidates eligible.
+Process resolution permits `trusted` candidates and `sandboxed` candidates
+that must pass the downstream `sandboxed` authority profile. `Orchestrator`
+either invokes a caller-injected in-process port or validates a caller-supplied
+process transcript; it does not launch a process or operate a sandbox.
+`disabled` candidates fail closed.
+
+The process authority profile binds ordered argv, environment names and opaque
+secret handles, filesystem reads/writes, network endpoints, subprocesses, AI
+providers, GPU access, source mutation, destructive operations, publication,
+signing, and telemetry to the exact invocation. Empty collections deny a
+dimension and the only v1 ambient policy is `deny-unlisted`. The operator grant
+must cover the provider request without widening argv. Both process seams
+require `AuthorizedProcess`, which also correlates the host's explicit
+enforcement statement. This is contract preflight, not runtime containment.
 
 Secrets are referenced through runtime handles. Providers and callers are
 responsible for keeping credentials, tokens, private prompt content, and other
@@ -258,6 +283,8 @@ The machine-readable schemas live in `contracts/schemas/`:
 - `flow.artifact-observations/v1`
 - `flow.execution-subject-lock/v1`
 - `flow.execution-subject-observations/v1`
+- `flow.process-authority-profile/v1`
+- `flow.process-enforcement-evidence/v1`
 
 Synthetic examples and compatibility fixtures cover all three holon domains and
 explicit compatible, incompatible, over-permissioned, duplicate, and malformed
@@ -274,8 +301,10 @@ artifact bindings, deterministic host observation, immutable input verification,
 and a separate artifact-acceptance token. Issue #38 adds a closed execution-
 subject lock, fresh package/executable observation, deterministic canonical
 identity, separated evidence claims, and an opaque match token required by both
-process seams. No proof promotes an extension's terminal success report until
-its applicable Flow-owned checks pass.
+process seams. Issue #40 adds exact request/grant profiles, explicit trust and
+isolation, canonical enforcement evidence, and an opaque authorization token
+also required by both process seams. No proof promotes an extension's terminal
+success report until its applicable Flow-owned checks pass.
 
 Those checks prove contract validity and correlation only. They do not prove
 the authenticity of the caller-issued configuration digest, authorization ID,
@@ -300,7 +329,8 @@ publisher authenticity, or sandbox enforcement.
 
 `extensions list`, `extensions inspect`, `doctor`, real process launching and
 capture, launch-time binding to the observed file object, signature and
-transparency verification, sandbox enforcement, real provider adapters,
+transparency verification, operating-system sandbox enforcement and
+authenticated host evidence, real provider adapters,
 domain-output validation, interruption delivery, durable run state,
 checkpoints/resume, and the cross-holon vertical slice remain deferred work for
 Flow #3 after the required holon contracts are available as releases or

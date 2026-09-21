@@ -11,8 +11,9 @@ changing their semantic ownership.
 The implemented checkpoint is deliberately host-neutral. It can encode one
 invocation request and validate already-captured transcript bytes plus an
 explicit termination observation. Both operations require a fresh opaque match
-for the exact locked package and executable subjects. It does not locate,
-start, supervise, signal, or reap an operating-system process. A transcript
+for the exact locked package and executable subjects plus an opaque process-
+authorization token for the exact authority/isolation evidence. It does not
+locate, start, supervise, signal, or reap an operating-system process. A transcript
 proves only that supplied evidence is internally valid under this profile and
 that the earlier subject observation matched its lock; it does not prove how
 the evidence was captured or that the observed executable produced it.
@@ -23,6 +24,8 @@ and refines the process mode described by the
 [federated extension contract](extension-contract.md). Package and executable
 preflight is governed separately by
 [ADR-0008](../architecture/governance/decisions/ADR-0008-locked-execution-subjects.md).
+Authority and isolation preflight is governed separately by
+[ADR-0009](../architecture/governance/decisions/ADR-0009-process-authority-isolation.md).
 
 ## Boundary ownership
 
@@ -35,6 +38,9 @@ preflight is governed separately by
 | Event observation | Flow and caller | A fallible, authoritative acceptance boundary through `EventSink` |
 | Execution-subject lock | Flow operator | Exact package/executable content and correlated process context |
 | Matched execution subjects | Flow observer | Opaque proof that a fresh observation exactly matched that lock and invocation |
+| Process-authority profile | Flow caller/operator boundary | Exact requested/granted authority, trust, isolation, and denial of unlisted ambient authority |
+| Process-enforcement evidence | Future runner/host | Caller-attested statement about the exact profile and dimensions a named backend reports enforcing |
+| Authorized process | Flow runtime | Opaque proof that authority and enforcement evidence correlate with the exact resolution, invocation, and matched subjects |
 
 The provider cannot promote its result to accepted completion. Flow returns a
 `ValidatedExecution` only after framing, contract, correlation, ordering,
@@ -49,6 +55,12 @@ For process mode, `ValidatedExecution` does require the separate
 content equality to the supplied lock, not signature validity, publisher
 authenticity, transparency-log inclusion, sandbox enforcement, or proof that a
 later child opened the observed file object.
+
+Process mode also requires the separate
+[authority/isolation profile](authority-isolation.md). That gate establishes
+exact correlation of intended authority and caller-attested host evidence. It
+does not authenticate the evidence source or prove that an operating-system
+sandbox applied the reported policy.
 
 ## Standard-input request
 
@@ -169,15 +181,19 @@ The boundary applies these gates before constructing accepted execution:
    process interface, entrypoint, and configured operator trust. Request
    encoding is a separate operation with the same invocation and subject
    preflight gates for use by a future runner.
-3. Enforce the captured standard-output and standard-error byte limits.
-4. Require the supplied termination observation to be normal exit `0`.
-5. Decode the JSON Lines framing and require the event-then-result grammar.
-6. Apply the shared Flow-owned event validation, correlation, uniqueness,
+3. Require an exact authority profile and correlated host-enforcement evidence,
+   represented by a fresh opaque authorization token bound to the same
+   resolution, invocation, matched subjects, operator trust, and isolation.
+   Request encoding requires the same token.
+4. Enforce the captured standard-output and standard-error byte limits.
+5. Require the supplied termination observation to be normal exit `0`.
+6. Decode the JSON Lines framing and require the event-then-result grammar.
+7. Apply the shared Flow-owned event validation, correlation, uniqueness,
    strictly increasing sequence, and diagnostic checks. Forward each
    individually valid event to the caller's `EventSink` in transcript order.
-7. Validate the result contract, correlation, diagnostics, artifact references,
+8. Validate the result contract, correlation, diagnostics, artifact references,
    outcome, and consistency with the terminal event.
-8. Construct `ValidatedExecution` only after every preceding gate succeeds.
+9. Construct `ValidatedExecution` only after every preceding gate succeeds.
 
 This ordering gives byte-limit and termination failures precedence over parsing
 or observing provider-authored records. In particular, events from an
@@ -212,6 +228,7 @@ The transcript boundary distinguishes at least these failure concerns:
 | --- | --- |
 | Invalid invocation | Wrong schema, malformed identity, or non-process interface |
 | Execution-subject preflight | Invalid lock, wrong context, altered package/executable bytes, or stale match token |
+| Authority/isolation preflight | Invalid, ungranted, overbroad, incomplete, contradictory, unsupported, or stale profile/evidence |
 | Output limit | Raw stdout or stderr exceeds its declared byte limit |
 | Encoding or framing | Invalid UTF-8, malformed JSON line, blank line, unknown record, or missing terminator |
 | Protocol order | Missing result, duplicate result, or record after result |
@@ -248,17 +265,20 @@ provider executable. The required proof covers:
 - proof that every invalid case returns an error rather than
   `ValidatedExecution`.
 
-After the subject token is constructed, transcript validation depends only on
-the resolved extension, invocation, exact subject lock and token, transcript
-bytes, termination observation, and authoritative sink outcome. It does not
-reinspect the host filesystem, environment, process table, clock, or network.
+After the subject and authorization tokens are constructed, transcript
+validation depends only on the resolved extension, invocation, exact subject
+lock and tokens, transcript bytes, termination observation, and authoritative
+sink outcome. It does not reinspect the host filesystem, environment, process
+table, clock, network, or sandbox backend.
 
 ## Implemented guarantees and deferred work
 
 Issue #26 implements the host-neutral request encoder and transcript validation
 seam described above. Issue #38 adds its mandatory locked package/executable
 preflight. It reuses the closed invocation, event, result, execution-subject,
-and Flow-owned semantic validation models.
+and Flow-owned semantic validation models. Issue #40 adds mandatory exact
+authority/isolation preflight to both seams. It validates a closed profile and
+caller-attested host evidence; it does not execute that profile.
 
 It does not implement or prove:
 
@@ -273,9 +293,11 @@ It does not implement or prove:
 - automatic artifact discovery or provider-native output validation; the
   separate issue #36 library seam requires explicit bindings and a fresh
   post-transcript host observation beneath a caller-selected root;
-- filesystem, environment, subprocess, network, AI, GPU, signing, publication,
-  or other side-effect isolation;
-- an operating-system sandbox or an enforceable `sandboxed` trust profile;
+- actual filesystem, environment, subprocess, network, AI, GPU, signing,
+  publication, telemetry, or other side-effect isolation; the exact intended
+  bounds and reported enforcement are validated separately;
+- an operating-system sandbox, authenticated enforcement evidence, or proof
+  that the named backend applied a `sandboxed` profile;
 - real Aniflow, Optiflow, or Renderflow process adapters;
 - durable plans, run state, checkpoints, retry, or resume;
 - a public Flow CLI; or
@@ -285,5 +307,6 @@ Later work may place a platform-specific runner in front of this validator. The
 runner must supply evidence without weakening the transcript grammar or
 promoting launch, exit, or file existence alone to accepted completion. It must
 also bind observation to the exact launched file object, quiesce and isolate
-the workspace, and preserve both execution-subject and artifact-observation
-claims without overstating authenticity.
+the workspace, consume the exact authority profile, authenticate any stronger
+enforcement claim, and preserve execution-subject, authority, and artifact-
+observation claims without overstating authenticity or containment.

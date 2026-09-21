@@ -374,9 +374,10 @@ impl Orchestrator {
 
     /// Encode one validated process-mode invocation for provider stdin.
     ///
-    /// Encoding requires a fresh opaque package/executable match for the exact
-    /// subject lock and invocation context. The token proves digest equality
-    /// to that lock, not publisher authenticity or launch-time file identity.
+    /// Encoding requires a fresh opaque package/executable match and a separate
+    /// opaque authority/isolation preflight for the exact invocation context.
+    /// The tokens prove contract correlation, not publisher authenticity,
+    /// launch-time file identity, or operating-system sandbox enforcement.
     ///
     /// The returned compact JSON document ends with exactly one LF. Its bytes
     /// are a deterministic transport projection, not execution identity or a
@@ -384,8 +385,8 @@ impl Orchestrator {
     ///
     /// # Errors
     ///
-    /// Returns an error for an invalid invocation, process or execution-subject
-    /// preflight mismatch, or serialization failure.
+    /// Returns an error for an invalid invocation, process, execution-subject,
+    /// or authority preflight mismatch, or serialization failure.
     pub fn encode_process_request(
         resolved: &ResolvedExtension,
         invocation: &ExtensionInvocation,
@@ -417,8 +418,8 @@ impl Orchestrator {
     /// Flow checks the declared byte limits and completion state, parses the
     /// protocol-only stdout stream, and routes the decoded evidence through the
     /// same event/result acceptance gate as in-process execution.
-    /// A matching package/executable token is required before any supplied
-    /// transcript can enter that gate.
+    /// Matching package/executable and authority/isolation tokens are required
+    /// before any supplied transcript can enter that gate.
     ///
     /// # Errors
     ///

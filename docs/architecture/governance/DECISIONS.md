@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.6.0
+version: 0.7.0
 status: draft
 owners:
   - egohygiene
@@ -62,6 +62,7 @@ justifies separate ADRs.
 | [ADR-0006](decisions/ADR-0006-bounded-process-transport.md) | Bound process transport with a deterministic JSON Lines transcript | Accepted | 2026-09-16 | None | A released provider or real runner cannot preserve the profile's framing or termination semantics |
 | [ADR-0007](decisions/ADR-0007-root-confined-artifact-acceptance.md) | Accept artifacts through root-confined host observations | Accepted | 2026-09-20 | None | A released adapter cannot preserve the root, locator, or deterministic content-identity profile |
 | [ADR-0008](decisions/ADR-0008-locked-execution-subjects.md) | Require exact locked package and executable subjects | Accepted | 2026-09-21 | None | Authenticity evidence, launch-time file binding, or transitive runtime identity changes the subject boundary |
+| [ADR-0009](decisions/ADR-0009-process-authority-isolation.md) | Bind process authority to explicit isolation evidence | Accepted | 2026-09-21 | None | A real sandbox, authenticated host evidence, or new authority dimension changes the preflight boundary |
 
 ## Active decisions
 
@@ -88,4 +89,6 @@ host-observation decision. ADR-0008 closes exact package/executable content
 matching while explicitly leaving signatures, publisher authentication,
 transparency verification, launch-time file binding, enforced process
 isolation, and real process supervision open after ADR-0006's host-neutral
-transcript profile.
+transcript profile. ADR-0009 closes the portable per-invocation authority and
+isolation-evidence vocabulary while explicitly leaving operating-system
+enforcement and evidence authentication open.

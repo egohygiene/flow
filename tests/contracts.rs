@@ -1,8 +1,9 @@
 use flow::{
     ArtifactBindingSet, ExecutionSubjectLock, ExtensionEvent, ExtensionInvocation, ExtensionLock,
     ExtensionManifest, ExtensionResolution, ExtensionResult, FailureClassification,
-    HostArtifactObservationSet, HostExecutionSubjectObservationSet, Outcome, ValidationEvidence,
-    ValidationStatus, parse_flow_version_requirement,
+    HostArtifactObservationSet, HostExecutionSubjectObservationSet, Outcome,
+    ProcessAuthorityProfile, ProcessEnforcementEvidence, ValidationEvidence, ValidationStatus,
+    parse_flow_version_requirement,
 };
 use serde::Serialize;
 use serde::de::DeserializeOwned;
@@ -18,7 +19,7 @@ where
 }
 
 #[test]
-fn ten_checked_in_examples_roundtrip_and_validate() {
+fn twelve_checked_in_examples_roundtrip_and_validate() {
     roundtrip_and_validate::<ArtifactBindingSet>(
         include_str!("../contracts/examples/artifact-bindings.v1.example.json"),
         |value| value.validate().unwrap(),
@@ -33,6 +34,14 @@ fn ten_checked_in_examples_roundtrip_and_validate() {
     );
     roundtrip_and_validate::<HostExecutionSubjectObservationSet>(
         include_str!("../contracts/examples/execution-subject-observations.v1.example.json"),
+        |value| value.validate().unwrap(),
+    );
+    roundtrip_and_validate::<ProcessAuthorityProfile>(
+        include_str!("../contracts/examples/process-authority-profile.v1.example.json"),
+        |value| value.validate().unwrap(),
+    );
+    roundtrip_and_validate::<ProcessEnforcementEvidence>(
+        include_str!("../contracts/examples/process-enforcement-evidence.v1.example.json"),
         |value| value.validate().unwrap(),
     );
     roundtrip_and_validate::<ExtensionManifest>(
@@ -59,6 +68,41 @@ fn ten_checked_in_examples_roundtrip_and_validate() {
         include_str!("../contracts/examples/extension-resolution.v1.example.json"),
         |value| value.validate().unwrap(),
     );
+}
+
+#[test]
+fn process_authority_contracts_are_closed_and_canonically_linked() {
+    let profile_source =
+        include_str!("../contracts/examples/process-authority-profile.v1.example.json");
+    let profile: ProcessAuthorityProfile = serde_json::from_str(profile_source).unwrap();
+    let evidence_source =
+        include_str!("../contracts/examples/process-enforcement-evidence.v1.example.json");
+    let evidence: ProcessEnforcementEvidence = serde_json::from_str(evidence_source).unwrap();
+
+    assert_eq!(
+        profile.canonical_digest().unwrap(),
+        evidence.authority_profile_digest
+    );
+
+    let mut unknown: serde_json::Value = serde_json::from_str(profile_source).unwrap();
+    unknown["requested"]["ambient_network"] = serde_json::json!(true);
+    assert!(serde_json::from_value::<ProcessAuthorityProfile>(unknown).is_err());
+
+    let duplicate =
+        include_str!("../contracts/fixtures/authority/duplicate-authority.v1.invalid.json");
+    let duplicate: ProcessAuthorityProfile = serde_json::from_str(duplicate).unwrap();
+    assert!(duplicate.validate().is_err());
+
+    let contradictory =
+        include_str!("../contracts/fixtures/authority/contradictory-enforcement.v1.invalid.json");
+    let contradictory: ProcessEnforcementEvidence = serde_json::from_str(contradictory).unwrap();
+    assert!(contradictory.validate().is_err());
+
+    let unsupported = include_str!(
+        "../contracts/fixtures/authority/unsupported-enforcement-claim.v1.invalid.json"
+    );
+    let unsupported: ProcessEnforcementEvidence = serde_json::from_str(unsupported).unwrap();
+    assert!(unsupported.validate().is_err());
 }
 
 #[test]
