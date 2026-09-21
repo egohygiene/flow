@@ -1,0 +1,81 @@
+{
+  "schema_version": "flow.process-authority-profile/v1",
+  "canonicalization": "flow.canonical-json/v1",
+  "authority_profile_id": "authority-profile:synthetic-process",
+  "extension_lock_id": "lock:synthetic-suite",
+  "authorization_id": "authorization:synthetic-process",
+  "grants_digest": "4444444444444444444444444444444444444444444444444444444444444444",
+  "invocation_id": "invocation:synthetic-process",
+  "run_id": "run:synthetic-process",
+  "extension": {
+    "extension_id": "org.egohygiene.synthetic-adapters",
+    "version": "0.1.0",
+    "publisher_id": "org.egohygiene",
+    "integrity": "1edb0efe95bec579fc3b7d70a9dbe97ef516782aaa6aacdabf69f3139758485c"
+  },
+  "capability_id": "optiflow/inspect-collection",
+  "interface": {
+    "kind": "process",
+    "name": "synthetic-process",
+    "protocol": "flow.extension-invocation/v1"
+  },
+  "subject_lock_id": "subject-lock:synthetic-process",
+  "subject_lock_digest": "12ac877554e88a314baa7f5ef86afdda77cbf89d8abb258503c2310a4b0ea9c8",
+  "operator_trust": "trusted",
+  "isolation": "trusted-unconfined",
+  "ambient_authority": "deny-unlisted",
+  "requested": {
+    "argv": [
+      "--contract",
+      "flow.extension-invocation/v1"
+    ],
+    "environment": [],
+    "filesystem_read": [
+      "input"
+    ],
+    "filesystem_write": [
+      "workspace"
+    ],
+    "network_endpoints": [],
+    "subprocesses": [
+      "flow-synthetic-adapter"
+    ],
+    "ai_providers": [],
+    "gpus": [],
+    "source_mutation_targets": [],
+    "destructive_operations": [],
+    "publication_destinations": [],
+    "signing_key_handles": [],
+    "telemetry": {
+      "fields": [],
+      "targets": []
+    }
+  },
+  "granted": {
+    "argv": [
+      "--contract",
+      "flow.extension-invocation/v1"
+    ],
+    "environment": [],
+    "filesystem_read": [
+      "input"
+    ],
+    "filesystem_write": [
+      "workspace"
+    ],
+    "network_endpoints": [],
+    "subprocesses": [
+      "flow-synthetic-adapter"
+    ],
+    "ai_providers": [],
+    "gpus": [],
+    "source_mutation_targets": [],
+    "destructive_operations": [],
+    "publication_destinations": [],
+    "signing_key_handles": [],
+    "telemetry": {
+      "fields": [],
+      "targets": []
+    }
+  }
+}

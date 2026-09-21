@@ -8,10 +8,14 @@ use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use flow::{
-    Authorization, Configuration, Domain, EXTENSION_INVOCATION_V1, ExecutionModeKind,
-    ExecutionSubjectLock, ExtensionCatalog, ExtensionInvocation, ExtensionLock, ExtensionManifest,
-    ExtensionObservation, InvocationExtension, InvocationInterface, InvocationPhase,
-    ResolutionRequest, ResolvedExtension,
+    AmbientAuthorityPolicy, AuthorityDimension, Authorization, AuthorizedProcess, Configuration,
+    Domain, EXTENSION_INVOCATION_V1, EnforcementEvidenceSource, EnforcementGuarantee,
+    EnforcementStatus, ExecutionModeKind, ExecutionSubjectLock, ExtensionCatalog,
+    ExtensionInvocation, ExtensionLock, ExtensionManifest, ExtensionObservation, GpuAccess,
+    GpuCapability, InvocationExtension, InvocationInterface, InvocationPhase,
+    MatchedExecutionSubjects, PROCESS_AUTHORITY_PROFILE_V1, PROCESS_ENFORCEMENT_EVIDENCE_V1,
+    ProcessAuthority, ProcessAuthorityProfile, ProcessEnforcementEvidence, ProcessIsolation,
+    ResolutionRequest, ResolvedExtension, TelemetryPropagation, authorize_process,
 };
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -119,6 +123,25 @@ pub fn resolved_fixture() -> (ExtensionCatalog, ResolutionRequest) {
 }
 
 pub fn process_subject_fixture() -> ProcessSubjectFixture {
+    process_subject_fixture_with_settings(flow::Trust::Trusted, None)
+}
+
+pub fn process_subject_fixture_with_trust(trust: flow::Trust) -> ProcessSubjectFixture {
+    process_subject_fixture_with_settings(trust, None)
+}
+
+pub fn process_subject_fixture_with_permissions(
+    trust: flow::Trust,
+    requested: flow::Permissions,
+    granted: flow::Permissions,
+) -> ProcessSubjectFixture {
+    process_subject_fixture_with_settings(trust, Some((requested, granted)))
+}
+
+fn process_subject_fixture_with_settings(
+    trust: flow::Trust,
+    permissions: Option<(flow::Permissions, flow::Permissions)>,
+) -> ProcessSubjectFixture {
     let sequence = NEXT_PROCESS_ROOT_ID.fetch_add(1, Ordering::Relaxed);
     let path = std::env::temp_dir().join(format!(
         "flow-process-subject-test-{}-{sequence}",
@@ -159,10 +182,17 @@ pub fn process_subject_fixture() -> ProcessSubjectFixture {
     let package_digest = format!("{:x}", Sha256::digest(canonical_package));
 
     let mut manifest = manifest();
+    if let Some((requested, _)) = &permissions {
+        manifest.requested_permissions = requested.clone();
+    }
     package_digest.clone_into(&mut manifest.integrity.value);
     let observation = observation(&manifest, true);
     let mut extension_lock = lock();
     package_digest.clone_into(&mut extension_lock.extensions[0].integrity.value);
+    extension_lock.extensions[0].trust = trust;
+    if let Some((_, granted)) = permissions {
+        extension_lock.extensions[0].granted_permissions = granted;
+    }
     let catalog = ExtensionCatalog::inspect([manifest], extension_lock, [observation])
         .expect("process-subject catalog must inspect");
 
@@ -232,6 +262,186 @@ pub fn invocation(resolved: &ResolvedExtension) -> ExtensionInvocation {
         secret_handles: Vec::new(),
         cancellation_id: "cancel:test".to_owned(),
     }
+}
+
+pub fn process_authority_profile(
+    resolved: &ResolvedExtension,
+    invocation: &ExtensionInvocation,
+    subject_lock: &ExecutionSubjectLock,
+    subjects: &MatchedExecutionSubjects,
+    isolation: ProcessIsolation,
+) -> ProcessAuthorityProfile {
+    ProcessAuthorityProfile {
+        schema_version: PROCESS_AUTHORITY_PROFILE_V1.to_owned(),
+        canonicalization: flow::CANONICAL_JSON_V1.to_owned(),
+        authority_profile_id: "authority-profile:test".to_owned(),
+        extension_lock_id: resolved.lock_id().to_owned(),
+        authorization_id: invocation.authorization.authorization_id.clone(),
+        grants_digest: invocation.authorization.grants_digest.clone(),
+        invocation_id: invocation.invocation_id.clone(),
+        run_id: invocation.run_id.clone(),
+        extension: invocation.extension.clone(),
+        capability_id: invocation.capability_id.clone(),
+        interface: invocation.interface.clone(),
+        subject_lock_id: subject_lock.subject_lock_id.clone(),
+        subject_lock_digest: subjects.lock_digest().to_owned(),
+        operator_trust: resolved.trust(),
+        isolation,
+        ambient_authority: AmbientAuthorityPolicy::DenyUnlisted,
+        requested: authority_from_permissions(resolved.requested_permissions()),
+        granted: authority_from_permissions(resolved.granted_permissions()),
+    }
+}
+
+pub fn process_enforcement_evidence(
+    profile: &ProcessAuthorityProfile,
+    subjects: &MatchedExecutionSubjects,
+) -> ProcessEnforcementEvidence {
+    let (source, backend_id, backend_version, enforced, status) = match profile.isolation {
+        ProcessIsolation::TrustedUnconfined => (
+            EnforcementEvidenceSource::None,
+            "none".to_owned(),
+            "0.0.0".to_owned(),
+            ProcessAuthority::default(),
+            EnforcementStatus::NotEnforced,
+        ),
+        ProcessIsolation::Sandboxed => (
+            EnforcementEvidenceSource::CallerAttestedHost,
+            "backend:synthetic-conformance".to_owned(),
+            "1.0.0".to_owned(),
+            profile.requested.clone(),
+            EnforcementStatus::Enforced,
+        ),
+    };
+    ProcessEnforcementEvidence {
+        schema_version: PROCESS_ENFORCEMENT_EVIDENCE_V1.to_owned(),
+        canonicalization: flow::CANONICAL_JSON_V1.to_owned(),
+        enforcement_evidence_id: "enforcement:test".to_owned(),
+        authority_profile_id: profile.authority_profile_id.clone(),
+        authority_profile_digest: profile.canonical_digest().unwrap(),
+        invocation_id: profile.invocation_id.clone(),
+        run_id: profile.run_id.clone(),
+        extension: profile.extension.clone(),
+        capability_id: profile.capability_id.clone(),
+        interface: profile.interface.clone(),
+        subject_lock_id: profile.subject_lock_id.clone(),
+        subject_lock_digest: profile.subject_lock_digest.clone(),
+        subject_observation_digest: subjects.observation_digest().to_owned(),
+        isolation: profile.isolation,
+        ambient_authority: profile.ambient_authority,
+        source,
+        backend_id,
+        backend_version,
+        enforced,
+        guarantees: authority_dimensions()
+            .into_iter()
+            .map(|dimension| EnforcementGuarantee { dimension, status })
+            .collect(),
+        unsupported_claims: Vec::new(),
+    }
+}
+
+pub fn authorized_process(
+    resolved: &ResolvedExtension,
+    invocation: &ExtensionInvocation,
+    subject_lock: &ExecutionSubjectLock,
+    subjects: &MatchedExecutionSubjects,
+) -> AuthorizedProcess {
+    let profile = process_authority_profile(
+        resolved,
+        invocation,
+        subject_lock,
+        subjects,
+        ProcessIsolation::TrustedUnconfined,
+    );
+    let evidence = process_enforcement_evidence(&profile, subjects);
+    authorize_process(
+        resolved,
+        invocation,
+        subject_lock,
+        subjects,
+        &profile,
+        &evidence,
+    )
+    .expect("fixture process authority must match")
+}
+
+fn authority_from_permissions(permissions: &flow::Permissions) -> ProcessAuthority {
+    let mut environment = permissions
+        .environment_read
+        .iter()
+        .map(|name| flow::EnvironmentBinding {
+            name: name.clone(),
+            source_handle: format!("secret:env.{}", name.to_ascii_lowercase()),
+        })
+        .collect::<Vec<_>>();
+    environment.sort();
+    let mut filesystem_read = permissions.filesystem_read.clone();
+    filesystem_read.sort();
+    let mut filesystem_write = permissions.filesystem_write.clone();
+    filesystem_write.sort();
+    let mut network_endpoints = permissions.network_hosts.clone();
+    network_endpoints.sort();
+    let mut subprocesses = permissions.subprocesses.clone();
+    subprocesses.sort();
+    let mut ai_providers = permissions.ai_providers.clone();
+    ai_providers.sort();
+    ProcessAuthority {
+        argv: vec!["--contract".to_owned(), EXTENSION_INVOCATION_V1.to_owned()],
+        environment,
+        filesystem_read,
+        filesystem_write,
+        network_endpoints,
+        subprocesses,
+        ai_providers,
+        gpus: if permissions.gpu {
+            vec![GpuAccess {
+                device_id: "gpu:synthetic-0".to_owned(),
+                capabilities: vec![GpuCapability::Compute],
+            }]
+        } else {
+            Vec::new()
+        },
+        source_mutation_targets: permissions
+            .source_mutation
+            .then(|| "artifact:authorized-source".to_owned())
+            .into_iter()
+            .collect(),
+        destructive_operations: permissions
+            .destructive
+            .then(|| "operation:authorized-delete".to_owned())
+            .into_iter()
+            .collect(),
+        publication_destinations: permissions
+            .publish
+            .then(|| "destination:authorized-publication".to_owned())
+            .into_iter()
+            .collect(),
+        signing_key_handles: permissions
+            .sign
+            .then(|| "handle:signing.test".to_owned())
+            .into_iter()
+            .collect(),
+        telemetry: TelemetryPropagation::default(),
+    }
+}
+
+fn authority_dimensions() -> [AuthorityDimension; 13] {
+    [
+        AuthorityDimension::Argv,
+        AuthorityDimension::Environment,
+        AuthorityDimension::FilesystemRead,
+        AuthorityDimension::FilesystemWrite,
+        AuthorityDimension::Network,
+        AuthorityDimension::Subprocess,
+        AuthorityDimension::AiProvider,
+        AuthorityDimension::Gpu,
+        AuthorityDimension::SourceMutation,
+        AuthorityDimension::Destructive,
+        AuthorityDimension::Publication,
+        AuthorityDimension::Signing,
+        AuthorityDimension::Telemetry,
+    ]
 }
 
 pub fn variant(

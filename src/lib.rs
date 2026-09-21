@@ -6,6 +6,7 @@
 //! already-captured external-process transcript; it does not launch processes.
 
 pub mod artifacts;
+pub mod authority;
 pub mod catalog;
 pub mod contracts;
 pub mod execution;
@@ -15,6 +16,7 @@ pub mod process;
 pub mod scenario;
 
 pub use artifacts::*;
+pub use authority::*;
 pub use catalog::{
     CatalogError, ExtensionCatalog, ExtensionObservation, ResolutionOutcome, ResolutionRequest,
     ResolvedExtension,

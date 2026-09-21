@@ -1,6 +1,6 @@
 {
   "schema_version": "flow.contract-set/v1",
-  "contract_set_version": "0.5.0",
+  "contract_set_version": "0.6.0",
   "status": "provisional",
   "contracts": [
     {
@@ -48,6 +48,23 @@
       "example": "examples/execution-subject-observations.v1.example.json",
       "invalid_examples": [
         "fixtures/execution-subjects/duplicate-observations.v1.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.process-authority-profile/v1",
+      "schema": "schemas/process-authority-profile.v1.schema.json",
+      "example": "examples/process-authority-profile.v1.example.json",
+      "invalid_examples": [
+        "fixtures/authority/duplicate-authority.v1.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.process-enforcement-evidence/v1",
+      "schema": "schemas/process-enforcement-evidence.v1.schema.json",
+      "example": "examples/process-enforcement-evidence.v1.example.json",
+      "invalid_examples": [
+        "fixtures/authority/contradictory-enforcement.v1.invalid.json",
+        "fixtures/authority/unsupported-enforcement-claim.v1.invalid.json"
       ]
     },
     {

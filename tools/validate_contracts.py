@@ -19,6 +19,21 @@ SEMVER = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
 CONTRACT_FAMILY = re.compile(r"^flow\.[a-z-]+/v([1-9][0-9]{0,19})$")
 LOWER_SHA256 = re.compile(r"^[a-f0-9]{64}$")
 U64_MAX = 18_446_744_073_709_551_615
+AUTHORITY_DIMENSIONS = [
+    "argv",
+    "environment",
+    "filesystem-read",
+    "filesystem-write",
+    "network",
+    "subprocess",
+    "ai-provider",
+    "gpu",
+    "source-mutation",
+    "destructive",
+    "publication",
+    "signing",
+    "telemetry",
+]
 
 
 def load_object(path: Path) -> dict[str, Any]:
@@ -118,8 +133,30 @@ def validate_instance(
     schema: dict[str, Any],
     location: str,
     errors: list[str],
+    root_schema: dict[str, Any] | None = None,
 ) -> None:
     """Validate the JSON Schema keywords used by the v1 contract set."""
+    if root_schema is None:
+        root_schema = schema
+
+    reference = schema.get("$ref")
+    if isinstance(reference, str):
+        target: Any = root_schema
+        if reference.startswith("#/"):
+            for raw_segment in reference[2:].split("/"):
+                segment = raw_segment.replace("~1", "/").replace("~0", "~")
+                if not isinstance(target, dict) or segment not in target:
+                    errors.append(f"{location}: unresolved schema reference {reference}")
+                    return
+                target = target[segment]
+        else:
+            errors.append(f"{location}: unsupported schema reference {reference}")
+            return
+        if not isinstance(target, dict):
+            errors.append(f"{location}: schema reference {reference} is not an object")
+            return
+        validate_instance(instance, target, location, errors, root_schema)
+
     expected_type = schema.get("type")
     type_checks = {
         "object": lambda value: isinstance(value, dict),
@@ -158,7 +195,13 @@ def validate_instance(
             for field, value in instance.items():
                 child_schema = properties.get(field)
                 if isinstance(child_schema, dict):
-                    validate_instance(value, child_schema, f"{location}.{field}", errors)
+                    validate_instance(
+                        value,
+                        child_schema,
+                        f"{location}.{field}",
+                        errors,
+                        root_schema,
+                    )
 
     if isinstance(instance, list):
         if "minItems" in schema:
@@ -171,7 +214,13 @@ def validate_instance(
         item_schema = schema.get("items")
         if isinstance(item_schema, dict):
             for index, value in enumerate(instance):
-                validate_instance(value, item_schema, f"{location}[{index}]", errors)
+                validate_instance(
+                    value,
+                    item_schema,
+                    f"{location}[{index}]",
+                    errors,
+                    root_schema,
+                )
 
 
 def validate_extension_manifest(
@@ -361,6 +410,256 @@ def validate_extension_result(
         require(
             classification not in {None, "none"},
             f"{location}: failed outcomes require a failure classification",
+            errors,
+        )
+
+
+def canonical_authority_item(value: Any) -> str:
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+
+
+def validate_authority(
+    authority: Any,
+    location: str,
+    errors: list[str],
+) -> None:
+    if not isinstance(authority, dict):
+        return
+
+    set_fields = (
+        "environment",
+        "filesystem_read",
+        "filesystem_write",
+        "network_endpoints",
+        "subprocesses",
+        "ai_providers",
+        "gpus",
+        "source_mutation_targets",
+        "destructive_operations",
+        "publication_destinations",
+        "signing_key_handles",
+    )
+    for field in set_fields:
+        values = authority.get(field, [])
+        if not isinstance(values, list):
+            continue
+        normalized = [canonical_authority_item(value) for value in values]
+        require(
+            normalized == sorted(set(normalized)),
+            f"{location}.{field}: must be strictly sorted and contain no duplicates",
+            errors,
+        )
+
+    telemetry = authority.get("telemetry", {})
+    if isinstance(telemetry, dict):
+        for field in ("fields", "targets"):
+            values = telemetry.get(field, [])
+            if not isinstance(values, list):
+                continue
+            normalized = [canonical_authority_item(value) for value in values]
+            require(
+                normalized == sorted(set(normalized)),
+                f"{location}.telemetry.{field}: must be strictly sorted and contain no duplicates",
+                errors,
+            )
+
+    explicit_values: list[Any] = [*authority.get("argv", [])]
+    for field in set_fields:
+        if field not in {"environment", "gpus"}:
+            explicit_values.extend(authority.get(field, []))
+    if isinstance(telemetry, dict):
+        explicit_values.extend(telemetry.get("targets", []))
+    require(
+        all(
+            isinstance(value, str)
+            and bool(value)
+            and value != "*"
+            and not any(ord(character) < 32 or ord(character) == 127 for character in value)
+            for value in explicit_values
+        ),
+        f"{location}: authority values must be explicit and contain no wildcard-only or control value",
+        errors,
+    )
+
+    environment = authority.get("environment", [])
+    if isinstance(environment, list):
+        handles = [
+            binding.get("source_handle")
+            for binding in environment
+            if isinstance(binding, dict)
+        ]
+        require(
+            len(handles) == len(set(handles)),
+            f"{location}.environment: source handles must be unique",
+            errors,
+        )
+
+    gpus = authority.get("gpus", [])
+    for index, gpu in enumerate(gpus if isinstance(gpus, list) else []):
+        if not isinstance(gpu, dict):
+            continue
+        capabilities = gpu.get("capabilities", [])
+        if isinstance(capabilities, list):
+            require(
+                capabilities == sorted(set(capabilities)),
+                f"{location}.gpus[{index}].capabilities: must be strictly sorted and contain no duplicates",
+                errors,
+            )
+        require(
+            gpu.get("device_id") != "*",
+            f"{location}.gpus[{index}].device_id: wildcard authority is forbidden",
+            errors,
+        )
+
+
+def authority_allows(granted: Any, requested: Any) -> bool:
+    if not isinstance(granted, dict) or not isinstance(requested, dict):
+        return False
+    if granted.get("argv") != requested.get("argv"):
+        return False
+    for field in (
+        "environment",
+        "filesystem_read",
+        "filesystem_write",
+        "network_endpoints",
+        "subprocesses",
+        "ai_providers",
+        "source_mutation_targets",
+        "destructive_operations",
+        "publication_destinations",
+        "signing_key_handles",
+    ):
+        requested_values = requested.get(field)
+        granted_values = granted.get(field)
+        if not isinstance(requested_values, list) or not isinstance(granted_values, list):
+            return False
+        if any(value not in granted_values for value in requested_values):
+            return False
+
+    requested_gpus = requested.get("gpus")
+    granted_gpus = granted.get("gpus")
+    if not isinstance(requested_gpus, list) or not isinstance(granted_gpus, list):
+        return False
+    for requested_gpu in requested_gpus:
+        if not isinstance(requested_gpu, dict):
+            return False
+        matching = [
+            granted_gpu
+            for granted_gpu in granted_gpus
+            if isinstance(granted_gpu, dict)
+            and granted_gpu.get("device_id") == requested_gpu.get("device_id")
+        ]
+        if not matching or any(
+            capability not in matching[0].get("capabilities", [])
+            for capability in requested_gpu.get("capabilities", [])
+        ):
+            return False
+
+    requested_telemetry = requested.get("telemetry")
+    granted_telemetry = granted.get("telemetry")
+    if not isinstance(requested_telemetry, dict) or not isinstance(granted_telemetry, dict):
+        return False
+    return all(
+        all(value in granted_telemetry.get(field, []) for value in requested_telemetry.get(field, []))
+        for field in ("fields", "targets")
+    )
+
+
+def authority_is_empty(authority: Any) -> bool:
+    if not isinstance(authority, dict):
+        return False
+    collection_fields = (
+        "argv",
+        "environment",
+        "filesystem_read",
+        "filesystem_write",
+        "network_endpoints",
+        "subprocesses",
+        "ai_providers",
+        "gpus",
+        "source_mutation_targets",
+        "destructive_operations",
+        "publication_destinations",
+        "signing_key_handles",
+    )
+    telemetry = authority.get("telemetry")
+    return all(authority.get(field) == [] for field in collection_fields) and isinstance(
+        telemetry, dict
+    ) and telemetry.get("fields") == [] and telemetry.get("targets") == []
+
+
+def validate_process_authority_profile(
+    profile: dict[str, Any],
+    location: str,
+    errors: list[str],
+) -> None:
+    requested = profile.get("requested")
+    granted = profile.get("granted")
+    validate_authority(requested, f"{location}.requested", errors)
+    validate_authority(granted, f"{location}.granted", errors)
+    require(
+        authority_allows(granted, requested),
+        f"{location}: granted authority must cover the exact request without widening argv",
+        errors,
+    )
+    require(
+        profile.get("operator_trust") != "sandboxed"
+        or profile.get("isolation") == "sandboxed",
+        f"{location}: sandbox-required operator trust cannot select trusted-unconfined isolation",
+        errors,
+    )
+
+
+def validate_process_enforcement_evidence(
+    evidence: dict[str, Any],
+    location: str,
+    errors: list[str],
+) -> None:
+    enforced = evidence.get("enforced")
+    validate_authority(enforced, f"{location}.enforced", errors)
+    guarantees = evidence.get("guarantees", [])
+    expected_status = (
+        "enforced" if evidence.get("isolation") == "sandboxed" else "not-enforced"
+    )
+    if isinstance(guarantees, list):
+        require(
+            [
+                guarantee.get("dimension")
+                for guarantee in guarantees
+                if isinstance(guarantee, dict)
+            ]
+            == AUTHORITY_DIMENSIONS,
+            f"{location}: guarantees must cover every authority dimension in canonical order",
+            errors,
+        )
+        require(
+            all(
+                isinstance(guarantee, dict)
+                and guarantee.get("status") == expected_status
+                for guarantee in guarantees
+            ),
+            f"{location}: guarantee statuses contradict the selected isolation",
+            errors,
+        )
+    require(
+        evidence.get("unsupported_claims") == [],
+        f"{location}: v1 supports no additional enforcement claims",
+        errors,
+    )
+    if evidence.get("isolation") == "trusted-unconfined":
+        require(
+            evidence.get("source") == "none"
+            and evidence.get("backend_id") == "none"
+            and evidence.get("backend_version") == "0.0.0"
+            and authority_is_empty(enforced),
+            f"{location}: trusted-unconfined evidence cannot claim host enforcement",
+            errors,
+        )
+    elif evidence.get("isolation") == "sandboxed":
+        require(
+            evidence.get("source") == "caller-attested-host"
+            and evidence.get("backend_id") != "none",
+            f"{location}: sandboxed evidence must identify caller-attested host enforcement",
             errors,
         )
 
@@ -1117,6 +1416,74 @@ def validate_execution_subject_examples(
     )
 
 
+def validate_process_authority_examples(
+    examples: dict[str, dict[str, Any]],
+    errors: list[str],
+) -> None:
+    profile = examples.get("flow.process-authority-profile/v1")
+    evidence = examples.get("flow.process-enforcement-evidence/v1")
+    subject_lock = examples.get("flow.execution-subject-lock/v1")
+    observations = examples.get("flow.execution-subject-observations/v1")
+    if not all(
+        isinstance(value, dict)
+        for value in (profile, evidence, subject_lock, observations)
+    ):
+        return
+    assert isinstance(profile, dict)
+    assert isinstance(evidence, dict)
+    assert isinstance(subject_lock, dict)
+    assert isinstance(observations, dict)
+
+    for field in ("extension", "capability_id", "interface", "subject_lock_id"):
+        require(
+            profile.get(field) == subject_lock.get(field),
+            f"process authority example disagrees with subject lock on {field}",
+            errors,
+        )
+        require(
+            evidence.get(field) == profile.get(field),
+            f"process enforcement example disagrees with authority profile on {field}",
+            errors,
+        )
+    require(
+        profile.get("extension_lock_id") == subject_lock.get("extension_lock_id"),
+        "process authority example disagrees with the extension lock identity",
+        errors,
+    )
+    lock_digest = canonical_flow_json_digest(subject_lock)
+    observation_digest = canonical_flow_json_digest(observations)
+    profile_digest = canonical_flow_json_digest(profile)
+    require(
+        profile.get("subject_lock_digest") == lock_digest
+        and evidence.get("subject_lock_digest") == lock_digest,
+        "process authority examples do not bind the canonical subject lock bytes",
+        errors,
+    )
+    require(
+        evidence.get("subject_observation_digest") == observation_digest,
+        "process enforcement example does not bind the canonical subject observation bytes",
+        errors,
+    )
+    require(
+        evidence.get("authority_profile_id") == profile.get("authority_profile_id")
+        and evidence.get("authority_profile_digest") == profile_digest,
+        "process enforcement example does not bind the canonical authority profile bytes",
+        errors,
+    )
+    for field in ("invocation_id", "run_id", "isolation", "ambient_authority"):
+        require(
+            evidence.get(field) == profile.get(field),
+            f"process enforcement example disagrees with authority profile on {field}",
+            errors,
+        )
+    if profile.get("isolation") == "sandboxed":
+        require(
+            evidence.get("enforced") == profile.get("requested"),
+            "sandboxed enforcement example must exactly enforce requested authority",
+            errors,
+        )
+
+
 def validate_scenario_digests(
     scenario_paths: list[Path],
     errors: list[str],
@@ -1202,6 +1569,8 @@ def validate_contract_semantics(
         "flow.extension-lock/v1": validate_extension_lock,
         "flow.extension-result/v1": validate_extension_result,
         "flow.extension-resolution/v1": validate_extension_resolution,
+        "flow.process-authority-profile/v1": validate_process_authority_profile,
+        "flow.process-enforcement-evidence/v1": validate_process_enforcement_evidence,
         "flow.scenario-manifest/v1": validate_scenario_manifest,
     }
     validator = validators.get(contract_id)
@@ -1340,10 +1709,13 @@ def main() -> int:
         "flow.extension-manifest/v1",
         "flow.extension-resolution/v1",
         "flow.extension-result/v1",
+        "flow.process-authority-profile/v1",
+        "flow.process-enforcement-evidence/v1",
         "flow.scenario-manifest/v1",
     }
     require(seen == expected, f"contract ids must be exactly {sorted(expected)}", errors)
     validate_execution_subject_examples(examples_by_id, errors)
+    validate_process_authority_examples(examples_by_id, errors)
     validate_scenario_digests(scenario_paths, errors)
 
     if errors:

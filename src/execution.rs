@@ -5,9 +5,10 @@ use std::collections::HashSet;
 use thiserror::Error;
 
 use crate::ResolvedExtension;
+use crate::authority::AuthorizedProcess;
 use crate::contracts::{
     EventKind, ExecutionModeKind, ExtensionEvent, ExtensionInvocation, ExtensionResult,
-    InvocationPhase, Outcome, ValidationError,
+    InvocationPhase, Outcome, Trust, ValidationError,
 };
 use crate::execution_subjects::{ExecutionSubjectLock, MatchedExecutionSubjects};
 use crate::process::{
@@ -390,12 +391,20 @@ impl Orchestrator {
         invocation: &ExtensionInvocation,
         subject_lock: &ExecutionSubjectLock,
         subjects: &MatchedExecutionSubjects,
+        authority: &AuthorizedProcess,
     ) -> Result<Vec<u8>, ExecutionError> {
         invocation
             .validate()
             .map_err(|source| ExecutionError::InvalidInvocation { source })?;
         validate_common_preflight(resolved, invocation, ExecutionModeKind::Process)?;
         validate_process_subject_preflight(resolved, invocation, subject_lock, subjects)?;
+        validate_process_authority_preflight(
+            resolved,
+            invocation,
+            subject_lock,
+            subjects,
+            authority,
+        )?;
         encode_invocation_frame(invocation)
             .map_err(|source| ExecutionError::ProcessProtocol { source })
     }
@@ -421,6 +430,7 @@ impl Orchestrator {
         invocation: &ExtensionInvocation,
         subject_lock: &ExecutionSubjectLock,
         subjects: &MatchedExecutionSubjects,
+        authority: &AuthorizedProcess,
         transcript: ProcessTranscript<'_>,
         event_sink: &mut dyn EventSink,
     ) -> Result<ValidatedExecution, ExecutionError> {
@@ -429,6 +439,13 @@ impl Orchestrator {
             .map_err(|source| ExecutionError::InvalidInvocation { source })?;
         validate_common_preflight(resolved, invocation, ExecutionModeKind::Process)?;
         validate_process_subject_preflight(resolved, invocation, subject_lock, subjects)?;
+        validate_process_authority_preflight(
+            resolved,
+            invocation,
+            subject_lock,
+            subjects,
+            authority,
+        )?;
 
         validate_captured_length(
             ProcessStream::Stdout,
@@ -456,6 +473,18 @@ impl Orchestrator {
     }
 }
 
+fn validate_process_authority_preflight(
+    resolved: &ResolvedExtension,
+    invocation: &ExtensionInvocation,
+    subject_lock: &ExecutionSubjectLock,
+    subjects: &MatchedExecutionSubjects,
+    authority: &AuthorizedProcess,
+) -> Result<(), ExecutionError> {
+    authority
+        .matches_context(resolved, invocation, subject_lock, subjects)
+        .map_err(|message| ExecutionError::Preflight { message })
+}
+
 fn validate_process_subject_preflight(
     resolved: &ResolvedExtension,
     invocation: &ExtensionInvocation,
@@ -473,6 +502,9 @@ fn validate_in_process_preflight(
     port: &PortIdentity,
 ) -> Result<(), ExecutionError> {
     validate_common_preflight(resolved, invocation, ExecutionModeKind::InProcess)?;
+    if resolved.trust() != Trust::Trusted {
+        return preflight("the injected in-process seam requires trusted operator policy");
+    }
     if port.extension_id != resolved.extension_id()
         || port.version != resolved.version()
         || port.publisher_id != resolved.publisher_id()

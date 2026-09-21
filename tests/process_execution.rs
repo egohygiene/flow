@@ -7,7 +7,7 @@ use flow::{
     observe_execution_subjects,
 };
 
-use common::{invocation, process_subject_fixture, resolved_fixture};
+use common::{authorized_process, invocation, process_subject_fixture, resolved_fixture};
 
 fn provider_evidence(
     resolved: &flow::ResolvedExtension,
@@ -45,6 +45,7 @@ fn process_request_and_transcript_reuse_flow_owned_validation() {
         &fixture.subject_lock,
     )
     .unwrap();
+    let authority = authorized_process(resolved, &invocation, &fixture.subject_lock, &subjects);
     let (events, result) = provider_evidence(resolved, &invocation);
     let provider_stdout = stdout(&events, &result);
     let request_bytes = Orchestrator::encode_process_request(
@@ -52,6 +53,7 @@ fn process_request_and_transcript_reuse_flow_owned_validation() {
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
     )
     .unwrap();
     let mut observed = Vec::new();
@@ -61,6 +63,7 @@ fn process_request_and_transcript_reuse_flow_owned_validation() {
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -89,6 +92,12 @@ fn execution_modes_fail_closed_at_the_wrong_seam() {
         &fixture.subject_lock,
     )
     .unwrap();
+    let authority = authorized_process(
+        process_resolved,
+        &process_invocation,
+        &fixture.subject_lock,
+        &subjects,
+    );
     let process_port = HermeticExtension::new(PortIdentity::from_resolved(process_resolved));
     let mut observed = Vec::new();
 
@@ -111,6 +120,7 @@ fn execution_modes_fail_closed_at_the_wrong_seam() {
         &in_process_invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
     )
     .unwrap_err();
     assert!(matches!(error, ExecutionError::Preflight { .. }));
@@ -129,6 +139,7 @@ fn captured_stream_limits_are_inclusive_and_checked_before_protocol_acceptance()
         &fixture.subject_lock,
     )
     .unwrap();
+    let authority = authorized_process(resolved, &invocation, &fixture.subject_lock, &subjects);
     let (events, mut result) = provider_evidence(resolved, &invocation);
 
     let mut provider_stdout = stdout(&events, &result);
@@ -146,6 +157,7 @@ fn captured_stream_limits_are_inclusive_and_checked_before_protocol_acceptance()
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -161,6 +173,7 @@ fn captured_stream_limits_are_inclusive_and_checked_before_protocol_acceptance()
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(1) },
             &provider_stdout,
@@ -183,6 +196,7 @@ fn captured_stream_limits_are_inclusive_and_checked_before_protocol_acceptance()
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &stdout(&events, &result),
@@ -213,6 +227,7 @@ fn abnormal_completion_cannot_promote_provider_success() {
         &fixture.subject_lock,
     )
     .unwrap();
+    let authority = authorized_process(resolved, &invocation, &fixture.subject_lock, &subjects);
     let (events, result) = provider_evidence(resolved, &invocation);
     let provider_stdout = stdout(&events, &result);
 
@@ -230,6 +245,7 @@ fn abnormal_completion_cannot_promote_provider_success() {
             &invocation,
             &fixture.subject_lock,
             &subjects,
+            &authority,
             ProcessTranscript::new(completion, &provider_stdout, &[]),
             &mut observed,
         )
@@ -261,6 +277,7 @@ fn result_without_a_terminal_event_remains_unaccepted() {
         &fixture.subject_lock,
     )
     .unwrap();
+    let authority = authorized_process(resolved, &invocation, &fixture.subject_lock, &subjects);
     let (_, result) = provider_evidence(resolved, &invocation);
     let provider_stdout = stdout(&[], &result);
 
@@ -269,6 +286,7 @@ fn result_without_a_terminal_event_remains_unaccepted() {
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -296,6 +314,7 @@ fn graceful_provider_cancellation_with_exit_zero_is_valid_evidence() {
         &fixture.subject_lock,
     )
     .unwrap();
+    let authority = authorized_process(resolved, &invocation, &fixture.subject_lock, &subjects);
     let (mut events, mut result) = provider_evidence(resolved, &invocation);
     let terminal = events.last_mut().unwrap();
     terminal.kind = EventKind::Cancelled;
@@ -312,6 +331,7 @@ fn graceful_provider_cancellation_with_exit_zero_is_valid_evidence() {
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -337,6 +357,7 @@ fn framed_events_still_use_existing_order_and_identity_validation() {
         &fixture.subject_lock,
     )
     .unwrap();
+    let authority = authorized_process(resolved, &invocation, &fixture.subject_lock, &subjects);
     let (mut events, result) = provider_evidence(resolved, &invocation);
     events[1].sequence = events[0].sequence;
     let provider_stdout = stdout(&events, &result);
@@ -346,6 +367,7 @@ fn framed_events_still_use_existing_order_and_identity_validation() {
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -366,6 +388,7 @@ fn framed_events_still_use_existing_order_and_identity_validation() {
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -391,6 +414,7 @@ fn successful_observers_do_not_change_authoritative_result_identity() {
         &fixture.subject_lock,
     )
     .unwrap();
+    let authority = authorized_process(resolved, &invocation, &fixture.subject_lock, &subjects);
     let (events, result) = provider_evidence(resolved, &invocation);
     let provider_stdout = stdout(&events, &result);
     let transcript = ProcessTranscript::new(
@@ -404,6 +428,7 @@ fn successful_observers_do_not_change_authoritative_result_identity() {
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         transcript,
         &mut no_op,
     )
@@ -414,6 +439,7 @@ fn successful_observers_do_not_change_authoritative_result_identity() {
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         transcript,
         &mut collected,
     )
@@ -436,6 +462,7 @@ fn rejecting_event_sink_rejects_process_evidence_without_fallback() {
         &fixture.subject_lock,
     )
     .unwrap();
+    let authority = authorized_process(resolved, &invocation, &fixture.subject_lock, &subjects);
     let (events, result) = provider_evidence(resolved, &invocation);
     let provider_stdout = stdout(&events, &result);
     let mut sink = RejectingSink;
@@ -445,6 +472,7 @@ fn rejecting_event_sink_rejects_process_evidence_without_fallback() {
         &invocation,
         &fixture.subject_lock,
         &subjects,
+        &authority,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,

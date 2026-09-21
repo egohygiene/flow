@@ -442,7 +442,7 @@ impl ExtensionCatalog {
             .ordered_extensions
             .iter()
             .filter_map(|extension_id| self.lock.extension(extension_id))
-            .filter(|entry| entry.enabled && entry.trust == Trust::Trusted)
+            .filter(|entry| entry.enabled && entry.trust != Trust::Disabled)
             .collect();
         let represented = required_entries
             .iter()
@@ -569,12 +569,19 @@ impl ExtensionCatalog {
             match entry.trust {
                 Trust::Trusted => {}
                 Trust::Sandboxed => {
-                    authorized = false;
-                    available = false;
-                    reasons.push(
-                        "Sandboxed trust requires an enforceable backend that this checkpoint does not provide."
-                            .to_owned(),
-                    );
+                    if request.execution_mode_kind == ExecutionModeKind::Process {
+                        reasons.push(
+                            "Sandbox-required operator trust remains subject to downstream authority and enforcement preflight."
+                                .to_owned(),
+                        );
+                    } else {
+                        authorized = false;
+                        available = false;
+                        reasons.push(
+                            "Sandbox-required operator trust cannot use the unconfined in-process seam."
+                                .to_owned(),
+                        );
+                    }
                 }
                 Trust::Disabled => {
                     authorized = false;
@@ -735,6 +742,11 @@ impl ResolvedExtension {
     #[must_use]
     pub fn granted_permissions(&self) -> &crate::contracts::Permissions {
         &self.locked.granted_permissions
+    }
+
+    #[must_use]
+    pub fn requested_permissions(&self) -> &crate::contracts::Permissions {
+        &self.manifest.requested_permissions
     }
 
     /// Return the operator-selected trust mode retained from the extension lock.

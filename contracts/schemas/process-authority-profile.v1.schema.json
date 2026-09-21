@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/process-authority-profile.v1.schema.json",
+  "title": "Flow process authority profile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "canonicalization",
+    "authority_profile_id",
+    "extension_lock_id",
+    "authorization_id",
+    "grants_digest",
+    "invocation_id",
+    "run_id",
+    "extension",
+    "capability_id",
+    "interface",
+    "subject_lock_id",
+    "subject_lock_digest",
+    "operator_trust",
+    "isolation",
+    "ambient_authority",
+    "requested",
+    "granted"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.process-authority-profile/v1" },
+    "canonicalization": { "const": "flow.canonical-json/v1" },
+    "authority_profile_id": {
+      "type": "string",
+      "pattern": "^authority-profile:[a-z0-9][a-z0-9._-]*$"
+    },
+    "extension_lock_id": {
+      "type": "string",
+      "pattern": "^lock:[a-z0-9][a-z0-9._-]*$"
+    },
+    "authorization_id": {
+      "type": "string",
+      "pattern": "^authorization:[a-z0-9][a-z0-9._-]*$"
+    },
+    "grants_digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "invocation_id": {
+      "type": "string",
+      "pattern": "^invocation:[a-z0-9][a-z0-9._-]*$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^run:[a-z0-9][a-z0-9._-]*$"
+    },
+    "extension": { "$ref": "#/$defs/extension" },
+    "capability_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9.-]+/[a-z][a-z0-9.-]+$"
+    },
+    "interface": { "$ref": "#/$defs/interface" },
+    "subject_lock_id": {
+      "type": "string",
+      "pattern": "^subject-lock:[a-z0-9][a-z0-9._-]*$"
+    },
+    "subject_lock_digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "operator_trust": { "enum": ["trusted", "sandboxed"] },
+    "isolation": { "enum": ["trusted-unconfined", "sandboxed"] },
+    "ambient_authority": { "const": "deny-unlisted" },
+    "requested": { "$ref": "#/$defs/authority" },
+    "granted": { "$ref": "#/$defs/authority" }
+  },
+  "$defs": {
+    "extension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["extension_id", "version", "publisher_id", "integrity"],
+      "properties": {
+        "extension_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)+$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "publisher_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9.-]+$"
+        },
+        "integrity": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "name", "protocol"],
+      "properties": {
+        "kind": { "const": "process" },
+        "name": { "type": "string", "minLength": 1 },
+        "protocol": { "const": "flow.extension-invocation/v1" }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "argv",
+        "environment",
+        "filesystem_read",
+        "filesystem_write",
+        "network_endpoints",
+        "subprocesses",
+        "ai_providers",
+        "gpus",
+        "source_mutation_targets",
+        "destructive_operations",
+        "publication_destinations",
+        "signing_key_handles",
+        "telemetry"
+      ],
+      "properties": {
+        "argv": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "environment": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "source_handle"],
+            "properties": {
+              "name": { "type": "string", "pattern": "^[A-Z_][A-Z0-9_]*$" },
+              "source_handle": {
+                "type": "string",
+                "pattern": "^secret:[a-z0-9][a-z0-9._-]*$"
+              }
+            }
+          }
+        },
+        "filesystem_read": { "$ref": "#/$defs/string_set" },
+        "filesystem_write": { "$ref": "#/$defs/string_set" },
+        "network_endpoints": { "$ref": "#/$defs/string_set" },
+        "subprocesses": { "$ref": "#/$defs/string_set" },
+        "ai_providers": { "$ref": "#/$defs/string_set" },
+        "gpus": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["device_id", "capabilities"],
+            "properties": {
+              "device_id": { "type": "string", "minLength": 1 },
+              "capabilities": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": { "enum": ["compute", "video-decode", "video-encode"] }
+              }
+            }
+          }
+        },
+        "source_mutation_targets": { "$ref": "#/$defs/string_set" },
+        "destructive_operations": { "$ref": "#/$defs/string_set" },
+        "publication_destinations": { "$ref": "#/$defs/string_set" },
+        "signing_key_handles": { "$ref": "#/$defs/string_set" },
+        "telemetry": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fields", "targets"],
+          "properties": {
+            "fields": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": ["baggage", "correlation-id", "traceparent", "tracestate"]
+              }
+            },
+            "targets": { "$ref": "#/$defs/string_set" }
+          }
+        }
+      }
+    },
+    "string_set": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

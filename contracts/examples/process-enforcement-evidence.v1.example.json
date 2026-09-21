@@ -1,0 +1,63 @@
+{
+  "schema_version": "flow.process-enforcement-evidence/v1",
+  "canonicalization": "flow.canonical-json/v1",
+  "enforcement_evidence_id": "enforcement:synthetic-process-unconfined",
+  "authority_profile_id": "authority-profile:synthetic-process",
+  "authority_profile_digest": "3b82dd4ca360d7a71533461a4f745bc909e9a792bfe81a1b639e0fd9552194b0",
+  "invocation_id": "invocation:synthetic-process",
+  "run_id": "run:synthetic-process",
+  "extension": {
+    "extension_id": "org.egohygiene.synthetic-adapters",
+    "version": "0.1.0",
+    "publisher_id": "org.egohygiene",
+    "integrity": "1edb0efe95bec579fc3b7d70a9dbe97ef516782aaa6aacdabf69f3139758485c"
+  },
+  "capability_id": "optiflow/inspect-collection",
+  "interface": {
+    "kind": "process",
+    "name": "synthetic-process",
+    "protocol": "flow.extension-invocation/v1"
+  },
+  "subject_lock_id": "subject-lock:synthetic-process",
+  "subject_lock_digest": "12ac877554e88a314baa7f5ef86afdda77cbf89d8abb258503c2310a4b0ea9c8",
+  "subject_observation_digest": "4ddb7bc8c69453073da266ca9f509829cc1cc7aa580cdad928f39e22d813c7cd",
+  "isolation": "trusted-unconfined",
+  "ambient_authority": "deny-unlisted",
+  "source": "none",
+  "backend_id": "none",
+  "backend_version": "0.0.0",
+  "enforced": {
+    "argv": [],
+    "environment": [],
+    "filesystem_read": [],
+    "filesystem_write": [],
+    "network_endpoints": [],
+    "subprocesses": [],
+    "ai_providers": [],
+    "gpus": [],
+    "source_mutation_targets": [],
+    "destructive_operations": [],
+    "publication_destinations": [],
+    "signing_key_handles": [],
+    "telemetry": {
+      "fields": [],
+      "targets": []
+    }
+  },
+  "guarantees": [
+    { "dimension": "argv", "status": "not-enforced" },
+    { "dimension": "environment", "status": "not-enforced" },
+    { "dimension": "filesystem-read", "status": "not-enforced" },
+    { "dimension": "filesystem-write", "status": "not-enforced" },
+    { "dimension": "network", "status": "not-enforced" },
+    { "dimension": "subprocess", "status": "not-enforced" },
+    { "dimension": "ai-provider", "status": "not-enforced" },
+    { "dimension": "gpu", "status": "not-enforced" },
+    { "dimension": "source-mutation", "status": "not-enforced" },
+    { "dimension": "destructive", "status": "not-enforced" },
+    { "dimension": "publication", "status": "not-enforced" },
+    { "dimension": "signing", "status": "not-enforced" },
+    { "dimension": "telemetry", "status": "not-enforced" }
+  ],
+  "unsupported_claims": []
+}
