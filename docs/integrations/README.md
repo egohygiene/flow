@@ -12,8 +12,10 @@ implementations.
 - [Federated extension contract](extension-contract.md) defines extension
   identity, trust, discovery, execution envelopes, hooks, and resolution.
 - [Process transport](process-transport.md) defines deterministic JSON Lines
-  request framing and host-neutral transcript acceptance without claiming a
-  production process runner.
+  request framing and host-neutral transcript acceptance.
+- [Bounded local process runner](process-runner.md) defines exact direct launch,
+  supervised transport, timeout/cancellation grace and escalation, and
+  direct-child reaping for `trusted-unconfined` providers.
 - [Execution subjects](execution-subjects.md) define exact locked package and
   executable identity, fresh Flow-owned observation, and separated digest,
   authenticity, publisher, trust, and transparency claims.
@@ -38,6 +40,8 @@ and
 [ADR-0008](../architecture/governance/decisions/ADR-0008-locked-execution-subjects.md),
 and
 [ADR-0009](../architecture/governance/decisions/ADR-0009-process-authority-isolation.md).
+The bounded runner is governed by
+[ADR-0010](../architecture/governance/decisions/ADR-0010-bounded-direct-process-supervision.md).
 
 ## Implementation status
 
@@ -82,19 +86,20 @@ For `sandboxed`, the evidence must report exact enforcement of every requested
 dimension. That statement is caller-attested and is not proof that an operating-
 system sandbox actually ran.
 
-Declared limits remain identity-correlated metadata for injected in-process
-code. The process-transcript seam checks captured stdout/stderr lengths and a
-completion observation, but no Flow runner yet enforces those limits while a
-process executes. The in-process path provides no isolation. The process path
-now rejects absent or contradictory authority/enforcement evidence but still
-does not itself provide timeout delivery, cancellation, output capture,
-filesystem/network containment, or operating-system side-effect enforcement.
+Flow #42 adds the bounded local runner. It freshly re-observes the locked
+subjects, directly launches the exact executable with literal argv, clears the
+environment, resolves only authorized opaque handles, supervises all three
+stdio streams, enforces timeout and caller cancellation with Unix grace and
+escalation, reaps the direct child, and sends normal evidence through the
+existing transcript gate. The in-process path provides no isolation. The local
+runner accepts only `trusted-unconfined` and does not provide filesystem,
+network, subprocess, or descendant containment.
 
 The following remain deferred: provider discovery from the filesystem, dynamic
-loading, cryptographic authenticity and transparency verification, a
-production child-process runner, authenticated operating-system sandboxing, real
-Aniflow/Optiflow/Renderflow adapters, domain-output validation, a public CLI,
-durable plans and run state, interruption,
+loading, cryptographic authenticity and transparency verification,
+authenticated operating-system sandboxing, descriptor-bound launch,
+process-tree containment, real Aniflow/Optiflow/Renderflow adapters,
+domain-output validation, a public CLI, durable plans and run state,
 checkpoints, and resume. `EventSink` is a fallible execution observer, not a
 logging or OpenTelemetry adapter. It cannot affect resolution or execution
 identity, but its rejection intentionally rejects the execution without

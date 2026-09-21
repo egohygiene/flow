@@ -36,8 +36,8 @@ The lock contains exactly two ordered subjects:
    `package.locator/executable.locator`. The lock stores its locator relative
    to the package; observations store the joined root-relative locator. Its
    file bytes receive a separate SHA-256 digest. This locator is the exact file
-   a future runner must invoke directly; the correlated manifest entrypoint is
-   not authority to search `PATH` or substitute another file.
+   a conforming runner must invoke directly; the correlated manifest entrypoint
+   is not authority to search `PATH` or substitute another file.
 
 The executable is therefore covered twice: once as a child in the package
 manifest and once as the explicit executable subject. Its kind, locator,

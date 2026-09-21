@@ -152,6 +152,22 @@ pub fn process_runner_fixture(
         Some((requested, granted)),
         executable_bytes,
         true,
+        None,
+    )
+}
+
+pub fn process_runner_fixture_with_limits(
+    executable_bytes: &[u8],
+    requested: flow::Permissions,
+    granted: flow::Permissions,
+    limits: flow::ExecutionLimits,
+) -> ProcessSubjectFixture {
+    process_subject_fixture_with_executable(
+        flow::Trust::Trusted,
+        Some((requested, granted)),
+        executable_bytes,
+        true,
+        Some(limits),
     )
 }
 
@@ -159,7 +175,13 @@ fn process_subject_fixture_with_settings(
     trust: flow::Trust,
     permissions: Option<(flow::Permissions, flow::Permissions)>,
 ) -> ProcessSubjectFixture {
-    process_subject_fixture_with_executable(trust, permissions, PROCESS_EXECUTABLE_BYTES, false)
+    process_subject_fixture_with_executable(
+        trust,
+        permissions,
+        PROCESS_EXECUTABLE_BYTES,
+        false,
+        None,
+    )
 }
 
 fn process_subject_fixture_with_executable(
@@ -167,6 +189,7 @@ fn process_subject_fixture_with_executable(
     permissions: Option<(flow::Permissions, flow::Permissions)>,
     executable_bytes: &[u8],
     make_executable: bool,
+    limits: Option<flow::ExecutionLimits>,
 ) -> ProcessSubjectFixture {
     #[cfg(not(unix))]
     let _ = make_executable;
@@ -225,6 +248,14 @@ fn process_subject_fixture_with_executable(
     let mut manifest = manifest();
     if let Some((requested, _)) = &permissions {
         manifest.requested_permissions = requested.clone();
+    }
+    if let Some(limits) = limits {
+        manifest
+            .execution_modes
+            .iter_mut()
+            .find(|mode| mode.name == "synthetic-process")
+            .expect("process execution mode must exist")
+            .limits = limits;
     }
     package_digest.clone_into(&mut manifest.integrity.value);
     let observation = observation(&manifest, true);

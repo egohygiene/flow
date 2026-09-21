@@ -1,18 +1,19 @@
 //! Direct, bounded launching for one pre-authorized provider process.
 //!
-//! This module is intentionally smaller than the final FLO-3.2e lifecycle.
-//! It proves the exact trusted-unconfined launch path, scrubbed environment,
-//! independent stream capture, normal wait/reap behavior, and reuse of Flow's
-//! existing transcript validator. Timeout and cancellation enforcement remain
-//! explicit follow-up work before the runner is complete.
+//! The runner owns the exact trusted-unconfined launch path, scrubbed
+//! environment, independent bounded stream capture, deadline and caller
+//! cancellation control, child termination/reaping, and reuse of Flow's
+//! existing transcript validator. It deliberately does not claim sandbox or
+//! descendant-process containment.
 
 use std::ffi::{OsStr, OsString};
 use std::fmt;
 use std::fs;
 use std::io::{self, Read, Write};
 use std::path::Path;
-use std::process::{Child, ChildStderr, ChildStdin, ChildStdout, Command, Stdio};
+use std::process::{Child, ChildStderr, ChildStdin, ChildStdout, Command, ExitStatus, Stdio};
 use std::thread;
+use std::time::{Duration, Instant};
 
 use thiserror::Error;
 
@@ -57,6 +58,36 @@ impl fmt::Debug for SecretValue {
 /// handles named by the already-authorized process profile.
 pub trait SecretResolver {
     fn resolve(&self, source_handle: &str) -> Option<SecretValue>;
+}
+
+/// Caller-owned cancellation observation for one running child.
+///
+/// The runner polls this signal after checking whether the child has already
+/// completed. Returning `true` is monotonic for the lifetime of one call: once
+/// cancellation is observed, Flow begins termination and never falls back to
+/// another provider. Implementations must return promptly so they do not stall
+/// deadline observation.
+pub trait CancellationSignal {
+    fn is_cancelled(&self) -> bool;
+}
+
+impl<F> CancellationSignal for F
+where
+    F: Fn() -> bool,
+{
+    fn is_cancelled(&self) -> bool {
+        self()
+    }
+}
+
+/// Cancellation signal that never requests interruption.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct NeverCancelled;
+
+impl CancellationSignal for NeverCancelled {
+    fn is_cancelled(&self) -> bool {
+        false
+    }
 }
 
 impl<F> SecretResolver for F
@@ -117,6 +148,20 @@ pub enum ProcessRunnerError {
         #[source]
         source: io::Error,
     },
+    #[error("failed to request graceful child termination: {source}")]
+    GracefulTermination {
+        #[source]
+        source: io::Error,
+    },
+    #[error("failed to force child termination: {source}")]
+    ForceTermination {
+        #[source]
+        source: io::Error,
+    },
+    #[error("the child exceeded its {timeout_ms} ms deadline (forced termination: {forced})")]
+    TimedOut { timeout_ms: u64, forced: bool },
+    #[error("the caller cancelled the child (forced termination: {forced})")]
+    Cancelled { forced: bool },
     #[error("failed to capture child {stream:?}: {source}")]
     Capture {
         stream: ProcessStream,
@@ -143,6 +188,7 @@ pub enum ProcessPipe {
 /// A worker used to drain one child stream concurrently.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum ProcessWorker {
+    Stdin,
     Stdout,
     Stderr,
 }
@@ -157,12 +203,15 @@ impl LocalProcessRunner {
     /// The runner re-observes the package and executable immediately before
     /// request encoding, invokes the absolute locked path directly, supplies
     /// only authorized argv and resolved environment bindings, closes stdin,
-    /// captures stdout/stderr independently with bounded retained memory, and
-    /// waits for the child before calling Flow's existing transcript validator.
+    /// captures stdout/stderr independently with bounded retained memory,
+    /// enforces the invocation deadline, and reaps the child before calling
+    /// Flow's existing transcript validator.
     ///
-    /// This checkpoint accepts only `trusted-unconfined`. It does not yet
-    /// enforce timeout or cancellation, and it does not claim sandboxing or a
-    /// race-free binding between the last observation and the host `exec`.
+    /// This convenience entry point never requests caller cancellation. Use
+    /// [`Self::run_with_cancellation`] to supply an explicit signal. The runner
+    /// accepts only `trusted-unconfined` and does not claim sandboxing,
+    /// descendant-process containment, or a race-free binding between the last
+    /// observation and the host `exec`.
     ///
     /// # Errors
     ///
@@ -176,6 +225,50 @@ impl LocalProcessRunner {
         subject_lock: &ExecutionSubjectLock,
         authority: &AuthorizedProcess,
         secrets: &dyn SecretResolver,
+        event_sink: &mut dyn EventSink,
+    ) -> Result<ValidatedExecution, ProcessRunnerError> {
+        Self::run_with_cancellation(
+            root,
+            resolved,
+            invocation,
+            subject_lock,
+            authority,
+            secrets,
+            &NeverCancelled,
+            event_sink,
+        )
+    }
+
+    /// Launch, supervise, and validate one exact locked executable.
+    ///
+    /// Normal completion observed by the supervisor wins over a concurrent
+    /// cancellation request. Otherwise caller cancellation wins over the
+    /// deadline when both become observable in the same polling cycle. On
+    /// Unix, interruption requests `SIGTERM`, waits the declared cancellation
+    /// grace, then uses forced termination if the child remains alive. Other
+    /// hosts use immediate forced termination because Rust's standard process
+    /// API exposes no portable graceful signal.
+    ///
+    /// Every normally completed, cancelled, or timed-out direct child is waited
+    /// and reaped before this method returns. Cleanup failures are reported as
+    /// typed errors. The control applies only to that direct child; an
+    /// unconfined provider may create descendants outside this lifecycle.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ProcessRunnerError::Cancelled`] or
+    /// [`ProcessRunnerError::TimedOut`] only after the direct child is reaped.
+    /// Other typed errors cover preflight, launch, capture, cleanup, or
+    /// transcript-validation failure.
+    #[allow(clippy::too_many_arguments)]
+    pub fn run_with_cancellation(
+        root: &Path,
+        resolved: &ResolvedExtension,
+        invocation: &ExtensionInvocation,
+        subject_lock: &ExecutionSubjectLock,
+        authority: &AuthorizedProcess,
+        secrets: &dyn SecretResolver,
+        cancellation: &dyn CancellationSignal,
         event_sink: &mut dyn EventSink,
     ) -> Result<ValidatedExecution, ProcessRunnerError> {
         let launch_subjects = observe_execution_subjects(root, resolved, invocation, subject_lock)
@@ -240,28 +333,24 @@ impl LocalProcessRunner {
 
         let stdout_limit = invocation.limits.max_stdout_bytes;
         let stderr_limit = invocation.limits.max_stderr_bytes;
+        let mut stdin_worker = Some(thread::spawn(move || stdin.write_all(&request)));
         let stdout_worker = thread::spawn(move || read_bounded(stdout, stdout_limit));
         let stderr_worker = thread::spawn(move || read_bounded(stderr, stderr_limit));
 
-        if let Err(source) = stdin.write_all(&request) {
-            terminate_and_reap(&mut child);
-            let _ = stdout_worker.join();
-            let _ = stderr_worker.join();
-            return Err(ProcessRunnerError::Stdin { source });
-        }
-        drop(stdin);
-
-        let status = match child.wait() {
-            Ok(status) => status,
-            Err(source) => {
-                terminate_and_reap(&mut child);
-                let _ = stdout_worker.join();
-                let _ = stderr_worker.join();
-                return Err(ProcessRunnerError::Wait { source });
-            }
-        };
+        let completion = supervise_child(
+            &mut child,
+            &mut stdin_worker,
+            cancellation,
+            invocation.limits.timeout_ms,
+            invocation.limits.cancellation_grace_ms,
+        );
+        let stdin = join_stdin_worker(&mut stdin_worker);
         let stdout = join_capture(stdout_worker, ProcessStream::Stdout, ProcessWorker::Stdout);
         let stderr = join_capture(stderr_worker, ProcessStream::Stderr, ProcessWorker::Stderr);
+        let completion = completion?;
+
+        let status = completed_status(completion, invocation.limits.timeout_ms)?;
+        stdin?;
         let stdout = stdout?;
         let stderr = stderr?;
 
@@ -282,6 +371,149 @@ impl LocalProcessRunner {
         )
         .map_err(|source| ProcessRunnerError::Validation { source })
     }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum Supervision {
+    Exited(ExitStatus),
+    TimedOut { forced: bool },
+    Cancelled { forced: bool },
+}
+
+fn completed_status(
+    completion: Supervision,
+    timeout_ms: u64,
+) -> Result<ExitStatus, ProcessRunnerError> {
+    match completion {
+        Supervision::Exited(status) => Ok(status),
+        Supervision::TimedOut { forced } => {
+            Err(ProcessRunnerError::TimedOut { timeout_ms, forced })
+        }
+        Supervision::Cancelled { forced } => Err(ProcessRunnerError::Cancelled { forced }),
+    }
+}
+
+fn supervise_child(
+    child: &mut Child,
+    stdin_worker: &mut Option<thread::JoinHandle<io::Result<()>>>,
+    cancellation: &dyn CancellationSignal,
+    timeout_ms: u64,
+    cancellation_grace_ms: u64,
+) -> Result<Supervision, ProcessRunnerError> {
+    let started = Instant::now();
+    let timeout = Duration::from_millis(timeout_ms);
+
+    loop {
+        if stdin_worker
+            .as_ref()
+            .is_some_and(thread::JoinHandle::is_finished)
+        {
+            if let Err(error) = join_stdin_worker(stdin_worker) {
+                terminate_and_reap(child);
+                return Err(error);
+            }
+        }
+        match child.try_wait() {
+            Ok(Some(status)) => {
+                child
+                    .wait()
+                    .map_err(|source| ProcessRunnerError::Wait { source })?;
+                return Ok(Supervision::Exited(status));
+            }
+            Ok(None) => {}
+            Err(source) => {
+                terminate_and_reap(child);
+                return Err(ProcessRunnerError::Wait { source });
+            }
+        }
+        if cancellation.is_cancelled() {
+            let forced = interrupt_and_reap(child, cancellation_grace_ms)?;
+            return Ok(Supervision::Cancelled { forced });
+        }
+        if started.elapsed() >= timeout {
+            let forced = interrupt_and_reap(child, cancellation_grace_ms)?;
+            return Ok(Supervision::TimedOut { forced });
+        }
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+
+fn join_stdin_worker(
+    worker: &mut Option<thread::JoinHandle<io::Result<()>>>,
+) -> Result<(), ProcessRunnerError> {
+    let Some(worker) = worker.take() else {
+        return Ok(());
+    };
+    worker
+        .join()
+        .map_err(|_| ProcessRunnerError::Worker {
+            task: ProcessWorker::Stdin,
+        })?
+        .map_err(|source| ProcessRunnerError::Stdin { source })
+}
+
+fn interrupt_and_reap(
+    child: &mut Child,
+    cancellation_grace_ms: u64,
+) -> Result<bool, ProcessRunnerError> {
+    #[cfg(unix)]
+    {
+        if let Err(error) = request_graceful_termination(child) {
+            terminate_and_reap(child);
+            return Err(error);
+        }
+        let grace_started = Instant::now();
+        let grace = Duration::from_millis(cancellation_grace_ms);
+        loop {
+            match child.try_wait() {
+                Ok(Some(_)) => {
+                    child
+                        .wait()
+                        .map_err(|source| ProcessRunnerError::Wait { source })?;
+                    return Ok(false);
+                }
+                Ok(None) => {}
+                Err(source) => {
+                    terminate_and_reap(child);
+                    return Err(ProcessRunnerError::Wait { source });
+                }
+            }
+            if grace_started.elapsed() >= grace {
+                break;
+            }
+            thread::sleep(Duration::from_millis(1));
+        }
+    }
+
+    force_terminate_and_reap(child)?;
+    Ok(true)
+}
+
+#[cfg(unix)]
+fn request_graceful_termination(child: &Child) -> Result<(), ProcessRunnerError> {
+    use nix::sys::signal::{Signal, kill};
+    use nix::unistd::Pid;
+
+    let pid = i32::try_from(child.id()).map_err(|_| ProcessRunnerError::GracefulTermination {
+        source: io::Error::new(io::ErrorKind::InvalidInput, "child PID exceeds i32"),
+    })?;
+    kill(Pid::from_raw(pid), Signal::SIGTERM).map_err(|error| {
+        ProcessRunnerError::GracefulTermination {
+            source: io::Error::from_raw_os_error(error as i32),
+        }
+    })
+}
+
+fn force_terminate_and_reap(child: &mut Child) -> Result<(), ProcessRunnerError> {
+    match child.kill() {
+        Ok(()) => {}
+        Err(source) if source.kind() == io::ErrorKind::InvalidInput => {}
+        Err(source) => return Err(ProcessRunnerError::ForceTermination { source }),
+    }
+    child
+        .wait()
+        .map_err(|source| ProcessRunnerError::Wait { source })?;
+    Ok(())
 }
 
 fn take_pipes(
@@ -329,6 +561,5 @@ fn join_capture(
 }
 
 fn terminate_and_reap(child: &mut Child) {
-    let _ = child.kill();
-    let _ = child.wait();
+    let _ = force_terminate_and_reap(child);
 }

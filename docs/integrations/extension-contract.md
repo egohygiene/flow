@@ -8,14 +8,15 @@ Flow issue #7. Flow issue #23 implements a bounded subset as a Rust library:
 deterministic resolution plus one injected, trusted in-process execution seam
 proven with a hermetic reference port. Flow issue #26 adds deterministic
 process request encoding and host-neutral validation of caller-supplied
-completion, stdout, and stderr evidence; it does not launch a process. Product
-Flow issue #36 adds a separate Flow-owned artifact-binding, host-observation,
-and acceptance boundary. Flow issue #38 adds exact package/executable subject
-observation before process request or transcript acceptance. Flow issue #40
-adds exact per-invocation authority and isolation evidence before either
-process seam. Product
-orchestration, real provider adapters, a two-holon vertical slice, and runtime
-CLI commands remain work for Flow issue #3 and its later children.
+completion, stdout, and stderr evidence. Flow issue #36 adds a separate
+Flow-owned artifact-binding, host-observation, and acceptance boundary. Flow
+issue #38 adds exact package/executable subject observation before process
+request or transcript acceptance. Flow issue #40 adds exact per-invocation
+authority and isolation evidence before either process seam. Flow issue #42
+adds one bounded local `trusted-unconfined` direct-child runner through those
+gates. Product orchestration, real provider adapters, a two-holon vertical
+slice, and runtime CLI commands remain work for Flow issue #3 and its later
+children.
 
 An extension is an independently versioned provider package. It can expose one
 or more Aniflow, Optiflow, Renderflow, Flow, or third-party domain capabilities
@@ -114,6 +115,8 @@ Exact per-invocation authority and isolation evidence remain separate from
 subject identity. Their request/grant split, canonical identity, closed
 dimensions, and caller-attested evidence boundary are specified in
 [Process authority and isolation](authority-isolation.md).
+The bounded direct-child lifecycle is specified separately in
+[Bounded local process runner](process-runner.md).
 
 ## Execution modes
 
@@ -126,11 +129,11 @@ dimensions, and caller-attested evidence boundary are specified in
   a fresh opaque token proving exact observation of the locked package and
   executable subjects for that invocation, plus a second opaque token proving
   exact correlation of its authority profile and isolation evidence. A
-  production process adapter must
-  still independently bind those observed bytes to launch, invoke the pinned
-  executable, capture stdout/stderr concurrently, enforce timeout, output
-  bounds, cancellation grace, permissions, and declared outputs, and never
-  parse human console text as a contract.
+  local runner now re-observes those bytes, invokes the pinned executable,
+  captures stdout/stderr concurrently, and enforces timeout, output bounds, and
+  cancellation grace. A real provider adapter must still close the
+  observation-to-exec race where supported, validate provider-native outputs,
+  and never parse human console text as a contract.
 
 Both modes must produce the same structured semantic result. Flow may choose
 process isolation when toolchains, licensing, trust, or failure containment make
@@ -140,20 +143,19 @@ The current executable checkpoint restricts the unconfined in-process seam to
 `trusted` candidates. A `sandboxed` process candidate may resolve only to the
 downstream authority/isolation preflight, where incomplete or contradictory
 evidence fails closed. The checkpoint proves a caller-injected in-process
-library port plus host-neutral process request and transcript validation.
-Process mode also observes the exact locked package and executable content and
-correlates exact authority/isolation evidence before either process seam. A
-post-execution library seam can observe explicitly
+library port, host-neutral process request/transcript validation, and one local
+`trusted-unconfined` direct-child runner. Process mode also observes the exact
+locked package and executable content and correlates exact authority/isolation
+evidence before either process seam. A post-execution library seam can observe explicitly
 bound files and directories beneath a caller-selected root and construct an
 opaque accepted artifact set only after binding, host, invocation, event, and
 result correlation. It performs no filesystem discovery, dynamic loading,
-external process launch/capture, signature or transparency verification, or
-operating-system sandbox enforcement. Caller-attested sandbox evidence is not
-authenticated proof. In-process limits remain
-policy metadata only. The process seam checks already captured stdout/stderr
-byte counts and completion evidence, but it does not enforce timeout,
-cancellation, output capture, panic isolation, filesystem/network containment,
-or any other side effect while a provider runs.
+signature or transparency verification, or operating-system sandbox
+enforcement. Caller-attested sandbox evidence is not authenticated proof.
+In-process limits remain policy metadata only. The local runner enforces direct-
+child timeout, caller cancellation, bounded retained output, and reaping, but it
+does not enforce panic isolation, filesystem/network authority, descendant
+containment, or other provider side effects.
 
 ## Observation and telemetry
 
@@ -192,8 +194,9 @@ The executable in-process seam makes only `trusted` candidates eligible.
 Process resolution permits `trusted` candidates and `sandboxed` candidates
 that must pass the downstream `sandboxed` authority profile. `Orchestrator`
 either invokes a caller-injected in-process port or validates a caller-supplied
-process transcript; it does not launch a process or operate a sandbox.
-`disabled` candidates fail closed.
+process transcript. `LocalProcessRunner` launches only an already-authorized
+`trusted-unconfined` process and refuses `sandboxed`; it does not operate a
+sandbox. `disabled` candidates fail closed.
 
 The process authority profile binds ordered argv, environment names and opaque
 secret handles, filesystem reads/writes, network endpoints, subprocesses, AI
@@ -303,15 +306,17 @@ subject lock, fresh package/executable observation, deterministic canonical
 identity, separated evidence claims, and an opaque match token required by both
 process seams. Issue #40 adds exact request/grant profiles, explicit trust and
 isolation, canonical enforcement evidence, and an opaque authorization token
-also required by both process seams. No proof promotes an extension's terminal
-success report until its applicable Flow-owned checks pass.
+also required by both process seams. Issue #42 adds exact direct launch,
+supervised stdio, deadline/cancellation grace and escalation, and direct-child
+reaping. No proof promotes an extension's terminal success report until its
+applicable Flow-owned checks pass.
 
 Those checks prove contract validity and correlation only. They do not prove
 the authenticity of the caller-issued configuration digest, authorization ID,
 or grants digest. The in-process seam does not enforce declared execution
 limits; the process seam checks only supplied captured byte counts and
-completion evidence. Neither seam contains side effects while provider code
-executes.
+completion evidence. The local runner enforces those direct-child limits but
+does not contain filesystem, network, subprocess, or descendant side effects.
 
 For terminal evidence, `produced` and `reused` require every reported
 validation to be `passed`; `skipped` permits `passed` or `not-run` but rejects

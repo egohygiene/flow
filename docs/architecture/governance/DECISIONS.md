@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.7.0
+version: 0.8.0
 status: draft
 owners:
   - egohygiene
@@ -63,6 +63,7 @@ justifies separate ADRs.
 | [ADR-0007](decisions/ADR-0007-root-confined-artifact-acceptance.md) | Accept artifacts through root-confined host observations | Accepted | 2026-09-20 | None | A released adapter cannot preserve the root, locator, or deterministic content-identity profile |
 | [ADR-0008](decisions/ADR-0008-locked-execution-subjects.md) | Require exact locked package and executable subjects | Accepted | 2026-09-21 | None | Authenticity evidence, launch-time file binding, or transitive runtime identity changes the subject boundary |
 | [ADR-0009](decisions/ADR-0009-process-authority-isolation.md) | Bind process authority to explicit isolation evidence | Accepted | 2026-09-21 | None | A real sandbox, authenticated host evidence, or new authority dimension changes the preflight boundary |
+| [ADR-0010](decisions/ADR-0010-bounded-direct-process-supervision.md) | Bound direct provider launch and supervision | Accepted | 2026-09-21 | None | Sandbox enforcement, descriptor-bound launch, process-tree containment, or durable interruption changes the runner boundary |
 
 ## Active decisions
 
@@ -91,4 +92,7 @@ transparency verification, launch-time file binding, enforced process
 isolation, and real process supervision open after ADR-0006's host-neutral
 transcript profile. ADR-0009 closes the portable per-invocation authority and
 isolation-evidence vocabulary while explicitly leaving operating-system
-enforcement and evidence authentication open.
+enforcement and evidence authentication open. ADR-0010 closes the bounded
+trusted-unconfined direct-child lifecycle while leaving sandbox enforcement,
+authenticated evidence, process-tree containment, descriptor-bound execution,
+durable interruption, retry, and resume open.

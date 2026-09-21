@@ -5,8 +5,9 @@
 //! completed. It can invoke a caller-supplied in-process port or validate an
 //! already-captured external-process transcript after exact subject and
 //! authority/isolation preflight. Its local runner can launch the exact
-//! trusted-unconfined executable; sandboxing and interrupted lifecycle control
-//! remain separate work.
+//! trusted-unconfined executable with bounded transport, timeout/cancellation
+//! control, and direct-child reaping; sandboxing, descendant containment, and
+//! durable recovery remain separate work.
 
 pub mod artifacts;
 pub mod authority;
@@ -36,7 +37,7 @@ pub use process::{
     DecodedProcessTranscript, ProcessProtocolError, decode_provider_stdout, encode_invocation_frame,
 };
 pub use runner::{
-    LocalProcessRunner, NoSecrets, ProcessPipe, ProcessRunnerError, ProcessWorker, SecretResolver,
-    SecretValue,
+    CancellationSignal, LocalProcessRunner, NeverCancelled, NoSecrets, ProcessPipe,
+    ProcessRunnerError, ProcessWorker, SecretResolver, SecretValue,
 };
 pub use scenario::*;
