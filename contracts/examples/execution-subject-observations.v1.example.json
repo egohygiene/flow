@@ -1,0 +1,81 @@
+{
+  "schema_version": "flow.execution-subject-observations/v1",
+  "canonicalization": "flow.canonical-json/v1",
+  "subject_lock_id": "subject-lock:synthetic-process",
+  "extension_lock_id": "lock:synthetic-suite",
+  "invocation_id": "invocation:synthetic-process",
+  "run_id": "run:synthetic-process",
+  "extension": {
+    "extension_id": "org.egohygiene.synthetic-adapters",
+    "version": "0.1.0",
+    "publisher_id": "org.egohygiene",
+    "integrity": "1edb0efe95bec579fc3b7d70a9dbe97ef516782aaa6aacdabf69f3139758485c"
+  },
+  "capability_id": "optiflow/inspect-collection",
+  "interface": {
+    "kind": "process",
+    "name": "synthetic-process",
+    "protocol": "flow.extension-invocation/v1"
+  },
+  "declared_entrypoint": "flow-synthetic-adapter",
+  "directory_manifest_profile": "flow.directory-manifest/v1",
+  "subjects": [
+    {
+      "subject_id": "package:synthetic-adapters",
+      "role": "package",
+      "kind": "directory",
+      "locator": "packages/synthetic adapter",
+      "digest": {
+        "algorithm": "sha256",
+        "value": "1edb0efe95bec579fc3b7d70a9dbe97ef516782aaa6aacdabf69f3139758485c"
+      },
+      "size_bytes": 24,
+      "manifest": [
+        {
+          "locator": "flow synthetic adapter",
+          "kind": "file",
+          "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "size_bytes": 24
+        }
+      ]
+    },
+    {
+      "subject_id": "executable:synthetic-adapter",
+      "role": "executable",
+      "kind": "file",
+      "locator": "packages/synthetic adapter/flow synthetic adapter",
+      "digest": {
+        "algorithm": "sha256",
+        "value": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "size_bytes": 24,
+      "manifest": []
+    }
+  ],
+  "claims": {
+    "content_digest": {
+      "status": "observed",
+      "algorithm": "sha256"
+    },
+    "lock_equality": {
+      "status": "matched",
+      "subject_lock_digest": "12ac877554e88a314baa7f5ef86afdda77cbf89d8abb258503c2310a4b0ea9c8"
+    },
+    "cryptographic_verification": {
+      "status": "not-performed",
+      "evidence": []
+    },
+    "publisher_identity": {
+      "status": "declared-and-correlated",
+      "publisher_id": "org.egohygiene"
+    },
+    "operator_trust": {
+      "status": "configured",
+      "trust": "trusted"
+    },
+    "transparency_log": {
+      "status": "not-checked",
+      "evidence": []
+    }
+  }
+}

@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 0.7.0
+version: 0.8.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-20
+updated: 2026-09-21
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -30,18 +30,18 @@ repository: egohygiene/flow
 visibility: public
 publication: central
 route: /roadmap/flow/
-updated: 2026-09-20
+updated: 2026-09-21
 -->
-## 2026-09-20 execution snapshot
+## 2026-09-21 execution snapshot
 
 > This evidence-reconciled snapshot is the issue-generation and visual-roadmap handoff. The longer-horizon strategy below remains canonical context; generated HTML, JSON, progress, issue plans, and commit lists are projections.
 
 **Lifecycle:** executable contract prototype
 
-**Current gate:** Complete Flow #36, the first bounded child of Flow #25: bind
-immutable inputs and candidate outputs to portable root-relative locators,
-observe their bytes beneath one selected root, and require exact host/provider
-correlation before artifact acceptance.
+**Current gate:** Complete Flow #38, the next bounded child of Flow #25: pin one
+exact package directory and executable file to a process context, observe both
+beneath one selected root, and reject request/transcript evidence unless both
+subjects exactly match the lock without overstating authenticity.
 
 **North-star outcome:** Federated orchestration across holons with stable provider seams, resumable work, and explicit evidence.
 
@@ -50,8 +50,9 @@ correlation before artifact acceptance.
 **Mode:** `central`  
 **Route:** `/roadmap/flow/`  
 **Current publication evidence:** Architecture, contract source, merged Flow
-#23 / PR #24, #26 / PR #27, #28 / PR #35, and successful default-branch CI at
-`aac62ab80c18c936e3a7ebd5f4e70b7845f39faa`; no executable release or Pages
+#23 / PR #24, #26 / PR #27, #28 / PR #35, #36 / PR #37, and successful
+default-branch CI run 35546410096 at
+`55341605968d3343e74d8bdd2b188c99a855aca0`; no executable release or Pages
 publication observed.
 
 Publish the public-safe projection through egohygiene.io at /roadmap/flow/. This repository owns intent and acceptance evidence; it does not add a second site deployment.
@@ -127,7 +128,7 @@ same acceptance gate validates a deterministic external-process transcript.
 id: FLO-Q03
 status: active
 depends_on: [FLO-Q02]
-issues: [13, 25, 28, 36]
+issues: [13, 25, 28, 36, 38]
 -->
 #### FLO-Q03 — Freeze conformance fixtures and implement provider adapters
 
@@ -142,8 +143,10 @@ behavior through stable error and evidence contracts.
 
 - [x] Stable scenario and fixture identities, immutable provenance, typed
   expectations, execution budgets, and deterministic drift checks are defined.
-- [ ] Bound artifact IDs to root-confined host observations and accept them only
+- [x] Bound artifact IDs to root-confined host observations and accept them only
   after exact invocation, provider, and content correlation.
+- [x] Require exact locked package and executable observations before process
+  request or transcript acceptance while keeping authenticity claims separate.
 - [ ] At least two adapters pass contract tests.
 - [ ] Provider-specific behavior does not leak into the core model.
 
@@ -152,10 +155,12 @@ behavior through stable error and evidence contracts.
 - Flow #13 decomposes the orchestration and failure corpus into bounded child
   checkpoints. Flow #28 / merged PR #35 freezes the scenario manifest before
   the hermetic provider kit or real-provider workflows.
-- Flow #25 remains the active owner of artifact acceptance, executable/package
-  integrity, authority profiles, and process enforcement. Flow #36 is its
-  current artifact-binding and host-observation child; scenario references do
-  not pre-empt those runtime contracts.
+- Flow #36 / merged PR #37 supplies the artifact-binding and host-observation
+  boundary with green default-branch CI at
+  `55341605968d3343e74d8bdd2b188c99a855aca0`.
+- Flow #25 remains the active owner of package/executable integrity, authority
+  profiles, and process enforcement. Flow #38 is its current bounded integrity
+  child; scenario references do not pre-empt those runtime contracts.
 
 <!-- roadmap-step
 id: FLO-Q04
@@ -232,10 +237,12 @@ The extension declaration, trust, and operator-authority split is approved by
 The process transcript and artifact-observation boundaries are approved by
 [ADR-0006](docs/architecture/governance/decisions/ADR-0006-bounded-process-transport.md)
 and
-[ADR-0007](docs/architecture/governance/decisions/ADR-0007-root-confined-artifact-acceptance.md).
-Artifact, capability, compatibility, binding, and host-observation schemas
-begin as provisional v1 contracts so real adapter work can refine them without
-claiming stability.
+[ADR-0007](docs/architecture/governance/decisions/ADR-0007-root-confined-artifact-acceptance.md),
+and
+[ADR-0008](docs/architecture/governance/decisions/ADR-0008-locked-execution-subjects.md).
+Artifact, capability, compatibility, binding, host-observation, and execution-
+subject schemas begin as provisional v1 contracts so real adapter work can
+refine them without claiming stability.
 
 **Exit evidence:** architecture validation passes; every suite capability has
 one primary owner; contract documents are machine-valid; no mutable or copied
@@ -310,12 +317,31 @@ provider execution validation separate from artifact acceptance, and require a
 complete result plus exact invocation, result, event, binding, and host
 observation correlation.
 
-**Candidate evidence:** Flow #36 adds
+**Delivered evidence:** Flow #36 / merged PR #37 adds
 `flow.artifact-bindings/v1`, `flow.artifact-observations/v1`, opaque observed and
 accepted artifact tokens, deterministic file/directory identity, and
 adversarial filesystem/correlation tests. It does not verify executables,
 enforce provider authority, launch a process, or validate provider-native
 artifact semantics.
+
+### Verify locked package and executable subjects
+
+Pin exactly one package directory and one regular executable file to the
+resolved extension lock, provider identity, capability, process interface, and
+declared entrypoint. Reuse root-confined observation, compare both SHA-256
+identities exactly, and require the resulting opaque match token for process
+request encoding and transcript validation. Keep content equality, publisher
+declaration, configured operator trust, cryptographic verification, and
+transparency-log status as distinct claims.
+
+**Candidate evidence:** Flow #38 adds
+`flow.execution-subject-lock/v1`,
+`flow.execution-subject-observations/v1`, deterministic canonical lock and
+observation identity, fresh package/executable matching, closed unsupported-
+claim rejection, and adversarial context/content tests. It does not authenticate
+a publisher, verify signatures or transparency proofs, bind observation to a
+later launched file object, enforce authority/isolation, launch a process,
+persist state, or implement a real provider adapter.
 
 ### Pin the capability matrix
 

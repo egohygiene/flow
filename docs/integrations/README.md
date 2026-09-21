@@ -14,6 +14,9 @@ implementations.
 - [Process transport](process-transport.md) defines deterministic JSON Lines
   request framing and host-neutral transcript acceptance without claiming a
   production process runner.
+- [Execution subjects](execution-subjects.md) define exact locked package and
+  executable identity, fresh Flow-owned observation, and separated digest,
+  authenticity, publisher, trust, and transparency claims.
 - [Artifact bindings](artifact-bindings.md) define portable root-relative
   locators, deterministic file/directory observations, and the separate
   artifact-acceptance gate.
@@ -26,10 +29,10 @@ implementations.
 These documents are governed by
 [ADR-0004](../architecture/governance/decisions/ADR-0004-federated-suite-contracts.md),
 [ADR-0005](../architecture/governance/decisions/ADR-0005-federated-extension-authority.md),
-and
 [ADR-0006](../architecture/governance/decisions/ADR-0006-bounded-process-transport.md),
+[ADR-0007](../architecture/governance/decisions/ADR-0007-root-confined-artifact-acceptance.md),
 and
-[ADR-0007](../architecture/governance/decisions/ADR-0007-root-confined-artifact-acceptance.md).
+[ADR-0008](../architecture/governance/decisions/ADR-0008-locked-execution-subjects.md).
 
 ## Implementation status
 
@@ -58,6 +61,13 @@ observation, immutable input digest checks, and an opaque
 `AcceptedArtifactSet`. `ValidatedExecution` remains a weaker provider-evidence
 token and never implies that filesystem artifacts were accepted.
 
+Flow #38 adds closed execution-subject lock and observation contracts. A fresh
+opaque `MatchedExecutionSubjects` token is required before process request
+encoding and transcript validation. The token proves exact package and
+executable digest equality for the correlated invocation; it does not prove a
+signature, publisher authenticity, transparency-log inclusion, or trustworthy
+operator policy.
+
 Declared limits remain identity-correlated metadata for injected in-process
 code. The process-transcript seam checks captured stdout/stderr lengths and a
 completion observation, but no Flow runner yet enforces those limits while a
@@ -65,7 +75,8 @@ process executes. Neither path provides timeout delivery, cancellation, panic
 isolation, filesystem/network containment, or other side-effect enforcement.
 
 The following remain deferred: provider discovery from the filesystem, dynamic
-loading, a production child-process runner, sandboxing, real
+loading, cryptographic authenticity and transparency verification, a
+production child-process runner, sandboxing, real
 Aniflow/Optiflow/Renderflow adapters, domain-output validation, a public CLI,
 durable plans and run state, interruption,
 checkpoints, and resume. `EventSink` is a fallible execution observer, not a

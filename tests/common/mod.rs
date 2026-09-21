@@ -1,16 +1,68 @@
 #![allow(dead_code)]
 
 use std::collections::BTreeMap;
+use std::fs;
+use std::path::{Path, PathBuf};
+#[cfg(unix)]
+use std::process::Command;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 use flow::{
     Authorization, Configuration, Domain, EXTENSION_INVOCATION_V1, ExecutionModeKind,
-    ExtensionCatalog, ExtensionInvocation, ExtensionLock, ExtensionManifest, ExtensionObservation,
-    InvocationExtension, InvocationInterface, InvocationPhase, ResolutionRequest,
-    ResolvedExtension,
+    ExecutionSubjectLock, ExtensionCatalog, ExtensionInvocation, ExtensionLock, ExtensionManifest,
+    ExtensionObservation, InvocationExtension, InvocationInterface, InvocationPhase,
+    ResolutionRequest, ResolvedExtension,
 };
+use serde::Serialize;
+use sha2::{Digest, Sha256};
 
 pub const CONFIG_DIGEST: &str = "3333333333333333333333333333333333333333333333333333333333333333";
 pub const GRANTS_DIGEST: &str = "4444444444444444444444444444444444444444444444444444444444444444";
+
+const PROCESS_PACKAGE_LOCATOR: &str = "packages/synthetic adapter";
+const PROCESS_EXECUTABLE_LOCATOR: &str = "flow synthetic adapter";
+const PROCESS_EXECUTABLE_BYTES: &[u8] = b"synthetic executable\n";
+const PROCESS_UNICODE_FILE: &str = "説明.txt";
+const PROCESS_UNICODE_BYTES: &[u8] = b"portable package evidence\n";
+
+static NEXT_PROCESS_ROOT_ID: AtomicU64 = AtomicU64::new(0);
+
+pub struct ProcessSubjectFixture {
+    pub root: ProcessSubjectRoot,
+    pub catalog: ExtensionCatalog,
+    pub request: ResolutionRequest,
+    pub subject_lock: ExecutionSubjectLock,
+}
+
+pub struct ProcessSubjectRoot {
+    path: PathBuf,
+}
+
+impl ProcessSubjectRoot {
+    pub fn path(&self) -> &Path {
+        &self.path
+    }
+
+    pub fn executable_path(&self) -> PathBuf {
+        self.path
+            .join(PROCESS_PACKAGE_LOCATOR)
+            .join(PROCESS_EXECUTABLE_LOCATOR)
+    }
+}
+
+impl Drop for ProcessSubjectRoot {
+    fn drop(&mut self) {
+        let _cleanup_result = fs::remove_dir_all(&self.path);
+    }
+}
+
+#[derive(Serialize)]
+struct CanonicalDirectoryChild<'a> {
+    name: &'a str,
+    kind: flow::ArtifactKind,
+    digest: &'a str,
+    size_bytes: u64,
+}
 
 pub fn manifest() -> ExtensionManifest {
     serde_json::from_str(include_str!(
@@ -66,12 +118,83 @@ pub fn resolved_fixture() -> (ExtensionCatalog, ResolutionRequest) {
     (catalog, request())
 }
 
-pub fn resolved_process_fixture() -> (ExtensionCatalog, ResolutionRequest) {
-    let manifest = manifest();
+pub fn process_subject_fixture() -> ProcessSubjectFixture {
+    let sequence = NEXT_PROCESS_ROOT_ID.fetch_add(1, Ordering::Relaxed);
+    let path = std::env::temp_dir().join(format!(
+        "flow-process-subject-test-{}-{sequence}",
+        std::process::id()
+    ));
+    let package_path = path.join(PROCESS_PACKAGE_LOCATOR);
+    fs::create_dir(&path).expect("process-subject test root must be new");
+    fs::create_dir_all(&package_path).expect("process package directory must be created");
+    fs::write(
+        package_path.join(PROCESS_EXECUTABLE_LOCATOR),
+        PROCESS_EXECUTABLE_BYTES,
+    )
+    .expect("process executable fixture must be written");
+    fs::write(
+        package_path.join(PROCESS_UNICODE_FILE),
+        PROCESS_UNICODE_BYTES,
+    )
+    .expect("Unicode package fixture must be written");
+    let root = ProcessSubjectRoot { path };
+
+    let executable_digest = format!("{:x}", Sha256::digest(PROCESS_EXECUTABLE_BYTES));
+    let unicode_digest = format!("{:x}", Sha256::digest(PROCESS_UNICODE_BYTES));
+    let canonical_package = serde_json::to_vec(&[
+        CanonicalDirectoryChild {
+            name: PROCESS_EXECUTABLE_LOCATOR,
+            kind: flow::ArtifactKind::File,
+            digest: &executable_digest,
+            size_bytes: PROCESS_EXECUTABLE_BYTES.len() as u64,
+        },
+        CanonicalDirectoryChild {
+            name: PROCESS_UNICODE_FILE,
+            kind: flow::ArtifactKind::File,
+            digest: &unicode_digest,
+            size_bytes: PROCESS_UNICODE_BYTES.len() as u64,
+        },
+    ])
+    .expect("package manifest fixture must serialize");
+    let package_digest = format!("{:x}", Sha256::digest(canonical_package));
+
+    let mut manifest = manifest();
+    package_digest.clone_into(&mut manifest.integrity.value);
     let observation = observation(&manifest, true);
-    let catalog = ExtensionCatalog::inspect([manifest], lock(), [observation])
-        .expect("fixture catalog must inspect");
-    (catalog, process_request())
+    let mut extension_lock = lock();
+    package_digest.clone_into(&mut extension_lock.extensions[0].integrity.value);
+    let catalog = ExtensionCatalog::inspect([manifest], extension_lock, [observation])
+        .expect("process-subject catalog must inspect");
+
+    let mut subject_lock: ExecutionSubjectLock = serde_json::from_str(include_str!(
+        "../../contracts/examples/execution-subject-lock.v1.example.json"
+    ))
+    .expect("checked-in execution-subject lock must deserialize");
+    package_digest.clone_into(&mut subject_lock.extension.integrity);
+    package_digest.clone_into(&mut subject_lock.package.digest.value);
+    executable_digest.clone_into(&mut subject_lock.executable.digest.value);
+    subject_lock
+        .validate()
+        .expect("process-subject lock fixture must validate");
+
+    ProcessSubjectFixture {
+        root,
+        catalog,
+        request: process_request(),
+        subject_lock,
+    }
+}
+
+#[cfg(unix)]
+pub fn create_unsupported_node(path: &Path) {
+    let status = Command::new("mkfifo")
+        .arg(path)
+        .status()
+        .expect("mkfifo must be available on supported Unix test hosts");
+    assert!(
+        status.success(),
+        "mkfifo must create the special-node fixture"
+    );
 }
 
 pub fn invocation(resolved: &ResolvedExtension) -> ExtensionInvocation {

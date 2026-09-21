@@ -4,9 +4,10 @@ use flow::{
     EventKind, EventSink, EventSinkError, EventState, ExecutionError, ExtensionEvent,
     ExtensionInvocation, ExtensionPort, ExtensionResult, FailureClassification, HermeticExtension,
     Orchestrator, Outcome, PortIdentity, ProcessCompletion, ProcessStream, ProcessTranscript,
+    observe_execution_subjects,
 };
 
-use common::{invocation, resolved_fixture, resolved_process_fixture};
+use common::{invocation, process_subject_fixture, resolved_fixture};
 
 fn provider_evidence(
     resolved: &flow::ResolvedExtension,
@@ -33,18 +34,33 @@ fn stdout(events: &[ExtensionEvent], result: &ExtensionResult) -> Vec<u8> {
 
 #[test]
 fn process_request_and_transcript_reuse_flow_owned_validation() {
-    let (catalog, request) = resolved_process_fixture();
-    let outcome = catalog.resolve(&request);
+    let fixture = process_subject_fixture();
+    let outcome = fixture.catalog.resolve(&fixture.request);
     let resolved = outcome.resolved().unwrap();
     let invocation = invocation(resolved);
+    let subjects = observe_execution_subjects(
+        fixture.root.path(),
+        resolved,
+        &invocation,
+        &fixture.subject_lock,
+    )
+    .unwrap();
     let (events, result) = provider_evidence(resolved, &invocation);
     let provider_stdout = stdout(&events, &result);
-    let request_bytes = Orchestrator::encode_process_request(resolved, &invocation).unwrap();
+    let request_bytes = Orchestrator::encode_process_request(
+        resolved,
+        &invocation,
+        &fixture.subject_lock,
+        &subjects,
+    )
+    .unwrap();
     let mut observed = Vec::new();
 
     let validated = Orchestrator::validate_process_transcript(
         resolved,
         &invocation,
+        &fixture.subject_lock,
+        &subjects,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -62,10 +78,17 @@ fn process_request_and_transcript_reuse_flow_owned_validation() {
 
 #[test]
 fn execution_modes_fail_closed_at_the_wrong_seam() {
-    let (process_catalog, process_request) = resolved_process_fixture();
-    let process_outcome = process_catalog.resolve(&process_request);
+    let fixture = process_subject_fixture();
+    let process_outcome = fixture.catalog.resolve(&fixture.request);
     let process_resolved = process_outcome.resolved().unwrap();
     let process_invocation = invocation(process_resolved);
+    let subjects = observe_execution_subjects(
+        fixture.root.path(),
+        process_resolved,
+        &process_invocation,
+        &fixture.subject_lock,
+    )
+    .unwrap();
     let process_port = HermeticExtension::new(PortIdentity::from_resolved(process_resolved));
     let mut observed = Vec::new();
 
@@ -83,17 +106,29 @@ fn execution_modes_fail_closed_at_the_wrong_seam() {
     let in_process_outcome = in_process_catalog.resolve(&in_process_request);
     let in_process_resolved = in_process_outcome.resolved().unwrap();
     let in_process_invocation = invocation(in_process_resolved);
-    let error = Orchestrator::encode_process_request(in_process_resolved, &in_process_invocation)
-        .unwrap_err();
+    let error = Orchestrator::encode_process_request(
+        in_process_resolved,
+        &in_process_invocation,
+        &fixture.subject_lock,
+        &subjects,
+    )
+    .unwrap_err();
     assert!(matches!(error, ExecutionError::Preflight { .. }));
 }
 
 #[test]
 fn captured_stream_limits_are_inclusive_and_checked_before_protocol_acceptance() {
-    let (catalog, request) = resolved_process_fixture();
-    let outcome = catalog.resolve(&request);
+    let fixture = process_subject_fixture();
+    let outcome = fixture.catalog.resolve(&fixture.request);
     let resolved = outcome.resolved().unwrap();
     let invocation = invocation(resolved);
+    let subjects = observe_execution_subjects(
+        fixture.root.path(),
+        resolved,
+        &invocation,
+        &fixture.subject_lock,
+    )
+    .unwrap();
     let (events, mut result) = provider_evidence(resolved, &invocation);
 
     let mut provider_stdout = stdout(&events, &result);
@@ -109,6 +144,8 @@ fn captured_stream_limits_are_inclusive_and_checked_before_protocol_acceptance()
     Orchestrator::validate_process_transcript(
         resolved,
         &invocation,
+        &fixture.subject_lock,
+        &subjects,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -122,6 +159,8 @@ fn captured_stream_limits_are_inclusive_and_checked_before_protocol_acceptance()
     let error = Orchestrator::validate_process_transcript(
         resolved,
         &invocation,
+        &fixture.subject_lock,
+        &subjects,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(1) },
             &provider_stdout,
@@ -142,6 +181,8 @@ fn captured_stream_limits_are_inclusive_and_checked_before_protocol_acceptance()
     let error = Orchestrator::validate_process_transcript(
         resolved,
         &invocation,
+        &fixture.subject_lock,
+        &subjects,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &stdout(&events, &result),
@@ -161,10 +202,17 @@ fn captured_stream_limits_are_inclusive_and_checked_before_protocol_acceptance()
 
 #[test]
 fn abnormal_completion_cannot_promote_provider_success() {
-    let (catalog, request) = resolved_process_fixture();
-    let outcome = catalog.resolve(&request);
+    let fixture = process_subject_fixture();
+    let outcome = fixture.catalog.resolve(&fixture.request);
     let resolved = outcome.resolved().unwrap();
     let invocation = invocation(resolved);
+    let subjects = observe_execution_subjects(
+        fixture.root.path(),
+        resolved,
+        &invocation,
+        &fixture.subject_lock,
+    )
+    .unwrap();
     let (events, result) = provider_evidence(resolved, &invocation);
     let provider_stdout = stdout(&events, &result);
 
@@ -180,6 +228,8 @@ fn abnormal_completion_cannot_promote_provider_success() {
         let error = Orchestrator::validate_process_transcript(
             resolved,
             &invocation,
+            &fixture.subject_lock,
+            &subjects,
             ProcessTranscript::new(completion, &provider_stdout, &[]),
             &mut observed,
         )
@@ -200,16 +250,25 @@ fn abnormal_completion_cannot_promote_provider_success() {
 
 #[test]
 fn result_without_a_terminal_event_remains_unaccepted() {
-    let (catalog, request) = resolved_process_fixture();
-    let outcome = catalog.resolve(&request);
+    let fixture = process_subject_fixture();
+    let outcome = fixture.catalog.resolve(&fixture.request);
     let resolved = outcome.resolved().unwrap();
     let invocation = invocation(resolved);
+    let subjects = observe_execution_subjects(
+        fixture.root.path(),
+        resolved,
+        &invocation,
+        &fixture.subject_lock,
+    )
+    .unwrap();
     let (_, result) = provider_evidence(resolved, &invocation);
     let provider_stdout = stdout(&[], &result);
 
     let error = Orchestrator::validate_process_transcript(
         resolved,
         &invocation,
+        &fixture.subject_lock,
+        &subjects,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -226,10 +285,17 @@ fn result_without_a_terminal_event_remains_unaccepted() {
 
 #[test]
 fn graceful_provider_cancellation_with_exit_zero_is_valid_evidence() {
-    let (catalog, request) = resolved_process_fixture();
-    let outcome = catalog.resolve(&request);
+    let fixture = process_subject_fixture();
+    let outcome = fixture.catalog.resolve(&fixture.request);
     let resolved = outcome.resolved().unwrap();
     let invocation = invocation(resolved);
+    let subjects = observe_execution_subjects(
+        fixture.root.path(),
+        resolved,
+        &invocation,
+        &fixture.subject_lock,
+    )
+    .unwrap();
     let (mut events, mut result) = provider_evidence(resolved, &invocation);
     let terminal = events.last_mut().unwrap();
     terminal.kind = EventKind::Cancelled;
@@ -244,6 +310,8 @@ fn graceful_provider_cancellation_with_exit_zero_is_valid_evidence() {
     let validated = Orchestrator::validate_process_transcript(
         resolved,
         &invocation,
+        &fixture.subject_lock,
+        &subjects,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -258,10 +326,17 @@ fn graceful_provider_cancellation_with_exit_zero_is_valid_evidence() {
 
 #[test]
 fn framed_events_still_use_existing_order_and_identity_validation() {
-    let (catalog, request) = resolved_process_fixture();
-    let outcome = catalog.resolve(&request);
+    let fixture = process_subject_fixture();
+    let outcome = fixture.catalog.resolve(&fixture.request);
     let resolved = outcome.resolved().unwrap();
     let invocation = invocation(resolved);
+    let subjects = observe_execution_subjects(
+        fixture.root.path(),
+        resolved,
+        &invocation,
+        &fixture.subject_lock,
+    )
+    .unwrap();
     let (mut events, result) = provider_evidence(resolved, &invocation);
     events[1].sequence = events[0].sequence;
     let provider_stdout = stdout(&events, &result);
@@ -269,6 +344,8 @@ fn framed_events_still_use_existing_order_and_identity_validation() {
     let error = Orchestrator::validate_process_transcript(
         resolved,
         &invocation,
+        &fixture.subject_lock,
+        &subjects,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -287,6 +364,8 @@ fn framed_events_still_use_existing_order_and_identity_validation() {
     let error = Orchestrator::validate_process_transcript(
         resolved,
         &invocation,
+        &fixture.subject_lock,
+        &subjects,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,
@@ -301,10 +380,17 @@ fn framed_events_still_use_existing_order_and_identity_validation() {
 
 #[test]
 fn successful_observers_do_not_change_authoritative_result_identity() {
-    let (catalog, request) = resolved_process_fixture();
-    let outcome = catalog.resolve(&request);
+    let fixture = process_subject_fixture();
+    let outcome = fixture.catalog.resolve(&fixture.request);
     let resolved = outcome.resolved().unwrap();
     let invocation = invocation(resolved);
+    let subjects = observe_execution_subjects(
+        fixture.root.path(),
+        resolved,
+        &invocation,
+        &fixture.subject_lock,
+    )
+    .unwrap();
     let (events, result) = provider_evidence(resolved, &invocation);
     let provider_stdout = stdout(&events, &result);
     let transcript = ProcessTranscript::new(
@@ -313,13 +399,21 @@ fn successful_observers_do_not_change_authoritative_result_identity() {
         &[],
     );
     let mut no_op = |_event: &ExtensionEvent| Ok::<(), EventSinkError>(());
-    let without_collection =
-        Orchestrator::validate_process_transcript(resolved, &invocation, transcript, &mut no_op)
-            .unwrap();
+    let without_collection = Orchestrator::validate_process_transcript(
+        resolved,
+        &invocation,
+        &fixture.subject_lock,
+        &subjects,
+        transcript,
+        &mut no_op,
+    )
+    .unwrap();
     let mut collected = Vec::new();
     let with_collection = Orchestrator::validate_process_transcript(
         resolved,
         &invocation,
+        &fixture.subject_lock,
+        &subjects,
         transcript,
         &mut collected,
     )
@@ -331,10 +425,17 @@ fn successful_observers_do_not_change_authoritative_result_identity() {
 
 #[test]
 fn rejecting_event_sink_rejects_process_evidence_without_fallback() {
-    let (catalog, request) = resolved_process_fixture();
-    let outcome = catalog.resolve(&request);
+    let fixture = process_subject_fixture();
+    let outcome = fixture.catalog.resolve(&fixture.request);
     let resolved = outcome.resolved().unwrap();
     let invocation = invocation(resolved);
+    let subjects = observe_execution_subjects(
+        fixture.root.path(),
+        resolved,
+        &invocation,
+        &fixture.subject_lock,
+    )
+    .unwrap();
     let (events, result) = provider_evidence(resolved, &invocation);
     let provider_stdout = stdout(&events, &result);
     let mut sink = RejectingSink;
@@ -342,6 +443,8 @@ fn rejecting_event_sink_rejects_process_evidence_without_fallback() {
     let error = Orchestrator::validate_process_transcript(
         resolved,
         &invocation,
+        &fixture.subject_lock,
+        &subjects,
         ProcessTranscript::new(
             ProcessCompletion::Exited { code: Some(0) },
             &provider_stdout,

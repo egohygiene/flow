@@ -1,7 +1,7 @@
 # Flow contract set
 
 This directory contains Flow-owned suite interchange contracts. The initial
-contract set is version `0.4.0`, status `provisional`, in the v1 compatibility
+contract set is version `0.5.0`, status `provisional`, in the v1 compatibility
 family. Provisional means versioned and testable, not stable for production.
 
 | Contract | Purpose |
@@ -11,6 +11,8 @@ family. Provisional means versioned and testable, not stable for production.
 | `flow.artifact-observations/v1` | deterministic host-observed file and directory identity for one binding set |
 | `flow.capability/v1` | provider capability discovery and side-effect declaration |
 | `flow.compatibility/v1` | deterministic compatibility decision and evidence |
+| `flow.execution-subject-lock/v1` | operator-controlled exact package, executable, provider-context, and evidence-policy lock |
+| `flow.execution-subject-observations/v1` | Flow-observed package/executable identity with separate digest, lock, publisher, trust, cryptographic, and transparency claims |
 | `flow.extension-manifest/v1` | provider identity, integrity, compatibility, capabilities, requested permissions, hooks, and checkpoint behavior |
 | `flow.extension-lock/v1` | operator-controlled discovery pins, trust, grants, precedence, and fallback |
 | `flow.extension-invocation/v1` | immutable inputs, authorization identity, declared execution-limit metadata, and resume references |
@@ -21,9 +23,10 @@ family. Provisional means versioned and testable, not stable for production.
 
 `contract-set.v1.json` is the machine-readable index. Schemas live in
 `schemas/`; deterministic examples live in `examples/`; extension compatibility
-fixtures live in `fixtures/extensions/`; and orchestration fixtures live in
-`fixtures/scenarios/`. Invalid fixtures are expected to fail their target schema
-or semantic invariants and are checked by the validator.
+fixtures live in `fixtures/extensions/`; execution-subject adversarial fixtures
+live in `fixtures/execution-subjects/`; and orchestration fixtures live in
+`fixtures/scenarios/`. Invalid fixtures are expected to fail their target
+schema or semantic invariants and are checked by the validator.
 
 The extension contracts are described in
 [`docs/integrations/extension-contract.md`](../docs/integrations/extension-contract.md).
@@ -42,6 +45,14 @@ manifest, Flow-observation token, and final correlation gate are specified in
 [`docs/integrations/artifact-bindings.md`](../docs/integrations/artifact-bindings.md).
 A deserialized observation document is inspectable evidence, not proof that
 Flow observed those bytes and not an artifact-acceptance token.
+
+Exact process package and executable identity is specified in
+[`docs/integrations/execution-subjects.md`](../docs/integrations/execution-subjects.md).
+`flow.execution-subject-lock/v1` binds both subjects to one process provider
+context. `flow.execution-subject-observations/v1` records fresh content and lock
+equality while explicitly reporting that cryptographic verification and
+transparency checks were not performed. A portable document cannot construct
+the opaque match token required by process request and transcript validation.
 
 The scenario manifest and its canonical identity profile are described in
 [`docs/integrations/scenario-fixtures.md`](../docs/integrations/scenario-fixtures.md).
@@ -62,11 +73,12 @@ semantic version. Consumers reject unknown major identifiers and never silently
 downgrade.
 
 The current Rust checkpoint maps the six extension-v1 documents, the scenario
-manifest, and both artifact-boundary documents into closed library models and
-adds semantic checks that JSON Schema alone does not express. Its hermetic
-in-process reference, host-neutral process transcript, and local artifact
-observer are not provider adapters and do not prove process launch/capture
-enforcement, executable verification, domain-output validity, sandboxing,
+manifest, both artifact-boundary documents, and both execution-subject documents
+into closed library models and adds semantic checks that JSON Schema alone does
+not express. Its hermetic in-process reference, host-neutral process transcript,
+local artifact observer, and exact package/executable observer are not provider
+adapters and do not prove process launch/capture enforcement, publisher
+authenticity, signatures, transparency, domain-output validity, sandboxing,
 checkpoints, or resume.
 
 For this checkpoint, the caller owns configuration canonicalization and digest

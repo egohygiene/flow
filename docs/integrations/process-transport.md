@@ -10,15 +10,19 @@ changing their semantic ownership.
 
 The implemented checkpoint is deliberately host-neutral. It can encode one
 invocation request and validate already-captured transcript bytes plus an
-explicit termination observation. It does not locate, start, supervise, signal,
-or reap an operating-system process. A transcript proves only that supplied
-evidence is internally valid under this profile; it does not prove how the
-evidence was captured or which executable produced it.
+explicit termination observation. Both operations require a fresh opaque match
+for the exact locked package and executable subjects. It does not locate,
+start, supervise, signal, or reap an operating-system process. A transcript
+proves only that supplied evidence is internally valid under this profile and
+that the earlier subject observation matched its lock; it does not prove how
+the evidence was captured or that the observed executable produced it.
 
 This profile is governed by
 [ADR-0006](../architecture/governance/decisions/ADR-0006-bounded-process-transport.md)
 and refines the process mode described by the
-[federated extension contract](extension-contract.md).
+[federated extension contract](extension-contract.md). Package and executable
+preflight is governed separately by
+[ADR-0008](../architecture/governance/decisions/ADR-0008-locked-execution-subjects.md).
 
 ## Boundary ownership
 
@@ -29,6 +33,8 @@ and refines the process mode described by the
 | Standard error | Provider contribution, caller-controlled handling | Opaque, bounded diagnostic bytes; never protocol |
 | Termination | Future process runner contribution, Flow validation | Host-neutral exit, timeout, or cancellation observation |
 | Event observation | Flow and caller | A fallible, authoritative acceptance boundary through `EventSink` |
+| Execution-subject lock | Flow operator | Exact package/executable content and correlated process context |
+| Matched execution subjects | Flow observer | Opaque proof that a fresh observation exactly matched that lock and invocation |
 
 The provider cannot promote its result to accepted completion. Flow returns a
 `ValidatedExecution` only after framing, contract, correlation, ordering,
@@ -37,6 +43,12 @@ observer, terminal-consistency, and termination checks all pass.
 `ValidatedExecution` is not artifact acceptance. A future runner must next use
 the separate [artifact-binding profile](artifact-bindings.md) to observe bound
 workspace bytes and construct `AcceptedArtifactSet`.
+
+For process mode, `ValidatedExecution` does require the separate
+[execution-subject profile](execution-subjects.md). That gate establishes
+content equality to the supplied lock, not signature validity, publisher
+authenticity, transparency-log inclusion, sandbox enforcement, or proof that a
+later child opened the observed file object.
 
 ## Standard-input request
 
@@ -151,17 +163,21 @@ does not measure a timeout, issue cancellation, deliver a signal, wait through
 The boundary applies these gates before constructing accepted execution:
 
 1. Validate the invocation and require that it matches the resolved process
-   interface. Request encoding is a separate operation with the same
-   invocation and process-preflight gates for use by a future runner.
-2. Enforce the captured standard-output and standard-error byte limits.
-3. Require the supplied termination observation to be normal exit `0`.
-4. Decode the JSON Lines framing and require the event-then-result grammar.
-5. Apply the shared Flow-owned event validation, correlation, uniqueness,
+   interface.
+2. Require the exact execution-subject lock and a fresh opaque match token
+   bound to that lock, resolution, run, invocation, provider, capability,
+   process interface, entrypoint, and configured operator trust. Request
+   encoding is a separate operation with the same invocation and subject
+   preflight gates for use by a future runner.
+3. Enforce the captured standard-output and standard-error byte limits.
+4. Require the supplied termination observation to be normal exit `0`.
+5. Decode the JSON Lines framing and require the event-then-result grammar.
+6. Apply the shared Flow-owned event validation, correlation, uniqueness,
    strictly increasing sequence, and diagnostic checks. Forward each
    individually valid event to the caller's `EventSink` in transcript order.
-6. Validate the result contract, correlation, diagnostics, artifact references,
+7. Validate the result contract, correlation, diagnostics, artifact references,
    outcome, and consistency with the terminal event.
-7. Construct `ValidatedExecution` only after every preceding gate succeeds.
+8. Construct `ValidatedExecution` only after every preceding gate succeeds.
 
 This ordering gives byte-limit and termination failures precedence over parsing
 or observing provider-authored records. In particular, events from an
@@ -195,6 +211,7 @@ The transcript boundary distinguishes at least these failure concerns:
 | Concern | Representative evidence |
 | --- | --- |
 | Invalid invocation | Wrong schema, malformed identity, or non-process interface |
+| Execution-subject preflight | Invalid lock, wrong context, altered package/executable bytes, or stale match token |
 | Output limit | Raw stdout or stderr exceeds its declared byte limit |
 | Encoding or framing | Invalid UTF-8, malformed JSON line, blank line, unknown record, or missing terminator |
 | Protocol order | Missing result, duplicate result, or record after result |
@@ -231,16 +248,17 @@ provider executable. The required proof covers:
 - proof that every invalid case returns an error rather than
   `ValidatedExecution`.
 
-The validation result depends only on the resolved extension, invocation,
-transcript bytes, termination observation, and authoritative sink outcome. It
-does not inspect the host filesystem, environment, process table, clock, or
-network.
+After the subject token is constructed, transcript validation depends only on
+the resolved extension, invocation, exact subject lock and token, transcript
+bytes, termination observation, and authoritative sink outcome. It does not
+reinspect the host filesystem, environment, process table, clock, or network.
 
 ## Implemented guarantees and deferred work
 
-Issue #26 implements only the host-neutral request encoder and transcript
-validation seam described above. It reuses the existing closed invocation,
-event, and result models plus Flow-owned semantic validation.
+Issue #26 implements the host-neutral request encoder and transcript validation
+seam described above. Issue #38 adds its mandatory locked package/executable
+preflight. It reuses the closed invocation, event, result, execution-subject,
+and Flow-owned semantic validation models.
 
 It does not implement or prove:
 
@@ -248,7 +266,10 @@ It does not implement or prove:
 - standard-input writing or concurrent stdout/stderr capture against a child;
 - runtime output backpressure, timeout measurement, cancellation delivery,
   grace periods, kill, or reap behavior;
-- executable, package, publisher, signature, or transparency-log verification;
+- publisher authentication, signature/attestation verification, or
+  transparency-log verification; exact observed package and executable digest
+  matching is implemented separately and must not be described as any of
+  those authenticity claims;
 - automatic artifact discovery or provider-native output validation; the
   separate issue #36 library seam requires explicit bindings and a fresh
   post-transcript host observation beneath a caller-selected root;
@@ -263,5 +284,6 @@ It does not implement or prove:
 Later work may place a platform-specific runner in front of this validator. The
 runner must supply evidence without weakening the transcript grammar or
 promoting launch, exit, or file existence alone to accepted completion. It must
-also quiesce and isolate the workspace before the artifact observer can make
-stronger byte-identity claims.
+also bind observation to the exact launched file object, quiesce and isolate
+the workspace, and preserve both execution-subject and artifact-observation
+claims without overstating authenticity.

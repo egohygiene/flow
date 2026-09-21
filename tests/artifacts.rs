@@ -14,6 +14,8 @@ use flow::{
 };
 use sha2::{Digest, Sha256};
 
+#[cfg(unix)]
+use common::create_unsupported_node;
 use common::{invocation, resolved_fixture};
 
 const INPUT_ID: &str = "artifact:source-collection";
@@ -401,7 +403,6 @@ fn symlinks_are_rejected_without_following_their_targets() {
 fn non_utf8_names_and_special_nodes_are_rejected() {
     use std::ffi::OsString;
     use std::os::unix::ffi::OsStringExt;
-    use std::os::unix::net::UnixListener;
 
     let (root, bindings) = fixture();
     let invalid_name = OsString::from_vec(vec![b'i', 0xff]);
@@ -417,7 +418,7 @@ fn non_utf8_names_and_special_nodes_are_rejected() {
     ));
 
     let (root, bindings) = fixture();
-    let _socket = UnixListener::bind(root.path().join("outputs/report bundle/socket")).unwrap();
+    create_unsupported_node(&root.path().join("outputs/report bundle/fifo"));
     let error = observe_artifacts(root.path(), &bindings).unwrap_err();
     assert!(matches!(
         error,

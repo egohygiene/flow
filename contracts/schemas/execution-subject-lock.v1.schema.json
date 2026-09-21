@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/execution-subject-lock.v1.schema.json",
+  "title": "Flow execution subject lock v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "canonicalization",
+    "subject_lock_id",
+    "extension_lock_id",
+    "extension",
+    "capability_id",
+    "interface",
+    "declared_entrypoint",
+    "package",
+    "executable",
+    "evidence_policy"
+  ],
+  "properties": {
+    "schema_version": { "const": "flow.execution-subject-lock/v1" },
+    "canonicalization": { "const": "flow.canonical-json/v1" },
+    "subject_lock_id": {
+      "type": "string",
+      "pattern": "^subject-lock:[a-z0-9][a-z0-9._-]*$"
+    },
+    "extension_lock_id": {
+      "type": "string",
+      "pattern": "^lock:[a-z0-9][a-z0-9._-]*$"
+    },
+    "extension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["extension_id", "version", "publisher_id", "integrity"],
+      "properties": {
+        "extension_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)+$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "publisher_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9.-]+$"
+        },
+        "integrity": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "capability_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9.-]+/[a-z][a-z0-9.-]+$"
+    },
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "name", "protocol"],
+      "properties": {
+        "kind": { "const": "process" },
+        "name": { "type": "string", "minLength": 1 },
+        "protocol": { "const": "flow.extension-invocation/v1" }
+      }
+    },
+    "declared_entrypoint": { "type": "string", "minLength": 1 },
+    "package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_id", "kind", "locator", "digest"],
+      "properties": {
+        "subject_id": {
+          "type": "string",
+          "pattern": "^package:[a-z0-9][a-z0-9._-]*$"
+        },
+        "kind": { "const": "directory" },
+        "locator": { "type": "string", "minLength": 1 },
+        "digest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": { "const": "sha256" },
+            "value": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+          }
+        }
+      }
+    },
+    "executable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_id", "kind", "locator", "digest"],
+      "properties": {
+        "subject_id": {
+          "type": "string",
+          "pattern": "^executable:[a-z0-9][a-z0-9._-]*$"
+        },
+        "kind": { "const": "file" },
+        "locator": { "type": "string", "minLength": 1 },
+        "digest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": { "const": "sha256" },
+            "value": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+          }
+        }
+      }
+    },
+    "evidence_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "content_digest",
+        "lock_equality",
+        "cryptographic_verification",
+        "publisher_identity",
+        "operator_trust",
+        "transparency_log"
+      ],
+      "properties": {
+        "content_digest": { "const": "required" },
+        "lock_equality": { "const": "required" },
+        "cryptographic_verification": { "const": "not-required" },
+        "publisher_identity": { "const": "declaration-correlation" },
+        "operator_trust": { "const": "extension-lock" },
+        "transparency_log": { "const": "not-required" }
+      }
+    }
+  }
+}

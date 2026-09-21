@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.6.0
+version: 0.7.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-20
+updated: 2026-09-21
 governed_by:
   - architecture-architecture
 depends_on:
@@ -77,6 +77,16 @@ caller-selected root. Only the separate artifact-acceptance gate can correlate
 those observations with resolved capability, invocation, event, and terminal
 result evidence.
 
+Process execution subjects are a third, distinct boundary. A Flow-owned lock
+pins one package directory and one regular executable file to an exact
+extension lock, provider identity, capability, process interface, and declared
+entrypoint. Flow observes both beneath a selected root and issues an opaque
+match token only when both digests equal the lock. Process request encoding and
+transcript validation require that token. Content equality, publisher
+declaration, configured operator trust, cryptographic verification, and
+transparency-log verification remain separate evidence claims; digest equality
+does not imply authenticity.
+
 ### External adapters
 
 Adapters isolate process invocation, version/capability probing, structured
@@ -94,8 +104,10 @@ The first process boundary is host-neutral: Flow deterministically encodes one
 versioned invocation and validates a caller-supplied JSON Lines stdout
 transcript, bounded stderr length, and completion observation. That seam reuses
 the same Flow-owned event and result validation as in-process execution. It does
-not spawn, signal, time out, cancel, reap, inspect files from, or isolate a child
-process.
+not spawn, signal, time out, cancel, reap, or isolate a child process. Before
+encoding or accepting process evidence, it does require a fresh opaque match
+for the exact locked package and executable subjects. The portable observer
+cannot prove that a later launcher opens the same unchanged file object.
 
 ### Extension lifecycle
 
@@ -183,13 +195,15 @@ extension port, Flow-owned event/result validation, and a hermetic no-effects
 reference implementation. Issue #26 / merged PR #27 adds deterministic process
 request framing and host-neutral transcript validation through that same
 acceptance gate. Issue #28 adds a closed scenario manifest, synthetic fixtures,
-and canonical digest drift checks; it does not run those scenarios. Issue #36
-adds explicit artifact bindings, root-confined host observation, deterministic
-file/directory identity, and an opaque accepted artifact set. Flow does not yet
-supply the public CLI, a production child-process runner, real holon adapters,
-executable verification, provider-native artifact validation, enforceable
-isolation, durable run state, checkpoints, interruption, or resume. Structural
-units beyond these library seams remain constraints for later adapter and
+and canonical digest drift checks; it does not run those scenarios. Issue #36 /
+merged PR #37 adds explicit artifact bindings, root-confined host observation,
+deterministic file/directory identity, and an opaque accepted artifact set.
+Issue #38 adds exact locked package/executable observation and an opaque token
+required by both process seams. Flow does not yet supply the public CLI, a
+production child-process runner, real holon adapters, signature or transparency
+verification, provider-native artifact validation, enforceable isolation,
+durable run state, checkpoints, interruption, or resume. Structural units
+beyond these library seams remain constraints for later adapter and
 orchestration work, not claims about current source layout.
 
 ## Open questions
@@ -200,12 +214,14 @@ orchestration work, not claims about current source layout.
 
 ## Validation
 
-Default-branch CI run 35510751421 validates Rust 1.85 and stable library builds,
+Default-branch CI run 35546410096 validates Rust 1.85 and stable library builds,
 closed contract models, deterministic resolution, the hermetic in-process and
 process-transcript seams, scenario-manifest identity, and repository
-architecture metadata at `aac62ab80c18c936e3a7ebd5f4e70b7845f39faa`.
-Issue #36 extends that matrix with artifact schema, semantic, filesystem, and
-adversarial correlation checks. Forbidden dependency-edge checks,
-CLI-thinness, real launcher enforcement, provider-native artifact validation,
-scenario execution, and sandbox conformance remain later gates for their
-corresponding runtime surfaces.
+architecture metadata plus artifact acceptance at
+`55341605968d3343e74d8bdd2b188c99a855aca0`. Issue #38 extends that matrix with
+execution-subject schema, canonical identity, filesystem, content-mismatch,
+context-replay, contradictory-evidence, and unsupported-claim checks. Forbidden
+dependency-edge checks, CLI-thinness, signature/transparency verification,
+real launcher enforcement, provider-native artifact validation, scenario
+execution, and sandbox conformance remain later gates for their corresponding
+runtime surfaces.

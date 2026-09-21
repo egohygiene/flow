@@ -1,7 +1,8 @@
 use flow::{
-    ArtifactBindingSet, ExtensionEvent, ExtensionInvocation, ExtensionLock, ExtensionManifest,
-    ExtensionResolution, ExtensionResult, FailureClassification, HostArtifactObservationSet,
-    Outcome, ValidationEvidence, ValidationStatus, parse_flow_version_requirement,
+    ArtifactBindingSet, ExecutionSubjectLock, ExtensionEvent, ExtensionInvocation, ExtensionLock,
+    ExtensionManifest, ExtensionResolution, ExtensionResult, FailureClassification,
+    HostArtifactObservationSet, HostExecutionSubjectObservationSet, Outcome, ValidationEvidence,
+    ValidationStatus, parse_flow_version_requirement,
 };
 use serde::Serialize;
 use serde::de::DeserializeOwned;
@@ -17,13 +18,21 @@ where
 }
 
 #[test]
-fn eight_checked_in_examples_roundtrip_and_validate() {
+fn ten_checked_in_examples_roundtrip_and_validate() {
     roundtrip_and_validate::<ArtifactBindingSet>(
         include_str!("../contracts/examples/artifact-bindings.v1.example.json"),
         |value| value.validate().unwrap(),
     );
     roundtrip_and_validate::<HostArtifactObservationSet>(
         include_str!("../contracts/examples/artifact-observations.v1.example.json"),
+        |value| value.validate().unwrap(),
+    );
+    roundtrip_and_validate::<ExecutionSubjectLock>(
+        include_str!("../contracts/examples/execution-subject-lock.v1.example.json"),
+        |value| value.validate().unwrap(),
+    );
+    roundtrip_and_validate::<HostExecutionSubjectObservationSet>(
+        include_str!("../contracts/examples/execution-subject-observations.v1.example.json"),
         |value| value.validate().unwrap(),
     );
     roundtrip_and_validate::<ExtensionManifest>(
@@ -50,6 +59,36 @@ fn eight_checked_in_examples_roundtrip_and_validate() {
         include_str!("../contracts/examples/extension-resolution.v1.example.json"),
         |value| value.validate().unwrap(),
     );
+}
+
+#[test]
+fn execution_subject_contracts_are_closed_and_canonically_linked() {
+    let lock_source = include_str!("../contracts/examples/execution-subject-lock.v1.example.json");
+    let lock: ExecutionSubjectLock = serde_json::from_str(lock_source).unwrap();
+    let observation_source =
+        include_str!("../contracts/examples/execution-subject-observations.v1.example.json");
+    let observations: HostExecutionSubjectObservationSet =
+        serde_json::from_str(observation_source).unwrap();
+
+    assert_eq!(
+        lock.canonical_digest().unwrap(),
+        observations.claims.lock_equality.subject_lock_digest
+    );
+
+    let mut unknown: serde_json::Value = serde_json::from_str(lock_source).unwrap();
+    unknown["package"]["signature"] = serde_json::json!("fabricated");
+    assert!(serde_json::from_value::<ExecutionSubjectLock>(unknown).is_err());
+
+    let unsupported = include_str!(
+        "../contracts/fixtures/execution-subjects/unsupported-verification.v1.invalid.json"
+    );
+    assert!(serde_json::from_str::<ExecutionSubjectLock>(unsupported).is_err());
+
+    let duplicate = include_str!(
+        "../contracts/fixtures/execution-subjects/duplicate-observations.v1.invalid.json"
+    );
+    let duplicate: HostExecutionSubjectObservationSet = serde_json::from_str(duplicate).unwrap();
+    assert!(duplicate.validate().is_err());
 }
 
 #[test]

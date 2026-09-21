@@ -1050,7 +1050,7 @@ fn validate_media_type(path: &str, value: &str) -> Result<(), ValidationError> {
     )
 }
 
-fn validate_locator(path: &str, locator: &str) -> Result<(), ValidationError> {
+pub(crate) fn validate_locator(path: &str, locator: &str) -> Result<(), ValidationError> {
     expect(!locator.is_empty(), path, "must not be empty")?;
     expect(
         !locator.starts_with('/') && !locator.contains('\\') && !locator.contains(':'),
@@ -1099,7 +1099,7 @@ fn is_windows_device_name(stem: &str) -> bool {
             .is_some_and(|suffix| suffix.len() == 1 && matches!(suffix.as_bytes()[0], b'1'..=b'9'))
 }
 
-fn validate_digest(path: &str, digest: &str) -> Result<(), ValidationError> {
+pub(crate) fn validate_digest(path: &str, digest: &str) -> Result<(), ValidationError> {
     expect(
         digest.len() == 64
             && digest
@@ -1123,7 +1123,7 @@ where
     expect(unique.len() == values.len(), path, message)
 }
 
-fn has_prefixed_id(value: &str, prefix: &str) -> bool {
+pub(crate) fn has_prefixed_id(value: &str, prefix: &str) -> bool {
     let Some(identifier) = value.strip_prefix(prefix) else {
         return false;
     };

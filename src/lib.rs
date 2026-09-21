@@ -9,6 +9,7 @@ pub mod artifacts;
 pub mod catalog;
 pub mod contracts;
 pub mod execution;
+pub mod execution_subjects;
 pub mod hermetic;
 pub mod process;
 pub mod scenario;
@@ -23,6 +24,7 @@ pub use execution::{
     EventSink, EventSinkError, ExecutionError, ExtensionPort, Orchestrator, PortError,
     PortIdentity, ProcessCompletion, ProcessStream, ProcessTranscript, ValidatedExecution,
 };
+pub use execution_subjects::*;
 pub use hermetic::{HermeticBehavior, HermeticExtension};
 pub use process::{
     DecodedProcessTranscript, ProcessProtocolError, decode_provider_stdout, encode_invocation_frame,
