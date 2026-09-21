@@ -67,6 +67,12 @@ canonical profile and fresh subject observation. A portable document cannot
 construct `AuthorizedProcess`, and the caller-attested statement is not proof
 that an operating-system sandbox actually ran.
 
+The bounded local runtime that consumes these existing contracts is specified
+in [`docs/integrations/process-runner.md`](../docs/integrations/process-runner.md).
+It introduces no new portable schema: timeout, cancellation, escalation, and
+reaping are host lifecycle behavior, while the existing invocation limits and
+completion vocabulary remain authoritative.
+
 The scenario manifest and its canonical identity profile are described in
 [`docs/integrations/scenario-fixtures.md`](../docs/integrations/scenario-fixtures.md).
 The Rust and Python implementations independently reproduce the checked-in
@@ -90,19 +96,22 @@ manifest, both artifact-boundary documents, both execution-subject documents,
 and both authority/isolation documents into closed library models and adds
 semantic checks that JSON Schema alone does not express. Its hermetic in-process
 reference, host-neutral process transcript, local artifact observer, exact
-package/executable observer, and authority preflight are not provider adapters
-and do not prove process launch/capture enforcement, publisher authenticity,
-signatures, transparency, domain-output validity, operating-system sandboxing,
-authenticated host evidence, checkpoints, or resume.
+package/executable observer, authority preflight, and bounded
+`trusted-unconfined` local runner are not real provider adapters. They do not
+prove publisher authenticity, signatures, transparency, domain-output
+validity, operating-system sandboxing, authenticated host evidence,
+descriptor-bound launch, descendant containment, checkpoints, or resume.
 
 For this checkpoint, the caller owns configuration canonicalization and digest
 generation plus authorization issuance, authorization ID, and grants digest.
 Flow shape-checks these values and correlates the identities repeated by the
-provider; `ValidatedExecution` does not authenticate them. The process
+provider; `ValidatedExecution` does not authenticate them. The pure process
 transcript validator checks already captured stdout/stderr lengths and a caller
 completion observation. The authority preflight validates exact intended bounds
-and caller-attested enforcement evidence. Neither operation is runtime timeout,
-cancellation, capture, panic, sandbox, or side-effect enforcement.
+and caller-attested enforcement evidence. The local runner separately enforces
+direct-child transport, timeout, cancellation grace/escalation, and reap
+behavior; none of these boundaries is panic, sandbox, descendant, or general
+side-effect enforcement.
 
 Validate the set with:
 

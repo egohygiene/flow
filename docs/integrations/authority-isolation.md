@@ -13,9 +13,12 @@ The profile is governed by
 and depends on the exact package/executable boundary in
 [ADR-0008](../architecture/governance/decisions/ADR-0008-locked-execution-subjects.md).
 
-This checkpoint validates contracts and correlation. It does not start a
+This profile validates contracts and correlation. It does not itself start a
 process, configure an operating-system sandbox, authenticate the evidence
-source, or prove that the reported host enforcement occurred.
+source, or prove that the reported host enforcement occurred. The separate
+[bounded local runner](process-runner.md) consumes only the
+`trusted-unconfined` profile and refuses `sandboxed` until a real backend can
+enforce it.
 
 ## Contracts and runtime proof
 
@@ -132,9 +135,10 @@ The process evidence seams apply these prerequisites:
 6. Require both opaque tokens when encoding the request and again when
    validating the supplied transcript.
 
-The current library performs these correlation gates around a host-neutral
-transport seam. The operating-system work that would occur between encoding
-and validation remains outside this checkpoint.
+The library performs these correlation gates around a host-neutral transport
+seam. The bounded local runner now performs one real direct-child lifecycle
+between encoding and validation for `trusted-unconfined`; operating-system
+sandbox enforcement remains outside this profile.
 
 ## Evidence claims and extension points
 

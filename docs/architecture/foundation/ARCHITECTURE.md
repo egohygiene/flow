@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.8.0
+version: 0.9.0
 status: draft
 owners:
   - egohygiene
@@ -124,6 +124,19 @@ encoding or accepting process evidence, it does require a fresh opaque match
 for the exact locked package and executable subjects. The portable observer
 cannot prove that a later launcher opens the same unchanged file object.
 
+The bounded local runner composes those gates for one real
+`trusted-unconfined` direct child. It freshly observes the locked subjects,
+invokes the exact executable with literal argv and an explicit cwd, clears and
+reconstructs the environment from opaque authorized handles, supervises stdin
+plus independently bounded stdout/stderr workers, enforces the declared
+deadline and caller cancellation, applies the declared Unix termination grace,
+and reaps the direct child before returning. It preserves the host-neutral
+transcript validator as the sole promotion path to `ValidatedExecution`.
+
+This runner is not a sandbox. It does not authenticate host evidence, constrain
+filesystem/network/subprocess authority, contain descendants, or bind the
+fresh digest observation to the host's later executable file object.
+
 ### Extension lifecycle
 
 Flow coordinates extensions through the ordered lifecycle `discover → inspect →
@@ -216,13 +229,15 @@ deterministic file/directory identity, and an opaque accepted artifact set.
 Issue #38 adds exact locked package/executable observation and an opaque token
 required by both process seams. Issue #40 adds exact process authority and
 isolation profiles, caller-attested enforcement evidence, and a second opaque
-token required by both process seams. Flow does not yet supply the public CLI,
-a production child-process runner, real holon adapters, signature or
-transparency verification, provider-native artifact validation, an operating-
-system sandbox or authenticated enforcement evidence, durable run state,
-checkpoints, interruption, or resume. Structural units beyond these library
-seams remain constraints for later adapter and orchestration work, not claims
-about current source layout.
+token required by both process seams. Issue #42 adds the bounded local
+trusted-unconfined runner, direct transport workers, timeout/cancellation grace
+and escalation, and direct-child reaping. Flow does not yet supply the public
+CLI, real holon adapters, signature or transparency verification,
+provider-native artifact validation, an operating-system sandbox or
+authenticated enforcement evidence, descriptor-bound execution, process-tree
+containment, durable run state, checkpoints, retry, or resume. Structural units
+beyond these library seams remain constraints for later adapter and
+orchestration work, not claims about current source layout.
 
 ## Open questions
 
@@ -244,6 +259,8 @@ and unsupported-claim checks. Issue #38 previously added
 execution-subject schema, canonical identity, filesystem, content-mismatch,
 context-replay, contradictory-evidence, and unsupported-claim checks. Forbidden
 dependency-edge checks, CLI-thinness, signature/transparency verification,
-real launcher enforcement, authenticated sandbox conformance, provider-native
-artifact validation, and scenario execution remain later gates for their
-corresponding runtime surfaces.
+authenticated sandbox conformance, descriptor-bound launch, process-tree
+containment, provider-native artifact validation, and scenario execution remain
+later gates for their corresponding runtime surfaces. Issue #42 adds real Unix
+direct-child conformance for literal launch state, supervised transport,
+overflow, interruption, grace, escalation, and reaping.

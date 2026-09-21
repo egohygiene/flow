@@ -3,20 +3,27 @@
 ## Purpose and scope
 
 This document defines the provider-neutral standard-input, standard-output,
-standard-error, and termination transcript that a future Flow process adapter
-must use. It composes the existing `flow.extension-invocation/v1`,
+standard-error, and termination transcript that every Flow process adapter must
+use. It composes the existing `flow.extension-invocation/v1`,
 `flow.extension-event/v1`, and `flow.extension-result/v1` contracts without
 changing their semantic ownership.
 
-The implemented checkpoint is deliberately host-neutral. It can encode one
+The transcript seam is deliberately host-neutral. It can encode one
 invocation request and validate already-captured transcript bytes plus an
 explicit termination observation. Both operations require a fresh opaque match
 for the exact locked package and executable subjects plus an opaque process-
-authorization token for the exact authority/isolation evidence. It does not
-locate, start, supervise, signal, or reap an operating-system process. A transcript
-proves only that supplied evidence is internally valid under this profile and
-that the earlier subject observation matched its lock; it does not prove how
-the evidence was captured or that the observed executable produced it.
+authorization token for the exact authority/isolation evidence. On its own it
+does not locate, start, supervise, signal, or reap an operating-system process.
+A transcript proves only that supplied evidence is internally valid under this
+profile and that the earlier subject observation matched its lock; it does not
+prove how the evidence was captured or that the observed executable produced
+it.
+
+The separate [bounded local runner](process-runner.md) now supplies one real
+`trusted-unconfined` direct-child lifecycle and feeds its observations through
+this unchanged acceptance gate. Keeping the pure validator public preserves
+host-neutral fixture coverage and prevents platform supervision from becoming
+protocol identity.
 
 This profile is governed by
 [ADR-0006](../architecture/governance/decisions/ADR-0006-bounded-process-transport.md)
@@ -26,6 +33,8 @@ preflight is governed separately by
 [ADR-0008](../architecture/governance/decisions/ADR-0008-locked-execution-subjects.md).
 Authority and isolation preflight is governed separately by
 [ADR-0009](../architecture/governance/decisions/ADR-0009-process-authority-isolation.md).
+Direct-child lifecycle control is governed separately by
+[ADR-0010](../architecture/governance/decisions/ADR-0010-bounded-direct-process-supervision.md).
 
 ## Boundary ownership
 
@@ -34,21 +43,21 @@ Authority and isolation preflight is governed separately by
 | Standard input | Flow | Exactly one validated invocation request |
 | Standard output | Provider contribution, Flow validation | Protocol records only: zero or more events followed by exactly one result |
 | Standard error | Provider contribution, caller-controlled handling | Opaque, bounded diagnostic bytes; never protocol |
-| Termination | Future process runner contribution, Flow validation | Host-neutral exit, timeout, or cancellation observation |
+| Termination | Flow runner or caller contribution, Flow validation | Host-neutral exit, timeout, or cancellation observation |
 | Event observation | Flow and caller | A fallible, authoritative acceptance boundary through `EventSink` |
 | Execution-subject lock | Flow operator | Exact package/executable content and correlated process context |
 | Matched execution subjects | Flow observer | Opaque proof that a fresh observation exactly matched that lock and invocation |
 | Process-authority profile | Flow caller/operator boundary | Exact requested/granted authority, trust, isolation, and denial of unlisted ambient authority |
-| Process-enforcement evidence | Future runner/host | Caller-attested statement about the exact profile and dimensions a named backend reports enforcing |
+| Process-enforcement evidence | Runner/host boundary | Caller-attested statement about the exact profile and dimensions a named backend reports enforcing |
 | Authorized process | Flow runtime | Opaque proof that authority and enforcement evidence correlate with the exact resolution, invocation, and matched subjects |
 
 The provider cannot promote its result to accepted completion. Flow returns a
 `ValidatedExecution` only after framing, contract, correlation, ordering,
 observer, terminal-consistency, and termination checks all pass.
 
-`ValidatedExecution` is not artifact acceptance. A future runner must next use
-the separate [artifact-binding profile](artifact-bindings.md) to observe bound
-workspace bytes and construct `AcceptedArtifactSet`.
+`ValidatedExecution` is not artifact acceptance. A downstream host must next
+use the separate [artifact-binding profile](artifact-bindings.md) to observe
+bound workspace bytes and construct `AcceptedArtifactSet`.
 
 For process mode, `ValidatedExecution` does require the separate
 [execution-subject profile](execution-subjects.md). That gate establishes
@@ -78,8 +87,8 @@ The request requirements are:
 - exactly one line-feed byte terminates the object;
 - no byte-order mark, blank prefix, second request, or trailing data is
   permitted; and
-- a future runner must write only that frame and close standard input after the
-  terminating line feed.
+- a conforming runner must write only that frame and close standard input after
+  the terminating line feed.
 
 Compact encoding makes requests reproducible for the same typed value, but it
 is not an RFC 8785 canonicalization claim. Request bytes are not an extension,
@@ -124,8 +133,8 @@ produce `ValidatedExecution`.
 The raw standard-output byte count includes JSON, carriage returns, line feeds,
 and any invalid or trailing bytes. It must not exceed the invocation's
 `limits.max_stdout_bytes`. The host-neutral validator rejects an oversized
-captured transcript; preventing an operating-system child from producing or
-buffering excess output is deferred to a future runner.
+captured transcript. The local runner drains both real child streams
+concurrently and retains only each limit plus one overflow byte.
 
 ## Standard error
 
@@ -139,9 +148,10 @@ private paths, or provider-native text, so it is sensitive operational evidence
 and is not portable result, provenance, event, or telemetry data. Callers must
 apply an explicit inspection and redaction policy before exporting it.
 
-This checkpoint validates the supplied byte bound. Independent concurrent
-capture, backpressure, truncation, and forced child termination remain future
-runner responsibilities.
+The pure validator checks the supplied byte bound. The local runner provides
+independent concurrent capture, bounded retained memory, and forced direct-child
+termination. It does not claim operating-system pipe backpressure limits or
+descendant-process containment.
 
 ## Termination observations
 
@@ -166,9 +176,11 @@ Conversely, exit `0` never converts missing, malformed, contradictory, or
 observer-rejected evidence into completion. A timeout, host cancellation, or
 nonzero exit cannot be repaired by a provider-authored result.
 
-The current library validates a caller-supplied termination observation. It
-does not measure a timeout, issue cancellation, deliver a signal, wait through
-`cancellation_grace_ms`, or prove that a process was reaped.
+The pure validator continues to accept a caller-supplied termination
+observation. The local runner separately measures the declared timeout, polls a
+caller cancellation signal, sends Unix `SIGTERM`, waits
+`cancellation_grace_ms`, escalates when required, and reaps the direct child.
+Those operations do not make the host-neutral observation self-authenticating.
 
 ## Validation and acceptance order
 
@@ -180,7 +192,7 @@ The boundary applies these gates before constructing accepted execution:
    bound to that lock, resolution, run, invocation, provider, capability,
    process interface, entrypoint, and configured operator trust. Request
    encoding is a separate operation with the same invocation and subject
-   preflight gates for use by a future runner.
+   preflight gates for use by the local or another conforming runner.
 3. Require an exact authority profile and correlated host-enforcement evidence,
    represented by a fresh opaque authorization token bound to the same
    resolution, invocation, matched subjects, operator trust, and isolation.
@@ -277,15 +289,16 @@ Issue #26 implements the host-neutral request encoder and transcript validation
 seam described above. Issue #38 adds its mandatory locked package/executable
 preflight. It reuses the closed invocation, event, result, execution-subject,
 and Flow-owned semantic validation models. Issue #40 adds mandatory exact
-authority/isolation preflight to both seams. It validates a closed profile and
-caller-attested host evidence; it does not execute that profile.
+authority/isolation preflight to both seams. Issue #42 adds the bounded local
+runner for exact `trusted-unconfined` direct-child launch, supervised transport,
+deadline/cancellation grace and escalation, reaping, and reuse of this
+validator.
 
 It does not implement or prove:
 
-- executable discovery, direct argv construction, or process launch;
-- standard-input writing or concurrent stdout/stderr capture against a child;
-- runtime output backpressure, timeout measurement, cancellation delivery,
-  grace periods, kill, or reap behavior;
+- executable discovery from an ambient store or `PATH`;
+- operating-system pipe backpressure limits beyond continuous draining and
+  bounded retained memory;
 - publisher authentication, signature/attestation verification, or
   transparency-log verification; exact observed package and executable digest
   matching is implemented separately and must not be described as any of
@@ -298,15 +311,15 @@ It does not implement or prove:
   bounds and reported enforcement are validated separately;
 - an operating-system sandbox, authenticated enforcement evidence, or proof
   that the named backend applied a `sandboxed` profile;
+- descriptor-bound execution of the freshly observed file or direct-child
+  process-tree containment;
 - real Aniflow, Optiflow, or Renderflow process adapters;
 - durable plans, run state, checkpoints, retry, or resume;
 - a public Flow CLI; or
 - logging, metrics, tracing, OpenTelemetry, or a hosted observability backend.
 
-Later work may place a platform-specific runner in front of this validator. The
-runner must supply evidence without weakening the transcript grammar or
-promoting launch, exit, or file existence alone to accepted completion. It must
-also bind observation to the exact launched file object, quiesce and isolate
-the workspace, consume the exact authority profile, authenticate any stronger
-enforcement claim, and preserve execution-subject, authority, and artifact-
-observation claims without overstating authenticity or containment.
+Later platform backends may add sandboxing, authenticated enforcement,
+descriptor-bound launch, and process-tree containment without weakening this
+transcript grammar or promoting launch, exit, or file existence alone to
+accepted completion. They must preserve execution-subject, authority, and
+artifact-observation claims without overstating authenticity or containment.

@@ -162,11 +162,11 @@ let accepted = accept_artifacts(
 )?;
 ```
 
-A future process runner uses the same final two calls after
-`validate_process_transcript` returns `ValidatedExecution`. The runner still
-owns safe workspace creation, child authority, concurrent output capture,
-timeout/cancellation enforcement, executable integrity, and quiescence before
-observation.
+`LocalProcessRunner` uses the same final two calls after its transcript returns
+`ValidatedExecution`. It owns exact trusted-unconfined launch, child authority,
+concurrent bounded output capture, timeout/cancellation enforcement, and
+direct-child reaping. A later orchestration layer still owns safe workspace
+creation, provider-native output checks, quiescence, and artifact observation.
 
 ## Failure surfaces
 

@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 0.9.0
+version: 1.0.0
 status: draft
 owners:
   - egohygiene
@@ -38,10 +38,10 @@ updated: 2026-09-21
 
 **Lifecycle:** executable contract prototype
 
-**Current gate:** Complete Flow #40, the next bounded child of Flow #25: bind one
-process invocation to exact requested/granted authority, explicit trust and
-isolation, and correlated host-enforcement evidence without claiming that
-caller attestation is operating-system proof.
+**Current gate:** Complete Flow #42, the final bounded child of Flow #25: launch
+one exact authorized `trusted-unconfined` provider, enforce bounded transport
+and direct-child lifecycle control, and preserve the existing subject,
+authority, transcript, and artifact boundaries.
 
 **North-star outcome:** Federated orchestration across holons with stable provider seams, resumable work, and explicit evidence.
 
@@ -50,9 +50,8 @@ caller attestation is operating-system proof.
 **Mode:** `central`  
 **Route:** `/roadmap/flow/`  
 **Current publication evidence:** Architecture, contract source, merged Flow
-#23 / PR #24, #26 / PR #27, #28 / PR #35, #36 / PR #37, #38 / PR #39, and
-successful default-branch CI run 35558851556 at
-`9cbe58eff5174faa9511a64211e8119e5c7bda6d`; no executable release or Pages
+#23 / PR #24, #26 / PR #27, #28 / PR #35, #36 / PR #37, #38 / PR #39, #40 /
+PR #41, and the candidate #42 / PR #43; no executable release or Pages
 publication observed.
 
 Publish the public-safe projection through egohygiene.io at /roadmap/flow/. This repository owns intent and acceptance evidence; it does not add a second site deployment.
@@ -128,7 +127,7 @@ same acceptance gate validates a deterministic external-process transcript.
 id: FLO-Q03
 status: active
 depends_on: [FLO-Q02]
-issues: [13, 25, 28, 36, 38, 40]
+issues: [13, 25, 28, 36, 38, 40, 42]
 -->
 #### FLO-Q03 — Freeze conformance fixtures and implement provider adapters
 
@@ -149,6 +148,8 @@ behavior through stable error and evidence contracts.
   request or transcript acceptance while keeping authenticity claims separate.
 - [x] Require exact requested/granted process authority and explicit isolation
   evidence before request or transcript acceptance.
+- [x] Launch and supervise one exact `trusted-unconfined` direct child with
+  bounded stdio, timeout/cancellation control, escalation, and reaping.
 - [ ] At least two adapters pass contract tests.
 - [ ] Provider-specific behavior does not leak into the core model.
 
@@ -163,9 +164,12 @@ behavior through stable error and evidence contracts.
 - Flow #38 / merged PR #39 supplies exact locked package/executable observation
   with green default-branch CI at
   `9cbe58eff5174faa9511a64211e8119e5c7bda6d`.
-- Flow #25 remains the active owner of authority profiles and process
-  enforcement. Flow #40 / PR #41 is its current bounded authority/isolation
-  child; scenario references do not pre-empt those runtime contracts.
+- Flow #40 / merged PR #41 supplies exact authority/isolation preflight with
+  green default-branch CI at
+  `5f411da6e7040e3494cbd275729de9a2ed8c67a3`.
+- Flow #25 remains the active owner of process enforcement. Flow #42 / PR #43
+  is its final bounded child and adds direct launch/supervision without
+  pre-empting later sandbox, durable-state, or real-adapter work.
 
 <!-- roadmap-step
 id: FLO-Q04
@@ -225,11 +229,11 @@ issues: []
 
 Flow begins with three independently released Rust tools. Its first executable
 checkpoint is a bounded extension resolution and execution seam: merged
-in-process evidence plus host-neutral process transcript validation. It is not
-yet a product orchestrator, process runner, or provider integration. Flow will
-integrate named releases through public libraries or versioned CLI contracts.
-It will not consolidate repositories, copy sibling source, or hide missing
-provider capabilities inside the facade.
+in-process evidence, host-neutral process transcript validation, and one bounded
+`trusted-unconfined` local runner. It is not yet a product orchestrator or real
+provider integration. Flow will integrate named releases through public
+libraries or versioned CLI contracts. It will not consolidate repositories,
+copy sibling source, or hide missing provider capabilities inside the facade.
 
 This roadmap advances on capability evidence rather than dates.
 
@@ -247,6 +251,8 @@ and
 [ADR-0008](docs/architecture/governance/decisions/ADR-0008-locked-execution-subjects.md).
 Exact process authority and isolation evidence is approved by
 [ADR-0009](docs/architecture/governance/decisions/ADR-0009-process-authority-isolation.md).
+Bounded direct-child launch and supervision is approved by
+[ADR-0010](docs/architecture/governance/decisions/ADR-0010-bounded-direct-process-supervision.md).
 Artifact, capability, compatibility, binding, host-observation, execution-
 subject, and authority/isolation schemas begin as provisional v1 contracts so
 real adapter work can refine them without claiming stability.
@@ -360,7 +366,7 @@ matched execution subjects. Require separate host evidence to identify the
 canonical profile, subject observation, backend, and enforcement status for
 every authority dimension.
 
-**Candidate evidence:** Flow #40 / PR #41 adds
+**Delivered evidence:** Flow #40 / merged PR #41 adds
 `flow.process-authority-profile/v1`,
 `flow.process-enforcement-evidence/v1`, deterministic canonical identities,
 opaque `AuthorizedProcess` preflight, sandbox-required process routing, and
@@ -368,6 +374,22 @@ positive/adversarial authority and evidence tests. It validates caller-attested
 host evidence; it does not launch a process, implement an operating-system
 sandbox, authenticate the evidence source, persist run state, or implement a
 real provider adapter.
+
+### Launch and supervise bounded provider processes
+
+Compose the subject, authority, and transport gates around one real local
+`trusted-unconfined` direct child. Invoke the exact locked executable with
+literal argv and an explicit cwd; clear and reconstruct the environment from
+authorized opaque handles; supervise stdin and independently bounded output;
+enforce deadline and caller cancellation with grace and escalation; reap the
+direct child; and retain transcript validation as the sole promotion path.
+
+**Candidate evidence:** Flow #42 / PR #43 adds `LocalProcessRunner`,
+`CancellationSignal`, bounded stdio workers, Unix `SIGTERM` grace and forced
+escalation, typed interruption, direct-child reap proof, and real-process
+positive/adversarial tests. It does not provide a sandbox, descendant
+containment, descriptor-bound execution, durable state, retry/resume, or a real
+provider adapter.
 
 ### Pin the capability matrix
 
