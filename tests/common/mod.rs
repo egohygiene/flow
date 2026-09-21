@@ -52,6 +52,10 @@ impl ProcessSubjectRoot {
             .join(PROCESS_PACKAGE_LOCATOR)
             .join(PROCESS_EXECUTABLE_LOCATOR)
     }
+
+    pub fn package_path(&self) -> PathBuf {
+        self.path.join(PROCESS_PACKAGE_LOCATOR)
+    }
 }
 
 impl Drop for ProcessSubjectRoot {
@@ -138,10 +142,35 @@ pub fn process_subject_fixture_with_permissions(
     process_subject_fixture_with_settings(trust, Some((requested, granted)))
 }
 
+pub fn process_runner_fixture(
+    executable_bytes: &[u8],
+    requested: flow::Permissions,
+    granted: flow::Permissions,
+) -> ProcessSubjectFixture {
+    process_subject_fixture_with_executable(
+        flow::Trust::Trusted,
+        Some((requested, granted)),
+        executable_bytes,
+        true,
+    )
+}
+
 fn process_subject_fixture_with_settings(
     trust: flow::Trust,
     permissions: Option<(flow::Permissions, flow::Permissions)>,
 ) -> ProcessSubjectFixture {
+    process_subject_fixture_with_executable(trust, permissions, PROCESS_EXECUTABLE_BYTES, false)
+}
+
+fn process_subject_fixture_with_executable(
+    trust: flow::Trust,
+    permissions: Option<(flow::Permissions, flow::Permissions)>,
+    executable_bytes: &[u8],
+    make_executable: bool,
+) -> ProcessSubjectFixture {
+    #[cfg(not(unix))]
+    let _ = make_executable;
+
     let sequence = NEXT_PROCESS_ROOT_ID.fetch_add(1, Ordering::Relaxed);
     let path = std::env::temp_dir().join(format!(
         "flow-process-subject-test-{}-{sequence}",
@@ -152,9 +181,21 @@ fn process_subject_fixture_with_settings(
     fs::create_dir_all(&package_path).expect("process package directory must be created");
     fs::write(
         package_path.join(PROCESS_EXECUTABLE_LOCATOR),
-        PROCESS_EXECUTABLE_BYTES,
+        executable_bytes,
     )
     .expect("process executable fixture must be written");
+    #[cfg(unix)]
+    if make_executable {
+        use std::os::unix::fs::PermissionsExt;
+
+        let executable_path = package_path.join(PROCESS_EXECUTABLE_LOCATOR);
+        let mut permissions = fs::metadata(&executable_path)
+            .expect("process executable fixture metadata must be available")
+            .permissions();
+        permissions.set_mode(0o700);
+        fs::set_permissions(executable_path, permissions)
+            .expect("process executable fixture must be executable");
+    }
     fs::write(
         package_path.join(PROCESS_UNICODE_FILE),
         PROCESS_UNICODE_BYTES,
@@ -162,14 +203,14 @@ fn process_subject_fixture_with_settings(
     .expect("Unicode package fixture must be written");
     let root = ProcessSubjectRoot { path };
 
-    let executable_digest = format!("{:x}", Sha256::digest(PROCESS_EXECUTABLE_BYTES));
+    let executable_digest = format!("{:x}", Sha256::digest(executable_bytes));
     let unicode_digest = format!("{:x}", Sha256::digest(PROCESS_UNICODE_BYTES));
     let canonical_package = serde_json::to_vec(&[
         CanonicalDirectoryChild {
             name: PROCESS_EXECUTABLE_LOCATOR,
             kind: flow::ArtifactKind::File,
             digest: &executable_digest,
-            size_bytes: PROCESS_EXECUTABLE_BYTES.len() as u64,
+            size_bytes: executable_bytes.len() as u64,
         },
         CanonicalDirectoryChild {
             name: PROCESS_UNICODE_FILE,

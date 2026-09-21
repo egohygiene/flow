@@ -4,7 +4,9 @@
 //! and provider events and results as untrusted evidence until validation has
 //! completed. It can invoke a caller-supplied in-process port or validate an
 //! already-captured external-process transcript after exact subject and
-//! authority/isolation preflight; it does not launch or sandbox processes.
+//! authority/isolation preflight. Its local runner can launch the exact
+//! trusted-unconfined executable; sandboxing and interrupted lifecycle control
+//! remain separate work.
 
 pub mod artifacts;
 pub mod authority;
@@ -14,6 +16,7 @@ pub mod execution;
 pub mod execution_subjects;
 pub mod hermetic;
 pub mod process;
+pub mod runner;
 pub mod scenario;
 
 pub use artifacts::*;
@@ -31,5 +34,9 @@ pub use execution_subjects::*;
 pub use hermetic::{HermeticBehavior, HermeticExtension};
 pub use process::{
     DecodedProcessTranscript, ProcessProtocolError, decode_provider_stdout, encode_invocation_frame,
+};
+pub use runner::{
+    LocalProcessRunner, NoSecrets, ProcessPipe, ProcessRunnerError, ProcessWorker, SecretResolver,
+    SecretValue,
 };
 pub use scenario::*;
