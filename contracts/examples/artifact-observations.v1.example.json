@@ -1,0 +1,47 @@
+{
+  "schema_version": "flow.artifact-observations/v1",
+  "binding_set_id": "bindings:synthetic-optiflow-scan",
+  "digest_algorithm": "sha256",
+  "directory_manifest_profile": "flow.directory-manifest/v1",
+  "artifacts": [
+    {
+      "artifact_id": "artifact:synthetic-collection",
+      "port": "port:collection",
+      "media_type": "application/vnd.flow.collection-reference+json",
+      "kind": "file",
+      "locator": "inputs/source collection.json",
+      "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+      "size_bytes": 128,
+      "manifest": []
+    },
+    {
+      "artifact_id": "artifact:synthetic-collection-evidence",
+      "port": "port:evidence",
+      "media_type": "application/vnd.optiflow.collection-evidence+json",
+      "kind": "directory",
+      "locator": "outputs/evidence bundle",
+      "digest": "51495603e74938fc7b5f86c3ae1d01ba4f9aaccf29dfe8ad26ea49bbd1ca864a",
+      "size_bytes": 384,
+      "manifest": [
+        {
+          "locator": "summary.json",
+          "kind": "file",
+          "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+          "size_bytes": 256
+        },
+        {
+          "locator": "évidence",
+          "kind": "directory",
+          "digest": "1e1b8003aaea7b8f60b4481e20c3ad61e627d84d54d2d459109d41b3b01799c2",
+          "size_bytes": 128
+        },
+        {
+          "locator": "évidence/details.json",
+          "kind": "file",
+          "digest": "6666666666666666666666666666666666666666666666666666666666666666",
+          "size_bytes": 128
+        }
+      ]
+    }
+  ]
+}

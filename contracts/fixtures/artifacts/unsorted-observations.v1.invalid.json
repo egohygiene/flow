@@ -1,0 +1,31 @@
+{
+  "schema_version": "flow.artifact-observations/v1",
+  "binding_set_id": "bindings:unsorted-fixture",
+  "digest_algorithm": "sha256",
+  "directory_manifest_profile": "flow.directory-manifest/v1",
+  "artifacts": [
+    {
+      "artifact_id": "artifact:bundle",
+      "port": "port:bundle",
+      "media_type": "application/vnd.flow.bundle+json",
+      "kind": "directory",
+      "locator": "outputs/bundle",
+      "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+      "size_bytes": 2,
+      "manifest": [
+        {
+          "locator": "z.txt",
+          "kind": "file",
+          "digest": "6666666666666666666666666666666666666666666666666666666666666666",
+          "size_bytes": 1
+        },
+        {
+          "locator": "a.txt",
+          "kind": "file",
+          "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+          "size_bytes": 1
+        }
+      ]
+    }
+  ]
+}

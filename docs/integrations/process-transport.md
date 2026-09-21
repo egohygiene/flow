@@ -34,6 +34,10 @@ The provider cannot promote its result to accepted completion. Flow returns a
 `ValidatedExecution` only after framing, contract, correlation, ordering,
 observer, terminal-consistency, and termination checks all pass.
 
+`ValidatedExecution` is not artifact acceptance. A future runner must next use
+the separate [artifact-binding profile](artifact-bindings.md) to observe bound
+workspace bytes and construct `AcceptedArtifactSet`.
+
 ## Standard-input request
 
 The encoded request frame has this grammar:
@@ -245,8 +249,9 @@ It does not implement or prove:
 - runtime output backpressure, timeout measurement, cancellation delivery,
   grace periods, kill, or reap behavior;
 - executable, package, publisher, signature, or transparency-log verification;
-- artifact locators, root confinement, path-escape prevention, immutable input
-  verification, declared-output discovery, or content digest recomputation;
+- automatic artifact discovery or provider-native output validation; the
+  separate issue #36 library seam requires explicit bindings and a fresh
+  post-transcript host observation beneath a caller-selected root;
 - filesystem, environment, subprocess, network, AI, GPU, signing, publication,
   or other side-effect isolation;
 - an operating-system sandbox or an enforceable `sandboxed` trust profile;
@@ -257,4 +262,6 @@ It does not implement or prove:
 
 Later work may place a platform-specific runner in front of this validator. The
 runner must supply evidence without weakening the transcript grammar or
-promoting launch, exit, or file existence alone to accepted completion.
+promoting launch, exit, or file existence alone to accepted completion. It must
+also quiesce and isolate the workspace before the artifact observer can make
+stronger byte-identity claims.

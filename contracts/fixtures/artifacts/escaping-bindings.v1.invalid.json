@@ -1,0 +1,16 @@
+{
+  "schema_version": "flow.artifact-bindings/v1",
+  "binding_set_id": "bindings:escaping-fixture",
+  "digest_algorithm": "sha256",
+  "inputs": [
+    {
+      "artifact_id": "artifact:source",
+      "port": "port:source",
+      "media_type": "application/json",
+      "kind": "file",
+      "locator": "../outside.json",
+      "expected_digest": "2222222222222222222222222222222222222222222222222222222222222222"
+    }
+  ],
+  "outputs": []
+}

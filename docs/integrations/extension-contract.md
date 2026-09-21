@@ -9,8 +9,10 @@ deterministic resolution plus one injected, trusted in-process execution seam
 proven with a hermetic reference port. Flow issue #26 adds deterministic
 process request encoding and host-neutral validation of caller-supplied
 completion, stdout, and stderr evidence; it does not launch a process. Product
-orchestration, real provider adapters, a two-holon vertical slice, and runtime
-CLI commands remain work for Flow issue #3 and its later children.
+Flow issue #36 adds a separate Flow-owned artifact-binding, host-observation,
+and acceptance boundary. Product orchestration, real provider adapters, a
+two-holon vertical slice, and runtime CLI commands remain work for Flow issue
+#3 and its later children.
 
 An extension is an independently versioned provider package. It can expose one
 or more Aniflow, Optiflow, Renderflow, Flow, or third-party domain capabilities
@@ -25,6 +27,8 @@ without importing sibling source or moving domain logic into Flow.
 | Invocation | Flow | Binds one capability call to immutable inputs, configuration, authorization, limits, and resume evidence |
 | Events and result | Provider contribution, Flow validation | Report observations; cannot self-approve suite completion |
 | Resolution evidence | Flow | Explains selection, rejection, conflict, replacement, and fallback |
+| Artifact bindings | Flow | Bind immutable input and candidate-output IDs to logical ports, media types, kinds, and root-relative locators |
+| Host artifact observations | Flow observer | Recompute file/directory content identity beneath one selected root; cannot be supplied by the provider as an acceptance token |
 
 Manifests are inert data. Flow reads manifests only from explicitly configured
 locations and never executes a binary merely because it is on `PATH`.
@@ -83,6 +87,13 @@ identities.
 Inputs and outputs cross the suite boundary as immutable artifact references.
 Any content-changing operation produces a new artifact identity and lineage.
 
+The extension envelopes remain path-independent. A separate
+`flow.artifact-bindings/v1` document maps their IDs to portable root-relative
+locators for one run, and `flow.artifact-observations/v1` records Flow-observed
+file or directory identity. Inputs carry an expected SHA-256 digest; outputs
+acquire their digest from host observation. The complete profile is specified
+in [Artifact bindings](artifact-bindings.md).
+
 ## Execution modes
 
 - **In-process:** a version-pinned public library entry point. Flow still binds
@@ -101,7 +112,10 @@ an in-process edge unsuitable.
 
 The current executable checkpoint resolves only `trusted` candidates. It proves
 a caller-injected in-process library port plus host-neutral process request and
-transcript validation. It performs no filesystem discovery, dynamic loading,
+transcript validation. A post-execution library seam can observe explicitly
+bound files and directories beneath a caller-selected root and construct an
+opaque accepted artifact set only after binding, host, invocation, event, and
+result correlation. It performs no filesystem discovery, dynamic loading,
 external process launch/capture, executable integrity verification, or sandbox
 enforcement. `sandboxed` candidates fail closed. In-process limits remain
 policy metadata only. The process seam checks already captured stdout/stderr
@@ -223,6 +237,8 @@ The machine-readable schemas live in `contracts/schemas/`:
 - `flow.extension-event/v1`
 - `flow.extension-result/v1`
 - `flow.extension-resolution/v1`
+- `flow.artifact-bindings/v1`
+- `flow.artifact-observations/v1`
 
 Synthetic examples and compatibility fixtures cover all three holon domains and
 explicit compatible, incompatible, over-permissioned, duplicate, and malformed
@@ -234,9 +250,10 @@ Issue #23 / merged PR #24 adds closed extension-v1 models, semantic validation,
 deterministic single-capability resolution, one injected `ExtensionPort`,
 correlated event/result validation, and a no-effects, no-artifacts hermetic
 reference port. Issue #26 reuses that validation for deterministic request
-framing and caller-supplied process transcripts. Neither proof promotes an
-extension's terminal success report to a validated execution until Flow-owned
-checks pass.
+framing and caller-supplied process transcripts. Issue #36 adds portable
+artifact bindings, deterministic host observation, immutable input verification,
+and a separate artifact-acceptance token. No proof promotes an extension's
+terminal success report until its applicable Flow-owned checks pass.
 
 Those checks prove contract validity and correlation only. They do not prove
 the authenticity of the caller-issued configuration digest, authorization ID,
@@ -250,16 +267,18 @@ validation to be `passed`; `skipped` permits `passed` or `not-run` but rejects
 `failed`. Outcome, failure classification, and failure payload must also be
 coherent.
 
-Artifact handling is identifier self-consistency only. Invocation input IDs
-must be unique, result `consumed_artifacts` must be a subset of those IDs, and
-references on `artifact-produced` events must appear in terminal
-`produced_artifacts`; generic event references remain unrestricted. This does
-not bind identifiers to locators, recompute or verify artifact digests or
-bytes, establish artifact existence, or perform domain-output validation.
+`ValidatedExecution` still proves provider-envelope consistency only. Artifact
+acceptance is a subsequent explicit gate: bindings and Flow-created host
+observations must cover every declared input and output, match capability media
+types, and correlate exactly with invocation, result, and `artifact-produced`
+event IDs. Inputs are rehashed against their expected digest; output file and
+directory identities come from host-observed bytes. This establishes portable
+byte identity beneath the selected root, not provider-native domain validity,
+publisher authenticity, or sandbox enforcement.
 
 `extensions list`, `extensions inspect`, `doctor`, real process launching and
-capture, artifact binding, executable verification, sandbox enforcement, real
-provider adapters, interruption delivery, durable run state,
+capture, executable verification, sandbox enforcement, real provider adapters,
+domain-output validation, interruption delivery, durable run state,
 checkpoints/resume, and the cross-holon vertical slice remain deferred work for
 Flow #3 after the required holon contracts are available as releases or
 versioned process envelopes.

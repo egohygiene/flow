@@ -1,12 +1,14 @@
 # Flow contract set
 
 This directory contains Flow-owned suite interchange contracts. The initial
-contract set is version `0.3.0`, status `provisional`, in the v1 compatibility
+contract set is version `0.4.0`, status `provisional`, in the v1 compatibility
 family. Provisional means versioned and testable, not stable for production.
 
 | Contract | Purpose |
 | --- | --- |
 | `flow.artifact/v1` | immutable artifact identity and production lineage |
+| `flow.artifact-bindings/v1` | Flow-owned immutable input and candidate-output bindings to logical ports and portable root-relative locators |
+| `flow.artifact-observations/v1` | deterministic host-observed file and directory identity for one binding set |
 | `flow.capability/v1` | provider capability discovery and side-effect declaration |
 | `flow.compatibility/v1` | deterministic compatibility decision and evidence |
 | `flow.extension-manifest/v1` | provider identity, integrity, compatibility, capabilities, requested permissions, hooks, and checkpoint behavior |
@@ -34,6 +36,13 @@ rules and host-neutral acceptance boundary are specified in
 [`docs/integrations/process-transport.md`](../docs/integrations/process-transport.md).
 Wire whitespace and caller read chunking are not contract identity.
 
+Artifact path binding remains separate from the path-independent extension
+envelopes. The root-relative locator, SHA-256 file identity, recursive directory
+manifest, Flow-observation token, and final correlation gate are specified in
+[`docs/integrations/artifact-bindings.md`](../docs/integrations/artifact-bindings.md).
+A deserialized observation document is inspectable evidence, not proof that
+Flow observed those bytes and not an artifact-acceptance token.
+
 The scenario manifest and its canonical identity profile are described in
 [`docs/integrations/scenario-fixtures.md`](../docs/integrations/scenario-fixtures.md).
 The Rust and Python implementations independently reproduce the checked-in
@@ -52,12 +61,12 @@ major schema identifier; additive compatible changes increment the contract-set
 semantic version. Consumers reject unknown major identifiers and never silently
 downgrade.
 
-The current Rust checkpoint maps the six extension-v1 documents and the
-scenario manifest into closed library models and adds semantic checks that JSON
-Schema alone does not express. Its hermetic in-process reference and
-host-neutral process transcript are not
-provider adapters and do not prove process launch/capture enforcement,
-filesystem artifact handling, executable verification, sandboxing,
+The current Rust checkpoint maps the six extension-v1 documents, the scenario
+manifest, and both artifact-boundary documents into closed library models and
+adds semantic checks that JSON Schema alone does not express. Its hermetic
+in-process reference, host-neutral process transcript, and local artifact
+observer are not provider adapters and do not prove process launch/capture
+enforcement, executable verification, domain-output validity, sandboxing,
 checkpoints, or resume.
 
 For this checkpoint, the caller owns configuration canonicalization and digest

@@ -1,7 +1,7 @@
 use flow::{
-    ExtensionEvent, ExtensionInvocation, ExtensionLock, ExtensionManifest, ExtensionResolution,
-    ExtensionResult, FailureClassification, Outcome, ValidationEvidence, ValidationStatus,
-    parse_flow_version_requirement,
+    ArtifactBindingSet, ExtensionEvent, ExtensionInvocation, ExtensionLock, ExtensionManifest,
+    ExtensionResolution, ExtensionResult, FailureClassification, HostArtifactObservationSet,
+    Outcome, ValidationEvidence, ValidationStatus, parse_flow_version_requirement,
 };
 use serde::Serialize;
 use serde::de::DeserializeOwned;
@@ -17,7 +17,15 @@ where
 }
 
 #[test]
-fn six_checked_in_examples_roundtrip_and_validate() {
+fn eight_checked_in_examples_roundtrip_and_validate() {
+    roundtrip_and_validate::<ArtifactBindingSet>(
+        include_str!("../contracts/examples/artifact-bindings.v1.example.json"),
+        |value| value.validate().unwrap(),
+    );
+    roundtrip_and_validate::<HostArtifactObservationSet>(
+        include_str!("../contracts/examples/artifact-observations.v1.example.json"),
+        |value| value.validate().unwrap(),
+    );
     roundtrip_and_validate::<ExtensionManifest>(
         include_str!("../contracts/examples/extension-manifest.v1.example.json"),
         |value| value.validate().unwrap(),
@@ -70,6 +78,23 @@ fn closed_models_reject_unknown_root_and_nested_fields() {
     let mut nested: serde_json::Value = serde_json::from_str(source).unwrap();
     nested["publisher"]["surprise"] = serde_json::json!(true);
     assert!(serde_json::from_value::<ExtensionManifest>(nested).is_err());
+}
+
+#[test]
+fn artifact_models_reject_unknown_root_and_nested_fields() {
+    let bindings_source = include_str!("../contracts/examples/artifact-bindings.v1.example.json");
+    let mut bindings: serde_json::Value = serde_json::from_str(bindings_source).unwrap();
+    bindings
+        .as_object_mut()
+        .unwrap()
+        .insert("surprise".to_owned(), serde_json::json!(true));
+    assert!(serde_json::from_value::<ArtifactBindingSet>(bindings).is_err());
+
+    let observations_source =
+        include_str!("../contracts/examples/artifact-observations.v1.example.json");
+    let mut observations: serde_json::Value = serde_json::from_str(observations_source).unwrap();
+    observations["artifacts"][1]["manifest"][0]["surprise"] = serde_json::json!(true);
+    assert!(serde_json::from_value::<HostArtifactObservationSet>(observations).is_err());
 }
 
 #[test]

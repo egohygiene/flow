@@ -5,6 +5,7 @@
 //! completed. It can invoke a caller-supplied in-process port or validate an
 //! already-captured external-process transcript; it does not launch processes.
 
+pub mod artifacts;
 pub mod catalog;
 pub mod contracts;
 pub mod execution;
@@ -12,6 +13,7 @@ pub mod hermetic;
 pub mod process;
 pub mod scenario;
 
+pub use artifacts::*;
 pub use catalog::{
     CatalogError, ExtensionCatalog, ExtensionObservation, ResolutionOutcome, ResolutionRequest,
     ResolvedExtension,
