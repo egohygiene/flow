@@ -65,8 +65,8 @@ binary is a synthetic conformance provider; it is not a public Flow CLI:
   provider binary, filesystem output, network access, or external service;
 - a separately compiled hermetic provider fixture freezes four synthetic
   capability IDs and proves a real deterministic process-to-artifact success
-  path without sibling source, ambient environment, network access, or an
-  external service.
+  path plus bounded resolution, lifecycle, and protocol outcomes without
+  sibling source, ambient environment, network access, or an external service.
 
 Run the reference example with:
 
@@ -157,8 +157,9 @@ Flow is in the **executable contract seam** phase. Issues #23, #26, #28, #36,
 `trusted-unconfined` direct launch and supervision through the existing
 subject, authority, and transcript gates. Issue #44 begins the parent-#29
 hermetic provider kit with an immutable package and deterministic accepted
-inspection artifact; #45 and #46 retain the failure and graph matrices. The
-process seam still does not
+inspection artifact. Issue #45 adds its bounded selection, lifecycle, and
+protocol outcome matrix; #46 retains physical artifact adversaries, graph
+fixtures, and the final parent evidence matrix. The process seam still does not
 implement authenticity verification, operating-system sandbox enforcement,
 authenticated host evidence, descriptor-bound launch, or process-tree
 containment, and the scenario contract is not an executor.

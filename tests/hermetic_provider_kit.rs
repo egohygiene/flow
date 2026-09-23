@@ -6,13 +6,16 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use flow::{
-    ARTIFACT_BINDINGS_V1, AcceptedArtifactSet, ArtifactBindingSet, ArtifactKind, Authorization,
-    CheckpointMode, Configuration, Domain, EXECUTION_SUBJECT_LOCK_V1, EventKind, EventState,
+    ARTIFACT_BINDINGS_V1, AcceptedArtifactSet, ArtifactAcceptanceError, ArtifactBindingSet,
+    ArtifactKind, Authorization, AuthorizedProcess, CheckpointMode, Configuration, Domain,
+    EXECUTION_SUBJECT_LOCK_V1, EventKind, EventSinkError, EventState, ExecutionError,
     ExecutionModeKind, ExecutionSubjectLock, ExtensionCatalog, ExtensionInvocation, ExtensionLock,
-    ExtensionManifest, ExtensionObservation, ExtensionResolution, HostArtifactObservationSet,
-    HostExecutionSubjectObservationSet, InputArtifact, InputArtifactBinding, InvocationExtension,
-    InvocationInterface, InvocationPhase, LocalProcessRunner, NoSecrets, OutputArtifactBinding,
-    PROCESS_AUTHORITY_PROFILE_V1, ProcessIsolation, ProvenanceKind, ResolutionRequest, SHA256,
+    ExtensionManifest, ExtensionObservation, ExtensionResolution, FallbackPolicy,
+    HostArtifactObservationSet, HostExecutionSubjectObservationSet, InputArtifact,
+    InputArtifactBinding, InvocationExtension, InvocationInterface, InvocationPhase,
+    LocalProcessRunner, MatchedExecutionSubjects, NoSecrets, OutputArtifactBinding,
+    PROCESS_AUTHORITY_PROFILE_V1, ProcessIsolation, ProcessRunnerError, ProcessStream,
+    ProvenanceKind, ResolutionOutcome, ResolutionRequest, ResolutionResult, SHA256, Severity,
     Trust, ValidatedExecution, ValidationStatus, accept_artifacts, authorize_process,
     observe_artifacts, observe_execution_subjects,
 };
@@ -34,6 +37,7 @@ const BINDINGS_LOCATOR: &str = "artifact-bindings.v1.json";
 const INPUT_LOCATOR: &str = "inputs/source-text.txt";
 const INPUT_ID: &str = "artifact:source-text";
 const CONFIGURATION_SCHEMA: &str = "flow.hermetic-provider-configuration/v1";
+const LIFECYCLE_CONTROL_LOCATOR: &str = "outputs/lifecycle-control.json";
 
 static NEXT_ROOT_ID: AtomicU64 = AtomicU64::new(0);
 
@@ -102,6 +106,37 @@ struct KitFixture {
     executable_locator: String,
     grants_digest: String,
     package_observations: HostArtifactObservationSet,
+}
+
+#[derive(Clone, Copy, Debug)]
+struct CatalogProfile {
+    available: bool,
+    flow_version_requirement: Option<&'static str>,
+}
+
+impl Default for CatalogProfile {
+    fn default() -> Self {
+        Self {
+            available: true,
+            flow_version_requirement: None,
+        }
+    }
+}
+
+struct PreparedLifecycleRun {
+    resolution: ResolutionOutcome,
+    invocation: ExtensionInvocation,
+    subject_lock: ExecutionSubjectLock,
+    subjects: MatchedExecutionSubjects,
+    authority: AuthorizedProcess,
+}
+
+impl PreparedLifecycleRun {
+    fn resolved(&self) -> &flow::ResolvedExtension {
+        self.resolution
+            .resolved()
+            .expect("prepared lifecycle runs must retain their resolution token")
+    }
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -226,8 +261,468 @@ fn inspection_is_deterministic_across_fresh_process_and_artifact_boundaries() {
     assert_eq!(first, second, "inspection evidence drifted");
 }
 
+#[test]
+fn unavailable_provider_is_blocked_before_invocation_with_retained_evidence() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new_with_catalog_profile(
+        capability,
+        &provider_bytes,
+        &executable_name,
+        CatalogProfile {
+            available: false,
+            flow_version_requirement: None,
+        },
+    );
+    let tree_before = snapshot_tree(fixture.root.path());
+
+    let outcome = fixture.resolve_case(
+        capability,
+        "hermetic-inspection-unavailable",
+        "hermetic-process",
+    );
+
+    outcome.evidence().validate().unwrap();
+    assert!(outcome.resolved().is_none());
+    assert_eq!(outcome.evidence().result, ResolutionResult::Blocked);
+    assert!(outcome.evidence().selected_extension_ids.is_empty());
+    assert!(outcome.evidence().fallback_order.is_empty());
+    assert_eq!(outcome.evidence().candidates.len(), 1);
+    let candidate = &outcome.evidence().candidates[0];
+    assert!(candidate.compatible);
+    assert!(candidate.authorized);
+    assert!(!candidate.available);
+    assert!(candidate.reasons.iter().any(|reason| {
+        reason == "The caller reports the extension unavailable before invocation."
+    }));
+    assert_eq!(snapshot_tree(fixture.root.path()), tree_before);
+    assert!(!fixture.output_path().exists());
+}
+
+#[test]
+fn incompatible_provider_is_rejected_before_invocation_with_retained_evidence() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new_with_catalog_profile(
+        capability,
+        &provider_bytes,
+        &executable_name,
+        CatalogProfile {
+            available: true,
+            flow_version_requirement: Some(">=9.0.0"),
+        },
+    );
+    let tree_before = snapshot_tree(fixture.root.path());
+
+    let outcome = fixture.resolve_case(
+        capability,
+        "hermetic-inspection-incompatible",
+        "hermetic-process",
+    );
+
+    outcome.evidence().validate().unwrap();
+    assert!(outcome.resolved().is_none());
+    assert_eq!(
+        outcome.evidence().result,
+        ResolutionResult::NoCompatibleProvider
+    );
+    assert!(outcome.evidence().selected_extension_ids.is_empty());
+    assert!(outcome.evidence().fallback_order.is_empty());
+    assert_eq!(outcome.evidence().candidates.len(), 1);
+    let candidate = &outcome.evidence().candidates[0];
+    assert!(!candidate.compatible);
+    assert!(candidate.authorized);
+    assert!(candidate.available);
+    assert!(
+        candidate
+            .reasons
+            .iter()
+            .any(|reason| reason == "Flow 0.1.0 does not satisfy >=9.0.0.")
+    );
+    assert_eq!(snapshot_tree(fixture.root.path()), tree_before);
+    assert!(!fixture.output_path().exists());
+}
+
+#[test]
+fn warning_and_partial_results_remain_semantically_distinct() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+
+    let warning_fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let warning = warning_fixture.prepare_lifecycle(capability, "warning", false);
+    let warning_before = warning_fixture.immutable_workspace_bytes();
+    let mut warning_events = Vec::new();
+    let warning_execution = LocalProcessRunner::run(
+        warning_fixture.root.path(),
+        warning.resolved(),
+        &warning.invocation,
+        &warning.subject_lock,
+        &warning.authority,
+        &NoSecrets,
+        &mut warning_events,
+    )
+    .unwrap();
+    assert_eq!(warning_events, warning_execution.events());
+    assert_eq!(warning_execution.result().outcome, flow::Outcome::Produced);
+    assert!(!warning_execution.result().partial_result);
+    assert_eq!(warning_execution.result().diagnostics.len(), 1);
+    let diagnostic = &warning_execution.result().diagnostics[0];
+    assert_eq!(diagnostic.severity, Severity::Warning);
+    assert!(diagnostic.redacted);
+    let warning_observed = observe_artifacts(
+        &warning_fixture.root.path().join(WORKSPACE_LOCATOR),
+        &warning_fixture.bindings,
+    )
+    .unwrap();
+    accept_artifacts(
+        warning.resolved(),
+        &warning.invocation,
+        &warning_execution,
+        &warning_fixture.bindings,
+        &warning_observed,
+    )
+    .unwrap();
+    warning_fixture.assert_subjects_unchanged(&warning);
+    warning_fixture.assert_immutable_workspace_bytes(&warning_before);
+
+    let partial_fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let partial = partial_fixture.prepare_lifecycle(capability, "partial-result", false);
+    let partial_before = partial_fixture.immutable_workspace_bytes();
+    let mut partial_events = Vec::new();
+    let partial_execution = LocalProcessRunner::run(
+        partial_fixture.root.path(),
+        partial.resolved(),
+        &partial.invocation,
+        &partial.subject_lock,
+        &partial.authority,
+        &NoSecrets,
+        &mut partial_events,
+    )
+    .unwrap();
+    assert_eq!(partial_events, partial_execution.events());
+    assert_eq!(partial_execution.result().outcome, flow::Outcome::Produced);
+    assert!(partial_execution.result().partial_result);
+    assert!(partial_execution.result().diagnostics.is_empty());
+    let partial_observed = observe_artifacts(
+        &partial_fixture.root.path().join(WORKSPACE_LOCATOR),
+        &partial_fixture.bindings,
+    )
+    .unwrap();
+    let error = accept_artifacts(
+        partial.resolved(),
+        &partial.invocation,
+        &partial_execution,
+        &partial_fixture.bindings,
+        &partial_observed,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::Mismatch { ref message }
+            if message == "artifact acceptance requires a complete produced or reused result"
+    ));
+    partial_fixture.assert_subjects_unchanged(&partial);
+    partial_fixture.assert_immutable_workspace_bytes(&partial_before);
+}
+
+#[test]
+fn nonzero_after_success_never_promotes_provider_evidence() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let prepared = fixture.prepare_lifecycle(capability, "nonzero-after-success", false);
+    let immutable_before = fixture.immutable_workspace_bytes();
+    let mut events = Vec::new();
+
+    let error = LocalProcessRunner::run(
+        fixture.root.path(),
+        prepared.resolved(),
+        &prepared.invocation,
+        &prepared.subject_lock,
+        &prepared.authority,
+        &NoSecrets,
+        &mut events,
+    )
+    .unwrap_err();
+
+    assert!(matches!(
+        error,
+        ProcessRunnerError::Validation {
+            source: ExecutionError::ProcessExit { code: Some(7) }
+        }
+    ));
+    assert!(
+        events.is_empty(),
+        "exit failure must precede transcript parsing"
+    );
+    assert!(fixture.output_path().is_file());
+    assert_eq!(
+        prepared.resolved().fallback_policy(),
+        FallbackPolicy::Forbidden
+    );
+    fixture.assert_subjects_unchanged(&prepared);
+    fixture.assert_immutable_workspace_bytes(&immutable_before);
+}
+
+#[test]
+fn invalid_event_and_result_return_typed_semantic_errors() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+
+    let event_fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let invalid_event = event_fixture.prepare_lifecycle(capability, "invalid-event", false);
+    let event_before = event_fixture.immutable_workspace_bytes();
+    let mut forwarded_events = Vec::new();
+    let event_error = LocalProcessRunner::run(
+        event_fixture.root.path(),
+        invalid_event.resolved(),
+        &invalid_event.invocation,
+        &invalid_event.subject_lock,
+        &invalid_event.authority,
+        &NoSecrets,
+        &mut forwarded_events,
+    )
+    .unwrap_err();
+    match event_error {
+        ProcessRunnerError::Validation {
+            source:
+                ExecutionError::InvalidEvent {
+                    message,
+                    events,
+                    result: Some(result),
+                },
+        } => {
+            assert!(message.contains("strictly increasing"));
+            assert_eq!(events.len(), 3, "raw provider events must be retained");
+            assert_eq!(result.outcome, flow::Outcome::Produced);
+        }
+        other => panic!("unexpected invalid-event error: {other:?}"),
+    }
+    assert_eq!(
+        forwarded_events.len(),
+        1,
+        "only the valid prefix may reach the authoritative sink"
+    );
+    event_fixture.assert_subjects_unchanged(&invalid_event);
+    event_fixture.assert_immutable_workspace_bytes(&event_before);
+
+    let result_fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let invalid_result = result_fixture.prepare_lifecycle(capability, "invalid-result", false);
+    let result_before = result_fixture.immutable_workspace_bytes();
+    let mut result_events = Vec::new();
+    let result_error = LocalProcessRunner::run(
+        result_fixture.root.path(),
+        invalid_result.resolved(),
+        &invalid_result.invocation,
+        &invalid_result.subject_lock,
+        &invalid_result.authority,
+        &NoSecrets,
+        &mut result_events,
+    )
+    .unwrap_err();
+    match result_error {
+        ProcessRunnerError::Validation {
+            source:
+                ExecutionError::InvalidResult {
+                    message,
+                    events,
+                    result,
+                },
+        } => {
+            assert!(message.contains("authorization_id"));
+            assert_eq!(events.len(), 3);
+            assert_eq!(result.outcome, flow::Outcome::Produced);
+        }
+        other => panic!("unexpected invalid-result error: {other:?}"),
+    }
+    assert_eq!(result_events.len(), 3, "valid events remain authoritative");
+    result_fixture.assert_subjects_unchanged(&invalid_result);
+    result_fixture.assert_immutable_workspace_bytes(&result_before);
+}
+
+#[test]
+fn authoritative_host_rejection_blocks_valid_provider_success() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let prepared = fixture.prepare_lifecycle(capability, "success-with-host-rejection", false);
+    let immutable_before = fixture.immutable_workspace_bytes();
+    let mut forwarded_events = Vec::new();
+    let mut rejecting_sink = |event: &flow::ExtensionEvent| {
+        forwarded_events.push(event.clone());
+        Err(EventSinkError::new(
+            "checkpoint-2 synthetic host observer rejection",
+        ))
+    };
+
+    let error = LocalProcessRunner::run(
+        fixture.root.path(),
+        prepared.resolved(),
+        &prepared.invocation,
+        &prepared.subject_lock,
+        &prepared.authority,
+        &NoSecrets,
+        &mut rejecting_sink,
+    )
+    .unwrap_err();
+
+    match error {
+        ProcessRunnerError::Validation {
+            source:
+                ExecutionError::EventSink {
+                    source,
+                    events,
+                    result: Some(result),
+                },
+        } => {
+            assert_eq!(
+                source.message,
+                "checkpoint-2 synthetic host observer rejection"
+            );
+            assert_eq!(events.len(), 3);
+            assert_eq!(result.outcome, flow::Outcome::Produced);
+        }
+        other => panic!("unexpected host-rejection error: {other:?}"),
+    }
+    assert_eq!(forwarded_events.len(), 1);
+    assert!(fixture.output_path().is_file());
+    assert_eq!(
+        prepared.resolved().fallback_policy(),
+        FallbackPolicy::Forbidden
+    );
+    fixture.assert_subjects_unchanged(&prepared);
+    fixture.assert_immutable_workspace_bytes(&immutable_before);
+}
+
+#[test]
+fn stdout_and_stderr_overflow_retain_only_the_limit_sentinel() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+
+    for (mode, expected_stream) in [
+        ("stdout-overflow", ProcessStream::Stdout),
+        ("stderr-overflow", ProcessStream::Stderr),
+    ] {
+        let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+        let prepared = fixture.prepare_lifecycle(capability, mode, false);
+        let immutable_before = fixture.immutable_workspace_bytes();
+        let limit = match expected_stream {
+            ProcessStream::Stdout => prepared.invocation.limits.max_stdout_bytes,
+            ProcessStream::Stderr => prepared.invocation.limits.max_stderr_bytes,
+        };
+        let mut events = Vec::new();
+
+        let error = LocalProcessRunner::run(
+            fixture.root.path(),
+            prepared.resolved(),
+            &prepared.invocation,
+            &prepared.subject_lock,
+            &prepared.authority,
+            &NoSecrets,
+            &mut events,
+        )
+        .unwrap_err();
+
+        assert!(matches!(
+            error,
+            ProcessRunnerError::Validation {
+                source: ExecutionError::ProcessOutputLimit {
+                    stream,
+                    limit: observed_limit,
+                    observed,
+                }
+            } if stream == expected_stream
+                && observed_limit == limit
+                && observed == limit + 1
+        ));
+        assert!(events.is_empty());
+        assert!(!fixture.output_path().exists());
+        fixture.assert_subjects_unchanged(&prepared);
+        fixture.assert_immutable_workspace_bytes(&immutable_before);
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn timeout_and_readiness_gated_cancellation_reap_the_direct_child() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+
+    let cancellation_fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let cancellation =
+        cancellation_fixture.prepare_lifecycle(capability, "await-interruption", true);
+    let cancellation_before = cancellation_fixture.immutable_workspace_bytes();
+    let cancellation_control = cancellation_fixture.lifecycle_control_path();
+    let cancel_when_ready = || cancellation_control.is_file();
+    let mut cancellation_events = Vec::new();
+    let cancellation_error = LocalProcessRunner::run_with_cancellation(
+        cancellation_fixture.root.path(),
+        cancellation.resolved(),
+        &cancellation.invocation,
+        &cancellation.subject_lock,
+        &cancellation.authority,
+        &NoSecrets,
+        &cancel_when_ready,
+        &mut cancellation_events,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        cancellation_error,
+        ProcessRunnerError::Cancelled { forced: false }
+    ));
+    assert!(cancellation_events.is_empty());
+    assert!(cancellation_control.is_file());
+    assert_recorded_process_reaped(&cancellation_control);
+    assert!(!cancellation_fixture.output_path().exists());
+    cancellation_fixture.assert_subjects_unchanged(&cancellation);
+    cancellation_fixture.assert_immutable_workspace_bytes(&cancellation_before);
+
+    let timeout_fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let timeout = timeout_fixture.prepare_lifecycle(capability, "await-interruption", true);
+    let timeout_before = timeout_fixture.immutable_workspace_bytes();
+    let timeout_control = timeout_fixture.lifecycle_control_path();
+    let mut timeout_events = Vec::new();
+    let timeout_error = LocalProcessRunner::run(
+        timeout_fixture.root.path(),
+        timeout.resolved(),
+        &timeout.invocation,
+        &timeout.subject_lock,
+        &timeout.authority,
+        &NoSecrets,
+        &mut timeout_events,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        timeout_error,
+        ProcessRunnerError::TimedOut {
+            timeout_ms: 5_000,
+            forced: false,
+        }
+    ));
+    assert!(timeout_events.is_empty());
+    assert!(timeout_control.is_file());
+    assert_recorded_process_reaped(&timeout_control);
+    assert!(!timeout_fixture.output_path().exists());
+    timeout_fixture.assert_subjects_unchanged(&timeout);
+    timeout_fixture.assert_immutable_workspace_bytes(&timeout_before);
+}
+
 impl KitFixture {
     fn new(capability: CapabilitySpec, provider_bytes: &[u8], executable_name: &str) -> Self {
+        Self::new_with_catalog_profile(
+            capability,
+            provider_bytes,
+            executable_name,
+            CatalogProfile::default(),
+        )
+    }
+
+    fn new_with_catalog_profile(
+        capability: CapabilitySpec,
+        provider_bytes: &[u8],
+        executable_name: &str,
+        profile: CatalogProfile,
+    ) -> Self {
         let root = TestRoot::new();
         let package_path = root.path().join(PACKAGE_LOCATOR);
         let workspace_path = root.path().join(WORKSPACE_LOCATOR);
@@ -291,13 +786,16 @@ impl KitFixture {
         let executable_digest = digest_bytes(&fs::read(&executable_path).unwrap());
 
         let mut manifest: ExtensionManifest = serde_json::from_str(MANIFEST_TEMPLATE).unwrap();
+        if let Some(requirement) = profile.flow_version_requirement {
+            requirement.clone_into(&mut manifest.compatibility.flow_version_requirement);
+        }
         package_digest.clone_into(&mut manifest.integrity.value);
         let observation = ExtensionObservation::new(
             manifest.extension_id.clone(),
             manifest.version.clone(),
             manifest.publisher.id.clone(),
             manifest.integrity.clone(),
-            true,
+            profile.available,
         );
         let mut lock: ExtensionLock = serde_json::from_str(LOCK_TEMPLATE).unwrap();
         package_digest.clone_into(&mut lock.extensions[0].integrity.value);
@@ -314,6 +812,159 @@ impl KitFixture {
             grants_digest,
             package_observations,
         }
+    }
+
+    fn resolve_case(
+        &self,
+        capability: CapabilitySpec,
+        case_id: &str,
+        execution_mode_name: &str,
+    ) -> ResolutionOutcome {
+        self.catalog.resolve(&ResolutionRequest::new(
+            case_id,
+            capability.capability_id,
+            Domain::Flow,
+            execution_mode_name,
+            ExecutionModeKind::Process,
+        ))
+    }
+
+    fn prepare_lifecycle(
+        &self,
+        capability: CapabilitySpec,
+        mode: &str,
+        lifecycle_control: bool,
+    ) -> PreparedLifecycleRun {
+        let resolution = self.resolve_case(
+            capability,
+            &format!("hermetic-{}-{mode}", capability.name),
+            "hermetic-process",
+        );
+        let resolved = resolution.resolved().unwrap_or_else(|| {
+            panic!(
+                "hermetic lifecycle provider must resolve: {:#?}",
+                resolution.evidence()
+            )
+        });
+        assert_eq!(resolved.fallback_policy(), FallbackPolicy::Forbidden);
+        let seed = format!("hermetic-{mode}-v1");
+        let configuration_values = BTreeMap::from([
+            ("mode".to_owned(), serde_json::json!(mode)),
+            ("seed".to_owned(), serde_json::json!(seed)),
+        ]);
+        let invocation = ExtensionInvocation {
+            schema_version: flow::EXTENSION_INVOCATION_V1.to_owned(),
+            invocation_id: format!("invocation:hermetic-{mode}"),
+            run_id: format!("run:hermetic-{mode}"),
+            phase: InvocationPhase::Execute,
+            extension: InvocationExtension {
+                extension_id: resolved.extension_id().to_owned(),
+                version: resolved.version().to_owned(),
+                publisher_id: resolved.publisher_id().to_owned(),
+                integrity: resolved.integrity().value.clone(),
+            },
+            capability_id: capability.capability_id.to_owned(),
+            interface: InvocationInterface {
+                kind: resolved.execution_mode().kind,
+                name: resolved.execution_mode().name.clone(),
+                protocol: resolved.execution_mode().protocol.clone(),
+            },
+            input_artifacts: vec![InputArtifact {
+                artifact_id: INPUT_ID.to_owned(),
+                digest: self.bindings.inputs[0].expected_digest.clone(),
+            }],
+            expected_output_types: vec![capability.output_media_type.to_owned()],
+            configuration: Configuration {
+                schema_id: CONFIGURATION_SCHEMA.to_owned(),
+                digest: digest_json(&configuration_values),
+                values: configuration_values,
+            },
+            authorization: Authorization {
+                authorization_id: format!("authorization:hermetic-{mode}"),
+                lock_id: resolved.lock_id().to_owned(),
+                grants_digest: self.grants_digest.clone(),
+            },
+            limits: resolved.execution_mode().limits.clone(),
+            checkpoint_refs: Vec::new(),
+            secret_handles: Vec::new(),
+            cancellation_id: format!("cancel:hermetic-{mode}"),
+        };
+        invocation.validate().unwrap();
+
+        let subject_lock = self.subject_lock(resolved, &invocation, capability);
+        let subjects =
+            observe_execution_subjects(self.root.path(), resolved, &invocation, &subject_lock)
+                .unwrap();
+        let mut authority_profile = process_authority_profile(
+            resolved,
+            &invocation,
+            &subject_lock,
+            &subjects,
+            ProcessIsolation::TrustedUnconfined,
+        );
+        authority_profile.authority_profile_id = format!("authority-profile:hermetic-{mode}");
+        authority_profile.requested.argv =
+            lifecycle_provider_argv(lifecycle_control.then_some(LIFECYCLE_CONTROL_LOCATOR));
+        authority_profile
+            .granted
+            .argv
+            .clone_from(&authority_profile.requested.argv);
+        let mut enforcement = process_enforcement_evidence(&authority_profile, &subjects);
+        enforcement.enforcement_evidence_id = format!("enforcement:hermetic-{mode}");
+        let authority = authorize_process(
+            resolved,
+            &invocation,
+            &subject_lock,
+            &subjects,
+            &authority_profile,
+            &enforcement,
+        )
+        .unwrap();
+
+        PreparedLifecycleRun {
+            resolution,
+            invocation,
+            subject_lock,
+            subjects,
+            authority,
+        }
+    }
+
+    fn output_path(&self) -> PathBuf {
+        self.root
+            .path()
+            .join(WORKSPACE_LOCATOR)
+            .join(&self.bindings.outputs[0].locator)
+    }
+
+    fn lifecycle_control_path(&self) -> PathBuf {
+        self.root
+            .path()
+            .join(WORKSPACE_LOCATOR)
+            .join(LIFECYCLE_CONTROL_LOCATOR)
+    }
+
+    fn assert_subjects_unchanged(&self, prepared: &PreparedLifecycleRun) {
+        let after = observe_execution_subjects(
+            self.root.path(),
+            prepared.resolved(),
+            &prepared.invocation,
+            &prepared.subject_lock,
+        )
+        .unwrap();
+        assert_eq!(prepared.subjects.evidence(), after.evidence());
+    }
+
+    fn immutable_workspace_bytes(&self) -> (Vec<u8>, Vec<u8>) {
+        let workspace = self.root.path().join(WORKSPACE_LOCATOR);
+        (
+            fs::read(workspace.join(INPUT_LOCATOR)).unwrap(),
+            fs::read(workspace.join(BINDINGS_LOCATOR)).unwrap(),
+        )
+    }
+
+    fn assert_immutable_workspace_bytes(&self, before: &(Vec<u8>, Vec<u8>)) {
+        assert_eq!(&self.immutable_workspace_bytes(), before);
     }
 
     #[allow(clippy::too_many_lines)]
@@ -432,6 +1083,7 @@ impl KitFixture {
         .unwrap();
         assert_eq!(events, execution.events());
         assert_eq!(execution.result().outcome, flow::Outcome::Produced);
+        assert!(execution.result().diagnostics.is_empty());
         assert_eq!(
             execution
                 .events()
@@ -606,6 +1258,15 @@ fn provider_argv() -> Vec<String> {
     ]
 }
 
+fn lifecycle_provider_argv(control_locator: Option<&str>) -> Vec<String> {
+    let mut argv = provider_argv();
+    if let Some(locator) = control_locator {
+        argv.push("--lifecycle-control".to_owned());
+        argv.push(locator.to_owned());
+    }
+    argv
+}
+
 fn snapshot_tree(root: &Path) -> Vec<TreeEntry> {
     fn visit(root: &Path, path: &Path, entries: &mut Vec<TreeEntry>) {
         let mut children = fs::read_dir(path)
@@ -645,6 +1306,33 @@ fn digest_json(value: &impl Serialize) -> String {
 
 fn digest_bytes(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
+}
+
+fn provider_binary_snapshot() -> (Vec<u8>, String) {
+    let provider_path = Path::new(PROVIDER_BINARY);
+    let bytes = fs::read(provider_path).unwrap();
+    let executable_name = provider_path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .expect("Cargo provider binary path must have a UTF-8 file name")
+        .to_owned();
+    (bytes, executable_name)
+}
+
+#[cfg(unix)]
+fn assert_recorded_process_reaped(control_path: &Path) {
+    use nix::errno::Errno;
+    use nix::sys::wait::{WaitPidFlag, waitpid};
+    use nix::unistd::Pid;
+
+    let control: serde_json::Value =
+        serde_json::from_slice(&fs::read(control_path).unwrap()).unwrap();
+    assert_eq!(control["state"], "ready");
+    let pid = i32::try_from(control["pid"].as_u64().unwrap()).unwrap();
+    assert_eq!(
+        waitpid(Pid::from_raw(pid), Some(WaitPidFlag::WNOHANG)),
+        Err(Errno::ECHILD)
+    );
 }
 
 #[cfg(unix)]

@@ -4,9 +4,11 @@
 
 The hermetic provider kit is Flow-owned conformance infrastructure for issue
 #29. Checkpoint #44 establishes its immutable package identity and deterministic
-success path. It deliberately exercises the released process and artifact
-boundaries without importing a sibling implementation or pretending to be an
-Aniflow, Optiflow, or Renderflow algorithm.
+success path. Checkpoint #45 keeps that baseline intact while adding a closed
+matrix for provider selection, lifecycle supervision, and protocol outcomes.
+Both checkpoints exercise released public boundaries without importing a
+sibling implementation or pretending to be an Aniflow, Optiflow, or Renderflow
+algorithm.
 
 The checkpoint composes only public contracts and APIs:
 
@@ -51,15 +53,17 @@ The observation capability still writes a new evidence artifact. “Read-only”
 means that its bound source is not mutated; it is not a claim that the shared
 multi-capability provider receives no output-write authority.
 
-Checkpoint #44 executes the inspection capability end to end. The other three
-IDs and their declared media/configuration profiles are frozen now so later
-failure and graph fixtures do not invent parallel identities. Their end-to-end
-coverage and broader behavior matrix remain explicitly deferred.
+Checkpoint #44 executes the inspection capability end to end. Checkpoint #45
+uses that same capability for the lifecycle and protocol matrix. The other
+three IDs and their declared media/configuration profiles remain frozen so the
+later graph fixtures do not invent parallel identities. Their end-to-end
+coverage remains explicitly deferred.
 
-## Deterministic success profile
+## Configuration and deterministic success profile
 
-The only checkpoint-1 behavior is `success`. Configuration uses
-`flow.hermetic-provider-configuration/v1` with exactly two string fields:
+Configuration uses `flow.hermetic-provider-configuration/v1` with exactly two
+string fields. Checkpoint #44 defines `success`; checkpoint #45 expands the
+closed `mode` vocabulary without changing the schema or the success evidence:
 
 | Field | Checkpoint-1 value | Identity rule |
 | --- | --- | --- |
@@ -79,10 +83,70 @@ schema, capability, synthetic operation, configuration digest, seed, and
 sorted input identity evidence. It never includes ambient or host-specific
 values.
 
+## Checkpoint-2 behavior matrix
+
+The case ID is part of the test harness. A provider `mode` exists only when the
+child is actually invoked. `unavailable` and `incompatible` are therefore
+prelaunch harness cases, not runtime modes: no provider can consume a
+configuration after resolution rejects it.
+
+| Case | Explicit trigger | Owning boundary | Exact outcome | Promotion |
+| --- | --- | --- | --- | --- |
+| `unavailable` | The exact provider observation has `available: false`. | Resolution / prelaunch | `ResolutionResult::Blocked`; the candidate remains compatible and authorized but unavailable, and `resolved()` is `None`. | No child, `ValidatedExecution`, or `AcceptedArtifactSet`. |
+| `incompatible` | A case-local external manifest requires Flow `>=9.0.0`. | Resolution / prelaunch | `ResolutionResult::NoCompatibleProvider`; the candidate is incompatible but remains authorized and available, and `resolved()` is `None`. | No child, `ValidatedExecution`, or `AcceptedArtifactSet`. |
+| `warning` | Runtime configuration selects `mode=warning`. | Semantic protocol validation | A complete `Outcome::Produced` result with `partial_result: false` and a redacted `Severity::Warning` diagnostic. A warning is not a separate outcome or event state. | Produces `ValidatedExecution` and, after normal host observation, `AcceptedArtifactSet`; the warning remains evidence distinct from silent success. |
+| `partial-result` | Runtime configuration selects `mode=partial-result`. | Semantic result plus artifact-acceptance gate | A protocol-valid `Outcome::Produced` result with `partial_result: true`. | Produces `ValidatedExecution`; `accept_artifacts` returns `ArtifactAcceptanceError::Mismatch` because acceptance requires a complete produced or reused result. |
+| `nonzero-after-success` | The provider writes and flushes success-shaped evidence, then exits with code `7`. | Process supervision / termination validation | `ProcessRunnerError::Validation` containing `ExecutionError::ProcessExit { code: Some(7) }`. Termination is rejected before stdout is promoted. | No `ValidatedExecution` or `AcceptedArtifactSet`; the sink observes no event. |
+| `await-interruption` / timeout | The provider writes the lifecycle control record, then remains alive until the invocation deadline. | Process supervision | On Unix, `ProcessRunnerError::TimedOut { timeout_ms, forced: false }` after the direct child is reaped. | No `ValidatedExecution` or `AcceptedArtifactSet`. |
+| `await-interruption` / cancellation | The caller requests cancellation only after observing the lifecycle control record. | Caller cancellation plus process supervision | On Unix, `ProcessRunnerError::Cancelled { forced: false }` after the direct child is reaped. | No `ValidatedExecution` or `AcceptedArtifactSet`. |
+| `stdout-overflow` | The provider writes more than `max_stdout_bytes` to stdout and exits. | Bounded process capture | `ProcessRunnerError::Validation` containing `ExecutionError::ProcessOutputLimit` for `ProcessStream::Stdout`, with `observed = limit + 1`. | No parsed provider evidence, `ValidatedExecution`, or `AcceptedArtifactSet`. |
+| `stderr-overflow` | The provider writes more than `max_stderr_bytes` to stderr and exits. | Bounded process capture | `ProcessRunnerError::Validation` containing `ExecutionError::ProcessOutputLimit` for `ProcessStream::Stderr`, with `observed = limit + 1`. | No parsed provider evidence, `ValidatedExecution`, or `AcceptedArtifactSet`. |
+| `invalid-event` | Runtime configuration emits a duplicate/non-increasing event sequence. | Semantic event validation | `ProcessRunnerError::Validation` containing `ExecutionError::InvalidEvent`; raw decoded evidence is retained for inspection. | No `ValidatedExecution` or `AcceptedArtifactSet`. |
+| `invalid-result` | Runtime configuration emits a terminal result whose authorization identity does not match the invocation. | Semantic result validation | `ProcessRunnerError::Validation` containing `ExecutionError::InvalidResult`; the raw result is retained for inspection. | No `ValidatedExecution` or `AcceptedArtifactSet`. |
+| `success-with-host-rejection` | The provider emits valid success-shaped evidence and the caller's authoritative `EventSink` rejects an event. | Host semantic-observation boundary | `ProcessRunnerError::Validation` containing `ExecutionError::EventSink`; decoded events and the result remain inspectable. | No `ValidatedExecution`, fallback, or `AcceptedArtifactSet`. |
+
+The stream-capture `observed` value is a bounded overflow sentinel, not the
+provider's total emitted byte count. Each worker drains its stream to EOF but
+retains at most the configured limit plus one byte.
+
+Event observation is authoritative but not transactional. An invalid later
+event or terminal result can reject the execution after earlier individually
+valid events reached the caller's sink; Flow does not claim rollback. Likewise,
+the runner receives exactly one already-selected provider and has no catalog or
+alternate provider with which to retry after invocation starts.
+
+### Lifecycle synchronization and reaping evidence
+
+`await-interruption` accepts the explicit
+`--lifecycle-control outputs/lifecycle-control.json` argument. The provider
+writes and syncs this compact, LF-terminated test-control record to a sibling
+temporary file, then atomically publishes it before it waits:
+
+```json
+{"state":"ready","pid":1234}
+```
+
+The PID value is illustrative and host-specific. The control record is outside
+the artifact binding set, is never passed to `observe_artifacts`, and never
+becomes portable result, provenance, normalized evidence, or a candidate for
+`AcceptedArtifactSet`. Its sole purpose is to remove timing guesses from caller
+cancellation and to let the Unix test verify that the recorded direct child is
+no longer waitable after the runner returns. The timeout case uses a generous
+deadline and requires the same ready record, but the current runner starts its
+deadline when transport workers are established; it does not expose a separate
+"arm timeout after ready" API.
+
+The control record is written beneath the authorized workspace output tree,
+never inside the immutable provider package. Reaping claims cover only the
+direct child. The kit does not claim descendant discovery, signalling, or
+containment. Unix expects graceful default `SIGTERM` handling and therefore
+asserts `forced: false`; other hosts may require immediate forced termination.
+
 ## Conformance evidence
 
-`tests/hermetic_provider_kit.rs` builds two fresh roots with identical package,
-input, binding, invocation, configuration, and authority values. It requires:
+`tests/hermetic_provider_kit.rs` builds fresh roots with identical package,
+input, binding, invocation, configuration, and authority values. The success
+baseline requires:
 
 - identical package and executable identities;
 - identical resolution, subject, authority, event, result, host-observation,
@@ -106,13 +170,16 @@ GPU, source-mutation, destructive, signing, or publication authority. The
 runner clears the inherited environment and passes no secret handles.
 
 The local runner profile is `trusted-unconfined`. This checkpoint proves exact
-contract correlation, byte identity, bounded transport, and direct-child use;
-it does not claim an operating-system sandbox, filesystem containment,
+contract correlation, byte identity, bounded transport, and direct-child use
+and reaping; it does not claim an operating-system sandbox, filesystem containment,
 descriptor-bound execution, publisher authentication, descendant cleanup, or
 provider-native semantic validation.
 
-Checkpoint #45 owns warning, partial, unavailable, incompatible, nonzero,
-timeout, cancellation, overflow, and invalid protocol behaviors. Checkpoint
-#46 owns artifact adversaries, single/multi-provider graph fixtures, and the
-final requirement-to-test matrix. Durable run state, retry, checkpoint, and
-resume remain outside all three.
+Checkpoint #46 still owns missing, extra, corrupt, stale, changed, partial, and
+contradictory physical artifact evidence; protocol-valid success followed by
+host observation or artifact-acceptance failure; single- and multi-provider
+graph fixtures; completed redistribution documentation; and the final parent
+#29 requirement-to-test matrix. Checkpoint #45's `partial-result` case changes
+only the result flag while leaving physical artifact-adversary coverage to that
+final checkpoint. Durable run state, retry, checkpoint, and resume remain
+outside all three.
