@@ -8,7 +8,7 @@ status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-21
+updated: 2026-09-22
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -30,9 +30,20 @@ repository: egohygiene/flow
 visibility: public
 publication: central
 route: /roadmap/flow/
-updated: 2026-09-21
+updated: 2026-09-22
 -->
 ## 2026-09-21 execution snapshot
+
+> [!IMPORTANT]
+> **2026-09-22 live-sweep checkpoint**
+>
+> The current suite state and strict next-up queue are preserved in
+> [the 2026-09-22 live-sweep checkpoint](docs/roadmaps/flow-suite-live-sweep-2026-09-22.md).
+> It supersedes stale active-checkpoint and open-count claims in this snapshot while preserving
+> the evidence below as history. Flow draft PR #47 is ready for maintainer review; stacked draft
+> PR #48 follows it. The immediate Optiflow lane is #88 → #89 → #90 → #91 → #92 → #96 → #93,
+> followed by #94 → #95 for lossless PNG replacement.
+
 
 > This evidence-reconciled snapshot is the issue-generation and visual-roadmap handoff. The longer-horizon strategy below remains canonical context; generated HTML, JSON, progress, issue plans, and commit lists are projections.
 
