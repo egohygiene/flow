@@ -1,0 +1,125 @@
+{
+  "schema_version": "flow.extension-manifest/v1",
+  "extension_id": "org.egohygiene.synthetic-scenario-provider",
+  "version": "0.1.0",
+  "publisher": {
+    "id": "org.egohygiene",
+    "display_name": "Ego Hygiene synthetic conformance fixtures"
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "value": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "compatibility": {
+    "flow_version_requirement": ">=0.1.0, <0.2.0",
+    "contract_families": [
+      "flow.artifact/v1",
+      "flow.extension-invocation/v1",
+      "flow.extension-event/v1",
+      "flow.extension-result/v1"
+    ]
+  },
+  "inspection": {
+    "version_source": "manifest",
+    "capability_source": "manifest",
+    "health_mode": "manifest-only",
+    "health_capability_ids": []
+  },
+  "domain_ownership": ["flow"],
+  "capabilities": [
+    {
+      "capability_id": "flow/inspect-fixture",
+      "domain": "flow",
+      "configuration_schema": "flow.hermetic-provider-configuration/v1",
+      "accepts": ["text/plain"],
+      "produces": ["application/vnd.flow.fixture-inspection+json"],
+      "preconditions": ["flow.hermetic-input-matches-binding/v1"],
+      "postconditions": ["flow.hermetic-output-is-deterministic/v1"],
+      "deterministic": true,
+      "cacheable": true,
+      "loss": "none",
+      "content_changes": false,
+      "effects": ["filesystem-read", "filesystem-write"]
+    },
+    {
+      "capability_id": "flow/transform-fixture",
+      "domain": "flow",
+      "configuration_schema": "flow.hermetic-provider-configuration/v1",
+      "accepts": ["text/plain"],
+      "produces": ["application/vnd.flow.fixture-transformation+json"],
+      "preconditions": ["flow.hermetic-input-matches-binding/v1"],
+      "postconditions": ["flow.hermetic-output-is-deterministic/v1"],
+      "deterministic": true,
+      "cacheable": true,
+      "loss": "none",
+      "content_changes": true,
+      "effects": ["filesystem-read", "filesystem-write"]
+    },
+    {
+      "capability_id": "flow/validate-fixture",
+      "domain": "flow",
+      "configuration_schema": "flow.hermetic-provider-configuration/v1",
+      "accepts": ["text/plain"],
+      "produces": ["application/vnd.flow.fixture-validation+json"],
+      "preconditions": ["flow.hermetic-input-matches-binding/v1"],
+      "postconditions": ["flow.hermetic-output-is-deterministic/v1"],
+      "deterministic": true,
+      "cacheable": true,
+      "loss": "none",
+      "content_changes": false,
+      "effects": ["filesystem-read", "filesystem-write"]
+    },
+    {
+      "capability_id": "flow/observe-fixture",
+      "domain": "flow",
+      "configuration_schema": "flow.hermetic-provider-configuration/v1",
+      "accepts": ["text/plain"],
+      "produces": ["application/vnd.flow.fixture-observation+json"],
+      "preconditions": ["flow.hermetic-input-matches-binding/v1"],
+      "postconditions": ["flow.hermetic-output-is-deterministic/v1"],
+      "deterministic": true,
+      "cacheable": true,
+      "loss": "none",
+      "content_changes": false,
+      "effects": ["filesystem-read", "filesystem-write"]
+    }
+  ],
+  "execution_modes": [
+    {
+      "name": "hermetic-process",
+      "kind": "process",
+      "protocol": "flow.extension-invocation/v1",
+      "entrypoint": "flow-hermetic-provider",
+      "limits": {
+        "timeout_ms": 5000,
+        "max_stdout_bytes": 65536,
+        "max_stderr_bytes": 65536,
+        "cancellation_grace_ms": 250
+      }
+    }
+  ],
+  "requested_permissions": {
+    "filesystem_read": ["workspace/artifact-bindings", "workspace/inputs"],
+    "filesystem_write": ["workspace/outputs"],
+    "environment_read": [],
+    "subprocesses": [],
+    "network_hosts": [],
+    "ai_providers": [],
+    "gpu": false,
+    "source_mutation": false,
+    "destructive": false,
+    "sign": false,
+    "publish": false
+  },
+  "checkpoint": {
+    "mode": "none",
+    "contract_family": "flow.extension-result/v1",
+    "compatibility_keys": []
+  },
+  "replacement": {
+    "replaces": [],
+    "fallbacks_for": []
+  },
+  "observer_hooks": [],
+  "transform_hooks": []
+}
