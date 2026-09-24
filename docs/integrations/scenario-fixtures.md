@@ -151,6 +151,12 @@ outputs. This focused evidence does not add a general scenario executor,
 production scheduler, durable plan or run, retry, checkpoint, resume, or real
 provider-algorithm claim.
 
+Flow issue #59 indexes that executable evidence against every parent #29
+criterion and records the exact handoff to #30. The later checkpoint still owns
+machine-readable execution of the broader compatibility, artifact, diagnostic,
+privacy, and budget matrix; this document remains the declarative fixture
+contract rather than an executor.
+
 ## Checked-in corpus
 
 The corpus includes a single-provider success example plus multi-provider,

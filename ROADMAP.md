@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.2.0
+version: 1.3.0
 status: draft
 owners:
   - egohygiene
@@ -30,29 +30,31 @@ repository: egohygiene/flow
 visibility: public
 publication: central
 route: /roadmap/flow/
-updated: 2026-09-22
+updated: 2026-09-24
 -->
-## 2026-09-21 execution snapshot
+## 2026-09-24 execution snapshot
 
 > [!IMPORTANT]
-> **2026-09-22 live-sweep checkpoint**
+> **2026-09-24 hermetic-kit closeout checkpoint**
 >
-> The current suite state and strict next-up queue are preserved in
-> [the 2026-09-22 live-sweep checkpoint](docs/roadmaps/flow-suite-live-sweep-2026-09-22.md).
-> It supersedes stale active-checkpoint and open-count claims in this snapshot while preserving
-> the evidence below as history. Flow draft PR #47 is ready for maintainer review; stacked draft
-> PR #48 follows it. The immediate Optiflow lane is #88 → #89 → #90 → #91 → #92 → #96 → #93,
-> followed by #94 → #95 for lossless PNG replacement.
+> Flow #42, #44, and #45 are merged. Draft PR #60 consolidates #46's four
+> sequential checkpoints (#56–#59), including the final hermetic-kit package
+> layout/finalization, behavior, and requirement evidence. Merge #60, require
+> green default-branch CI, then close #46 and #29 and hand the executable
+> conformance matrix to #30.
+> [The 2026-09-22 live-sweep checkpoint](docs/roadmaps/flow-suite-live-sweep-2026-09-22.md)
+> remains the historical suite-wide queue; this checkpoint supersedes only its
+> older Flow PR state.
 
 
 > This evidence-reconciled snapshot is the issue-generation and visual-roadmap handoff. The longer-horizon strategy below remains canonical context; generated HTML, JSON, progress, issue plans, and commit lists are projections.
 
 **Lifecycle:** executable contract prototype
 
-**Current gate:** Complete Flow #42, the final bounded child of Flow #25: launch
-one exact authorized `trusted-unconfined` provider, enforce bounded transport
-and direct-child lifecycle control, and preserve the existing subject,
-authority, transcript, and artifact boundaries.
+**Current gate:** Review and merge Flow PR #60, then require green
+default-branch CI before closing #46 and #29. Flow #30 is the exact next
+checkpoint for the broader executable compatibility, artifact, provider,
+diagnostic, and privacy scenario matrix.
 
 **North-star outcome:** Federated orchestration across holons with stable provider seams, resumable work, and explicit evidence.
 
@@ -62,8 +64,8 @@ authority, transcript, and artifact boundaries.
 **Route:** `/roadmap/flow/`  
 **Current publication evidence:** Architecture, contract source, merged Flow
 #23 / PR #24, #26 / PR #27, #28 / PR #35, #36 / PR #37, #38 / PR #39, #40 /
-PR #41, and the candidate #42 / PR #43; no executable release or Pages
-publication observed.
+PR #41, #42 / PR #43, #44 / PR #47, and #45 / PR #48, plus candidate #46 /
+PR #60; no executable release or Pages publication observed.
 
 Publish the public-safe projection through egohygiene.io at /roadmap/flow/. This repository owns intent and acceptance evidence; it does not add a second site deployment.
 
@@ -138,7 +140,7 @@ same acceptance gate validates a deterministic external-process transcript.
 id: FLO-Q03
 status: active
 depends_on: [FLO-Q02]
-issues: [13, 25, 28, 36, 38, 40, 42]
+issues: [13, 25, 28, 29, 30, 36, 38, 40, 42]
 -->
 #### FLO-Q03 — Freeze conformance fixtures and implement provider adapters
 
@@ -178,13 +180,20 @@ behavior through stable error and evidence contracts.
 - Flow #40 / merged PR #41 supplies exact authority/isolation preflight with
   green default-branch CI at
   `5f411da6e7040e3494cbd275729de9a2ed8c67a3`.
-- Flow #58 supplies fixed single-provider and two-provider compositions over
-  the hermetic kit. Each accepted inspection artifact is the exact immutable
-  input to transformation, and fresh roots must retain equal normalized
-  evidence and bytes without adding a production scheduler.
-- Flow #25 remains the active owner of process enforcement. Flow #42 / PR #43
-  is its final bounded child and adds direct launch/supervision without
-  pre-empting later sandbox, durable-state, or real-adapter work.
+- Flow #25 is complete through #42 / merged PR #43, which adds bounded direct
+  launch and supervision without claiming sandbox, durable-state, or
+  real-adapter behavior.
+- Flow #44 / merged PR #47 establishes the immutable hermetic package and
+  accepted success path. Flow #45 / merged PR #48 adds its closed lifecycle and
+  protocol matrix.
+- Flow #46 / candidate PR #60 carries the evidence intended to complete the
+  remaining artifact adversaries, fixed single-provider and two-provider
+  compositions, exact package and executable-digest correlation and tamper
+  rejection, the closed behavior catalog, and every parent #29 requirement
+  mapping. Its evidence is indexed in
+  [the hermetic provider kit](docs/integrations/hermetic-provider-kit.md).
+- The synthetic providers are conformance infrastructure, not real adapters.
+  FLO-Q03 remains active for #30 and the later released-provider adapter work.
 
 <!-- roadmap-step
 id: FLO-Q04
@@ -361,8 +370,12 @@ authoritative digest semantics to free-form provider provenance. Flow #58 adds
 fixed two-stage single-provider and two-provider compositions that hand the
 exact accepted inspection artifact into a transformation stage through public
 Flow boundaries and produce equal normalized evidence and bytes across fresh
-roots. It remains test-owned sequencing rather than a graph scheduler. The
-hermetic-kit documentation and parent-evidence closeout remains with #59.
+roots. It remains test-owned sequencing rather than a graph scheduler. Flow #59
+adds candidate closeout evidence for the exact materialized package layouts,
+correlated package and executable digests across the manifest, locks, and
+observations, tamper rejection, redistribution terms, behavior-to-test catalog,
+parent #29 requirement matrix, residual gaps, and #30 handoff. Parent closure
+waits for PR #60 to merge and default-branch CI to pass.
 
 ### Verify locked package and executable subjects
 
@@ -411,7 +424,7 @@ authorized opaque handles; supervise stdin and independently bounded output;
 enforce deadline and caller cancellation with grace and escalation; reap the
 direct child; and retain transcript validation as the sole promotion path.
 
-**Candidate evidence:** Flow #42 / PR #43 adds `LocalProcessRunner`,
+**Delivered evidence:** Flow #42 / merged PR #43 adds `LocalProcessRunner`,
 `CancellationSignal`, bounded stdio workers, Unix `SIGTERM` grace and forced
 escalation, typed interruption, direct-child reap proof, and real-process
 positive/adversarial tests. It does not provide a sandbox, descendant

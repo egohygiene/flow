@@ -1,8 +1,10 @@
 # Hermetic provider fixture
 
-This directory is the source bundle for Flow's redistribution-safe synthetic
-process provider. It is conformance infrastructure, not a production holon
-adapter or a public Flow CLI.
+This directory is the MIT-licensed, redistribution-safe source bundle for
+Flow's synthetic process provider. A locally built executable is conformance
+input, not a turnkey binary distribution: a binary distributor must separately
+satisfy the licenses and notices of the dependencies in its target-specific
+build. This is not a production holon adapter or a public Flow CLI.
 
 ## Stable identity
 
@@ -35,32 +37,63 @@ shared manifest requests a narrowly named output-write grant.
 ## Package materialization
 
 `extension-manifest.v1.json` and `extension-lock.v1.json` are external metadata
-templates containing an all-zero integrity placeholder. A host must build the
-executable, place it with the MIT license in an otherwise empty package
-directory, observe that directory and the executable through Flow, and replace
-both placeholders in finalized metadata copies with the observed package
-SHA-256 before catalog inspection. The finalized manifest, operator lock, and
-checksum record remain beside the package in the host's configured catalog;
-they are not copied into the hashed package root, which would create a
-self-referential package digest. The conformance test performs these steps in
-memory and then creates the exact execution-subject lock.
+templates containing an all-zero integrity sentinel. It is never a verified
+package checksum. The primary hashed package root contains exactly:
 
-Composition packages for the inspector and renderer add only the documented
-`PROVIDER-IDENTITY` marker beside the same executable and license. The marker
-bytes are fixed and included in Flow's package observation.
+```text
+packages/hermetic-provider/
+├── LICENSE
+└── flow-hermetic-provider[.exe]
+```
 
-Build from an already populated Cargo cache without network access:
+The inspector and renderer roots use
+`packages/hermetic-provider-inspector/` and
+`packages/hermetic-provider-renderer/`. Each adds exactly one regular
+`PROVIDER-IDENTITY` file beside the same executable and license. Its fixed
+LF-terminated bytes are `org.egohygiene.synthetic-inspector\n` or
+`org.egohygiene.synthetic-renderer\n`.
+
+The finalized manifest, operator lock, execution-subject lock and observation
+evidence, artifact bindings, and workspace remain outside the hashed package
+root. Otherwise the declared directory identity would be self-referential or
+would change when run evidence is added.
+
+First populate Cargo's dependency cache while network access is available. The
+repository locks but does not vendor dependencies. After disconnecting, build
+and exercise the supported package path with:
 
 ```console
 cargo build --bin flow-hermetic-provider --locked --offline
-```
-
-Exercise the supported package path through Flow rather than invoking the
-fixture as a standalone user command:
-
-```console
 cargo test --test hermetic_provider_kit --locked --offline
 ```
+
+Finalize one materialization in this order:
+
+1. Create a new, otherwise empty package root and copy the built executable and
+   repository `LICENSE`; add the fixed marker only for a composition identity.
+2. Use Flow's `observe_artifacts` to compute the package SHA-256 over its
+   canonical `flow.directory-manifest/v1`. Separately compute SHA-256 over the
+   executable's raw bytes. A shell hash of the directory is not the Flow
+   package digest.
+3. Clone the manifest and operator-lock templates, replace both all-zero values
+   with the observed package digest, and validate both documents. A composition
+   clone also finalizes the provider ID, configured location, and capability
+   resolution entries.
+4. Put that package digest and the raw executable digest in the
+   `flow.execution-subject-lock/v1` record. Freshly call
+   `observe_execution_subjects` and require the resulting
+   `flow.execution-subject-observations/v1` digests to match exactly before
+   launch and again after execution.
+5. Reject any net change to executable, license, marker, kind, or package
+   membership that is present at a fresh observation.
+
+`finalized_packages_have_exact_layout_and_correlated_digests` covers exact
+layouts, primary manifest/lock finalization, digest correlation, and changed-
+license rejection. Together with the deterministic success/composition tests
+and `tests/execution_subjects.rs`, it covers prelaunch and post-run
+re-observation plus altered package/executable rejection. Build outputs are
+target/toolchain/profile-specific, so no universal binary or package digest is
+checked in and no cross-platform reproducible-build claim is made.
 
 At runtime the host passes only literal long-form arguments:
 
@@ -115,11 +148,15 @@ Checkpoint #58 owns two explicit, test-only two-stage fixtures:
 | Fixture | Ordered stages | Providers | Exact handoff |
 | --- | --- | --- | --- |
 | `single-provider-composition` | `inspect` → `transform` | `org.egohygiene.synthetic-scenario-provider` for both stages | accepted `artifact:inspection-report` |
-| `multi-provider-composition` | `inspect` → `transform` | `org.egohygiene.synthetic-inspector` → `org.egohygiene.synthetic-renderer` | accepted `artifact:inspection-report` |
+| `multi-provider-composition` | `inspect` → `transform` | `org.egohygiene.synthetic-inspector@0.1.0` → `org.egohygiene.synthetic-renderer@0.1.0` | accepted `artifact:inspection-report` |
 
 The harness calls each stage explicitly in array order. It creates the second
 binding only from the first stage's `AcceptedArtifactSet`, retaining the same
 artifact ID, port, media type, kind, locator, and digest in one workspace.
+Those exact fields are `artifact:inspection-report`, `port:inspection-report`,
+`application/vnd.flow.fixture-inspection+json`, `file`,
+`outputs/inspection-report.json`, and the digest learned from the first stage's
+accepted output.
 Every stage independently resolves its provider, matches package and executable
 subjects, authorizes the invocation, runs the direct child, observes the bound
 artifacts, and accepts the output. Two fresh roots must produce equal portable
@@ -180,9 +217,15 @@ a sandbox or containment claim.
 Checkpoint #57 delivers corrupt, changed, stale, and contradictory artifact
 evidence cases while leaving provider provenance v1 free-form and
 non-authoritative. Checkpoint #58 delivers the deterministic composition
-fixtures. Final redistribution documentation plus the parent requirement matrix
-remain with #59.
+fixtures. Checkpoint #59 closes the exact package workflow, complete behavior
+catalog, parent #29 requirement matrix, residual gaps, and #30 handoff in the
+[integration guide](../../../docs/integrations/hermetic-provider-kit.md).
 
-The source and generated package are distributed under the repository's MIT
-license. Do not redistribute a materialized package without its license or
-without replacing and verifying the integrity placeholders.
+The fixture source is MIT-licensed, and every local materialization retains the
+repository `LICENSE`. A compiled executable may incorporate a target-specific
+subset of dependency versions resolved by `Cargo.lock`; downstream binary
+redistributors must determine and retain any licenses and notices those
+dependencies require. This fixture neither assembles nor audits a distributable
+third-party notice bundle. Never redistribute an all-zero template as finalized
+metadata, and never redistribute a materialized package without freshly
+verifying its package and executable evidence.

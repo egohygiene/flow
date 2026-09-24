@@ -29,9 +29,9 @@ implementations.
   immutable topology, typed expectations, resource tiers, canonicalization,
   and honest coverage boundaries.
 - [Hermetic provider kit](hermetic-provider-kit.md) defines the immutable
-  synthetic package, stable capability IDs, deterministic success profile,
-  bounded lifecycle/protocol outcome matrix, and process-to-artifact
-  acceptance proof used by orchestration conformance.
+  synthetic packages, stable capability IDs, closed behavior catalog,
+  deterministic compositions, exact digest/finalization workflow, and the
+  parent requirement-to-test evidence used by orchestration conformance.
 - [Versioned contracts](../../contracts/README.md) define the provisional suite
   interchange vocabulary.
 
@@ -121,7 +121,13 @@ single-provider and two-provider fixtures twice from fresh roots. Every stage
 uses the public resolution, subject, authority, runner, observation, and
 acceptance boundaries, and stage two receives the exact accepted stage-one
 artifact without introducing a scenario runner or production scheduler. The
-final #29 requirement matrix and redistribution closeout remain with #59.
+checkpoint #59 closeout pins the exact materialized layouts, package/executable
+digest correlation across the manifest, locks, and observations, source and
+binary redistribution obligations, closed
+behavior-to-test index, parent #29 requirement matrix, residual gaps, and #30
+handoff. After PR #60 merges and default-branch CI is green, #46 and #29 can
+close; #30 then owns the broader executable scenario matrix. FLO-Q03 remains
+active because these synthetic providers are not real holon adapters.
 
 The following remain deferred: provider discovery from the filesystem, dynamic
 loading, cryptographic authenticity and transparency verification,

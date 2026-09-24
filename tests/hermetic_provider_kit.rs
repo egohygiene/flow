@@ -9,10 +9,11 @@ use flow::{
     ARTIFACT_BINDINGS_V1, AcceptedArtifactSet, ArtifactAcceptanceError, ArtifactBindingSet,
     ArtifactKind, ArtifactObservationError, Authorization, AuthorizedProcess, CheckpointMode,
     Configuration, Domain, EXECUTION_SUBJECT_LOCK_V1, EventKind, EventSinkError, EventState,
-    ExecutionError, ExecutionModeKind, ExecutionSubjectLock, ExtensionCatalog, ExtensionInvocation,
-    ExtensionLock, ExtensionManifest, ExtensionObservation, ExtensionResolution, FallbackPolicy,
-    HostArtifactObservation, HostArtifactObservationSet, HostExecutionSubjectObservationSet,
-    InputArtifact, InputArtifactBinding, InvocationExtension, InvocationInterface, InvocationPhase,
+    ExecutionError, ExecutionModeKind, ExecutionSubjectError, ExecutionSubjectLock,
+    ExecutionSubjectRole, ExtensionCatalog, ExtensionInvocation, ExtensionLock, ExtensionManifest,
+    ExtensionObservation, ExtensionResolution, FallbackPolicy, HostArtifactObservation,
+    HostArtifactObservationSet, HostExecutionSubjectObservationSet, InputArtifact,
+    InputArtifactBinding, InvocationExtension, InvocationInterface, InvocationPhase,
     LocalProcessRunner, MatchedExecutionSubjects, NoSecrets, OutputArtifactBinding,
     PROCESS_AUTHORITY_PROFILE_V1, ProcessIsolation, ProcessRunnerError, ProcessStream,
     ProvenanceKind, ResolutionOutcome, ResolutionRequest, ResolutionResult, SHA256, Severity,
@@ -41,6 +42,8 @@ const LIFECYCLE_CONTROL_LOCATOR: &str = "outputs/lifecycle-control.json";
 const EXTRA_OUTPUT_ID: &str = "artifact:undeclared-extra-output";
 const EXTRA_OUTPUT_LOCATOR: &str = "outputs/undeclared-extra-output.json";
 const PROVIDER_IDENTITY_LOCATOR: &str = "PROVIDER-IDENTITY";
+const INTEGRITY_SENTINEL: &str =
+    "0000000000000000000000000000000000000000000000000000000000000000";
 
 static NEXT_ROOT_ID: AtomicU64 = AtomicU64::new(0);
 
@@ -202,6 +205,8 @@ impl Drop for TestRoot {
 struct KitFixture {
     root: TestRoot,
     catalog: ExtensionCatalog,
+    manifest: ExtensionManifest,
+    lock: ExtensionLock,
     bindings: ArtifactBindingSet,
     package_digest: String,
     executable_digest: String,
@@ -340,6 +345,7 @@ fn templates_freeze_the_provider_identity_and_four_capabilities() {
     );
     assert_eq!(manifest.version, "0.1.0");
     assert_eq!(manifest.publisher.id, "org.egohygiene");
+    assert_eq!(manifest.integrity.value, INTEGRITY_SENTINEL);
     assert_eq!(manifest.checkpoint.mode, CheckpointMode::None);
     assert!(manifest.checkpoint.compatibility_keys.is_empty());
     assert_eq!(
@@ -386,8 +392,16 @@ fn templates_freeze_the_provider_identity_and_four_capabilities() {
     assert!(manifest.requested_permissions.network_hosts.is_empty());
     assert!(manifest.requested_permissions.subprocesses.is_empty());
     assert!(manifest.requested_permissions.ai_providers.is_empty());
+    assert!(manifest.requested_permissions.environment_read.is_empty());
+    assert!(!manifest.requested_permissions.gpu);
     assert!(!manifest.requested_permissions.source_mutation);
     assert!(!manifest.requested_permissions.destructive);
+    assert!(!manifest.requested_permissions.sign);
+    assert!(!manifest.requested_permissions.publish);
+    assert_eq!(
+        manifest.requested_permissions.filesystem_write,
+        ["workspace/outputs"]
+    );
     assert_eq!(
         manifest.requested_permissions.filesystem_read,
         [
@@ -397,6 +411,7 @@ fn templates_freeze_the_provider_identity_and_four_capabilities() {
         ]
     );
     assert_eq!(lock.extensions.len(), 1);
+    assert_eq!(lock.extensions[0].integrity.value, INTEGRITY_SENTINEL);
     assert_eq!(lock.extensions[0].trust, Trust::Trusted);
     assert_eq!(
         lock.extensions[0].granted_permissions,
@@ -412,6 +427,128 @@ fn templates_freeze_the_provider_identity_and_four_capabilities() {
             .map(|capability| capability.capability_id)
             .collect::<Vec<_>>()
     );
+}
+
+#[test]
+#[allow(clippy::too_many_lines)]
+fn finalized_packages_have_exact_layout_and_correlated_digests() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+
+    assert_eq!(
+        snapshot_tree(&fixture.root.path().join(PACKAGE_LOCATOR)),
+        vec![
+            TreeEntry {
+                path: PathBuf::from("LICENSE"),
+                kind: TreeEntryKind::File,
+            },
+            TreeEntry {
+                path: PathBuf::from(&executable_name),
+                kind: TreeEntryKind::File,
+            },
+        ]
+    );
+    assert_eq!(
+        fs::read(fixture.root.path().join(PACKAGE_LOCATOR).join("LICENSE")).unwrap(),
+        LICENSE_BYTES
+    );
+    assert_eq!(fixture.manifest.integrity.value, fixture.package_digest);
+    assert_eq!(
+        fixture.lock.extensions[0].integrity.value,
+        fixture.package_digest
+    );
+    assert_eq!(
+        fixture.package_observations.artifacts[0].digest,
+        fixture.package_digest
+    );
+
+    let prepared = fixture.prepare_lifecycle(capability, "success", false);
+    assert_eq!(
+        prepared.subject_lock.package.digest.value,
+        fixture.package_digest
+    );
+    assert_eq!(
+        prepared.subject_lock.executable.digest.value,
+        fixture.executable_digest
+    );
+    let package_observation = prepared
+        .subjects
+        .evidence()
+        .subjects
+        .iter()
+        .find(|subject| subject.role == ExecutionSubjectRole::Package)
+        .unwrap();
+    let executable_observation = prepared
+        .subjects
+        .evidence()
+        .subjects
+        .iter()
+        .find(|subject| subject.role == ExecutionSubjectRole::Executable)
+        .unwrap();
+    assert_eq!(package_observation.digest.value, fixture.package_digest);
+    assert_eq!(
+        executable_observation.digest.value,
+        fixture.executable_digest
+    );
+
+    let composition =
+        CompositionFixture::new(&MULTI_PROVIDER_COMPOSITION, &provider_bytes, &executable_name);
+    for provider in [&INSPECTOR_PROVIDER, &RENDERER_PROVIDER] {
+        let materialized = composition.providers.get(provider.extension_id).unwrap();
+        let package_path = composition.root.path().join(provider.package_locator);
+        assert_eq!(
+            snapshot_tree(&package_path),
+            vec![
+                TreeEntry {
+                    path: PathBuf::from("LICENSE"),
+                    kind: TreeEntryKind::File,
+                },
+                TreeEntry {
+                    path: PathBuf::from(PROVIDER_IDENTITY_LOCATOR),
+                    kind: TreeEntryKind::File,
+                },
+                TreeEntry {
+                    path: PathBuf::from(&executable_name),
+                    kind: TreeEntryKind::File,
+                },
+            ]
+        );
+        assert_eq!(
+            fs::read(package_path.join(PROVIDER_IDENTITY_LOCATOR)).unwrap(),
+            provider.identity_marker.unwrap()
+        );
+        assert_eq!(
+            fs::read(package_path.join("LICENSE")).unwrap(),
+            LICENSE_BYTES
+        );
+        assert_eq!(
+            observe_package_digest(composition.root.path(), provider),
+            materialized.package_digest
+        );
+        assert_eq!(
+            digest_bytes(&fs::read(package_path.join(&executable_name)).unwrap()),
+            materialized.executable_digest
+        );
+    }
+
+    fs::write(
+        fixture.root.path().join(PACKAGE_LOCATOR).join("LICENSE"),
+        b"tampered license bytes\n",
+    )
+    .unwrap();
+    let error = observe_execution_subjects(
+        fixture.root.path(),
+        prepared.resolved(),
+        &prepared.invocation,
+        &prepared.subject_lock,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ExecutionSubjectError::ContentMismatch { ref subject_id }
+            if subject_id == &prepared.subject_lock.package.subject_id
+    ));
 }
 
 #[test]
@@ -1857,11 +1994,14 @@ impl KitFixture {
         let mut lock: ExtensionLock = serde_json::from_str(LOCK_TEMPLATE).unwrap();
         package_digest.clone_into(&mut lock.extensions[0].integrity.value);
         let grants_digest = digest_json(&lock.extensions[0].granted_permissions);
-        let catalog = ExtensionCatalog::inspect([manifest], lock, [observation]).unwrap();
+        let catalog =
+            ExtensionCatalog::inspect([manifest.clone()], lock.clone(), [observation]).unwrap();
 
         Self {
             root,
             catalog,
+            manifest,
+            lock,
             bindings,
             package_digest,
             executable_digest,
@@ -2363,6 +2503,26 @@ fn digest_json(value: &impl Serialize) -> String {
 
 fn digest_bytes(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
+}
+
+fn observe_package_digest(root: &Path, provider: &ProviderSpec) -> String {
+    let bindings = ArtifactBindingSet {
+        schema_version: ARTIFACT_BINDINGS_V1.to_owned(),
+        binding_set_id: format!("bindings:redistribution-{}", provider.extension_id),
+        digest_algorithm: SHA256.to_owned(),
+        inputs: Vec::new(),
+        outputs: vec![OutputArtifactBinding {
+            artifact_id: format!("artifact:redistribution-{}", provider.extension_id),
+            port: format!("port:redistribution-{}", provider.extension_id),
+            media_type: "application/vnd.flow.execution-package-directory".to_owned(),
+            kind: ArtifactKind::Directory,
+            locator: provider.package_locator.to_owned(),
+        }],
+    };
+    bindings.validate().unwrap();
+    observe_artifacts(root, &bindings).unwrap().evidence().artifacts[0]
+        .digest
+        .clone()
 }
 
 fn provider_binary_snapshot() -> (Vec<u8>, String) {
