@@ -443,7 +443,7 @@ fn inspection_is_deterministic_across_fresh_process_and_artifact_boundaries() {
 #[test]
 fn single_provider_composition_preserves_exact_handoff_and_determinism() {
     assert_composition_fixture(
-        SINGLE_PROVIDER_COMPOSITION,
+        &SINGLE_PROVIDER_COMPOSITION,
         [PRIMARY_PROVIDER.extension_id, PRIMARY_PROVIDER.extension_id],
         false,
     );
@@ -452,7 +452,7 @@ fn single_provider_composition_preserves_exact_handoff_and_determinism() {
 #[test]
 fn multi_provider_composition_preserves_exact_handoff_and_determinism() {
     assert_composition_fixture(
-        MULTI_PROVIDER_COMPOSITION,
+        &MULTI_PROVIDER_COMPOSITION,
         [
             INSPECTOR_PROVIDER.extension_id,
             RENDERER_PROVIDER.extension_id,
@@ -1273,7 +1273,7 @@ fn timeout_and_readiness_gated_cancellation_reap_the_direct_child() {
 
 impl CompositionFixture {
     #[allow(clippy::too_many_lines)]
-    fn new(spec: CompositionFixtureSpec, provider_bytes: &[u8], executable_name: &str) -> Self {
+    fn new(spec: &CompositionFixtureSpec, provider_bytes: &[u8], executable_name: &str) -> Self {
         let root = TestRoot::new();
         let workspace_path = root.path().join(WORKSPACE_LOCATOR);
         fs::create_dir_all(workspace_path.join("inputs")).unwrap();
@@ -1388,7 +1388,7 @@ impl CompositionFixture {
 
         Self {
             root,
-            spec,
+            spec: *spec,
             catalog,
             providers,
             source_digest,
@@ -1694,7 +1694,7 @@ impl CompositionFixture {
 }
 
 fn assert_composition_fixture(
-    spec: CompositionFixtureSpec,
+    spec: &CompositionFixtureSpec,
     expected_providers: [&str; 2],
     distinct_packages: bool,
 ) {
