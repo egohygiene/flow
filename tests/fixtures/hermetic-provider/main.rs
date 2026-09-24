@@ -1,8 +1,9 @@
 //! Redistribution-safe synthetic process provider used by Flow conformance tests.
 //!
 //! This executable deliberately uses only Flow's public contracts. It reads one
-//! invocation frame, verifies explicitly bound inputs, writes one deterministic
-//! candidate artifact, and emits a JSON Lines event/result transcript.
+//! invocation frame, verifies explicitly bound inputs, exercises one closed
+//! deterministic success or adversarial behavior, and emits a JSON Lines
+//! event/result transcript.
 
 use std::error::Error;
 use std::ffi::OsString;
@@ -234,11 +235,7 @@ fn run() -> ProviderResult<()> {
         artifact_bytes.truncate(artifact_bytes.len().div_ceil(2));
     }
     if behavior != Behavior::MissingOutput {
-        write_new_output(
-            &root,
-            Path::new(&output_binding.locator),
-            &artifact_bytes,
-        )?;
+        write_new_output(&root, Path::new(&output_binding.locator), &artifact_bytes)?;
     }
     if behavior == Behavior::ExtraOutput {
         write_new_output(
@@ -280,6 +277,18 @@ fn run() -> ProviderResult<()> {
             Vec::new(),
         ),
     ];
+    let explanation = match behavior {
+        Behavior::MissingOutput => {
+            "The hermetic provider emitted success-shaped evidence without materializing the bound synthetic artifact."
+        }
+        Behavior::ExtraOutput => {
+            "The hermetic provider produced one bound and one undeclared synthetic artifact."
+        }
+        Behavior::PartialOutput => {
+            "The hermetic provider produced deterministic truncated synthetic artifact bytes and marked the result partial."
+        }
+        _ => "The hermetic provider produced one deterministic synthetic artifact.",
+    };
     let mut result = ExtensionResult {
         schema_version: EXTENSION_RESULT_V1.to_owned(),
         run_id: invocation.run_id.clone(),
@@ -324,8 +333,7 @@ fn run() -> ProviderResult<()> {
             retryable: false,
         },
         checkpoint_refs: Vec::new(),
-        explanation: "The hermetic provider produced one deterministic synthetic artifact."
-            .to_owned(),
+        explanation: explanation.to_owned(),
     };
 
     match behavior {
