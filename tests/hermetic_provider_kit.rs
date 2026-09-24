@@ -42,8 +42,7 @@ const LIFECYCLE_CONTROL_LOCATOR: &str = "outputs/lifecycle-control.json";
 const EXTRA_OUTPUT_ID: &str = "artifact:undeclared-extra-output";
 const EXTRA_OUTPUT_LOCATOR: &str = "outputs/undeclared-extra-output.json";
 const PROVIDER_IDENTITY_LOCATOR: &str = "PROVIDER-IDENTITY";
-const INTEGRITY_SENTINEL: &str =
-    "0000000000000000000000000000000000000000000000000000000000000000";
+const INTEGRITY_SENTINEL: &str = "0000000000000000000000000000000000000000000000000000000000000000";
 
 static NEXT_ROOT_ID: AtomicU64 = AtomicU64::new(0);
 
@@ -492,8 +491,11 @@ fn finalized_packages_have_exact_layout_and_correlated_digests() {
         fixture.executable_digest
     );
 
-    let composition =
-        CompositionFixture::new(&MULTI_PROVIDER_COMPOSITION, &provider_bytes, &executable_name);
+    let composition = CompositionFixture::new(
+        &MULTI_PROVIDER_COMPOSITION,
+        &provider_bytes,
+        &executable_name,
+    );
     for provider in [&INSPECTOR_PROVIDER, &RENDERER_PROVIDER] {
         let materialized = composition.providers.get(provider.extension_id).unwrap();
         let package_path = composition.root.path().join(provider.package_locator);
@@ -2520,7 +2522,10 @@ fn observe_package_digest(root: &Path, provider: &ProviderSpec) -> String {
         }],
     };
     bindings.validate().unwrap();
-    observe_artifacts(root, &bindings).unwrap().evidence().artifacts[0]
+    observe_artifacts(root, &bindings)
+        .unwrap()
+        .evidence()
+        .artifacts[0]
         .digest
         .clone()
 }
