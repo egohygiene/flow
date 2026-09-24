@@ -126,6 +126,31 @@ catalog without rewriting it. Any intentional fixture change therefore
 requires a reviewed manifest, version decision, and explicit digest update;
 drift cannot silently bless itself.
 
+## Executed composition conformance
+
+Flow issue #58 aligns the declarative multi-provider fixture with the frozen
+`flow/inspect-fixture` and `flow/transform-fixture` capability names and keeps
+its explicit `inspect`-then-`transform` order and artifact dependency. The
+manifest still is not a runtime plan. In particular, scenario artifact names
+such as `inspection-report` and runtime binding IDs such as
+`artifact:inspection-report` belong to different closed namespaces.
+
+Execution evidence lives in the hermetic provider-kit tests. A fixed test-owned
+sequencer materializes these two cases:
+
+| Runtime fixture | Ordered providers | Accepted handoff |
+| --- | --- | --- |
+| `single-provider-composition` | scenario provider → same provider | `artifact:inspection-report` |
+| `multi-provider-composition` | synthetic inspector → synthetic renderer | `artifact:inspection-report` |
+
+Every stage independently crosses public resolution, subject observation,
+authority, local-process execution, artifact observation, and acceptance. The
+downstream binding is derived only from the upstream `AcceptedArtifactSet`, and
+two fresh runs must retain equal normalized evidence and byte-identical
+outputs. This focused evidence does not add a general scenario executor,
+production scheduler, durable plan or run, retry, checkpoint, resume, or real
+provider-algorithm claim.
+
 ## Checked-in corpus
 
 The corpus includes a single-provider success example plus multi-provider,

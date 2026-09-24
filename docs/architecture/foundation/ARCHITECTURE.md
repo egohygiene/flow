@@ -238,7 +238,14 @@ trusted-unconfined runner, direct transport workers, timeout/cancellation grace
 and escalation, and direct-child reaping. Issue #57 binds an opaque artifact
 observation to its exact binding snapshot and canonical root and requires an
 equal final observation before acceptance, without changing portable artifact
-schemas or free-form extension-result v1 provenance. Flow does not yet supply
+schemas or free-form extension-result v1 provenance. Issue #58 adds a test-owned
+fixed `inspect`-then-`transform` sequencer that runs both single-provider and
+two-provider compositions through public resolution, subject observation,
+authority, local-process execution, artifact observation, and acceptance. The
+second stage consumes the exact accepted first-stage artifact in the same
+workspace, and two fresh roots must produce equal portable evidence and output
+bytes. This is conformance infrastructure, not a scenario-manifest executor or
+production graph scheduler. Flow does not yet supply
 the public CLI, real holon adapters, signature or transparency verification,
 provider-native artifact validation, an atomic filesystem snapshot, an
 operating-system sandbox or authenticated enforcement evidence,
@@ -271,4 +278,6 @@ authenticated sandbox conformance, descriptor-bound launch, process-tree
 containment, provider-native artifact validation, and scenario execution remain
 later gates for their corresponding runtime surfaces. Issue #42 adds real Unix
 direct-child conformance for literal launch state, supervised transport,
-overflow, interruption, grace, escalation, and reaping.
+overflow, interruption, grace, escalation, and reaping. Issue #58 additionally
+validates deterministic fixed-order composition without adding plan/run state,
+retry, checkpoint, resume, or real holon algorithms.

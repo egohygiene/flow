@@ -9,7 +9,8 @@ matrix for provider selection, lifecycle supervision, and protocol outcomes.
 Checkpoint #56 adds the first physical artifact-outcome matrix for missing,
 extra, and partial outputs. Checkpoint #57 closes corrupt, contradictory,
 changed, and stale artifact-evidence cases and hardens final artifact freshness.
-All four checkpoints exercise released public boundaries without importing a
+Checkpoint #58 adds deterministic single-provider and two-provider composition
+fixtures. All five checkpoints exercise released public boundaries without importing a
 sibling implementation or pretending to be an Aniflow, Optiflow, or Renderflow
 algorithm.
 
@@ -46,12 +47,12 @@ The provider identity is
 introduced by issue #28. Its one process entrypoint exposes four stable
 Flow-domain capability IDs:
 
-| Capability | Role | Content-changing | Output media type |
+| Capability | Accepted input | Content-changing | Output media type |
 | --- | --- | --- | --- |
-| `flow/inspect-fixture` | Inspect one immutable text fixture | No | `application/vnd.flow.fixture-inspection+json` |
-| `flow/transform-fixture` | Produce a synthetic derivative description | Yes | `application/vnd.flow.fixture-transformation+json` |
-| `flow/validate-fixture` | Produce synthetic validation evidence | No | `application/vnd.flow.fixture-validation+json` |
-| `flow/observe-fixture` | Observe a source without mutating it | No | `application/vnd.flow.fixture-observation+json` |
+| `flow/inspect-fixture` | `text/plain` | No | `application/vnd.flow.fixture-inspection+json` |
+| `flow/transform-fixture` | `text/plain` or inspection JSON | Yes | `application/vnd.flow.fixture-transformation+json` |
+| `flow/validate-fixture` | `text/plain` | No | `application/vnd.flow.fixture-validation+json` |
+| `flow/observe-fixture` | `text/plain` | No | `application/vnd.flow.fixture-observation+json` |
 
 The observation capability still writes a new evidence artifact. “Read-only”
 means that its bound source is not mutated; it is not a claim that the shared
@@ -61,10 +62,12 @@ Checkpoint #44 executes the inspection capability end to end. Checkpoint #45
 uses that same capability for the lifecycle and protocol matrix, and checkpoint
 #56 uses it for physical artifact outcomes after protocol-valid execution.
 Checkpoint #57 adds two provider evidence modes and host-harness freshness
-cases without changing the capability surface. The other three IDs and their
-declared media/configuration profiles remain frozen so the later graph fixtures
-do not invent parallel identities. Their end-to-end coverage remains explicitly
-deferred.
+cases without changing the capability surface. Checkpoint #58 executes
+`flow/transform-fixture` for the first time and narrowly adds inspection JSON
+to that capability's accepted inputs so a typed handoff is possible. It does
+not widen any other capability profile or invent a real holon capability.
+Validation and observation remain stable declared synthetic IDs but are not
+claimed as executed graph stages by this minimal checkpoint.
 
 ## Configuration and deterministic success profile
 
@@ -79,8 +82,11 @@ the success evidence:
 | `mode` | `success` | Included in compact JSON over the sorted configuration map |
 | `seed` | `hermetic-success-v1` | Included in the same SHA-256 configuration identity |
 
-The provider requires exactly one bound `text/plain` input and one bound file
-output of the capability's declared media type. It recomputes the input digest,
+The provider requires exactly one bound input accepted by the selected
+capability and one bound file output of that capability's declared media type.
+Inspection, validation, and observation accept `text/plain`; transformation
+additionally accepts the exact inspection JSON type used by checkpoint #58. It
+recomputes the input digest,
 creates the output with create-new semantics, and emits deterministic started,
 artifact-produced, and completed events with sequences `0`, `1`, and `2`.
 The terminal result names the exact consumed and produced artifact IDs and
@@ -193,6 +199,35 @@ direct child. The kit does not claim descendant discovery, signalling, or
 containment. Unix expects graceful default `SIGTERM` handling and therefore
 asserts `forced: false`; other hosts may require immediate forced termination.
 
+## Checkpoint-3c deterministic compositions
+
+Checkpoint #58 adds two fixed, test-owned compositions. Both declare the exact
+stage array `inspect` then `transform`; the latter depends on the former and
+consumes its one accepted output.
+
+| Fixture | Inspect provider | Transform provider | Handoff |
+| --- | --- | --- | --- |
+| `single-provider-composition` | `org.egohygiene.synthetic-scenario-provider@0.1.0` | same provider | accepted `artifact:inspection-report` at `outputs/inspection-report.json` |
+| `multi-provider-composition` | `org.egohygiene.synthetic-inspector@0.1.0` | `org.egohygiene.synthetic-renderer@0.1.0` | same accepted artifact identity |
+
+The multi-provider packages contain different fixed identity markers and
+therefore have different package digests. They intentionally reuse the same
+generic executable bytes, so the executable digest is equal; this is a
+provider-boundary test, not an algorithm-diversity claim.
+
+For each stage, the harness calls public catalog resolution, execution-subject
+observation, process authorization, `LocalProcessRunner`, artifact observation,
+and artifact acceptance. Only the first stage's `AcceptedArtifactSet` may
+supply the second stage's input binding. Artifact ID, port, media type, kind,
+locator, and digest remain equal in the shared workspace. Provider, package,
+executable, invocation, configuration, authority, execution, observation, and
+accepted-artifact identities are retained as normalized stage evidence.
+
+Each fixture runs twice in fresh roots. Equal normalized evidence and
+byte-identical accepted outputs are required. The code explicitly calls stage
+zero and stage one; it has no ready queue, topological scheduler, retry,
+checkpoint, resume, durable plan/run state, or scenario-manifest execution.
+
 ## Conformance evidence
 
 `tests/hermetic_provider_kit.rs` builds fresh roots with identical package,
@@ -223,14 +258,22 @@ snapshot cannot reuse otherwise valid evidence to construct
 `AcceptedArtifactSet`. The focused artifact tests also cover changed input
 evidence and malformed or contradictory portable observations.
 
+The checkpoint #58 tests additionally require exact accepted-output-to-input
+equality across both fixed compositions, stable ordered dependency evidence,
+the expected provider selection at each stage, unchanged locked subjects, and
+fresh-root repeat equivalence. The checked-in scenario manifests remain
+declarative conformance intent rather than runtime instructions.
+
 The fixture source, manifest, lock, materialization rules, offline commands,
 and redistribution terms live in
 [`tests/fixtures/hermetic-provider`](../../tests/fixtures/hermetic-provider/README.md).
 
 ## Authority and non-claims
 
-The manifest requests only named workspace input/binding reads and named
-workspace output writes. It requests no environment, subprocess, network, AI,
+The manifest requests only named workspace input, binding, and prior-output
+reads plus named workspace output writes. Prior-output read authority permits
+the second fixed stage to consume an accepted artifact; it does not permit
+input mutation. The provider requests no environment, subprocess, network, AI,
 GPU, source-mutation, destructive, signing, or publication authority. The
 runner clears the inherited environment and passes no secret handles.
 
@@ -243,7 +286,7 @@ validation.
 
 Checkpoint #57 delivers corrupt, stale, changed, and contradictory artifact
 evidence coverage without changing extension-result v1 provenance. Checkpoint
-#58 owns the single- and multi-provider composition fixtures. Checkpoint #59
+#58 delivers the single- and multi-provider composition fixtures. Checkpoint #59
 owns completed redistribution documentation and the final parent #29
 requirement-to-test matrix. Durable run state, retry, checkpoint, and resume
 remain outside the hermetic provider kit.

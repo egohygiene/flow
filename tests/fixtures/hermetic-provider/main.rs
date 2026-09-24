@@ -153,7 +153,8 @@ fn run() -> ProviderResult<()> {
         _ => {}
     }
 
-    let (operation, expected_output_type) = capability_profile(&invocation.capability_id)?;
+    let (operation, accepted_input_types, expected_output_type) =
+        capability_profile(&invocation.capability_id)?;
     let root_metadata = fs::symlink_metadata(&arguments.artifact_root)?;
     ensure(
         !root_metadata.file_type().is_symlink(),
@@ -196,8 +197,8 @@ fn run() -> ProviderResult<()> {
         "the hermetic success input binding must name a file",
     )?;
     ensure(
-        input_binding.media_type == "text/plain",
-        "the hermetic success input must use text/plain",
+        accepted_input_types.contains(&input_binding.media_type.as_str()),
+        "input binding type is not accepted by the selected capability",
     )?;
     ensure(
         invocation_input.artifact_id == input_binding.artifact_id
@@ -459,20 +460,31 @@ fn read_invocation() -> ProviderResult<ExtensionInvocation> {
     Ok(serde_json::from_slice(&frame)?)
 }
 
-fn capability_profile(capability_id: &str) -> ProviderResult<(&'static str, &'static str)> {
+fn capability_profile(
+    capability_id: &str,
+) -> ProviderResult<(&'static str, &'static [&'static str], &'static str)> {
     match capability_id {
-        "flow/inspect-fixture" => {
-            Ok(("inspection", "application/vnd.flow.fixture-inspection+json"))
-        }
+        "flow/inspect-fixture" => Ok((
+            "inspection",
+            &["text/plain"],
+            "application/vnd.flow.fixture-inspection+json",
+        )),
         "flow/transform-fixture" => Ok((
             "transformation",
+            &[
+                "application/vnd.flow.fixture-inspection+json",
+                "text/plain",
+            ],
             "application/vnd.flow.fixture-transformation+json",
         )),
-        "flow/validate-fixture" => {
-            Ok(("validation", "application/vnd.flow.fixture-validation+json"))
-        }
+        "flow/validate-fixture" => Ok((
+            "validation",
+            &["text/plain"],
+            "application/vnd.flow.fixture-validation+json",
+        )),
         "flow/observe-fixture" => Ok((
             "read-only-observation",
+            &["text/plain"],
             "application/vnd.flow.fixture-observation+json",
         )),
         _ => Err(invalid_input("unsupported hermetic capability").into()),

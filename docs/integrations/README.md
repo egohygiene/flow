@@ -116,8 +116,12 @@ binding snapshot, and requires equal final root-confined evidence before
 artifact promotion. Changed or removed evidence and stale invocation or
 binding context cannot construct `AcceptedArtifactSet`. This hardening does not
 make observation atomic or reinterpret free-form extension-result v1
-provenance. Graph fixtures and the final parent matrix remain with #58 and #59
-respectively.
+provenance. Flow #58 executes fixed `inspect`-then-`transform`
+single-provider and two-provider fixtures twice from fresh roots. Every stage
+uses the public resolution, subject, authority, runner, observation, and
+acceptance boundaries, and stage two receives the exact accepted stage-one
+artifact without introducing a scenario runner or production scheduler. The
+final #29 requirement matrix and redistribution closeout remain with #59.
 
 The following remain deferred: provider discovery from the filesystem, dynamic
 loading, cryptographic authenticity and transparency verification,

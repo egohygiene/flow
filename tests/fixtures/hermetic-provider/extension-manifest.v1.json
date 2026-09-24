@@ -45,7 +45,10 @@
       "capability_id": "flow/transform-fixture",
       "domain": "flow",
       "configuration_schema": "flow.hermetic-provider-configuration/v1",
-      "accepts": ["text/plain"],
+      "accepts": [
+        "application/vnd.flow.fixture-inspection+json",
+        "text/plain"
+      ],
       "produces": ["application/vnd.flow.fixture-transformation+json"],
       "preconditions": ["flow.hermetic-input-matches-binding/v1"],
       "postconditions": ["flow.hermetic-output-is-deterministic/v1"],
@@ -99,7 +102,11 @@
     }
   ],
   "requested_permissions": {
-    "filesystem_read": ["workspace/artifact-bindings", "workspace/inputs"],
+    "filesystem_read": [
+      "workspace/artifact-bindings",
+      "workspace/inputs",
+      "workspace/outputs"
+    ],
     "filesystem_write": ["workspace/outputs"],
     "environment_read": [],
     "subprocesses": [],

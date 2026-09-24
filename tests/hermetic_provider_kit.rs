@@ -11,8 +11,8 @@ use flow::{
     Configuration, Domain, EXECUTION_SUBJECT_LOCK_V1, EventKind, EventSinkError, EventState,
     ExecutionError, ExecutionModeKind, ExecutionSubjectLock, ExtensionCatalog, ExtensionInvocation,
     ExtensionLock, ExtensionManifest, ExtensionObservation, ExtensionResolution, FallbackPolicy,
-    HostArtifactObservationSet, HostExecutionSubjectObservationSet, InputArtifact,
-    InputArtifactBinding, InvocationExtension, InvocationInterface, InvocationPhase,
+    HostArtifactObservation, HostArtifactObservationSet, HostExecutionSubjectObservationSet,
+    InputArtifact, InputArtifactBinding, InvocationExtension, InvocationInterface, InvocationPhase,
     LocalProcessRunner, MatchedExecutionSubjects, NoSecrets, OutputArtifactBinding,
     PROCESS_AUTHORITY_PROFILE_V1, ProcessIsolation, ProcessRunnerError, ProcessStream,
     ProvenanceKind, ResolutionOutcome, ResolutionRequest, ResolutionResult, SHA256, Severity,
@@ -40,13 +40,15 @@ const CONFIGURATION_SCHEMA: &str = "flow.hermetic-provider-configuration/v1";
 const LIFECYCLE_CONTROL_LOCATOR: &str = "outputs/lifecycle-control.json";
 const EXTRA_OUTPUT_ID: &str = "artifact:undeclared-extra-output";
 const EXTRA_OUTPUT_LOCATOR: &str = "outputs/undeclared-extra-output.json";
+const PROVIDER_IDENTITY_LOCATOR: &str = "PROVIDER-IDENTITY";
 
 static NEXT_ROOT_ID: AtomicU64 = AtomicU64::new(0);
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct CapabilitySpec {
     capability_id: &'static str,
     name: &'static str,
+    accepted_input_media_types: &'static [&'static str],
     output_media_type: &'static str,
 }
 
@@ -54,24 +56,125 @@ const CAPABILITIES: [CapabilitySpec; 4] = [
     CapabilitySpec {
         capability_id: "flow/inspect-fixture",
         name: "inspection",
+        accepted_input_media_types: &["text/plain"],
         output_media_type: "application/vnd.flow.fixture-inspection+json",
     },
     CapabilitySpec {
         capability_id: "flow/transform-fixture",
         name: "transformation",
+        accepted_input_media_types: &[
+            "application/vnd.flow.fixture-inspection+json",
+            "text/plain",
+        ],
         output_media_type: "application/vnd.flow.fixture-transformation+json",
     },
     CapabilitySpec {
         capability_id: "flow/validate-fixture",
         name: "validation",
+        accepted_input_media_types: &["text/plain"],
         output_media_type: "application/vnd.flow.fixture-validation+json",
     },
     CapabilitySpec {
         capability_id: "flow/observe-fixture",
         name: "observation",
+        accepted_input_media_types: &["text/plain"],
         output_media_type: "application/vnd.flow.fixture-observation+json",
     },
 ];
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct ProviderSpec {
+    extension_id: &'static str,
+    package_locator: &'static str,
+    package_subject_id: &'static str,
+    executable_subject_id: &'static str,
+    identity_marker: Option<&'static [u8]>,
+}
+
+const PRIMARY_PROVIDER: ProviderSpec = ProviderSpec {
+    extension_id: "org.egohygiene.synthetic-scenario-provider",
+    package_locator: PACKAGE_LOCATOR,
+    package_subject_id: "package:hermetic-provider",
+    executable_subject_id: "executable:hermetic-provider",
+    identity_marker: None,
+};
+
+const INSPECTOR_PROVIDER: ProviderSpec = ProviderSpec {
+    extension_id: "org.egohygiene.synthetic-inspector",
+    package_locator: "packages/hermetic-provider-inspector",
+    package_subject_id: "package:hermetic-provider-inspector",
+    executable_subject_id: "executable:hermetic-provider-inspector",
+    identity_marker: Some(b"org.egohygiene.synthetic-inspector\n"),
+};
+
+const RENDERER_PROVIDER: ProviderSpec = ProviderSpec {
+    extension_id: "org.egohygiene.synthetic-renderer",
+    package_locator: "packages/hermetic-provider-renderer",
+    package_subject_id: "package:hermetic-provider-renderer",
+    executable_subject_id: "executable:hermetic-provider-renderer",
+    identity_marker: Some(b"org.egohygiene.synthetic-renderer\n"),
+};
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct CompositionStageSpec {
+    stage_id: &'static str,
+    provider: ProviderSpec,
+    capability: CapabilitySpec,
+    phase: InvocationPhase,
+    depends_on: &'static [&'static str],
+    consumes: &'static [&'static str],
+    produces: &'static [&'static str],
+    output_port: &'static str,
+    output_locator: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct CompositionFixtureSpec {
+    fixture_id: &'static str,
+    stages: [CompositionStageSpec; 2],
+}
+
+const SINGLE_PROVIDER_COMPOSITION: CompositionFixtureSpec = CompositionFixtureSpec {
+    fixture_id: "single-provider-composition",
+    stages: [
+        CompositionStageSpec {
+            stage_id: "inspect",
+            provider: PRIMARY_PROVIDER,
+            capability: CAPABILITIES[0],
+            phase: InvocationPhase::Inspect,
+            depends_on: &[],
+            consumes: &[INPUT_ID],
+            produces: &["artifact:inspection-report"],
+            output_port: "port:inspection-report",
+            output_locator: "outputs/inspection-report.json",
+        },
+        CompositionStageSpec {
+            stage_id: "transform",
+            provider: PRIMARY_PROVIDER,
+            capability: CAPABILITIES[1],
+            phase: InvocationPhase::Execute,
+            depends_on: &["inspect"],
+            consumes: &["artifact:inspection-report"],
+            produces: &["artifact:transformation-report"],
+            output_port: "port:transformation-report",
+            output_locator: "outputs/transformation-report.json",
+        },
+    ],
+};
+
+const MULTI_PROVIDER_COMPOSITION: CompositionFixtureSpec = CompositionFixtureSpec {
+    fixture_id: "multi-provider-composition",
+    stages: [
+        CompositionStageSpec {
+            provider: INSPECTOR_PROVIDER,
+            ..SINGLE_PROVIDER_COMPOSITION.stages[0]
+        },
+        CompositionStageSpec {
+            provider: RENDERER_PROVIDER,
+            ..SINGLE_PROVIDER_COMPOSITION.stages[1]
+        },
+    ],
+};
 
 struct TestRoot {
     path: PathBuf,
@@ -110,6 +213,45 @@ struct KitFixture {
     package_observations: HostArtifactObservationSet,
 }
 
+struct CompositionFixture {
+    root: TestRoot,
+    spec: CompositionFixtureSpec,
+    catalog: ExtensionCatalog,
+    providers: BTreeMap<String, MaterializedProvider>,
+    source_digest: String,
+}
+
+struct MaterializedProvider {
+    spec: ProviderSpec,
+    package_digest: String,
+    executable_digest: String,
+    executable_locator: String,
+    grants_digest: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct CompositionInput {
+    artifact_id: String,
+    port: String,
+    media_type: String,
+    kind: ArtifactKind,
+    locator: String,
+    digest: String,
+}
+
+impl From<&HostArtifactObservation> for CompositionInput {
+    fn from(artifact: &HostArtifactObservation) -> Self {
+        Self {
+            artifact_id: artifact.artifact_id.clone(),
+            port: artifact.port.clone(),
+            media_type: artifact.media_type.clone(),
+            kind: artifact.kind,
+            locator: artifact.locator.clone(),
+            digest: artifact.digest.clone(),
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug)]
 struct CatalogProfile {
     available: bool,
@@ -144,6 +286,29 @@ impl PreparedLifecycleRun {
 #[derive(Debug, Eq, PartialEq)]
 struct RunEvidence {
     resolution: ExtensionResolution,
+    subjects: HostExecutionSubjectObservationSet,
+    authority_profile_digest: String,
+    enforcement_evidence_digest: String,
+    execution: ValidatedExecution,
+    observations: HostArtifactObservationSet,
+    accepted: AcceptedArtifactSet,
+    output_bytes: Vec<u8>,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+struct CompositionRunEvidence {
+    fixture_id: String,
+    stages: Vec<CompositionStageEvidence>,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+struct CompositionStageEvidence {
+    stage_id: String,
+    depends_on: Vec<String>,
+    bindings: ArtifactBindingSet,
+    resolution: ExtensionResolution,
+    invocation: ExtensionInvocation,
+    subject_lock: ExecutionSubjectLock,
     subjects: HostExecutionSubjectObservationSet,
     authority_profile_digest: String,
     enforcement_evidence_digest: String,
@@ -199,7 +364,14 @@ fn templates_freeze_the_provider_identity_and_four_capabilities() {
     );
     for (declared, expected) in manifest.capabilities.iter().zip(CAPABILITIES) {
         assert_eq!(declared.configuration_schema, CONFIGURATION_SCHEMA);
-        assert_eq!(declared.accepts, ["text/plain"]);
+        assert_eq!(
+            declared
+                .accepts
+                .iter()
+                .map(String::as_str)
+                .collect::<Vec<_>>(),
+            expected.accepted_input_media_types
+        );
         assert_eq!(declared.produces, [expected.output_media_type]);
         assert_eq!(declared.content_changes, expected.name == "transformation");
         assert!(declared.cacheable);
@@ -219,6 +391,14 @@ fn templates_freeze_the_provider_identity_and_four_capabilities() {
     assert!(manifest.requested_permissions.ai_providers.is_empty());
     assert!(!manifest.requested_permissions.source_mutation);
     assert!(!manifest.requested_permissions.destructive);
+    assert_eq!(
+        manifest.requested_permissions.filesystem_read,
+        [
+            "workspace/artifact-bindings",
+            "workspace/inputs",
+            "workspace/outputs",
+        ]
+    );
     assert_eq!(lock.extensions.len(), 1);
     assert_eq!(lock.extensions[0].trust, Trust::Trusted);
     assert_eq!(
@@ -261,6 +441,24 @@ fn inspection_is_deterministic_across_fresh_process_and_artifact_boundaries() {
         second_fixture.executable_digest
     );
     assert_eq!(first, second, "inspection evidence drifted");
+}
+
+#[test]
+fn single_provider_composition_preserves_exact_handoff_and_determinism() {
+    assert_composition_fixture(
+        SINGLE_PROVIDER_COMPOSITION,
+        [PRIMARY_PROVIDER.extension_id, PRIMARY_PROVIDER.extension_id],
+        false,
+    );
+}
+
+#[test]
+fn multi_provider_composition_preserves_exact_handoff_and_determinism() {
+    assert_composition_fixture(
+        MULTI_PROVIDER_COMPOSITION,
+        [INSPECTOR_PROVIDER.extension_id, RENDERER_PROVIDER.extension_id],
+        true,
+    );
 }
 
 #[test]
@@ -1071,6 +1269,533 @@ fn timeout_and_readiness_gated_cancellation_reap_the_direct_child() {
     assert!(!timeout_fixture.output_path().exists());
     timeout_fixture.assert_subjects_unchanged(&timeout);
     timeout_fixture.assert_immutable_workspace_bytes(&timeout_before);
+}
+
+impl CompositionFixture {
+    #[allow(clippy::too_many_lines)]
+    fn new(
+        spec: CompositionFixtureSpec,
+        provider_bytes: &[u8],
+        executable_name: &str,
+    ) -> Self {
+        let root = TestRoot::new();
+        let workspace_path = root.path().join(WORKSPACE_LOCATOR);
+        fs::create_dir_all(workspace_path.join("inputs")).unwrap();
+        fs::create_dir_all(workspace_path.join("outputs")).unwrap();
+        fs::create_dir_all(workspace_path.join("artifact-bindings")).unwrap();
+        fs::write(workspace_path.join(INPUT_LOCATOR), INPUT_BYTES).unwrap();
+        let source_digest = digest_bytes(INPUT_BYTES);
+
+        let manifest_template: ExtensionManifest = serde_json::from_str(MANIFEST_TEMPLATE).unwrap();
+        let mut lock: ExtensionLock = serde_json::from_str(LOCK_TEMPLATE).unwrap();
+        let locked_extension_template = lock.extensions[0].clone();
+        lock.lock_id = format!("lock:{}", spec.fixture_id);
+        lock.extensions.clear();
+
+        let mut provider_specs = BTreeMap::new();
+        for stage in spec.stages {
+            provider_specs.insert(stage.provider.extension_id, stage.provider);
+        }
+
+        let mut manifests = Vec::new();
+        let mut observations = Vec::new();
+        let mut providers = BTreeMap::new();
+        for provider_spec in provider_specs.values().copied() {
+            let package_path = root.path().join(provider_spec.package_locator);
+            fs::create_dir_all(&package_path).unwrap();
+            let executable_path = package_path.join(executable_name);
+            fs::write(&executable_path, provider_bytes).unwrap();
+            make_executable(&executable_path);
+            fs::write(package_path.join("LICENSE"), LICENSE_BYTES).unwrap();
+            if let Some(identity_marker) = provider_spec.identity_marker {
+                fs::write(
+                    package_path.join(PROVIDER_IDENTITY_LOCATOR),
+                    identity_marker,
+                )
+                .unwrap();
+            }
+
+            let package_bindings = ArtifactBindingSet {
+                schema_version: ARTIFACT_BINDINGS_V1.to_owned(),
+                binding_set_id: format!(
+                    "bindings:composition-package-{}",
+                    provider_spec.extension_id
+                ),
+                digest_algorithm: SHA256.to_owned(),
+                inputs: Vec::new(),
+                outputs: vec![OutputArtifactBinding {
+                    artifact_id: format!(
+                        "artifact:composition-package-{}",
+                        provider_spec.extension_id
+                    ),
+                    port: format!("port:composition-package-{}", provider_spec.extension_id),
+                    media_type: "application/vnd.flow.execution-package-directory".to_owned(),
+                    kind: ArtifactKind::Directory,
+                    locator: provider_spec.package_locator.to_owned(),
+                }],
+            };
+            package_bindings.validate().unwrap();
+            let package_observations = observe_artifacts(root.path(), &package_bindings)
+                .unwrap()
+                .into_evidence();
+            let package_digest = package_observations.artifacts[0].digest.clone();
+            let executable_digest = digest_bytes(&fs::read(&executable_path).unwrap());
+
+            let mut manifest = manifest_template.clone();
+            provider_spec
+                .extension_id
+                .clone_into(&mut manifest.extension_id);
+            package_digest.clone_into(&mut manifest.integrity.value);
+            manifest.validate().unwrap();
+            observations.push(ExtensionObservation::new(
+                manifest.extension_id.clone(),
+                manifest.version.clone(),
+                manifest.publisher.id.clone(),
+                manifest.integrity.clone(),
+                true,
+            ));
+
+            let mut locked_extension = locked_extension_template.clone();
+            provider_spec
+                .extension_id
+                .clone_into(&mut locked_extension.extension_id);
+            provider_spec
+                .package_locator
+                .clone_into(&mut locked_extension.discovery.location);
+            package_digest.clone_into(&mut locked_extension.integrity.value);
+            let grants_digest = digest_json(&locked_extension.granted_permissions);
+            lock.extensions.push(locked_extension);
+            manifests.push(manifest);
+            providers.insert(
+                provider_spec.extension_id.to_owned(),
+                MaterializedProvider {
+                    spec: provider_spec,
+                    package_digest,
+                    executable_digest,
+                    executable_locator: executable_name.to_owned(),
+                    grants_digest,
+                },
+            );
+        }
+
+        let default_provider = spec.stages[0].provider.extension_id;
+        for resolution in &mut lock.capability_resolution {
+            let selected_provider = spec
+                .stages
+                .iter()
+                .find(|stage| stage.capability.capability_id == resolution.capability_id)
+                .map_or(default_provider, |stage| stage.provider.extension_id);
+            resolution.ordered_extensions = vec![selected_provider.to_owned()];
+        }
+        lock.validate().unwrap();
+        let catalog = ExtensionCatalog::inspect(manifests, lock, observations).unwrap();
+
+        Self {
+            root,
+            spec,
+            catalog,
+            providers,
+            source_digest,
+        }
+    }
+
+    fn run(&self) -> CompositionRunEvidence {
+        let inspect_spec = self.spec.stages[0];
+        assert_eq!(inspect_spec.stage_id, "inspect");
+        assert!(inspect_spec.depends_on.is_empty());
+        assert_eq!(inspect_spec.consumes, [INPUT_ID]);
+        let inspect_input = CompositionInput {
+            artifact_id: INPUT_ID.to_owned(),
+            port: "port:source-text".to_owned(),
+            media_type: "text/plain".to_owned(),
+            kind: ArtifactKind::File,
+            locator: INPUT_LOCATOR.to_owned(),
+            digest: self.source_digest.clone(),
+        };
+        let inspect = self.run_stage(inspect_spec, &inspect_input);
+
+        let transform_spec = self.spec.stages[1];
+        assert_eq!(transform_spec.stage_id, "transform");
+        assert_eq!(transform_spec.depends_on, [inspect_spec.stage_id]);
+        let accepted_handoff = inspect.accepted.outputs()[0].clone();
+        assert_eq!(
+            transform_spec.consumes,
+            [accepted_handoff.artifact_id.as_str()]
+        );
+        let transform_input = CompositionInput::from(&accepted_handoff);
+        let transform = self.run_stage(transform_spec, &transform_input);
+        assert_eq!(
+            accepted_handoff,
+            transform.accepted.inputs()[0],
+            "the downstream input must be the exact accepted upstream artifact"
+        );
+        assert_eq!(
+            fs::read(
+                self.root
+                    .path()
+                    .join(WORKSPACE_LOCATOR)
+                    .join(INPUT_LOCATOR)
+            )
+            .unwrap(),
+            INPUT_BYTES
+        );
+
+        CompositionRunEvidence {
+            fixture_id: self.spec.fixture_id.to_owned(),
+            stages: vec![inspect, transform],
+        }
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn run_stage(
+        &self,
+        stage: CompositionStageSpec,
+        input: &CompositionInput,
+    ) -> CompositionStageEvidence {
+        assert_eq!(stage.consumes, [input.artifact_id.as_str()]);
+        assert_eq!(stage.produces.len(), 1);
+        assert!(
+            stage
+                .capability
+                .accepted_input_media_types
+                .contains(&input.media_type.as_str())
+        );
+        let bindings = ArtifactBindingSet {
+            schema_version: ARTIFACT_BINDINGS_V1.to_owned(),
+            binding_set_id: format!(
+                "bindings:{}-{}",
+                self.spec.fixture_id, stage.stage_id
+            ),
+            digest_algorithm: SHA256.to_owned(),
+            inputs: vec![InputArtifactBinding {
+                artifact_id: input.artifact_id.clone(),
+                port: input.port.clone(),
+                media_type: input.media_type.clone(),
+                kind: input.kind,
+                locator: input.locator.clone(),
+                expected_digest: input.digest.clone(),
+            }],
+            outputs: vec![OutputArtifactBinding {
+                artifact_id: stage.produces[0].to_owned(),
+                port: stage.output_port.to_owned(),
+                media_type: stage.capability.output_media_type.to_owned(),
+                kind: ArtifactKind::File,
+                locator: stage.output_locator.to_owned(),
+            }],
+        };
+        bindings.validate().unwrap();
+        let bindings_locator = format!(
+            "artifact-bindings/{}-{}.v1.json",
+            self.spec.fixture_id, stage.stage_id
+        );
+        let bindings_path = self
+            .root
+            .path()
+            .join(WORKSPACE_LOCATOR)
+            .join(&bindings_locator);
+        assert!(!bindings_path.exists());
+        fs::write(&bindings_path, serde_json::to_vec_pretty(&bindings).unwrap()).unwrap();
+
+        let request = ResolutionRequest::new(
+            format!("{}-{}", self.spec.fixture_id, stage.stage_id),
+            stage.capability.capability_id,
+            Domain::Flow,
+            "hermetic-process",
+            ExecutionModeKind::Process,
+        );
+        let resolution = self.catalog.resolve(&request);
+        let resolved = resolution.resolved().unwrap_or_else(|| {
+            panic!(
+                "composition stage must resolve: {:#?}",
+                resolution.evidence()
+            )
+        });
+        assert_eq!(resolved.extension_id(), stage.provider.extension_id);
+        assert_eq!(resolved.fallback_policy(), FallbackPolicy::Forbidden);
+        let provider = self.providers.get(stage.provider.extension_id).unwrap();
+        let seed = format!("{}-{}-v1", self.spec.fixture_id, stage.stage_id);
+        let configuration_values = BTreeMap::from([
+            ("mode".to_owned(), serde_json::json!("success")),
+            ("seed".to_owned(), serde_json::json!(seed)),
+        ]);
+        let invocation = ExtensionInvocation {
+            schema_version: flow::EXTENSION_INVOCATION_V1.to_owned(),
+            invocation_id: format!(
+                "invocation:{}-{}",
+                self.spec.fixture_id, stage.stage_id
+            ),
+            run_id: format!("run:{}", self.spec.fixture_id),
+            phase: stage.phase,
+            extension: InvocationExtension {
+                extension_id: resolved.extension_id().to_owned(),
+                version: resolved.version().to_owned(),
+                publisher_id: resolved.publisher_id().to_owned(),
+                integrity: resolved.integrity().value.clone(),
+            },
+            capability_id: stage.capability.capability_id.to_owned(),
+            interface: InvocationInterface {
+                kind: resolved.execution_mode().kind,
+                name: resolved.execution_mode().name.clone(),
+                protocol: resolved.execution_mode().protocol.clone(),
+            },
+            input_artifacts: vec![InputArtifact {
+                artifact_id: input.artifact_id.clone(),
+                digest: input.digest.clone(),
+            }],
+            expected_output_types: vec![stage.capability.output_media_type.to_owned()],
+            configuration: Configuration {
+                schema_id: CONFIGURATION_SCHEMA.to_owned(),
+                digest: digest_json(&configuration_values),
+                values: configuration_values,
+            },
+            authorization: Authorization {
+                authorization_id: format!(
+                    "authorization:{}-{}",
+                    self.spec.fixture_id, stage.stage_id
+                ),
+                lock_id: resolved.lock_id().to_owned(),
+                grants_digest: provider.grants_digest.clone(),
+            },
+            limits: resolved.execution_mode().limits.clone(),
+            checkpoint_refs: Vec::new(),
+            secret_handles: Vec::new(),
+            cancellation_id: format!("cancel:{}-{}", self.spec.fixture_id, stage.stage_id),
+        };
+        invocation.validate().unwrap();
+
+        let subject_lock = self.subject_lock(resolved, &invocation, stage, provider);
+        let subjects_before = observe_execution_subjects(
+            self.root.path(),
+            resolved,
+            &invocation,
+            &subject_lock,
+        )
+        .unwrap();
+        let mut authority_profile = process_authority_profile(
+            resolved,
+            &invocation,
+            &subject_lock,
+            &subjects_before,
+            ProcessIsolation::TrustedUnconfined,
+        );
+        authority_profile.authority_profile_id = format!(
+            "authority-profile:{}-{}",
+            self.spec.fixture_id, stage.stage_id
+        );
+        authority_profile.requested.argv = composition_provider_argv(&bindings_locator);
+        authority_profile
+            .granted
+            .argv
+            .clone_from(&authority_profile.requested.argv);
+        let mut enforcement = process_enforcement_evidence(&authority_profile, &subjects_before);
+        enforcement.enforcement_evidence_id = format!(
+            "enforcement:{}-{}",
+            self.spec.fixture_id, stage.stage_id
+        );
+        let authority = authorize_process(
+            resolved,
+            &invocation,
+            &subject_lock,
+            &subjects_before,
+            &authority_profile,
+            &enforcement,
+        )
+        .unwrap();
+
+        let mut events = Vec::new();
+        let execution = LocalProcessRunner::run(
+            self.root.path(),
+            resolved,
+            &invocation,
+            &subject_lock,
+            &authority,
+            &NoSecrets,
+            &mut events,
+        )
+        .unwrap();
+        assert_eq!(events, execution.events());
+        assert_eq!(
+            execution.result().consumed_artifacts,
+            [input.artifact_id.as_str()]
+        );
+        assert_eq!(
+            execution.result().produced_artifacts,
+            [stage.produces[0]]
+        );
+        assert_eq!(
+            execution.result().configuration_digest,
+            invocation.configuration.digest
+        );
+        assert_eq!(
+            execution.result().extension_id,
+            stage.provider.extension_id
+        );
+
+        let observed = observe_artifacts(
+            &self.root.path().join(WORKSPACE_LOCATOR),
+            &bindings,
+        )
+        .unwrap();
+        let accepted =
+            accept_artifacts(resolved, &invocation, &execution, &bindings, &observed).unwrap();
+        let output_bytes = fs::read(
+            self.root
+                .path()
+                .join(WORKSPACE_LOCATOR)
+                .join(stage.output_locator),
+        )
+        .unwrap();
+        assert_eq!(accepted.outputs()[0].digest, digest_bytes(&output_bytes));
+        let subjects_after = observe_execution_subjects(
+            self.root.path(),
+            resolved,
+            &invocation,
+            &subject_lock,
+        )
+        .unwrap();
+        assert_eq!(subjects_before.evidence(), subjects_after.evidence());
+
+        CompositionStageEvidence {
+            stage_id: stage.stage_id.to_owned(),
+            depends_on: stage
+                .depends_on
+                .iter()
+                .map(|dependency| (*dependency).to_owned())
+                .collect(),
+            bindings,
+            resolution: resolution.evidence().clone(),
+            invocation,
+            subject_lock,
+            subjects: subjects_after.evidence().clone(),
+            authority_profile_digest: authority.profile_digest().to_owned(),
+            enforcement_evidence_digest: authority.evidence_digest().to_owned(),
+            execution,
+            observations: observed.into_evidence(),
+            accepted,
+            output_bytes,
+        }
+    }
+
+    fn subject_lock(
+        &self,
+        resolved: &flow::ResolvedExtension,
+        invocation: &ExtensionInvocation,
+        stage: CompositionStageSpec,
+        provider: &MaterializedProvider,
+    ) -> ExecutionSubjectLock {
+        let mut lock: ExecutionSubjectLock = serde_json::from_str(include_str!(
+            "../contracts/examples/execution-subject-lock.v1.example.json"
+        ))
+        .unwrap();
+        EXECUTION_SUBJECT_LOCK_V1.clone_into(&mut lock.schema_version);
+        lock.subject_lock_id = format!(
+            "subject-lock:{}-{}",
+            self.spec.fixture_id, stage.stage_id
+        );
+        resolved.lock_id().clone_into(&mut lock.extension_lock_id);
+        lock.extension.clone_from(&invocation.extension);
+        stage
+            .capability
+            .capability_id
+            .clone_into(&mut lock.capability_id);
+        lock.interface.clone_from(&invocation.interface);
+        lock.declared_entrypoint
+            .clone_from(&resolved.execution_mode().entrypoint);
+        provider
+            .spec
+            .package_subject_id
+            .clone_into(&mut lock.package.subject_id);
+        provider
+            .spec
+            .package_locator
+            .clone_into(&mut lock.package.locator);
+        provider
+            .package_digest
+            .clone_into(&mut lock.package.digest.value);
+        provider
+            .spec
+            .executable_subject_id
+            .clone_into(&mut lock.executable.subject_id);
+        lock.executable
+            .locator
+            .clone_from(&provider.executable_locator);
+        provider
+            .executable_digest
+            .clone_into(&mut lock.executable.digest.value);
+        lock.validate().unwrap();
+        lock
+    }
+}
+
+fn assert_composition_fixture(
+    spec: CompositionFixtureSpec,
+    expected_providers: [&str; 2],
+    distinct_packages: bool,
+) {
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let first_fixture = CompositionFixture::new(spec, &provider_bytes, &executable_name);
+    let first = first_fixture.run();
+    let second_fixture = CompositionFixture::new(spec, &provider_bytes, &executable_name);
+    let second = second_fixture.run();
+
+    assert_eq!(first, second, "normalized composition evidence drifted");
+    assert_eq!(first.fixture_id, spec.fixture_id);
+    assert_eq!(
+        first
+            .stages
+            .iter()
+            .map(|stage| stage.stage_id.as_str())
+            .collect::<Vec<_>>(),
+        ["inspect", "transform"]
+    );
+    assert!(first.stages[0].depends_on.is_empty());
+    assert_eq!(first.stages[1].depends_on, ["inspect"]);
+    assert_eq!(
+        first.stages[0].accepted.outputs()[0],
+        first.stages[1].accepted.inputs()[0]
+    );
+
+    for (stage, expected_provider) in first.stages.iter().zip(expected_providers) {
+        assert_eq!(stage.invocation.extension.extension_id, expected_provider);
+        assert_eq!(stage.subject_lock.extension, stage.invocation.extension);
+        assert_eq!(stage.subjects.extension, stage.invocation.extension);
+        assert_eq!(stage.execution.result().extension_id, expected_provider);
+        assert_eq!(
+            stage.execution.result().configuration_digest,
+            stage.invocation.configuration.digest
+        );
+        assert_eq!(stage.accepted.outputs().len(), 1);
+        assert_eq!(
+            stage.accepted.outputs()[0].digest,
+            digest_bytes(&stage.output_bytes)
+        );
+    }
+
+    if distinct_packages {
+        assert_ne!(
+            first.stages[0].subject_lock.package.digest.value,
+            first.stages[1].subject_lock.package.digest.value
+        );
+    } else {
+        assert_eq!(
+            first.stages[0].subject_lock.package.digest.value,
+            first.stages[1].subject_lock.package.digest.value
+        );
+    }
+    assert_eq!(
+        first.stages[0].subject_lock.executable.digest.value,
+        first.stages[1].subject_lock.executable.digest.value,
+        "both synthetic providers intentionally reuse the immutable generic executable"
+    );
+}
+
+fn composition_provider_argv(bindings_locator: &str) -> Vec<String> {
+    vec![
+        "--artifact-root".to_owned(),
+        "../../workspace".to_owned(),
+        "--artifact-bindings".to_owned(),
+        bindings_locator.to_owned(),
+    ]
 }
 
 impl KitFixture {

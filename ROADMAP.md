@@ -178,6 +178,10 @@ behavior through stable error and evidence contracts.
 - Flow #40 / merged PR #41 supplies exact authority/isolation preflight with
   green default-branch CI at
   `5f411da6e7040e3494cbd275729de9a2ed8c67a3`.
+- Flow #58 supplies fixed single-provider and two-provider compositions over
+  the hermetic kit. Each accepted inspection artifact is the exact immutable
+  input to transformation, and fresh roots must retain equal normalized
+  evidence and bytes without adding a production scheduler.
 - Flow #25 remains the active owner of process enforcement. Flow #42 / PR #43
   is its final bounded child and adds direct launch/supervision without
   pre-empting later sandbox, durable-state, or real-adapter work.
@@ -353,8 +357,12 @@ artifact semantics.
 
 Flow #57 hardens that acceptance boundary against changed evidence and stale
 binding context without changing the portable artifact schemas or assigning
-authoritative digest semantics to free-form provider provenance. The remaining
-hermetic-kit graph and closeout checkpoints stay with #58 and #59.
+authoritative digest semantics to free-form provider provenance. Flow #58 adds
+fixed two-stage single-provider and two-provider compositions that hand the
+exact accepted inspection artifact into a transformation stage through public
+Flow boundaries and produce equal normalized evidence and bytes across fresh
+roots. It remains test-owned sequencing rather than a graph scheduler. The
+hermetic-kit documentation and parent-evidence closeout remains with #59.
 
 ### Verify locked package and executable subjects
 

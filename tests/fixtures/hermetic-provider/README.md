@@ -11,14 +11,22 @@ adapter or a public Flow CLI.
 - Process mode: `hermetic-process`
 - Entrypoint: `flow-hermetic-provider`
 
+The executable composition fixtures also finalize the same generic manifest
+under the already declared synthetic identities
+`org.egohygiene.synthetic-inspector@0.1.0` and
+`org.egohygiene.synthetic-renderer@0.1.0`. Their package directories include a
+provider-identity marker, so the two package digests are distinct while the
+executable digest remains exactly equal. This proves separate provider
+boundaries, not separate algorithms.
+
 The manifest freezes four Flow-owned synthetic capabilities:
 
-| Capability | Synthetic role | Candidate artifact type |
+| Capability | Accepted input type | Candidate artifact type |
 | --- | --- | --- |
-| `flow/inspect-fixture` | Inspection | `application/vnd.flow.fixture-inspection+json` |
-| `flow/transform-fixture` | Transformation | `application/vnd.flow.fixture-transformation+json` |
-| `flow/validate-fixture` | Validation | `application/vnd.flow.fixture-validation+json` |
-| `flow/observe-fixture` | Read-only source observation | `application/vnd.flow.fixture-observation+json` |
+| `flow/inspect-fixture` | `text/plain` | `application/vnd.flow.fixture-inspection+json` |
+| `flow/transform-fixture` | `text/plain` or `application/vnd.flow.fixture-inspection+json` | `application/vnd.flow.fixture-transformation+json` |
+| `flow/validate-fixture` | `text/plain` | `application/vnd.flow.fixture-validation+json` |
+| `flow/observe-fixture` | `text/plain` | `application/vnd.flow.fixture-observation+json` |
 
 “Read-only” describes the source boundary: the provider never mutates an input.
 Every capability writes a new, explicitly bound evidence artifact, so the
@@ -36,6 +44,10 @@ checksum record remain beside the package in the host's configured catalog;
 they are not copied into the hashed package root, which would create a
 self-referential package digest. The conformance test performs these steps in
 memory and then creates the exact execution-subject lock.
+
+Composition packages for the inspector and renderer add only the documented
+`PROVIDER-IDENTITY` marker beside the same executable and license. The marker
+bytes are fixed and included in Flow's package observation.
 
 Build from an already populated Cargo cache without network access:
 
@@ -96,6 +108,29 @@ The unavailable case marks the exact observation unavailable. The incompatible
 case applies a case-local external manifest requirement of Flow `>=9.0.0`.
 Neither change mutates the hashed provider package.
 
+## Deterministic composition fixtures
+
+Checkpoint #58 owns two explicit, test-only two-stage fixtures:
+
+| Fixture | Ordered stages | Providers | Exact handoff |
+| --- | --- | --- | --- |
+| `single-provider-composition` | `inspect` → `transform` | `org.egohygiene.synthetic-scenario-provider` for both stages | accepted `artifact:inspection-report` |
+| `multi-provider-composition` | `inspect` → `transform` | `org.egohygiene.synthetic-inspector` → `org.egohygiene.synthetic-renderer` | accepted `artifact:inspection-report` |
+
+The harness calls each stage explicitly in array order. It creates the second
+binding only from the first stage's `AcceptedArtifactSet`, retaining the same
+artifact ID, port, media type, kind, locator, and digest in one workspace.
+Every stage independently resolves its provider, matches package and executable
+subjects, authorizes the invocation, runs the direct child, observes the bound
+artifacts, and accepts the output. Two fresh roots must produce equal portable
+resolution, invocation, subject, authority, execution, observation, and
+accepted-artifact evidence plus byte-identical outputs.
+
+The output read grant is required only so a later composition stage may consume
+an earlier accepted output; it grants no mutation of that input. These fixtures
+do not implement a ready queue, DAG scheduler, retry, resume, checkpoint,
+durable state, scenario-manifest executor, or real holon algorithm.
+
 ## Host-harness artifact cases
 
 Two checkpoint #57 cases deliberately keep `mode=success` because only the host
@@ -136,15 +171,17 @@ may retain decoded provider evidence for inspection. Event delivery is not
 transactional, so an earlier valid event can reach the authoritative sink
 before later evidence rejects execution.
 
-The provider reads no ambient environment, opens no network connection, starts
+The provider reads only the named binding, input, and prior-output workspace
+trees. It reads no ambient environment, opens no network connection, starts
 no subprocess, mutates no source, and performs no destructive, signing, or
 publication action. `trusted-unconfined` remains an explicit test profile, not
 a sandbox or containment claim.
 
 Checkpoint #57 delivers corrupt, changed, stale, and contradictory artifact
 evidence cases while leaving provider provenance v1 free-form and
-non-authoritative. Graph fixtures remain with #58, and final redistribution
-documentation plus the parent requirement matrix remain with #59.
+non-authoritative. Checkpoint #58 delivers the deterministic composition
+fixtures. Final redistribution documentation plus the parent requirement matrix
+remain with #59.
 
 The source and generated package are distributed under the repository's MIT
 license. Do not redistribute a materialized package without its license or
