@@ -654,14 +654,8 @@ fn changed_input_bytes_fail_the_immutable_digest_gate() {
     let invocation = configured_invocation(resolved, &bindings);
     let execution = execute(resolved, &invocation, ProviderBehavior::default());
 
-    let error = accept_artifacts(
-        resolved,
-        &invocation,
-        &execution,
-        &bindings,
-        &observations,
-    )
-    .unwrap_err();
+    let error =
+        accept_artifacts(resolved, &invocation, &execution, &bindings, &observations).unwrap_err();
     assert!(matches!(
         error,
         ArtifactAcceptanceError::Mismatch { ref message }
@@ -685,18 +679,9 @@ fn changed_input_after_observation_cannot_be_accepted() {
     )
     .unwrap();
 
-    let error = accept_artifacts(
-        resolved,
-        &invocation,
-        &execution,
-        &bindings,
-        &observations,
-    )
-    .unwrap_err();
-    assert!(matches!(
-        error,
-        ArtifactAcceptanceError::ObservationChanged
-    ));
+    let error =
+        accept_artifacts(resolved, &invocation, &execution, &bindings, &observations).unwrap_err();
+    assert!(matches!(error, ArtifactAcceptanceError::ObservationChanged));
 }
 
 #[test]
@@ -715,18 +700,9 @@ fn changed_output_after_observation_cannot_be_accepted() {
     )
     .unwrap();
 
-    let error = accept_artifacts(
-        resolved,
-        &invocation,
-        &execution,
-        &bindings,
-        &observations,
-    )
-    .unwrap_err();
-    assert!(matches!(
-        error,
-        ArtifactAcceptanceError::ObservationChanged
-    ));
+    let error =
+        accept_artifacts(resolved, &invocation, &execution, &bindings, &observations).unwrap_err();
+    assert!(matches!(error, ArtifactAcceptanceError::ObservationChanged));
 }
 
 #[test]
@@ -741,14 +717,8 @@ fn removed_output_after_observation_returns_typed_reobservation_error() {
 
     fs::remove_dir_all(root.path().join("outputs/report bundle")).unwrap();
 
-    let error = accept_artifacts(
-        resolved,
-        &invocation,
-        &execution,
-        &bindings,
-        &observations,
-    )
-    .unwrap_err();
+    let error =
+        accept_artifacts(resolved, &invocation, &execution, &bindings, &observations).unwrap_err();
     assert!(matches!(
         error,
         ArtifactAcceptanceError::Reobservation {

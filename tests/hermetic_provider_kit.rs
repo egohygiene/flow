@@ -631,10 +631,7 @@ fn corrupt_artifact_evidence_never_promotes_execution() {
                     result,
                 },
         } => {
-            assert_eq!(
-                message,
-                "result.provenance[2].value: must not be empty"
-            );
+            assert_eq!(message, "result.provenance[2].value: must not be empty");
             assert_eq!(retained_events.len(), 3);
             assert!(result.provenance[2].value.is_empty());
         }
@@ -651,8 +648,7 @@ fn contradictory_artifact_evidence_fails_exact_acceptance() {
     let capability = CAPABILITIES[0];
     let (provider_bytes, executable_name) = provider_binary_snapshot();
     let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
-    let prepared =
-        fixture.prepare_lifecycle(capability, "contradictory-artifact-evidence", false);
+    let prepared = fixture.prepare_lifecycle(capability, "contradictory-artifact-evidence", false);
     let immutable_before = fixture.immutable_workspace_bytes();
     let mut events = Vec::new();
 
@@ -730,10 +726,7 @@ fn changed_output_after_host_observation_fails_freshness_gate() {
         &observed,
     )
     .unwrap_err();
-    assert!(matches!(
-        error,
-        ArtifactAcceptanceError::ObservationChanged
-    ));
+    assert!(matches!(error, ArtifactAcceptanceError::ObservationChanged));
     fixture.assert_subjects_unchanged(&prepared);
     fixture.assert_immutable_workspace_bytes(&immutable_before);
 }

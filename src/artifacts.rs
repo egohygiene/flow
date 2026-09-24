@@ -535,10 +535,8 @@ pub fn accept_artifacts(
     for binding in &bindings.inputs {
         let observation = observations_by_id
             .get(binding.artifact_id.as_str())
-            .ok_or_else(|| {
-                ArtifactAcceptanceError::Mismatch {
-                    message: "a declared input has no host observation".to_owned(),
-                }
+            .ok_or_else(|| ArtifactAcceptanceError::Mismatch {
+                message: "a declared input has no host observation".to_owned(),
             })?;
         correlate_observation(
             &binding.artifact_id,
@@ -559,10 +557,8 @@ pub fn accept_artifacts(
     for binding in &bindings.outputs {
         let observation = observations_by_id
             .get(binding.artifact_id.as_str())
-            .ok_or_else(|| {
-                ArtifactAcceptanceError::Mismatch {
-                    message: "a declared output has no host observation".to_owned(),
-                }
+            .ok_or_else(|| ArtifactAcceptanceError::Mismatch {
+                message: "a declared output has no host observation".to_owned(),
             })?;
         correlate_observation(
             &binding.artifact_id,
