@@ -80,6 +80,8 @@ runtime `mode` values are:
 | `missing-output` | Emits a complete valid transcript for the bound candidate without creating its file, so host observation returns the exact typed missing-artifact error. |
 | `extra-output` | Writes the bound candidate plus one closed, bounded undeclared sibling and names both in the artifact event and result; observation remains binding-driven and acceptance rejects the extra provider declaration. |
 | `partial-output` | Writes a deterministic truncated synthetic candidate, reports its exact byte digest, and sets `partial_result` so acceptance rejects incomplete evidence without claiming generic format validation. |
+| `corrupt-artifact-evidence` | Writes the normal candidate but clears the artifact-provenance value so semantic result validation returns an exact invalid-result error before `ValidatedExecution`. |
+| `contradictory-artifact-evidence` | Writes the normal candidate and names it in the result while omitting it from the artifact-produced event; protocol validation succeeds, but artifact acceptance rejects the contradiction. |
 | `nonzero-after-success` | Flushes success-shaped stdout, then exits with code `7`. |
 | `await-interruption` | Creates the explicit lifecycle control record, then waits for host timeout or cancellation. |
 | `stdout-overflow` | Emits deterministic stdout beyond the invocation limit. |
@@ -93,6 +95,23 @@ not runtime modes because both reject selection before an invocation exists.
 The unavailable case marks the exact observation unavailable. The incompatible
 case applies a case-local external manifest requirement of Flow `>=9.0.0`.
 Neither change mutates the hashed provider package.
+
+## Host-harness artifact cases
+
+Two checkpoint #57 cases deliberately keep `mode=success` because only the host
+can create or attempt to reuse Flow's opaque observation token:
+
+| Case | Harness operation | Exact rejection boundary |
+| --- | --- | --- |
+| `changed-output-after-observation` | Run the real provider successfully, observe the complete binding set, then overwrite the bound output with deterministic replacement bytes. | The final acceptance read returns `ArtifactAcceptanceError::ObservationChanged`; no accepted token is created. |
+| `stale-invocation-and-binding-contexts` | Reuse valid execution or observation evidence first with a changed run identity and then with a changed binding set. | Artifact acceptance returns the exact invocation-context or retained-binding mismatch; no accepted token is created. |
+
+The supporting artifact-library cases also change an input after observation,
+remove an output before the final read, and validate deliberately malformed or
+contradictory portable observation documents. They do not add provider modes:
+portable JSON cannot recreate `ObservedArtifactSet`, and the retained absolute
+canonical root is sensitive host context omitted from portable evidence and
+from the token's manual `Debug` output.
 
 For `await-interruption`, the provider writes and syncs this compact record to
 a sibling temporary file, then atomically publishes it with one line feed at
@@ -122,9 +141,10 @@ no subprocess, mutates no source, and performs no destructive, signing, or
 publication action. `trusted-unconfined` remains an explicit test profile, not
 a sandbox or containment claim.
 
-Corrupt, changed, stale, and contradictory artifact cases remain with #57.
-Graph fixtures remain with #58, and final redistribution documentation plus
-the parent requirement matrix remain with #59.
+Checkpoint #57 delivers corrupt, changed, stale, and contradictory artifact
+evidence cases while leaving provider provenance v1 free-form and
+non-authoritative. Graph fixtures remain with #58, and final redistribution
+documentation plus the parent requirement matrix remain with #59.
 
 The source and generated package are distributed under the repository's MIT
 license. Do not redistribute a materialized package without its license or

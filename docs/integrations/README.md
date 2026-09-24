@@ -110,8 +110,14 @@ stream overflow, invalid protocol evidence, and authoritative host-rejection
 cases without weakening the immutable-package or success baseline. Flow #56
 adds protocol-valid missing, extra, and partial physical artifact outcomes and
 proves that each stops at its exact host-observation or artifact-acceptance
-boundary. Corrupt/stale/contradictory evidence, graph fixtures, and the final
-parent matrix remain with #57, #58, and #59 respectively.
+boundary. Flow #57 distinguishes corrupt result evidence from a protocol-valid
+event/result contradiction, binds each opaque observation token to its exact
+binding snapshot, and requires equal final root-confined evidence before
+artifact promotion. Changed or removed evidence and stale invocation or
+binding context cannot construct `AcceptedArtifactSet`. This hardening does not
+make observation atomic or reinterpret free-form extension-result v1
+provenance. Graph fixtures and the final parent matrix remain with #58 and #59
+respectively.
 
 The following remain deferred: provider discovery from the filesystem, dynamic
 loading, cryptographic authenticity and transparency verification,

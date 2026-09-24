@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.9.0
+version: 0.10.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-21
+updated: 2026-09-24
 governed_by:
   - architecture-architecture
 depends_on:
@@ -73,9 +73,13 @@ Artifact bindings remain separate from path-independent extension envelopes.
 A Flow-owned binding set maps immutable input and candidate-output identities to
 logical ports, media types, kinds, and portable root-relative locators for one
 run. A Flow observer computes file or recursive directory identity beneath one
-caller-selected root. Only the separate artifact-acceptance gate can correlate
-those observations with resolved capability, invocation, event, and terminal
-result evidence.
+caller-selected root. Its opaque token privately retains the exact binding
+snapshot and absolute canonical root while omitting that sensitive host context
+from portable evidence and manual `Debug` output. Only the separate artifact-
+acceptance gate can correlate those observations with resolved capability,
+invocation, event, and terminal result evidence. Immediately before promotion,
+the gate re-observes the retained root and requires the portable evidence to
+remain equal.
 
 Process execution subjects are a third, distinct boundary. A Flow-owned lock
 pins one package directory and one regular executable file to an exact
@@ -231,13 +235,17 @@ required by both process seams. Issue #40 adds exact process authority and
 isolation profiles, caller-attested enforcement evidence, and a second opaque
 token required by both process seams. Issue #42 adds the bounded local
 trusted-unconfined runner, direct transport workers, timeout/cancellation grace
-and escalation, and direct-child reaping. Flow does not yet supply the public
-CLI, real holon adapters, signature or transparency verification,
-provider-native artifact validation, an operating-system sandbox or
-authenticated enforcement evidence, descriptor-bound execution, process-tree
-containment, durable run state, checkpoints, retry, or resume. Structural units
-beyond these library seams remain constraints for later adapter and
-orchestration work, not claims about current source layout.
+and escalation, and direct-child reaping. Issue #57 binds an opaque artifact
+observation to its exact binding snapshot and canonical root and requires an
+equal final observation before acceptance, without changing portable artifact
+schemas or free-form extension-result v1 provenance. Flow does not yet supply
+the public CLI, real holon adapters, signature or transparency verification,
+provider-native artifact validation, an atomic filesystem snapshot, an
+operating-system sandbox or authenticated enforcement evidence,
+descriptor-bound execution, process-tree containment, durable run state,
+checkpoints, retry, or resume. Structural units beyond these library seams
+remain constraints for later adapter and orchestration work, not claims about
+current source layout.
 
 ## Open questions
 

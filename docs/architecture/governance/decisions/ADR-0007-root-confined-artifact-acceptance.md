@@ -77,8 +77,12 @@ represent them losslessly.
 
 The portable observation document is serializable evidence, not an authority
 token. Flow wraps freshly observed evidence in an `ObservedArtifactSet` whose
-fields are private. Deserializing or constructing
-`HostArtifactObservationSet` cannot recreate that token or enter artifact
+fields are private. The token also retains the canonical root and an exact copy
+of the validated binding set used for that observation. The absolute canonical
+root is sensitive host context and is omitted from portable evidence and the
+token's manual `Debug` output; neither retained value is serialized.
+Deserializing or constructing
+`HostArtifactObservationSet` cannot recreate the token or enter artifact
 acceptance without a fresh host observation.
 
 Files use the lowercase hexadecimal SHA-256 digest of their bytes and their
@@ -112,13 +116,20 @@ all of these checks pass together:
    introduces an undeclared type;
 5. result-consumed IDs, result-produced IDs, and `artifact-produced` event IDs
    each match their declared sets exactly, with no duplicates;
-6. host observations cover every input and output exactly once and match every
-   bound ID, port, media type, kind, and locator; and
-7. every observed input digest equals its immutable expected digest.
+6. the supplied bindings exactly equal the binding snapshot retained by the
+   opaque observation token;
+7. host observations cover every input and output exactly once and match every
+   bound ID, port, media type, kind, and locator;
+8. every observed input digest equals its immutable expected digest; and
+9. immediately before promotion, Flow re-observes the same bindings beneath
+   the retained canonical root and requires the fresh portable evidence to
+   equal the original observation exactly.
 
 An output digest is learned from host observation rather than accepted from the
 provider. A provider result, event, exit code, or file existence alone cannot
-construct `AcceptedArtifactSet`.
+construct `AcceptedArtifactSet`. Provider-contributed artifact provenance
+remains untrusted extension-result evidence; the final re-observation does not
+reinterpret its free-form v1 value as an expected output digest.
 
 ## Rationale
 
@@ -138,6 +149,13 @@ Keeping `ValidatedExecution` separate also prevents existing event/result
 validation from silently acquiring stronger filesystem claims than it can
 support.
 
+Retaining the exact binding snapshot prevents a caller from replaying an
+observation token against a modified declaration that happens to reuse an
+identifier. Re-observing at the final promotion boundary detects a net change
+to bound host evidence after the first observation without trusting a provider
+to attest to its own output bytes or changing the provisional extension-result
+v1 provenance model.
+
 ## Evidence and assumptions
 
 - Closed extension invocation, event, result, and resolution models already
@@ -145,8 +163,10 @@ support.
 - Both the injected in-process seam and host-neutral process seam produce the
   same `ValidatedExecution` type, so artifact acceptance can follow either.
 - The caller controls the observation root and is responsible for keeping it
-  quiescent while Flow observes it. Portable Rust filesystem APIs do not provide
-  an atomic, race-free directory capability across all supported hosts.
+  quiescent while Flow observes and accepts it. The final re-observation narrows
+  the observation-to-acceptance drift window, but portable Rust filesystem APIs
+  do not provide an atomic, race-free directory capability across all supported
+  hosts.
 - SHA-256 is already the suite's provisional content-digest algorithm.
 - Real adapters are expected to stage outputs beneath an isolated run root and
   to expose provider-native validation separately from byte identity.
@@ -158,6 +178,10 @@ support.
   existing contract family.
 - **Trust provider-reported digests:** rejected because the provider would be
   approving the same evidence that Flow must independently assess.
+- **Interpret free-form artifact provenance as an expected output digest:**
+  rejected because the v1 value does not bind a claim unambiguously to one
+  output, and silently adding that meaning would redefine a closed provisional
+  contract.
 - **Accept file existence plus exit `0`:** rejected because neither establishes
   immutable input identity, output bytes, exact declared coverage, or event and
   result agreement.
@@ -183,16 +207,23 @@ Unix names. No normalization means visually similar Unicode names remain
 different artifacts. Case behavior follows exact string identity even on a
 case-insensitive filesystem.
 
-Directory observation reads every descendant and can be expensive. The
-checkpoint has no streaming manifest sink, incremental cache, hard-link
-identity, or resource quota. A future runner must apply authority and resource
-controls before observing untrusted large trees.
+Directory observation reads every descendant and can be expensive. Successful
+acceptance reads every bound artifact a second time. The checkpoint has no
+streaming manifest sink, incremental cache, hard-link identity, or resource
+quota. A future runner must apply authority and resource controls before
+observing untrusted large trees.
 
 The check is not a race-free sandbox boundary. A concurrently mutating or
-hostile workspace can change between metadata inspection and byte reads. The
-production runner must create an isolated, quiescent workspace or replace this
-portable observer with a stronger platform capability before making adversarial
-concurrency claims.
+hostile workspace can change during either traversal, change and return to the
+same portable evidence between observations, or change after the final read.
+The production runner must create an isolated, quiescent workspace or replace
+this portable observer with a stronger platform capability before making
+adversarial concurrency claims.
+
+The v1 observation token carries no run or invocation identity. Reuse across
+runs is therefore indistinguishable when the exact binding snapshot and current
+portable evidence are identical; the stale-context cases reject observable
+correlation differences, not same-evidence replay.
 
 ## Expected consequences
 
@@ -202,6 +233,8 @@ concurrency claims.
   caller mutation before acceptance.
 - Candidate outputs acquire host-observed content identities that downstream
   planning and provenance can reference.
+- A changed binding declaration or a net change to bound evidence between the
+  first and final observations cannot construct `AcceptedArtifactSet`.
 - File and directory artifacts have one deterministic cross-platform profile.
 - `ValidatedExecution` and `AcceptedArtifactSet` communicate different evidence
   strengths in the type system.
@@ -211,9 +244,12 @@ concurrency claims.
 ## Observed outcomes
 
 Flow issue #36 adds the two contracts, Rust binding/observation/acceptance APIs,
-portable path and manifest validation, and adversarial conformance tests. It
-does not add a real provider adapter or process runner. Default-branch CI after
-merge remains the acceptance evidence for this implementation.
+portable path and manifest validation, and adversarial conformance tests. Flow
+issue #57 hardens the opaque observation token with its exact binding snapshot
+and canonical root, then requires an equal final re-observation before
+acceptance. It does not change either portable schema or the extension-result
+v1 provenance model. Default-branch CI after merge remains the acceptance
+evidence for this implementation.
 
 ## Security, privacy, and authority
 
@@ -231,7 +267,10 @@ This decision grants no filesystem access to a provider and does not enforce a
 manifest's requested permissions. It does not verify executable/package bytes,
 publisher identity, signatures, or transparency logs. It is not an
 operating-system sandbox, a process launcher, a domain validator, or an atomic
-filesystem snapshot.
+filesystem snapshot. The privately retained canonical path may expose sensitive
+host topology, so it is omitted from portable evidence and the token's manual
+`Debug` output. It is host context for the final read, not a filesystem
+capability, lock, or containment boundary.
 
 ## Review triggers
 
@@ -263,5 +302,7 @@ missing artifacts, kind mismatch, duplicate IDs/ports/locators, absolute and
 traversing locators, backslash and drive ambiguity, symlinks, special nodes,
 non-UTF-8 names where supported, invalid/tampered manifests, incomplete host
 coverage, invocation/resolution mismatch, result/event mismatch, duplicates,
-and partial or unsuccessful terminal evidence. Every rejected case must return
-a typed error and never an `AcceptedArtifactSet`.
+partial or unsuccessful terminal evidence, stale binding snapshots, changed
+bound bytes after initial observation, and a missing or unsafe node during the
+final re-observation. Every rejected case must return a typed error and never an
+`AcceptedArtifactSet`.

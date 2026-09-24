@@ -7,9 +7,11 @@ The hermetic provider kit is Flow-owned conformance infrastructure for issue
 success path. Checkpoint #45 keeps that baseline intact while adding a closed
 matrix for provider selection, lifecycle supervision, and protocol outcomes.
 Checkpoint #56 adds the first physical artifact-outcome matrix for missing,
-extra, and partial outputs. All three checkpoints exercise released public
-boundaries without importing a sibling implementation or pretending to be an
-Aniflow, Optiflow, or Renderflow algorithm.
+extra, and partial outputs. Checkpoint #57 closes corrupt, contradictory,
+changed, and stale artifact-evidence cases and hardens final artifact freshness.
+All four checkpoints exercise released public boundaries without importing a
+sibling implementation or pretending to be an Aniflow, Optiflow, or Renderflow
+algorithm.
 
 The checkpoint composes only public contracts and APIs:
 
@@ -25,8 +27,9 @@ The checkpoint composes only public contracts and APIs:
    `ValidatedExecution`;
 8. observe every explicit input and candidate output beneath the selected
    artifact root; and
-9. correlate bindings, host observations, events, and the result before
-   constructing `AcceptedArtifactSet`.
+9. correlate bindings, host observations, events, and the result; and
+10. re-observe the retained root and require unchanged evidence immediately
+    before constructing `AcceptedArtifactSet`.
 
 The manifest and operator lock are finalized external catalog metadata. They
 remain outside the package directory whose digest they name, avoiding a
@@ -56,17 +59,20 @@ multi-capability provider receives no output-write authority.
 
 Checkpoint #44 executes the inspection capability end to end. Checkpoint #45
 uses that same capability for the lifecycle and protocol matrix, and checkpoint
-#56 uses it for physical artifact outcomes after protocol-valid execution. The
-other three IDs and their declared media/configuration profiles remain frozen
-so the later graph fixtures do not invent parallel identities. Their
-end-to-end coverage remains explicitly deferred.
+#56 uses it for physical artifact outcomes after protocol-valid execution.
+Checkpoint #57 adds two provider evidence modes and host-harness freshness
+cases without changing the capability surface. The other three IDs and their
+declared media/configuration profiles remain frozen so the later graph fixtures
+do not invent parallel identities. Their end-to-end coverage remains explicitly
+deferred.
 
 ## Configuration and deterministic success profile
 
 Configuration uses `flow.hermetic-provider-configuration/v1` with exactly two
 string fields. Checkpoint #44 defines `success`; checkpoint #45 expands the
-closed `mode` vocabulary, and checkpoint #56 adds three artifact-outcome modes
-without changing the schema or the success evidence:
+closed `mode` vocabulary, checkpoint #56 adds three artifact-outcome modes, and
+checkpoint #57 adds two artifact-evidence modes without changing the schema or
+the success evidence:
 
 | Field | Checkpoint-1 value | Identity rule |
 | --- | --- | --- |
@@ -80,6 +86,13 @@ artifact-produced, and completed events with sequences `0`, `1`, and `2`.
 The terminal result names the exact consumed and produced artifact IDs and
 records passed binding/input validation plus extension, configuration, and
 output-digest provenance.
+
+The artifact provenance entry remains provider-contributed free-form
+`flow.extension-result/v1` evidence. Flow validates that its value is nonempty,
+but does not parse it as an authoritative expected output digest or use it to
+promote host identity. Checkpoint #57 instead protects freshness by retaining
+the Flow-owned observation context and requiring an equal final host
+re-observation immediately before artifact acceptance.
 
 The output is compact JSON followed by one line feed. It contains the artifact
 schema, capability, synthetic operation, configuration digest, seed, and
@@ -119,6 +132,29 @@ extra file is a closed fixture behavior, not an automatic discovery feature.
 | `missing-output` | Runtime configuration suppresses creation of the one bound candidate while retaining a complete success-shaped transcript. | Host artifact observation | `observe_artifacts` returns `ArtifactObservationError::Missing` for the exact bound ID and locator. | Produces `ValidatedExecution`; no `ObservedArtifactSet` or `AcceptedArtifactSet`. |
 | `extra-output` | The provider creates the bound candidate plus `outputs/undeclared-extra-output.json` and names both IDs in its event and result. | Artifact acceptance | Observation covers only the explicit binding set; `accept_artifacts` returns `ArtifactAcceptanceError::Mismatch` because provider-produced IDs do not exactly match declared outputs. | Produces `ValidatedExecution` and `ObservedArtifactSet`; no `AcceptedArtifactSet`. The undeclared sibling is not discovered or promoted. |
 | `partial-output` | The provider writes a deterministic truncated synthetic candidate, reports its exact digest, and sets `partial_result: true`. | Artifact acceptance | Observation succeeds for the bytes that exist; `accept_artifacts` returns `ArtifactAcceptanceError::Mismatch` because acceptance requires a complete produced or reused result. | Produces `ValidatedExecution` and `ObservedArtifactSet`; no `AcceptedArtifactSet`. Flow does not claim generic JSON or provider-native semantic validation. |
+
+## Checkpoint-3b artifact evidence and freshness matrix
+
+The first two cases are real provider modes. The remaining cases are
+host-harness operations because only Flow can create an opaque observation
+token and only its caller can attempt to reuse that token with changed host or
+correlation context.
+
+| Case | Explicit trigger | Owning boundary | Exact outcome | Promotion |
+| --- | --- | --- | --- | --- |
+| `corrupt-artifact-evidence` | The provider clears the otherwise valid artifact-provenance value while still creating the candidate output. | Semantic result validation | `ProcessRunnerError::Validation` contains `ExecutionError::InvalidResult` with `result.provenance[2].value: must not be empty`. | Valid events and the raw invalid result remain inspectable, and the output may exist; no `ValidatedExecution` or `AcceptedArtifactSet`. “Corrupt” names explicit evidence corruption, not provider-native format validation. |
+| `contradictory-artifact-evidence` | The result names the bound output while the `artifact-produced` event omits it. | Artifact acceptance | The transcript remains protocol-valid; `accept_artifacts` returns `ArtifactAcceptanceError::Mismatch` with `artifact-produced events do not exactly match declared outputs`. | Produces `ValidatedExecution` and `ObservedArtifactSet`; no `AcceptedArtifactSet`. |
+| `changed-output-after-observation` | After normal provider success and initial host observation, the harness overwrites the bound output with deterministic replacement bytes. | Final artifact-freshness gate | `accept_artifacts` returns `ArtifactAcceptanceError::ObservationChanged` (`bound artifact evidence changed after host observation`). | Produces `ValidatedExecution` and the initial `ObservedArtifactSet`; no `AcceptedArtifactSet`. |
+| `removed-output-after-observation` | After normal provider success and initial host observation, the harness removes the bound output. | Final artifact re-observation | `accept_artifacts` returns `ArtifactAcceptanceError::Reobservation` containing `ArtifactObservationError::Missing` for the exact output ID and locator. | Produces `ValidatedExecution` and the initial `ObservedArtifactSet`; no `AcceptedArtifactSet`. |
+| `stale-invocation-and-binding-contexts` | The harness first supplies a changed run identity with valid execution evidence, then separately supplies a changed binding set with the valid observation token. | Artifact acceptance correlation | The invocation case returns `ArtifactAcceptanceError::Mismatch` with `validated execution context does not match the supplied invocation`; the binding case returns the same variant with `artifact bindings changed after host observation`. | Neither stale context can construct `AcceptedArtifactSet`. |
+
+The artifact-binding library cases additionally prove that changed input bytes
+after initial observation return `ObservationChanged`, malformed portable
+digests fail `HostArtifactObservationSet::validate`, contradictory directory
+manifests fail before correlation, and deserialized portable evidence cannot
+recreate the opaque observation token. The final re-observation detects a net
+evidence change; it is not an atomic snapshot and does not interpret provider
+artifact provenance as authoritative host identity.
 
 The stream-capture `observed` value is a bounded overflow sentinel, not the
 provider's total emitted byte count. Each worker drains its stream to EOF but
@@ -180,6 +216,13 @@ provider evidence stops at typed artifact acceptance. Every case re-observes
 the immutable package and verifies that input and binding bytes remain
 unchanged.
 
+The checkpoint #57 provider modes distinguish invalid result evidence from a
+protocol-valid event/result contradiction. Its host-harness cases prove that a
+changed output, a removed output, a stale invocation, or a changed binding
+snapshot cannot reuse otherwise valid evidence to construct
+`AcceptedArtifactSet`. The focused artifact tests also cover changed input
+evidence and malformed or contradictory portable observations.
+
 The fixture source, manifest, lock, materialization rules, offline commands,
 and redistribution terms live in
 [`tests/fixtures/hermetic-provider`](../../tests/fixtures/hermetic-provider/README.md).
@@ -193,12 +236,14 @@ runner clears the inherited environment and passes no secret handles.
 
 The local runner profile is `trusted-unconfined`. This checkpoint proves exact
 contract correlation, byte identity, bounded transport, and direct-child use
-and reaping; it does not claim an operating-system sandbox, filesystem containment,
-descriptor-bound execution, publisher authentication, descendant cleanup, or
-provider-native semantic validation.
+and reaping; it does not claim an operating-system sandbox, filesystem
+containment, atomic artifact observation, descriptor-bound execution,
+publisher authentication, descendant cleanup, or provider-native semantic
+validation.
 
-Checkpoint #57 owns corrupt, stale, changed, and contradictory artifact
-evidence. Checkpoint #58 owns the single- and multi-provider composition
-fixtures. Checkpoint #59 owns completed redistribution documentation and the
-final parent #29 requirement-to-test matrix. Durable run state, retry,
-checkpoint, and resume remain outside the hermetic provider kit.
+Checkpoint #57 delivers corrupt, stale, changed, and contradictory artifact
+evidence coverage without changing extension-result v1 provenance. Checkpoint
+#58 owns the single- and multi-provider composition fixtures. Checkpoint #59
+owns completed redistribution documentation and the final parent #29
+requirement-to-test matrix. Durable run state, retry, checkpoint, and resume
+remain outside the hermetic provider kit.

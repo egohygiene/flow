@@ -292,6 +292,8 @@ fn file_and_directory_artifacts_are_observed_deterministically_and_accepted() {
     let first = observe_artifacts(root.path(), &bindings).unwrap();
     let second = observe_artifacts(root.path(), &bindings).unwrap();
     assert_eq!(first, second);
+    let debug = format!("{first:?}");
+    assert!(!debug.contains(&root.path().display().to_string()));
     assert_eq!(
         first.evidence().directory_manifest_profile,
         DIRECTORY_MANIFEST_V1
@@ -511,15 +513,34 @@ fn mismatched_host_provider_and_invocation_evidence_never_becomes_accepted() {
 
     let mut wrong_invocation = invocation.clone();
     wrong_invocation.run_id = "run:different".to_owned();
+    let error = accept_artifacts(
+        resolved,
+        &wrong_invocation,
+        &execution,
+        &bindings,
+        &observations,
+    )
+    .unwrap_err();
     assert!(matches!(
-        accept_artifacts(
-            resolved,
-            &wrong_invocation,
-            &execution,
-            &bindings,
-            &observations
-        ),
-        Err(ArtifactAcceptanceError::Mismatch { .. })
+        error,
+        ArtifactAcceptanceError::Mismatch { ref message }
+            if message == "validated execution context does not match the supplied invocation"
+    ));
+
+    let mut wrong_invocation = invocation.clone();
+    wrong_invocation.invocation_id = "invocation:different".to_owned();
+    let error = accept_artifacts(
+        resolved,
+        &wrong_invocation,
+        &execution,
+        &bindings,
+        &observations,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::Mismatch { ref message }
+            if message == "validated execution context does not match the supplied invocation"
     ));
 
     let mut incomplete_bindings = bindings.clone();
@@ -534,6 +555,33 @@ fn mismatched_host_provider_and_invocation_evidence_never_becomes_accepted() {
             &missing_observation
         ),
         Err(ArtifactAcceptanceError::Mismatch { .. })
+    ));
+}
+
+#[test]
+fn stale_binding_context_cannot_reuse_an_observation_token() {
+    let (root, bindings) = fixture();
+    let observations = observe_artifacts(root.path(), &bindings).unwrap();
+    let (catalog, request) = resolved_fixture();
+    let resolution = catalog.resolve(&request);
+    let resolved = resolution.resolved().unwrap();
+    let invocation = configured_invocation(resolved, &bindings);
+    let execution = execute(resolved, &invocation, ProviderBehavior::default());
+    let mut stale_bindings = bindings.clone();
+    stale_bindings.binding_set_id = "bindings:stale-artifact-test".to_owned();
+
+    let error = accept_artifacts(
+        resolved,
+        &invocation,
+        &execution,
+        &stale_bindings,
+        &observations,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::Mismatch { ref message }
+            if message == "artifact bindings changed after host observation"
     ));
 }
 
@@ -606,16 +654,123 @@ fn changed_input_bytes_fail_the_immutable_digest_gate() {
     let invocation = configured_invocation(resolved, &bindings);
     let execution = execute(resolved, &invocation, ProviderBehavior::default());
 
+    let error = accept_artifacts(
+        resolved,
+        &invocation,
+        &execution,
+        &bindings,
+        &observations,
+    )
+    .unwrap_err();
     assert!(matches!(
-        accept_artifacts(resolved, &invocation, &execution, &bindings, &observations),
-        Err(ArtifactAcceptanceError::Mismatch { .. })
+        error,
+        ArtifactAcceptanceError::Mismatch { ref message }
+            if message == "host-observed input digest conflicts with the immutable binding"
     ));
 }
 
 #[test]
-fn a_tampered_directory_manifest_is_invalid_before_correlation() {
+fn changed_input_after_observation_cannot_be_accepted() {
+    let (root, bindings) = fixture();
+    let observations = observe_artifacts(root.path(), &bindings).unwrap();
+    let (catalog, request) = resolved_fixture();
+    let resolution = catalog.resolve(&request);
+    let resolved = resolution.resolved().unwrap();
+    let invocation = configured_invocation(resolved, &bindings);
+    let execution = execute(resolved, &invocation, ProviderBehavior::default());
+
+    fs::write(
+        root.path().join("inputs/source collection.json"),
+        b"changed after observation",
+    )
+    .unwrap();
+
+    let error = accept_artifacts(
+        resolved,
+        &invocation,
+        &execution,
+        &bindings,
+        &observations,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::ObservationChanged
+    ));
+}
+
+#[test]
+fn changed_output_after_observation_cannot_be_accepted() {
+    let (root, bindings) = fixture();
+    let observations = observe_artifacts(root.path(), &bindings).unwrap();
+    let (catalog, request) = resolved_fixture();
+    let resolution = catalog.resolve(&request);
+    let resolved = resolution.resolved().unwrap();
+    let invocation = configured_invocation(resolved, &bindings);
+    let execution = execute(resolved, &invocation, ProviderBehavior::default());
+
+    fs::write(
+        root.path().join("outputs/report bundle/alpha.txt"),
+        b"changed after observation\n",
+    )
+    .unwrap();
+
+    let error = accept_artifacts(
+        resolved,
+        &invocation,
+        &execution,
+        &bindings,
+        &observations,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::ObservationChanged
+    ));
+}
+
+#[test]
+fn removed_output_after_observation_returns_typed_reobservation_error() {
+    let (root, bindings) = fixture();
+    let observations = observe_artifacts(root.path(), &bindings).unwrap();
+    let (catalog, request) = resolved_fixture();
+    let resolution = catalog.resolve(&request);
+    let resolved = resolution.resolved().unwrap();
+    let invocation = configured_invocation(resolved, &bindings);
+    let execution = execute(resolved, &invocation, ProviderBehavior::default());
+
+    fs::remove_dir_all(root.path().join("outputs/report bundle")).unwrap();
+
+    let error = accept_artifacts(
+        resolved,
+        &invocation,
+        &execution,
+        &bindings,
+        &observations,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::Reobservation {
+            source: ArtifactObservationError::Missing {
+                ref artifact_id,
+                ref locator,
+            }
+        } if artifact_id == OUTPUT_ID && locator == "outputs/report bundle"
+    ));
+}
+
+#[test]
+fn corrupt_or_contradictory_portable_observations_are_invalid_before_correlation() {
     let (root, bindings) = fixture();
     let observed = observe_artifacts(root.path(), &bindings).unwrap();
+
+    let mut corrupt_digest = observed.evidence().clone();
+    corrupt_digest.artifacts[1].digest = "corrupt".to_owned();
+    let error = corrupt_digest.validate().unwrap_err();
+    assert_eq!(error.path, "observations.artifacts[1].digest");
+    assert_eq!(error.message, "must be 64 lowercase hexadecimal characters");
+
     let mut observations = observed.evidence().clone();
     let output = observations
         .artifacts
@@ -624,5 +779,10 @@ fn a_tampered_directory_manifest_is_invalid_before_correlation() {
         .unwrap();
     output.manifest.swap(0, 1);
 
-    assert!(observations.validate().is_err());
+    let error = observations.validate().unwrap_err();
+    assert_eq!(error.path, "observations.artifacts[1].manifest");
+    assert_eq!(
+        error.message,
+        "entries must be unique and sorted by locator"
+    );
 }

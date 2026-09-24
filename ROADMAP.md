@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.0.0
+version: 1.1.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-22
+updated: 2026-09-24
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -339,7 +339,10 @@ kinds, and portable locators beneath one caller-selected root. Recompute file
 and deterministic recursive-directory identity with Flow-owned code. Keep
 provider execution validation separate from artifact acceptance, and require a
 complete result plus exact invocation, result, event, binding, and host
-observation correlation.
+observation correlation. Bind each opaque observation token to its exact
+binding snapshot and host-local canonical root, then require equal final
+root-confined evidence immediately before promotion. This freshness check does
+not make either observation atomic.
 
 **Delivered evidence:** Flow #36 / merged PR #37 adds
 `flow.artifact-bindings/v1`, `flow.artifact-observations/v1`, opaque observed and
@@ -347,6 +350,11 @@ accepted artifact tokens, deterministic file/directory identity, and
 adversarial filesystem/correlation tests. It does not verify executables,
 enforce provider authority, launch a process, or validate provider-native
 artifact semantics.
+
+Flow #57 hardens that acceptance boundary against changed evidence and stale
+binding context without changing the portable artifact schemas or assigning
+authoritative digest semantics to free-form provider provenance. The remaining
+hermetic-kit graph and closeout checkpoints stay with #58 and #59.
 
 ### Verify locked package and executable subjects
 

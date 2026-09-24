@@ -44,6 +44,8 @@ enum Behavior {
     MissingOutput,
     ExtraOutput,
     PartialOutput,
+    CorruptArtifactEvidence,
+    ContradictoryArtifactEvidence,
     NonzeroAfterSuccess,
     AwaitInterruption,
     StdoutOverflow,
@@ -62,6 +64,8 @@ impl Behavior {
             "missing-output" => Ok(Self::MissingOutput),
             "extra-output" => Ok(Self::ExtraOutput),
             "partial-output" => Ok(Self::PartialOutput),
+            "corrupt-artifact-evidence" => Ok(Self::CorruptArtifactEvidence),
+            "contradictory-artifact-evidence" => Ok(Self::ContradictoryArtifactEvidence),
             "nonzero-after-success" => Ok(Self::NonzeroAfterSuccess),
             "await-interruption" => Ok(Self::AwaitInterruption),
             "stdout-overflow" => Ok(Self::StdoutOverflow),
@@ -287,6 +291,12 @@ fn run() -> ProviderResult<()> {
         Behavior::PartialOutput => {
             "The hermetic provider produced deterministic truncated synthetic artifact bytes and marked the result partial."
         }
+        Behavior::CorruptArtifactEvidence => {
+            "The hermetic provider emitted an explicitly corrupt empty artifact-provenance value."
+        }
+        Behavior::ContradictoryArtifactEvidence => {
+            "The hermetic provider emitted contradictory result and artifact-produced event evidence."
+        }
         _ => "The hermetic provider produced one deterministic synthetic artifact.",
     };
     let mut result = ExtensionResult {
@@ -344,6 +354,8 @@ fn run() -> ProviderResult<()> {
             redacted: true,
         }),
         Behavior::PartialResult | Behavior::PartialOutput => result.partial_result = true,
+        Behavior::CorruptArtifactEvidence => result.provenance[2].value.clear(),
+        Behavior::ContradictoryArtifactEvidence => events[1].artifact_refs.clear(),
         Behavior::InvalidEvent => events[1].sequence = events[0].sequence,
         Behavior::InvalidResult => {
             "authorization:hermetic-invalid-result-mismatch"
@@ -683,6 +695,14 @@ mod tests {
             ("missing-output", Behavior::MissingOutput),
             ("extra-output", Behavior::ExtraOutput),
             ("partial-output", Behavior::PartialOutput),
+            (
+                "corrupt-artifact-evidence",
+                Behavior::CorruptArtifactEvidence,
+            ),
+            (
+                "contradictory-artifact-evidence",
+                Behavior::ContradictoryArtifactEvidence,
+            ),
             ("nonzero-after-success", Behavior::NonzeroAfterSuccess),
             ("await-interruption", Behavior::AwaitInterruption),
             ("stdout-overflow", Behavior::StdoutOverflow),

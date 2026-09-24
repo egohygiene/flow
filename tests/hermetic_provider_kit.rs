@@ -603,6 +603,202 @@ fn partial_output_is_observable_but_cannot_be_accepted() {
 }
 
 #[test]
+fn corrupt_artifact_evidence_never_promotes_execution() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let prepared = fixture.prepare_lifecycle(capability, "corrupt-artifact-evidence", false);
+    let immutable_before = fixture.immutable_workspace_bytes();
+    let mut events = Vec::new();
+
+    let error = LocalProcessRunner::run(
+        fixture.root.path(),
+        prepared.resolved(),
+        &prepared.invocation,
+        &prepared.subject_lock,
+        &prepared.authority,
+        &NoSecrets,
+        &mut events,
+    )
+    .unwrap_err();
+
+    match error {
+        ProcessRunnerError::Validation {
+            source:
+                ExecutionError::InvalidResult {
+                    message,
+                    events: retained_events,
+                    result,
+                },
+        } => {
+            assert_eq!(
+                message,
+                "result.provenance[2].value: must not be empty"
+            );
+            assert_eq!(retained_events.len(), 3);
+            assert!(result.provenance[2].value.is_empty());
+        }
+        other => panic!("unexpected corrupt-artifact-evidence error: {other:?}"),
+    }
+    assert_eq!(events.len(), 3, "valid events remain authoritative");
+    assert!(fixture.output_path().is_file());
+    fixture.assert_subjects_unchanged(&prepared);
+    fixture.assert_immutable_workspace_bytes(&immutable_before);
+}
+
+#[test]
+fn contradictory_artifact_evidence_fails_exact_acceptance() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let prepared =
+        fixture.prepare_lifecycle(capability, "contradictory-artifact-evidence", false);
+    let immutable_before = fixture.immutable_workspace_bytes();
+    let mut events = Vec::new();
+
+    let execution = LocalProcessRunner::run(
+        fixture.root.path(),
+        prepared.resolved(),
+        &prepared.invocation,
+        &prepared.subject_lock,
+        &prepared.authority,
+        &NoSecrets,
+        &mut events,
+    )
+    .unwrap();
+
+    assert_eq!(events, execution.events());
+    assert!(execution.events()[1].artifact_refs.is_empty());
+    assert_eq!(
+        execution.result().produced_artifacts,
+        [fixture.bindings.outputs[0].artifact_id.as_str()]
+    );
+    let observed = observe_artifacts(
+        &fixture.root.path().join(WORKSPACE_LOCATOR),
+        &fixture.bindings,
+    )
+    .unwrap();
+    let error = accept_artifacts(
+        prepared.resolved(),
+        &prepared.invocation,
+        &execution,
+        &fixture.bindings,
+        &observed,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::Mismatch { ref message }
+            if message == "artifact-produced events do not exactly match declared outputs"
+    ));
+    fixture.assert_subjects_unchanged(&prepared);
+    fixture.assert_immutable_workspace_bytes(&immutable_before);
+}
+
+#[test]
+fn changed_output_after_host_observation_fails_freshness_gate() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let prepared = fixture.prepare_lifecycle(capability, "success", false);
+    let immutable_before = fixture.immutable_workspace_bytes();
+    let mut events = Vec::new();
+    let execution = LocalProcessRunner::run(
+        fixture.root.path(),
+        prepared.resolved(),
+        &prepared.invocation,
+        &prepared.subject_lock,
+        &prepared.authority,
+        &NoSecrets,
+        &mut events,
+    )
+    .unwrap();
+    assert_eq!(events, execution.events());
+    let observed = observe_artifacts(
+        &fixture.root.path().join(WORKSPACE_LOCATOR),
+        &fixture.bindings,
+    )
+    .unwrap();
+
+    fs::write(fixture.output_path(), b"{\"changed\":true}\n").unwrap();
+
+    let error = accept_artifacts(
+        prepared.resolved(),
+        &prepared.invocation,
+        &execution,
+        &fixture.bindings,
+        &observed,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::ObservationChanged
+    ));
+    fixture.assert_subjects_unchanged(&prepared);
+    fixture.assert_immutable_workspace_bytes(&immutable_before);
+}
+
+#[test]
+fn stale_invocation_and_binding_contexts_cannot_reuse_valid_evidence() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let prepared = fixture.prepare_lifecycle(capability, "success", false);
+    let immutable_before = fixture.immutable_workspace_bytes();
+    let mut events = Vec::new();
+    let execution = LocalProcessRunner::run(
+        fixture.root.path(),
+        prepared.resolved(),
+        &prepared.invocation,
+        &prepared.subject_lock,
+        &prepared.authority,
+        &NoSecrets,
+        &mut events,
+    )
+    .unwrap();
+    let observed = observe_artifacts(
+        &fixture.root.path().join(WORKSPACE_LOCATOR),
+        &fixture.bindings,
+    )
+    .unwrap();
+
+    let mut stale_invocation = prepared.invocation.clone();
+    stale_invocation.run_id = "run:stale-hermetic-evidence".to_owned();
+    let error = accept_artifacts(
+        prepared.resolved(),
+        &stale_invocation,
+        &execution,
+        &fixture.bindings,
+        &observed,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::Mismatch { ref message }
+            if message == "validated execution context does not match the supplied invocation"
+    ));
+
+    let mut stale_bindings = fixture.bindings.clone();
+    stale_bindings.binding_set_id = "bindings:stale-hermetic-evidence".to_owned();
+    let error = accept_artifacts(
+        prepared.resolved(),
+        &prepared.invocation,
+        &execution,
+        &stale_bindings,
+        &observed,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::Mismatch { ref message }
+            if message == "artifact bindings changed after host observation"
+    ));
+
+    fixture.assert_subjects_unchanged(&prepared);
+    fixture.assert_immutable_workspace_bytes(&immutable_before);
+}
+
+#[test]
 fn nonzero_after_success_never_promotes_provider_evidence() {
     let capability = CAPABILITIES[0];
     let (provider_bytes, executable_name) = provider_binary_snapshot();
