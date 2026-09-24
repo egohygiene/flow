@@ -21,6 +21,8 @@ use sha2::{Digest, Sha256};
 
 const CONFIGURATION_SCHEMA: &str = "flow.hermetic-provider-configuration/v1";
 const ARTIFACT_SCHEMA: &str = "flow.hermetic-artifact/v1";
+const EXTRA_OUTPUT_ID: &str = "artifact:undeclared-extra-output";
+const EXTRA_OUTPUT_LOCATOR: &str = "outputs/undeclared-extra-output.json";
 const NONZERO_AFTER_SUCCESS_EXIT_CODE: i32 = 7;
 const MAX_OVERFLOW_BYTES: u64 = 1_048_576;
 
@@ -38,6 +40,9 @@ enum Behavior {
     Success,
     Warning,
     PartialResult,
+    MissingOutput,
+    ExtraOutput,
+    PartialOutput,
     NonzeroAfterSuccess,
     AwaitInterruption,
     StdoutOverflow,
@@ -53,6 +58,9 @@ impl Behavior {
             "success" => Ok(Self::Success),
             "warning" => Ok(Self::Warning),
             "partial-result" => Ok(Self::PartialResult),
+            "missing-output" => Ok(Self::MissingOutput),
+            "extra-output" => Ok(Self::ExtraOutput),
+            "partial-output" => Ok(Self::PartialOutput),
             "nonzero-after-success" => Ok(Self::NonzeroAfterSuccess),
             "await-interruption" => Ok(Self::AwaitInterruption),
             "stdout-overflow" => Ok(Self::StdoutOverflow),
@@ -208,7 +216,6 @@ fn run() -> ProviderResult<()> {
         output_binding.media_type == expected_output_type,
         "output binding type does not match the selected capability",
     )?;
-    let output_path = confined_new_output_path(&root, Path::new(&output_binding.locator))?;
     let artifact = HermeticArtifact {
         schema_version: ARTIFACT_SCHEMA,
         capability_id: &invocation.capability_id,
@@ -223,16 +230,30 @@ fn run() -> ProviderResult<()> {
     };
     let mut artifact_bytes = serde_json::to_vec(&artifact)?;
     artifact_bytes.push(b'\n');
-    let mut output = OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(output_path)?;
-    output.write_all(&artifact_bytes)?;
-    output.sync_all()?;
+    if behavior == Behavior::PartialOutput {
+        artifact_bytes.truncate(artifact_bytes.len().div_ceil(2));
+    }
+    if behavior != Behavior::MissingOutput {
+        write_new_output(
+            &root,
+            Path::new(&output_binding.locator),
+            &artifact_bytes,
+        )?;
+    }
+    if behavior == Behavior::ExtraOutput {
+        write_new_output(
+            &root,
+            Path::new(EXTRA_OUTPUT_LOCATOR),
+            b"{\"schema_version\":\"flow.hermetic-extra-artifact/v1\"}\n",
+        )?;
+    }
     let output_digest = digest_bytes(&artifact_bytes);
 
     let consumed_artifacts = vec![input_binding.artifact_id.clone()];
-    let produced_artifacts = vec![output_binding.artifact_id.clone()];
+    let mut produced_artifacts = vec![output_binding.artifact_id.clone()];
+    if behavior == Behavior::ExtraOutput {
+        produced_artifacts.push(EXTRA_OUTPUT_ID.to_owned());
+    }
     let mut events = [
         event(
             &invocation,
@@ -314,13 +335,17 @@ fn run() -> ProviderResult<()> {
             message: "The hermetic provider completed with synthetic warning evidence.".to_owned(),
             redacted: true,
         }),
-        Behavior::PartialResult => result.partial_result = true,
+        Behavior::PartialResult | Behavior::PartialOutput => result.partial_result = true,
         Behavior::InvalidEvent => events[1].sequence = events[0].sequence,
         Behavior::InvalidResult => {
             "authorization:hermetic-invalid-result-mismatch"
                 .clone_into(&mut result.authorization_id);
         }
-        Behavior::Success | Behavior::NonzeroAfterSuccess | Behavior::SuccessWithHostRejection => {}
+        Behavior::Success
+        | Behavior::MissingOutput
+        | Behavior::ExtraOutput
+        | Behavior::NonzeroAfterSuccess
+        | Behavior::SuccessWithHostRejection => {}
         Behavior::AwaitInterruption | Behavior::StdoutOverflow | Behavior::StderrOverflow => {
             unreachable!("non-artifact behaviors return before evidence construction")
         }
@@ -507,6 +532,17 @@ fn confined_new_output_path(root: &Path, locator: &Path) -> ProviderResult<PathB
     Ok(output)
 }
 
+fn write_new_output(root: &Path, locator: &Path, bytes: &[u8]) -> ProviderResult<()> {
+    let output_path = confined_new_output_path(root, locator)?;
+    let mut output = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(output_path)?;
+    output.write_all(bytes)?;
+    output.sync_all()?;
+    Ok(())
+}
+
 fn ensure_portable_locator(locator: &Path) -> ProviderResult<()> {
     ensure(!locator.as_os_str().is_empty(), "locator must not be empty")?;
     ensure(!locator.is_absolute(), "locator must be relative")?;
@@ -636,6 +672,9 @@ mod tests {
             ("success", Behavior::Success),
             ("warning", Behavior::Warning),
             ("partial-result", Behavior::PartialResult),
+            ("missing-output", Behavior::MissingOutput),
+            ("extra-output", Behavior::ExtraOutput),
+            ("partial-output", Behavior::PartialOutput),
             ("nonzero-after-success", Behavior::NonzeroAfterSuccess),
             ("await-interruption", Behavior::AwaitInterruption),
             ("stdout-overflow", Behavior::StdoutOverflow),

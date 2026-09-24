@@ -6,9 +6,10 @@ The hermetic provider kit is Flow-owned conformance infrastructure for issue
 #29. Checkpoint #44 establishes its immutable package identity and deterministic
 success path. Checkpoint #45 keeps that baseline intact while adding a closed
 matrix for provider selection, lifecycle supervision, and protocol outcomes.
-Both checkpoints exercise released public boundaries without importing a
-sibling implementation or pretending to be an Aniflow, Optiflow, or Renderflow
-algorithm.
+Checkpoint #56 adds the first physical artifact-outcome matrix for missing,
+extra, and partial outputs. All three checkpoints exercise released public
+boundaries without importing a sibling implementation or pretending to be an
+Aniflow, Optiflow, or Renderflow algorithm.
 
 The checkpoint composes only public contracts and APIs:
 
@@ -54,16 +55,18 @@ means that its bound source is not mutated; it is not a claim that the shared
 multi-capability provider receives no output-write authority.
 
 Checkpoint #44 executes the inspection capability end to end. Checkpoint #45
-uses that same capability for the lifecycle and protocol matrix. The other
-three IDs and their declared media/configuration profiles remain frozen so the
-later graph fixtures do not invent parallel identities. Their end-to-end
-coverage remains explicitly deferred.
+uses that same capability for the lifecycle and protocol matrix, and checkpoint
+#56 uses it for physical artifact outcomes after protocol-valid execution. The
+other three IDs and their declared media/configuration profiles remain frozen
+so the later graph fixtures do not invent parallel identities. Their
+end-to-end coverage remains explicitly deferred.
 
 ## Configuration and deterministic success profile
 
 Configuration uses `flow.hermetic-provider-configuration/v1` with exactly two
 string fields. Checkpoint #44 defines `success`; checkpoint #45 expands the
-closed `mode` vocabulary without changing the schema or the success evidence:
+closed `mode` vocabulary, and checkpoint #56 adds three artifact-outcome modes
+without changing the schema or the success evidence:
 
 | Field | Checkpoint-1 value | Identity rule |
 | --- | --- | --- |
@@ -104,6 +107,18 @@ configuration after resolution rejects it.
 | `invalid-event` | Runtime configuration emits a duplicate/non-increasing event sequence. | Semantic event validation | `ProcessRunnerError::Validation` containing `ExecutionError::InvalidEvent`; raw decoded evidence is retained for inspection. | No `ValidatedExecution` or `AcceptedArtifactSet`. |
 | `invalid-result` | Runtime configuration emits a terminal result whose authorization identity does not match the invocation. | Semantic result validation | `ProcessRunnerError::Validation` containing `ExecutionError::InvalidResult`; the raw result is retained for inspection. | No `ValidatedExecution` or `AcceptedArtifactSet`. |
 | `success-with-host-rejection` | The provider emits valid success-shaped evidence and the caller's authoritative `EventSink` rejects an event. | Host semantic-observation boundary | `ProcessRunnerError::Validation` containing `ExecutionError::EventSink`; decoded events and the result remain inspectable. | No `ValidatedExecution`, fallback, or `AcceptedArtifactSet`. |
+
+## Checkpoint-3a physical artifact outcome matrix
+
+These modes deliberately pass process transport and semantic result validation.
+They fail only when Flow observes or accepts physical artifact evidence. The
+extra file is a closed fixture behavior, not an automatic discovery feature.
+
+| Case | Explicit trigger | Owning boundary | Exact outcome | Promotion |
+| --- | --- | --- | --- | --- |
+| `missing-output` | Runtime configuration suppresses creation of the one bound candidate while retaining a complete success-shaped transcript. | Host artifact observation | `observe_artifacts` returns `ArtifactObservationError::Missing` for the exact bound ID and locator. | Produces `ValidatedExecution`; no `ObservedArtifactSet` or `AcceptedArtifactSet`. |
+| `extra-output` | The provider creates the bound candidate plus `outputs/undeclared-extra-output.json` and names both IDs in its event and result. | Artifact acceptance | Observation covers only the explicit binding set; `accept_artifacts` returns `ArtifactAcceptanceError::Mismatch` because provider-produced IDs do not exactly match declared outputs. | Produces `ValidatedExecution` and `ObservedArtifactSet`; no `AcceptedArtifactSet`. The undeclared sibling is not discovered or promoted. |
+| `partial-output` | The provider writes a deterministic truncated synthetic candidate, reports its exact digest, and sets `partial_result: true`. | Artifact acceptance | Observation succeeds for the bytes that exist; `accept_artifacts` returns `ArtifactAcceptanceError::Mismatch` because acceptance requires a complete produced or reused result. | Produces `ValidatedExecution` and `ObservedArtifactSet`; no `AcceptedArtifactSet`. Flow does not claim generic JSON or provider-native semantic validation. |
 
 The stream-capture `observed` value is a bounded overflow sentinel, not the
 provider's total emitted byte count. Each worker drains its stream to EOF but
@@ -158,6 +173,13 @@ baseline requires:
 - successful promotion through both `ValidatedExecution` and
   `AcceptedArtifactSet`.
 
+The checkpoint #56 cases reuse the same real process path and additionally
+prove that missing output stops at typed host observation, that an explicitly
+undeclared sibling never expands the binding set, and that extra or partial
+provider evidence stops at typed artifact acceptance. Every case re-observes
+the immutable package and verifies that input and binding bytes remain
+unchanged.
+
 The fixture source, manifest, lock, materialization rules, offline commands,
 and redistribution terms live in
 [`tests/fixtures/hermetic-provider`](../../tests/fixtures/hermetic-provider/README.md).
@@ -175,11 +197,8 @@ and reaping; it does not claim an operating-system sandbox, filesystem containme
 descriptor-bound execution, publisher authentication, descendant cleanup, or
 provider-native semantic validation.
 
-Checkpoint #46 still owns missing, extra, corrupt, stale, changed, partial, and
-contradictory physical artifact evidence; protocol-valid success followed by
-host observation or artifact-acceptance failure; single- and multi-provider
-graph fixtures; completed redistribution documentation; and the final parent
-#29 requirement-to-test matrix. Checkpoint #45's `partial-result` case changes
-only the result flag while leaving physical artifact-adversary coverage to that
-final checkpoint. Durable run state, retry, checkpoint, and resume remain
-outside all three.
+Checkpoint #57 owns corrupt, stale, changed, and contradictory artifact
+evidence. Checkpoint #58 owns the single- and multi-provider composition
+fixtures. Checkpoint #59 owns completed redistribution documentation and the
+final parent #29 requirement-to-test matrix. Durable run state, retry,
+checkpoint, and resume remain outside the hermetic provider kit.

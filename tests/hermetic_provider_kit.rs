@@ -7,16 +7,16 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 use flow::{
     ARTIFACT_BINDINGS_V1, AcceptedArtifactSet, ArtifactAcceptanceError, ArtifactBindingSet,
-    ArtifactKind, Authorization, AuthorizedProcess, CheckpointMode, Configuration, Domain,
-    EXECUTION_SUBJECT_LOCK_V1, EventKind, EventSinkError, EventState, ExecutionError,
-    ExecutionModeKind, ExecutionSubjectLock, ExtensionCatalog, ExtensionInvocation, ExtensionLock,
-    ExtensionManifest, ExtensionObservation, ExtensionResolution, FallbackPolicy,
-    HostArtifactObservationSet, HostExecutionSubjectObservationSet, InputArtifact,
-    InputArtifactBinding, InvocationExtension, InvocationInterface, InvocationPhase,
-    LocalProcessRunner, MatchedExecutionSubjects, NoSecrets, OutputArtifactBinding,
-    PROCESS_AUTHORITY_PROFILE_V1, ProcessIsolation, ProcessRunnerError, ProcessStream,
-    ProvenanceKind, ResolutionOutcome, ResolutionRequest, ResolutionResult, SHA256, Severity,
-    Trust, ValidatedExecution, ValidationStatus, accept_artifacts, authorize_process,
+    ArtifactKind, ArtifactObservationError, Authorization, AuthorizedProcess, CheckpointMode,
+    Configuration, Domain, EXECUTION_SUBJECT_LOCK_V1, EventKind, EventSinkError, EventState,
+    ExecutionError, ExecutionModeKind, ExecutionSubjectLock, ExtensionCatalog,
+    ExtensionInvocation, ExtensionLock, ExtensionManifest, ExtensionObservation,
+    ExtensionResolution, FallbackPolicy, HostArtifactObservationSet,
+    HostExecutionSubjectObservationSet, InputArtifact, InputArtifactBinding, InvocationExtension,
+    InvocationInterface, InvocationPhase, LocalProcessRunner, MatchedExecutionSubjects, NoSecrets,
+    OutputArtifactBinding, PROCESS_AUTHORITY_PROFILE_V1, ProcessIsolation, ProcessRunnerError,
+    ProcessStream, ProvenanceKind, ResolutionOutcome, ResolutionRequest, ResolutionResult, SHA256,
+    Severity, Trust, ValidatedExecution, ValidationStatus, accept_artifacts, authorize_process,
     observe_artifacts, observe_execution_subjects,
 };
 use serde::Serialize;
@@ -38,6 +38,8 @@ const INPUT_LOCATOR: &str = "inputs/source-text.txt";
 const INPUT_ID: &str = "artifact:source-text";
 const CONFIGURATION_SCHEMA: &str = "flow.hermetic-provider-configuration/v1";
 const LIFECYCLE_CONTROL_LOCATOR: &str = "outputs/lifecycle-control.json";
+const EXTRA_OUTPUT_ID: &str = "artifact:undeclared-extra-output";
+const EXTRA_OUTPUT_LOCATOR: &str = "outputs/undeclared-extra-output.json";
 
 static NEXT_ROOT_ID: AtomicU64 = AtomicU64::new(0);
 
@@ -423,6 +425,181 @@ fn warning_and_partial_results_remain_semantically_distinct() {
     ));
     partial_fixture.assert_subjects_unchanged(&partial);
     partial_fixture.assert_immutable_workspace_bytes(&partial_before);
+}
+
+#[test]
+fn missing_bound_output_fails_observation_after_valid_provider_success() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let prepared = fixture.prepare_lifecycle(capability, "missing-output", false);
+    let immutable_before = fixture.immutable_workspace_bytes();
+    let mut events = Vec::new();
+
+    let execution = LocalProcessRunner::run(
+        fixture.root.path(),
+        prepared.resolved(),
+        &prepared.invocation,
+        &prepared.subject_lock,
+        &prepared.authority,
+        &NoSecrets,
+        &mut events,
+    )
+    .unwrap();
+
+    assert_eq!(events, execution.events());
+    assert_eq!(execution.result().outcome, flow::Outcome::Produced);
+    assert!(!execution.result().partial_result);
+    assert_eq!(
+        execution.result().produced_artifacts,
+        [fixture.bindings.outputs[0].artifact_id.as_str()]
+    );
+    assert!(!fixture.output_path().exists());
+
+    let error = observe_artifacts(
+        &fixture.root.path().join(WORKSPACE_LOCATOR),
+        &fixture.bindings,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactObservationError::Missing {
+            ref artifact_id,
+            ref locator,
+        } if artifact_id == &fixture.bindings.outputs[0].artifact_id
+            && locator == &fixture.bindings.outputs[0].locator
+    ));
+    fixture.assert_subjects_unchanged(&prepared);
+    fixture.assert_immutable_workspace_bytes(&immutable_before);
+}
+
+#[test]
+fn extra_provider_output_fails_exact_acceptance_without_auto_discovery() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let prepared = fixture.prepare_lifecycle(capability, "extra-output", false);
+    let immutable_before = fixture.immutable_workspace_bytes();
+    let mut events = Vec::new();
+
+    let execution = LocalProcessRunner::run(
+        fixture.root.path(),
+        prepared.resolved(),
+        &prepared.invocation,
+        &prepared.subject_lock,
+        &prepared.authority,
+        &NoSecrets,
+        &mut events,
+    )
+    .unwrap();
+
+    assert_eq!(events, execution.events());
+    assert_eq!(
+        execution.result().produced_artifacts,
+        [
+            fixture.bindings.outputs[0].artifact_id.as_str(),
+            EXTRA_OUTPUT_ID,
+        ]
+    );
+    assert_eq!(
+        execution.events()[1].artifact_refs,
+        [
+            fixture.bindings.outputs[0].artifact_id.as_str(),
+            EXTRA_OUTPUT_ID,
+        ]
+    );
+    assert!(
+        fixture
+            .root
+            .path()
+            .join(WORKSPACE_LOCATOR)
+            .join(EXTRA_OUTPUT_LOCATOR)
+            .is_file()
+    );
+
+    let observed = observe_artifacts(
+        &fixture.root.path().join(WORKSPACE_LOCATOR),
+        &fixture.bindings,
+    )
+    .unwrap();
+    assert_eq!(
+        observed
+            .evidence()
+            .artifacts
+            .iter()
+            .map(|artifact| artifact.artifact_id.as_str())
+            .collect::<Vec<_>>(),
+        [
+            fixture.bindings.inputs[0].artifact_id.as_str(),
+            fixture.bindings.outputs[0].artifact_id.as_str(),
+        ]
+    );
+    let error = accept_artifacts(
+        prepared.resolved(),
+        &prepared.invocation,
+        &execution,
+        &fixture.bindings,
+        &observed,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::Mismatch { ref message }
+            if message == "provider-produced artifacts do not exactly match declared outputs"
+    ));
+    fixture.assert_subjects_unchanged(&prepared);
+    fixture.assert_immutable_workspace_bytes(&immutable_before);
+}
+
+#[test]
+fn partial_output_is_observable_but_cannot_be_accepted() {
+    let capability = CAPABILITIES[0];
+    let (provider_bytes, executable_name) = provider_binary_snapshot();
+    let fixture = KitFixture::new(capability, &provider_bytes, &executable_name);
+    let prepared = fixture.prepare_lifecycle(capability, "partial-output", false);
+    let immutable_before = fixture.immutable_workspace_bytes();
+    let mut events = Vec::new();
+
+    let execution = LocalProcessRunner::run(
+        fixture.root.path(),
+        prepared.resolved(),
+        &prepared.invocation,
+        &prepared.subject_lock,
+        &prepared.authority,
+        &NoSecrets,
+        &mut events,
+    )
+    .unwrap();
+
+    assert_eq!(events, execution.events());
+    assert!(execution.result().partial_result);
+    let output_bytes = fs::read(fixture.output_path()).unwrap();
+    assert!(!output_bytes.ends_with(b"\n"));
+    assert!(serde_json::from_slice::<serde_json::Value>(&output_bytes).is_err());
+    let observed = observe_artifacts(
+        &fixture.root.path().join(WORKSPACE_LOCATOR),
+        &fixture.bindings,
+    )
+    .unwrap();
+    assert_eq!(
+        execution.result().provenance[2].value,
+        format!("sha256:{}", observed.evidence().artifacts[1].digest)
+    );
+    let error = accept_artifacts(
+        prepared.resolved(),
+        &prepared.invocation,
+        &execution,
+        &fixture.bindings,
+        &observed,
+    )
+    .unwrap_err();
+    assert!(matches!(
+        error,
+        ArtifactAcceptanceError::Mismatch { ref message }
+            if message == "artifact acceptance requires a complete produced or reused result"
+    ));
+    fixture.assert_subjects_unchanged(&prepared);
+    fixture.assert_immutable_workspace_bytes(&immutable_before);
 }
 
 #[test]

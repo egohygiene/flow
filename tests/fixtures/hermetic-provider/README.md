@@ -77,6 +77,9 @@ runtime `mode` values are:
 | `success` | Writes one deterministic candidate artifact and a complete valid transcript. |
 | `warning` | Writes the same complete evidence with a redacted warning diagnostic; warning is not a distinct terminal outcome. |
 | `partial-result` | Writes a complete candidate and a protocol-valid produced result whose `partial_result` flag is true. |
+| `missing-output` | Emits a complete valid transcript for the bound candidate without creating its file, so host observation returns the exact typed missing-artifact error. |
+| `extra-output` | Writes the bound candidate plus one closed, bounded undeclared sibling and names both in the artifact event and result; observation remains binding-driven and acceptance rejects the extra provider declaration. |
+| `partial-output` | Writes a deterministic truncated synthetic candidate, reports its exact byte digest, and sets `partial_result` so acceptance rejects incomplete evidence without claiming generic format validation. |
 | `nonzero-after-success` | Flushes success-shaped stdout, then exits with code `7`. |
 | `await-interruption` | Creates the explicit lifecycle control record, then waits for host timeout or cancellation. |
 | `stdout-overflow` | Emits deterministic stdout beyond the invocation limit. |
@@ -119,10 +122,9 @@ no subprocess, mutates no source, and performs no destructive, signing, or
 publication action. `trusted-unconfined` remains an explicit test profile, not
 a sandbox or containment claim.
 
-Artifact missing/extra/corrupt/stale/contradictory cases, host physical-
-artifact observation and acceptance failures after complete protocol success,
-graph fixtures, and the final parent requirement matrix remain outside this
-checkpoint and are owned by issue #46.
+Corrupt, changed, stale, and contradictory artifact cases remain with #57.
+Graph fixtures remain with #58, and final redistribution documentation plus
+the parent requirement matrix remain with #59.
 
 The source and generated package are distributed under the repository's MIT
 license. Do not redistribute a materialized package without its license or
