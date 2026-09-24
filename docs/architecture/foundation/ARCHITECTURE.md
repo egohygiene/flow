@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.10.0
+version: 0.11.0
 status: draft
 owners:
   - egohygiene

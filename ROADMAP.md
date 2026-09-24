@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.1.0
+version: 1.2.0
 status: draft
 owners:
   - egohygiene

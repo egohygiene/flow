@@ -62,10 +62,7 @@ const CAPABILITIES: [CapabilitySpec; 4] = [
     CapabilitySpec {
         capability_id: "flow/transform-fixture",
         name: "transformation",
-        accepted_input_media_types: &[
-            "application/vnd.flow.fixture-inspection+json",
-            "text/plain",
-        ],
+        accepted_input_media_types: &["application/vnd.flow.fixture-inspection+json", "text/plain"],
         output_media_type: "application/vnd.flow.fixture-transformation+json",
     },
     CapabilitySpec {
@@ -456,7 +453,10 @@ fn single_provider_composition_preserves_exact_handoff_and_determinism() {
 fn multi_provider_composition_preserves_exact_handoff_and_determinism() {
     assert_composition_fixture(
         MULTI_PROVIDER_COMPOSITION,
-        [INSPECTOR_PROVIDER.extension_id, RENDERER_PROVIDER.extension_id],
+        [
+            INSPECTOR_PROVIDER.extension_id,
+            RENDERER_PROVIDER.extension_id,
+        ],
         true,
     );
 }
@@ -1273,11 +1273,7 @@ fn timeout_and_readiness_gated_cancellation_reap_the_direct_child() {
 
 impl CompositionFixture {
     #[allow(clippy::too_many_lines)]
-    fn new(
-        spec: CompositionFixtureSpec,
-        provider_bytes: &[u8],
-        executable_name: &str,
-    ) -> Self {
+    fn new(spec: CompositionFixtureSpec, provider_bytes: &[u8], executable_name: &str) -> Self {
         let root = TestRoot::new();
         let workspace_path = root.path().join(WORKSPACE_LOCATOR);
         fs::create_dir_all(workspace_path.join("inputs")).unwrap();
@@ -1430,13 +1426,7 @@ impl CompositionFixture {
             "the downstream input must be the exact accepted upstream artifact"
         );
         assert_eq!(
-            fs::read(
-                self.root
-                    .path()
-                    .join(WORKSPACE_LOCATOR)
-                    .join(INPUT_LOCATOR)
-            )
-            .unwrap(),
+            fs::read(self.root.path().join(WORKSPACE_LOCATOR).join(INPUT_LOCATOR)).unwrap(),
             INPUT_BYTES
         );
 
@@ -1462,10 +1452,7 @@ impl CompositionFixture {
         );
         let bindings = ArtifactBindingSet {
             schema_version: ARTIFACT_BINDINGS_V1.to_owned(),
-            binding_set_id: format!(
-                "bindings:{}-{}",
-                self.spec.fixture_id, stage.stage_id
-            ),
+            binding_set_id: format!("bindings:{}-{}", self.spec.fixture_id, stage.stage_id),
             digest_algorithm: SHA256.to_owned(),
             inputs: vec![InputArtifactBinding {
                 artifact_id: input.artifact_id.clone(),
@@ -1494,7 +1481,11 @@ impl CompositionFixture {
             .join(WORKSPACE_LOCATOR)
             .join(&bindings_locator);
         assert!(!bindings_path.exists());
-        fs::write(&bindings_path, serde_json::to_vec_pretty(&bindings).unwrap()).unwrap();
+        fs::write(
+            &bindings_path,
+            serde_json::to_vec_pretty(&bindings).unwrap(),
+        )
+        .unwrap();
 
         let request = ResolutionRequest::new(
             format!("{}-{}", self.spec.fixture_id, stage.stage_id),
@@ -1520,10 +1511,7 @@ impl CompositionFixture {
         ]);
         let invocation = ExtensionInvocation {
             schema_version: flow::EXTENSION_INVOCATION_V1.to_owned(),
-            invocation_id: format!(
-                "invocation:{}-{}",
-                self.spec.fixture_id, stage.stage_id
-            ),
+            invocation_id: format!("invocation:{}-{}", self.spec.fixture_id, stage.stage_id),
             run_id: format!("run:{}", self.spec.fixture_id),
             phase: stage.phase,
             extension: InvocationExtension {
@@ -1564,13 +1552,9 @@ impl CompositionFixture {
         invocation.validate().unwrap();
 
         let subject_lock = self.subject_lock(resolved, &invocation, stage, provider);
-        let subjects_before = observe_execution_subjects(
-            self.root.path(),
-            resolved,
-            &invocation,
-            &subject_lock,
-        )
-        .unwrap();
+        let subjects_before =
+            observe_execution_subjects(self.root.path(), resolved, &invocation, &subject_lock)
+                .unwrap();
         let mut authority_profile = process_authority_profile(
             resolved,
             &invocation,
@@ -1588,10 +1572,8 @@ impl CompositionFixture {
             .argv
             .clone_from(&authority_profile.requested.argv);
         let mut enforcement = process_enforcement_evidence(&authority_profile, &subjects_before);
-        enforcement.enforcement_evidence_id = format!(
-            "enforcement:{}-{}",
-            self.spec.fixture_id, stage.stage_id
-        );
+        enforcement.enforcement_evidence_id =
+            format!("enforcement:{}-{}", self.spec.fixture_id, stage.stage_id);
         let authority = authorize_process(
             resolved,
             &invocation,
@@ -1618,24 +1600,15 @@ impl CompositionFixture {
             execution.result().consumed_artifacts,
             [input.artifact_id.as_str()]
         );
-        assert_eq!(
-            execution.result().produced_artifacts,
-            [stage.produces[0]]
-        );
+        assert_eq!(execution.result().produced_artifacts, [stage.produces[0]]);
         assert_eq!(
             execution.result().configuration_digest,
             invocation.configuration.digest
         );
-        assert_eq!(
-            execution.result().extension_id,
-            stage.provider.extension_id
-        );
+        assert_eq!(execution.result().extension_id, stage.provider.extension_id);
 
-        let observed = observe_artifacts(
-            &self.root.path().join(WORKSPACE_LOCATOR),
-            &bindings,
-        )
-        .unwrap();
+        let observed =
+            observe_artifacts(&self.root.path().join(WORKSPACE_LOCATOR), &bindings).unwrap();
         let accepted =
             accept_artifacts(resolved, &invocation, &execution, &bindings, &observed).unwrap();
         let output_bytes = fs::read(
@@ -1646,13 +1619,9 @@ impl CompositionFixture {
         )
         .unwrap();
         assert_eq!(accepted.outputs()[0].digest, digest_bytes(&output_bytes));
-        let subjects_after = observe_execution_subjects(
-            self.root.path(),
-            resolved,
-            &invocation,
-            &subject_lock,
-        )
-        .unwrap();
+        let subjects_after =
+            observe_execution_subjects(self.root.path(), resolved, &invocation, &subject_lock)
+                .unwrap();
         assert_eq!(subjects_before.evidence(), subjects_after.evidence());
 
         CompositionStageEvidence {
@@ -1688,10 +1657,7 @@ impl CompositionFixture {
         ))
         .unwrap();
         EXECUTION_SUBJECT_LOCK_V1.clone_into(&mut lock.schema_version);
-        lock.subject_lock_id = format!(
-            "subject-lock:{}-{}",
-            self.spec.fixture_id, stage.stage_id
-        );
+        lock.subject_lock_id = format!("subject-lock:{}-{}", self.spec.fixture_id, stage.stage_id);
         resolved.lock_id().clone_into(&mut lock.extension_lock_id);
         lock.extension.clone_from(&invocation.extension);
         stage

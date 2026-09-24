@@ -471,10 +471,7 @@ fn capability_profile(
         )),
         "flow/transform-fixture" => Ok((
             "transformation",
-            &[
-                "application/vnd.flow.fixture-inspection+json",
-                "text/plain",
-            ],
+            &["application/vnd.flow.fixture-inspection+json", "text/plain"],
             "application/vnd.flow.fixture-transformation+json",
         )),
         "flow/validate-fixture" => Ok((
