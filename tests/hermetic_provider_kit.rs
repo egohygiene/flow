@@ -138,7 +138,7 @@ const SINGLE_PROVIDER_COMPOSITION: CompositionFixtureSpec = CompositionFixtureSp
             stage_id: "inspect",
             provider: PRIMARY_PROVIDER,
             capability: CAPABILITIES[0],
-            phase: InvocationPhase::Inspect,
+            phase: InvocationPhase::Execute,
             depends_on: &[],
             consumes: &[INPUT_ID],
             produces: &["artifact:inspection-report"],
