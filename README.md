@@ -143,6 +143,7 @@ or a sandbox.
 - [Process authority and isolation](docs/integrations/authority-isolation.md)
 - [Artifact binding contract](docs/integrations/artifact-bindings.md)
 - [Scenario fixture contract](docs/integrations/scenario-fixtures.md)
+- [Hermetic provider kit](docs/integrations/hermetic-provider-kit.md)
 - [Versioned contracts](contracts/README.md)
 - [Roadmap](ROADMAP.md)
 
@@ -152,17 +153,18 @@ skills, agents, templates, and validators used to maintain these documents.
 ## Status
 
 Flow is in the **executable contract seam** phase. Issues #23, #26, #28, #36,
-#38, and #40 are merged through PRs #24, #27, #35, #37, #39, and #41. Issue
-#42 / PR #43 adds the final bounded parent-#25 slice: real
-`trusted-unconfined` direct launch and supervision through the existing
-subject, authority, and transcript gates. Issue #44 begins the parent-#29
-hermetic provider kit with an immutable package and deterministic accepted
-inspection artifact. Issue #45 adds its bounded selection, lifecycle, and
-protocol outcome matrix; #46 retains physical artifact adversaries, graph
-fixtures, and the final parent evidence matrix. The process seam still does not
-implement authenticity verification, operating-system sandbox enforcement,
-authenticated host evidence, descriptor-bound launch, or process-tree
-containment, and the scenario contract is not an executor.
+#38, #40, #42, #44, and #45 are merged through PRs #24, #27, #35, #37, #39,
+#41, #43, #47, and #48. PR #60 consolidates #46's four sequential checkpoints:
+physical and evidence adversaries, deterministic single- and two-provider
+compositions, exact package/executable content-identity correlation, a closed
+behavior catalog, and the parent #29 evidence matrix. After that PR merges and
+default-branch CI is green, #46 and #29 can close and #30 becomes the next
+conformance-matrix checkpoint.
+The synthetic providers are not the two real adapters required to finish
+FLO-Q03. The process seam still does not implement authenticity verification,
+operating-system sandbox enforcement, authenticated host evidence,
+descriptor-bound launch, or process-tree containment, and the scenario contract
+is not an executor.
 Current descriptions of Aniflow, Optiflow, and Renderflow are grounded in their default
 branches as inspected on 2026-08-13. The holons remain independently released
 repositories; real provider adapters and the restore-and-assess workflow remain

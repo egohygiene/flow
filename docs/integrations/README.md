@@ -29,9 +29,9 @@ implementations.
   immutable topology, typed expectations, resource tiers, canonicalization,
   and honest coverage boundaries.
 - [Hermetic provider kit](hermetic-provider-kit.md) defines the immutable
-  synthetic package, stable capability IDs, deterministic success profile,
-  bounded lifecycle/protocol outcome matrix, and process-to-artifact
-  acceptance proof used by orchestration conformance.
+  synthetic packages, stable capability IDs, closed behavior catalog,
+  deterministic compositions, exact digest/finalization workflow, and the
+  parent requirement-to-test evidence used by orchestration conformance.
 - [Versioned contracts](../../contracts/README.md) define the provisional suite
   interchange vocabulary.
 
@@ -107,9 +107,27 @@ and `AcceptedArtifactSet`. Two fresh roots prove identical semantic and content
 evidence while package, input, and binding bytes remain unchanged. Flow #45
 adds prelaunch rejection, warning/partial evidence, bounded process lifecycle,
 stream overflow, invalid protocol evidence, and authoritative host-rejection
-cases without weakening the immutable-package or success baseline. Physical
-artifact adversaries, graph fixtures, and the final parent matrix remain with
-#46.
+cases without weakening the immutable-package or success baseline. Flow #56
+adds protocol-valid missing, extra, and partial physical artifact outcomes and
+proves that each stops at its exact host-observation or artifact-acceptance
+boundary. Flow #57 distinguishes corrupt result evidence from a protocol-valid
+event/result contradiction, binds each opaque observation token to its exact
+binding snapshot, and requires equal final root-confined evidence before
+artifact promotion. Changed or removed evidence and stale invocation or
+binding context cannot construct `AcceptedArtifactSet`. This hardening does not
+make observation atomic or reinterpret free-form extension-result v1
+provenance. Flow #58 executes fixed `inspect`-then-`transform`
+single-provider and two-provider fixtures twice from fresh roots. Every stage
+uses the public resolution, subject, authority, runner, observation, and
+acceptance boundaries, and stage two receives the exact accepted stage-one
+artifact without introducing a scenario runner or production scheduler. The
+checkpoint #59 closeout pins the exact materialized layouts, package/executable
+digest correlation across the manifest, locks, and observations, source and
+binary redistribution obligations, closed
+behavior-to-test index, parent #29 requirement matrix, residual gaps, and #30
+handoff. After PR #60 merges and default-branch CI is green, #46 and #29 can
+close; #30 then owns the broader executable scenario matrix. FLO-Q03 remains
+active because these synthetic providers are not real holon adapters.
 
 The following remain deferred: provider discovery from the filesystem, dynamic
 loading, cryptographic authenticity and transparency verification,

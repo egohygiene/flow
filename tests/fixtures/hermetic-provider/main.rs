@@ -1,8 +1,9 @@
 //! Redistribution-safe synthetic process provider used by Flow conformance tests.
 //!
 //! This executable deliberately uses only Flow's public contracts. It reads one
-//! invocation frame, verifies explicitly bound inputs, writes one deterministic
-//! candidate artifact, and emits a JSON Lines event/result transcript.
+//! invocation frame, verifies explicitly bound inputs, exercises one closed
+//! deterministic success or adversarial behavior, and emits a JSON Lines
+//! event/result transcript.
 
 use std::error::Error;
 use std::ffi::OsString;
@@ -21,6 +22,8 @@ use sha2::{Digest, Sha256};
 
 const CONFIGURATION_SCHEMA: &str = "flow.hermetic-provider-configuration/v1";
 const ARTIFACT_SCHEMA: &str = "flow.hermetic-artifact/v1";
+const EXTRA_OUTPUT_ID: &str = "artifact:undeclared-extra-output";
+const EXTRA_OUTPUT_LOCATOR: &str = "outputs/undeclared-extra-output.json";
 const NONZERO_AFTER_SUCCESS_EXIT_CODE: i32 = 7;
 const MAX_OVERFLOW_BYTES: u64 = 1_048_576;
 
@@ -38,6 +41,11 @@ enum Behavior {
     Success,
     Warning,
     PartialResult,
+    MissingOutput,
+    ExtraOutput,
+    PartialOutput,
+    CorruptArtifactEvidence,
+    ContradictoryArtifactEvidence,
     NonzeroAfterSuccess,
     AwaitInterruption,
     StdoutOverflow,
@@ -53,6 +61,11 @@ impl Behavior {
             "success" => Ok(Self::Success),
             "warning" => Ok(Self::Warning),
             "partial-result" => Ok(Self::PartialResult),
+            "missing-output" => Ok(Self::MissingOutput),
+            "extra-output" => Ok(Self::ExtraOutput),
+            "partial-output" => Ok(Self::PartialOutput),
+            "corrupt-artifact-evidence" => Ok(Self::CorruptArtifactEvidence),
+            "contradictory-artifact-evidence" => Ok(Self::ContradictoryArtifactEvidence),
             "nonzero-after-success" => Ok(Self::NonzeroAfterSuccess),
             "await-interruption" => Ok(Self::AwaitInterruption),
             "stdout-overflow" => Ok(Self::StdoutOverflow),
@@ -140,7 +153,8 @@ fn run() -> ProviderResult<()> {
         _ => {}
     }
 
-    let (operation, expected_output_type) = capability_profile(&invocation.capability_id)?;
+    let (operation, accepted_input_types, expected_output_type) =
+        capability_profile(&invocation.capability_id)?;
     let root_metadata = fs::symlink_metadata(&arguments.artifact_root)?;
     ensure(
         !root_metadata.file_type().is_symlink(),
@@ -183,8 +197,8 @@ fn run() -> ProviderResult<()> {
         "the hermetic success input binding must name a file",
     )?;
     ensure(
-        input_binding.media_type == "text/plain",
-        "the hermetic success input must use text/plain",
+        accepted_input_types.contains(&input_binding.media_type.as_str()),
+        "input binding type is not accepted by the selected capability",
     )?;
     ensure(
         invocation_input.artifact_id == input_binding.artifact_id
@@ -208,7 +222,6 @@ fn run() -> ProviderResult<()> {
         output_binding.media_type == expected_output_type,
         "output binding type does not match the selected capability",
     )?;
-    let output_path = confined_new_output_path(&root, Path::new(&output_binding.locator))?;
     let artifact = HermeticArtifact {
         schema_version: ARTIFACT_SCHEMA,
         capability_id: &invocation.capability_id,
@@ -223,16 +236,26 @@ fn run() -> ProviderResult<()> {
     };
     let mut artifact_bytes = serde_json::to_vec(&artifact)?;
     artifact_bytes.push(b'\n');
-    let mut output = OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(output_path)?;
-    output.write_all(&artifact_bytes)?;
-    output.sync_all()?;
+    if behavior == Behavior::PartialOutput {
+        artifact_bytes.truncate(artifact_bytes.len().div_ceil(2));
+    }
+    if behavior != Behavior::MissingOutput {
+        write_new_output(&root, Path::new(&output_binding.locator), &artifact_bytes)?;
+    }
+    if behavior == Behavior::ExtraOutput {
+        write_new_output(
+            &root,
+            Path::new(EXTRA_OUTPUT_LOCATOR),
+            b"{\"schema_version\":\"flow.hermetic-extra-artifact/v1\"}\n",
+        )?;
+    }
     let output_digest = digest_bytes(&artifact_bytes);
 
     let consumed_artifacts = vec![input_binding.artifact_id.clone()];
-    let produced_artifacts = vec![output_binding.artifact_id.clone()];
+    let mut produced_artifacts = vec![output_binding.artifact_id.clone()];
+    if behavior == Behavior::ExtraOutput {
+        produced_artifacts.push(EXTRA_OUTPUT_ID.to_owned());
+    }
     let mut events = [
         event(
             &invocation,
@@ -259,6 +282,24 @@ fn run() -> ProviderResult<()> {
             Vec::new(),
         ),
     ];
+    let explanation = match behavior {
+        Behavior::MissingOutput => {
+            "The hermetic provider emitted success-shaped evidence without materializing the bound synthetic artifact."
+        }
+        Behavior::ExtraOutput => {
+            "The hermetic provider produced one bound and one undeclared synthetic artifact."
+        }
+        Behavior::PartialOutput => {
+            "The hermetic provider produced deterministic truncated synthetic artifact bytes and marked the result partial."
+        }
+        Behavior::CorruptArtifactEvidence => {
+            "The hermetic provider emitted an explicitly corrupt empty artifact-provenance value."
+        }
+        Behavior::ContradictoryArtifactEvidence => {
+            "The hermetic provider emitted contradictory result and artifact-produced event evidence."
+        }
+        _ => "The hermetic provider produced one deterministic synthetic artifact.",
+    };
     let mut result = ExtensionResult {
         schema_version: EXTENSION_RESULT_V1.to_owned(),
         run_id: invocation.run_id.clone(),
@@ -303,8 +344,7 @@ fn run() -> ProviderResult<()> {
             retryable: false,
         },
         checkpoint_refs: Vec::new(),
-        explanation: "The hermetic provider produced one deterministic synthetic artifact."
-            .to_owned(),
+        explanation: explanation.to_owned(),
     };
 
     match behavior {
@@ -314,13 +354,19 @@ fn run() -> ProviderResult<()> {
             message: "The hermetic provider completed with synthetic warning evidence.".to_owned(),
             redacted: true,
         }),
-        Behavior::PartialResult => result.partial_result = true,
+        Behavior::PartialResult | Behavior::PartialOutput => result.partial_result = true,
+        Behavior::CorruptArtifactEvidence => result.provenance[2].value.clear(),
+        Behavior::ContradictoryArtifactEvidence => events[1].artifact_refs.clear(),
         Behavior::InvalidEvent => events[1].sequence = events[0].sequence,
         Behavior::InvalidResult => {
             "authorization:hermetic-invalid-result-mismatch"
                 .clone_into(&mut result.authorization_id);
         }
-        Behavior::Success | Behavior::NonzeroAfterSuccess | Behavior::SuccessWithHostRejection => {}
+        Behavior::Success
+        | Behavior::MissingOutput
+        | Behavior::ExtraOutput
+        | Behavior::NonzeroAfterSuccess
+        | Behavior::SuccessWithHostRejection => {}
         Behavior::AwaitInterruption | Behavior::StdoutOverflow | Behavior::StderrOverflow => {
             unreachable!("non-artifact behaviors return before evidence construction")
         }
@@ -414,20 +460,28 @@ fn read_invocation() -> ProviderResult<ExtensionInvocation> {
     Ok(serde_json::from_slice(&frame)?)
 }
 
-fn capability_profile(capability_id: &str) -> ProviderResult<(&'static str, &'static str)> {
+fn capability_profile(
+    capability_id: &str,
+) -> ProviderResult<(&'static str, &'static [&'static str], &'static str)> {
     match capability_id {
-        "flow/inspect-fixture" => {
-            Ok(("inspection", "application/vnd.flow.fixture-inspection+json"))
-        }
+        "flow/inspect-fixture" => Ok((
+            "inspection",
+            &["text/plain"],
+            "application/vnd.flow.fixture-inspection+json",
+        )),
         "flow/transform-fixture" => Ok((
             "transformation",
+            &["application/vnd.flow.fixture-inspection+json", "text/plain"],
             "application/vnd.flow.fixture-transformation+json",
         )),
-        "flow/validate-fixture" => {
-            Ok(("validation", "application/vnd.flow.fixture-validation+json"))
-        }
+        "flow/validate-fixture" => Ok((
+            "validation",
+            &["text/plain"],
+            "application/vnd.flow.fixture-validation+json",
+        )),
         "flow/observe-fixture" => Ok((
             "read-only-observation",
+            &["text/plain"],
             "application/vnd.flow.fixture-observation+json",
         )),
         _ => Err(invalid_input("unsupported hermetic capability").into()),
@@ -505,6 +559,17 @@ fn confined_new_output_path(root: &Path, locator: &Path) -> ProviderResult<PathB
         Err(error) => return Err(error.into()),
     }
     Ok(output)
+}
+
+fn write_new_output(root: &Path, locator: &Path, bytes: &[u8]) -> ProviderResult<()> {
+    let output_path = confined_new_output_path(root, locator)?;
+    let mut output = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(output_path)?;
+    output.write_all(bytes)?;
+    output.sync_all()?;
+    Ok(())
 }
 
 fn ensure_portable_locator(locator: &Path) -> ProviderResult<()> {
@@ -636,6 +701,17 @@ mod tests {
             ("success", Behavior::Success),
             ("warning", Behavior::Warning),
             ("partial-result", Behavior::PartialResult),
+            ("missing-output", Behavior::MissingOutput),
+            ("extra-output", Behavior::ExtraOutput),
+            ("partial-output", Behavior::PartialOutput),
+            (
+                "corrupt-artifact-evidence",
+                Behavior::CorruptArtifactEvidence,
+            ),
+            (
+                "contradictory-artifact-evidence",
+                Behavior::ContradictoryArtifactEvidence,
+            ),
             ("nonzero-after-success", Behavior::NonzeroAfterSuccess),
             ("await-interruption", Behavior::AwaitInterruption),
             ("stdout-overflow", Behavior::StdoutOverflow),

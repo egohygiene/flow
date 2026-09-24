@@ -109,7 +109,7 @@ fn canonical_digests_match_the_checked_in_cross_language_catalog() {
         ),
         (
             MULTI_PROVIDER,
-            "cbf8a6e6b436a20438661abb9f0b17206e720b08027f7efc1cd3c19b21493e2c",
+            "0f813edfe5492236ebd66f72e5861960afa9047b74e1a5cc8acf989f0fa64186",
         ),
         (
             OBSERVED_EMPTY,

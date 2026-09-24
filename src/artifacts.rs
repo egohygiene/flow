@@ -102,12 +102,35 @@ pub struct DirectoryManifestEntry {
 
 /// Filesystem evidence produced by Flow's root-confined observer.
 ///
-/// The field is private so a deserialized or provider-authored observation
+/// Its fields are private so a deserialized or provider-authored observation
 /// document cannot be passed to [`accept_artifacts`] as if Flow had read it.
-#[derive(Clone, Debug, Eq, PartialEq)]
+/// The token also retains its canonical root and exact bindings so acceptance
+/// can reject rebinding and repeat the observation immediately before
+/// promotion. The retained path is host context, not an operating-system
+/// capability or atomic snapshot.
+#[derive(Clone)]
 pub struct ObservedArtifactSet {
+    canonical_root: PathBuf,
+    bindings: ArtifactBindingSet,
     evidence: HostArtifactObservationSet,
 }
+
+impl std::fmt::Debug for ObservedArtifactSet {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("ObservedArtifactSet")
+            .field("evidence", &self.evidence)
+            .finish_non_exhaustive()
+    }
+}
+
+impl PartialEq for ObservedArtifactSet {
+    fn eq(&self, other: &Self) -> bool {
+        self.evidence == other.evidence
+    }
+}
+
+impl Eq for ObservedArtifactSet {}
 
 impl ObservedArtifactSet {
     #[must_use]
@@ -373,6 +396,8 @@ pub fn observe_artifacts(
         .validate()
         .map_err(|source| ArtifactObservationError::InvalidObservations { source })?;
     Ok(ObservedArtifactSet {
+        canonical_root,
+        bindings: bindings.clone(),
         evidence: observations,
     })
 }
@@ -381,9 +406,14 @@ pub fn observe_artifacts(
 ///
 /// # Errors
 ///
-/// Returns an error unless every declared input and candidate output matches
-/// the resolved capability, invocation, host observation, provider result, and
-/// artifact-produced events exactly.
+/// Returns an invalid-contract or mismatch error unless every declared input
+/// and candidate output matches the resolved capability, invocation, retained
+/// binding context, host observation, provider result, and artifact-produced
+/// events exactly. [`ArtifactAcceptanceError::Reobservation`] retains a typed
+/// host failure from the final read, while
+/// [`ArtifactAcceptanceError::ObservationChanged`] reports valid evidence that
+/// differs from the initial observation. The final read rejects net evidence
+/// drift; it does not make either traversal atomic.
 #[allow(clippy::too_many_lines)]
 pub fn accept_artifacts(
     resolved: &ResolvedExtension,
@@ -403,6 +433,10 @@ pub fn accept_artifacts(
         .validate()
         .map_err(|source| ArtifactAcceptanceError::InvalidObservations { source })?;
 
+    mismatch(
+        bindings == &observed.bindings,
+        "artifact bindings changed after host observation",
+    )?;
     mismatch(
         bindings.binding_set_id == observations.binding_set_id,
         "host observations reference a different binding set",
@@ -426,7 +460,7 @@ pub fn accept_artifacts(
         .iter()
         .map(|binding| (binding.artifact_id.as_str(), binding))
         .collect::<HashMap<_, _>>();
-    let observed = observations
+    let observations_by_id = observations
         .artifacts
         .iter()
         .map(|observation| (observation.artifact_id.as_str(), observation))
@@ -493,17 +527,17 @@ pub fn accept_artifacts(
     )?;
 
     mismatch(
-        observed.len() == input_bindings.len() + output_bindings.len(),
+        observations_by_id.len() == input_bindings.len() + output_bindings.len(),
         "host observations do not cover every binding exactly",
     )?;
 
     let mut accepted_inputs = Vec::with_capacity(bindings.inputs.len());
     for binding in &bindings.inputs {
-        let observation = observed.get(binding.artifact_id.as_str()).ok_or_else(|| {
-            ArtifactAcceptanceError::Mismatch {
+        let observation = observations_by_id
+            .get(binding.artifact_id.as_str())
+            .ok_or_else(|| ArtifactAcceptanceError::Mismatch {
                 message: "a declared input has no host observation".to_owned(),
-            }
-        })?;
+            })?;
         correlate_observation(
             &binding.artifact_id,
             &binding.port,
@@ -521,11 +555,11 @@ pub fn accept_artifacts(
 
     let mut accepted_outputs = Vec::with_capacity(bindings.outputs.len());
     for binding in &bindings.outputs {
-        let observation = observed.get(binding.artifact_id.as_str()).ok_or_else(|| {
-            ArtifactAcceptanceError::Mismatch {
+        let observation = observations_by_id
+            .get(binding.artifact_id.as_str())
+            .ok_or_else(|| ArtifactAcceptanceError::Mismatch {
                 message: "a declared output has no host observation".to_owned(),
-            }
-        })?;
+            })?;
         correlate_observation(
             &binding.artifact_id,
             &binding.port,
@@ -535,6 +569,12 @@ pub fn accept_artifacts(
             observation,
         )?;
         accepted_outputs.push((*observation).clone());
+    }
+
+    let refreshed = observe_artifacts(&observed.canonical_root, bindings)
+        .map_err(|source| ArtifactAcceptanceError::Reobservation { source })?;
+    if refreshed.evidence() != observations {
+        return Err(ArtifactAcceptanceError::ObservationChanged);
     }
 
     Ok(AcceptedArtifactSet {
@@ -612,6 +652,13 @@ pub enum ArtifactAcceptanceError {
         #[source]
         source: ValidationError,
     },
+    #[error("failed to re-observe bound artifacts before acceptance: {source}")]
+    Reobservation {
+        #[source]
+        source: ArtifactObservationError,
+    },
+    #[error("bound artifact evidence changed after host observation")]
+    ObservationChanged,
     #[error("artifact acceptance mismatch: {message}")]
     Mismatch { message: String },
 }

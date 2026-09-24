@@ -18,7 +18,11 @@
       "enabled": true,
       "trust": "trusted",
       "granted_permissions": {
-        "filesystem_read": ["workspace/artifact-bindings", "workspace/inputs"],
+        "filesystem_read": [
+          "workspace/artifact-bindings",
+          "workspace/inputs",
+          "workspace/outputs"
+        ],
         "filesystem_write": ["workspace/outputs"],
         "environment_read": [],
         "subprocesses": [],

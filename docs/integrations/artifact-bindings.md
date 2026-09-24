@@ -21,14 +21,18 @@ executable content is a separate pre-execution boundary documented in
 | --- | --- | --- |
 | Declaration | `flow.artifact-bindings/v1` | Flow intends these immutable inputs and candidate outputs to occupy these logical ports and root-relative locators |
 | Portable observation document | `flow.artifact-observations/v1` | A serializable description of content identity and directory structure; deserialization alone does not prove who observed it |
-| Flow observation token | `ObservedArtifactSet` | Flow's observer produced the contained document from one binding set and root during this process |
+| Flow observation token | `ObservedArtifactSet` | Flow's observer produced the contained document from one binding set and root during this process and privately retained that exact binding snapshot and canonical root for final re-observation |
 | Provider evidence | `ValidatedExecution` | Provider events and result passed the extension contract and correlation gate; this is not filesystem acceptance |
-| Accepted artifacts | `AcceptedArtifactSet` | Flow correlated a complete provider outcome with the resolved context, immutable bindings, and Flow-observed host evidence |
+| Accepted artifacts | `AcceptedArtifactSet` | Flow correlated a complete provider outcome with the resolved context, the retained binding snapshot, and equal initial and final Flow-observed host evidence |
 
 Both `ObservedArtifactSet` and `AcceptedArtifactSet` have private fields. A
 caller can serialize or deserialize the portable observation contract for
 inspection, but cannot turn deserialized or provider-authored JSON directly
 into either token. Acceptance requires a fresh result from `observe_artifacts`.
+The retained absolute canonical root is sensitive host context. It remains
+host-local and is omitted from both the portable observation document and the
+token's manual `Debug` output; the exact binding snapshot is likewise not
+serialized as part of the observation document.
 
 ## Binding contract
 
@@ -83,11 +87,13 @@ byte-for-byte in UTF-8. No Unicode normalization or case folding occurs.
    sockets, devices, FIFOs, other special nodes, and non-UTF-8 descendant
    names.
 7. Validate the generated observation document before returning the opaque
-   `ObservedArtifactSet`.
+   `ObservedArtifactSet`, which privately retains the canonical root and an
+   exact copy of the validated bindings for the final acceptance read.
 
 Observation is read-only, but it reads every bound file. Callers must provide a
-quiescent, isolated root. This portable implementation is not an atomic
-filesystem snapshot and cannot prevent a hostile concurrent path swap.
+quiescent, isolated root through acceptance. This portable implementation is
+not an atomic filesystem snapshot and cannot prevent a hostile concurrent path
+swap.
 
 ## Content identity
 
@@ -141,12 +147,19 @@ an `AcceptedArtifactSet` only after all inputs agree:
 7. Provider-consumed IDs exactly match inputs; provider-produced IDs exactly
    match outputs; and `artifact-produced` event references name every output
    exactly once.
-8. The Flow observation covers every binding exactly once and matches its ID,
-   port, media type, kind, and locator.
-9. Every host-observed input digest equals its expected immutable digest.
+8. The supplied binding set exactly equals the binding snapshot retained by the
+   opaque observation token.
+9. The initial Flow observation covers every binding exactly once and matches
+   its ID, port, media type, kind, and locator.
+10. Every host-observed input digest equals its expected immutable digest.
+11. Immediately before promotion, Flow re-observes the same bindings beneath
+    the retained canonical root and requires the fresh portable evidence to
+    equal the initial observation exactly.
 
 Set comparison rejects omissions, additions, and duplicates. No individual
 success report, event, exit code, or existing path bypasses the combined gate.
+Provider-contributed artifact provenance remains untrusted, free-form v1
+evidence and is not interpreted as a host-observed output digest.
 
 ## Typical library sequence
 
@@ -167,6 +180,9 @@ let accepted = accept_artifacts(
 concurrent bounded output capture, timeout/cancellation enforcement, and
 direct-child reaping. A later orchestration layer still owns safe workspace
 creation, provider-native output checks, quiescence, and artifact observation.
+`accept_artifacts` performs filesystem I/O for its final re-observation. Its
+success is point-in-time promotion evidence, not a filesystem lock or an
+immutable snapshot.
 
 ## Failure surfaces
 
@@ -176,8 +192,11 @@ nodes, non-UTF-8 names, canonical escape, I/O failure, manifest encoding, and
 size overflow.
 
 `ArtifactAcceptanceError` separates invalid invocation, bindings, or
-observation contracts from cross-evidence mismatch. Error display text names
-the failed invariant but does not include artifact contents.
+observation contracts from cross-evidence mismatch. `Reobservation` retains a
+typed `ArtifactObservationError` when the final read cannot complete, while
+`ObservationChanged` reports valid final evidence that differs from the first
+observation as `bound artifact evidence changed after host observation`. Error
+display text names the failed invariant but does not include artifact contents.
 
 Errors return no accepted token. Raw filesystem contents and rejected portable
 observation documents remain caller-controlled evidence.
@@ -188,8 +207,10 @@ The Rust suite covers repeated deterministic observation, files, nested
 directories, spaces, Unicode, immutable input changes, traversal and absolute
 locators, backslash and drive ambiguity, symlinks, tampered manifests,
 incomplete and mismatched observations, invocation mismatch, duplicate provider
-artifact events, and partial results. JSON Schema plus the independent Python
-validator cover the checked-in examples and semantic-invalid fixtures.
+artifact events, partial results, stale binding snapshots, changed input and
+output bytes after initial observation, and typed final re-observation failure.
+JSON Schema plus the independent Python validator cover the checked-in examples
+and semantic-invalid fixtures.
 
 Run the full local gates with:
 
@@ -211,4 +232,9 @@ binding, operating-system permission enforcement, sandboxing, process
 launch/supervision, resource quotas during directory traversal, domain-specific
 artifact validation, durable provenance/state commit, checkpoint compatibility,
 retry, or resume. Those claims require their own Flow #25 and orchestration
-checkpoints.
+checkpoints. The final re-observation does not make either traversal atomic,
+pin file descriptors or inodes, detect an intervening change restored to the
+same portable evidence, or prevent mutation after the final read. Because the
+v1 observation token has no run or invocation identity, it also cannot
+distinguish cross-run reuse when the binding snapshot and current portable
+evidence are identical.

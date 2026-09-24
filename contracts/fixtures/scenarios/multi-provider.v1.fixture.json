@@ -2,9 +2,9 @@
   "schema_version": "flow.scenario-manifest/v1",
   "scenario_id": "scenario:multi-provider-handoff",
   "fixture_id": "fixture:multi-provider-handoff-v1",
-  "fixture_version": "1.0.0",
+  "fixture_version": "1.1.0",
   "title": "Hermetic multi-provider handoff",
-  "description": "Describes an ordered inspect-then-render handoff through two independently identified synthetic providers.",
+  "description": "Describes an ordered inspect-then-transform handoff through two independently identified synthetic providers using only Flow-owned fake capabilities.",
   "fixture_class": "valid",
   "tags": ["clean-room", "multi-provider", "success"],
   "inputs": [
@@ -52,7 +52,7 @@
           "parameters_digest": "6161616161616161616161616161616161616161616161616161616161616161"
         }
       },
-      "required_capabilities": ["optiflow/inspect-artifact"]
+      "required_capabilities": ["flow/inspect-fixture"]
     },
     {
       "provider_id": "org.egohygiene.synthetic-renderer",
@@ -75,33 +75,33 @@
           "parameters_digest": "9191919191919191919191919191919191919191919191919191919191919191"
         }
       },
-      "required_capabilities": ["renderflow/render-synthetic-document"]
+      "required_capabilities": ["flow/transform-fixture"]
     }
   ],
   "stages": [
     {
       "stage_id": "inspect",
       "provider_id": "org.egohygiene.synthetic-inspector",
-      "capability_id": "optiflow/inspect-artifact",
+      "capability_id": "flow/inspect-fixture",
       "depends_on": [],
       "consumes": ["source-document"],
-      "produces": ["inspection-evidence"],
+      "produces": ["inspection-report"],
       "required": true
     },
     {
-      "stage_id": "render",
+      "stage_id": "transform",
       "provider_id": "org.egohygiene.synthetic-renderer",
-      "capability_id": "renderflow/render-synthetic-document",
+      "capability_id": "flow/transform-fixture",
       "depends_on": ["inspect"],
-      "consumes": ["inspection-evidence", "source-document"],
-      "produces": ["rendered-document"],
+      "consumes": ["inspection-report"],
+      "produces": ["transformation-report"],
       "required": true
     }
   ],
   "expectation": {
     "terminal_state": "complete",
     "evidence_state": "complete",
-    "expected_artifacts": ["inspection-evidence", "rendered-document"],
+    "expected_artifacts": ["inspection-report", "transformation-report"],
     "expected_diagnostics": [],
     "evidence_refs": [
       {
@@ -130,8 +130,11 @@
     "covered_behaviors": [
       "cross-provider immutable artifact handoff",
       "deterministic topological stage order",
-      "two-provider capability references"
+      "two-provider Flow-owned fake capability references"
     ],
-    "known_gaps": ["Uses synthetic package references rather than released holon binaries."]
+    "known_gaps": [
+      "This manifest remains declarative; the hermetic provider kit separately executes its aligned two-stage composition without making the manifest a runtime plan.",
+      "Uses synthetic package references rather than released holon binaries."
+    ]
   }
 }
