@@ -207,6 +207,6 @@ all local identity boundaries, complete inventories, stale-report non-authority,
 the single-step bypass, blocked future inputs, and preserved history. The
 acceptance driver includes these test sources in its evidence identity and runs
 them with `--all-targets`, along with the 49-row [lifecycle receipt corpus](lifecycle-scenarios.md)
-from #65. The latter runs every recipe twice, includes fresh-process recovery,
+from #65/#66. The latter runs every recipe twice, includes fresh-process recovery,
 and checks bounded portable reports.
 macOS/Windows CI runs the portable store suite; Linux runs the full provider matrix.

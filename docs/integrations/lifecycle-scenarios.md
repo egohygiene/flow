@@ -124,6 +124,12 @@ aside before retry is an explicit test-operator action, not automatic Flow behav
 This completes the synthetic lifecycle proof when #66 is merged. Parent #13 remains
 open for real released-provider integration and the #32/#33/#34 qualification gates.
 
+The [#66 local validation record](../validation/flow-66-local.json) pins the tested
+commit, source identities, report/receipt digests, and executed checks. Rust 1.85
+ran all targets and both corpora; stable Rust ran the lifecycle corpus. Hosted CI
+and macOS/Windows results were not checked for this handoff. Full reports remain
+reproducible with the commands below; the committed record is their compact summary.
+
 ## Running and checking coverage
 
 Populate Cargo's locked cache, then run on Linux:
