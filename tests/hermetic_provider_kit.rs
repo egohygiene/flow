@@ -9,6 +9,9 @@ mod durable_execution;
 #[path = "graph_recovery/mod.rs"]
 mod graph_recovery;
 
+#[cfg(target_os = "linux")]
+mod lifecycle_matrix;
+
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -186,6 +189,7 @@ const MULTI_PROVIDER_COMPOSITION: CompositionFixtureSpec = CompositionFixtureSpe
 
 struct TestRoot {
     path: PathBuf,
+    owned: bool,
 }
 
 impl TestRoot {
@@ -196,7 +200,7 @@ impl TestRoot {
             std::process::id()
         ));
         fs::create_dir(&path).expect("hermetic provider test root must be new");
-        Self { path }
+        Self { path, owned: true }
     }
 
     fn path(&self) -> &Path {
@@ -206,7 +210,9 @@ impl TestRoot {
 
 impl Drop for TestRoot {
     fn drop(&mut self) {
-        let _cleanup_result = fs::remove_dir_all(&self.path);
+        if self.owned && !std::thread::panicking() {
+            let _cleanup_result = fs::remove_dir_all(&self.path);
+        }
     }
 }
 

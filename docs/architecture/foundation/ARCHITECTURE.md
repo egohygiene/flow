@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.13.0
+version: 0.13.1
 status: draft
 owners:
   - egohygiene
@@ -132,6 +132,13 @@ accepted history or grant execution authority. Dependent execution recomputes
 the assessment, and single-step entry points refuse dependent steps. Automatic
 scheduling, retry, cross-plan migration, and provider-native checkpoints remain
 later orchestration work.
+
+The test-owned lifecycle corpus exercises these same public durable APIs with
+synthetic providers, immutable transition projections, fresh-process reopening,
+and explicit recovery decisions. Its versioned receipts are conformance evidence,
+not executable plans, authorization tokens, or a second runtime state model.
+Portable reports contain allowlisted identities and typed outcomes; raw operational
+evidence stays local. The lifecycle guide owns recipe coverage and resource limits.
 
 ### External adapters
 
@@ -281,7 +288,9 @@ production graph scheduler. Issue #49 adds the versioned durable coordinator,
 immutable prepared plans, atomic snapshots, accepted checkpoints, fresh reuse
 assessment, and explicit recovery decisions described above. Issue #64 requires
 fresh prerequisite evidence for graph assessment and dependent execution without
-adding a scheduler or rewriting accepted history. Flow does not yet supply
+adding a scheduler or rewriting accepted history. Issue #65 adds the bounded
+[durable lifecycle corpus](../../integrations/lifecycle-scenarios.md), including
+fresh-process restart and deterministic recovery receipts. Flow does not yet supply
 the public CLI, real holon adapters, signature or transparency verification,
 provider-native artifact validation, an atomic filesystem snapshot, an
 operating-system sandbox or authenticated enforcement evidence,

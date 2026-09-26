@@ -47,6 +47,9 @@ enum Behavior {
     CorruptArtifactEvidence,
     ContradictoryArtifactEvidence,
     NonzeroAfterSuccess,
+    SignalTermination,
+    RetryableFailure,
+    TerminalFailure,
     AwaitInterruption,
     StdoutOverflow,
     StderrOverflow,
@@ -67,6 +70,9 @@ impl Behavior {
             "corrupt-artifact-evidence" => Ok(Self::CorruptArtifactEvidence),
             "contradictory-artifact-evidence" => Ok(Self::ContradictoryArtifactEvidence),
             "nonzero-after-success" => Ok(Self::NonzeroAfterSuccess),
+            "signal-termination" => Ok(Self::SignalTermination),
+            "retryable-failure" => Ok(Self::RetryableFailure),
+            "terminal-failure" => Ok(Self::TerminalFailure),
             "await-interruption" => Ok(Self::AwaitInterruption),
             "stdout-overflow" => Ok(Self::StdoutOverflow),
             "stderr-overflow" => Ok(Self::StderrOverflow),
@@ -140,6 +146,11 @@ fn run() -> ProviderResult<()> {
     }
 
     match behavior {
+        Behavior::SignalTermination => {
+            #[cfg(unix)]
+            nix::sys::signal::raise(nix::sys::signal::Signal::SIGTERM)?;
+            return Err(invalid_input("signal termination requires Unix signals").into());
+        }
         Behavior::StdoutOverflow => {
             let stdout = io::stdout();
             write_overflow(&mut stdout.lock(), invocation.limits.max_stdout_bytes)?;
@@ -354,6 +365,33 @@ fn run() -> ProviderResult<()> {
             message: "The hermetic provider completed with synthetic warning evidence.".to_owned(),
             redacted: true,
         }),
+        Behavior::RetryableFailure | Behavior::TerminalFailure => {
+            result.outcome = Outcome::Failed;
+            result.failure = Failure {
+                classification: if behavior == Behavior::RetryableFailure {
+                    FailureClassification::Provider
+                } else {
+                    FailureClassification::Validation
+                },
+                code: "hermetic.failure".to_owned(),
+                message: "FLOW_LIFECYCLE_FAILURE_PRIVATE_CANARY".to_owned(),
+                retryable: behavior == Behavior::RetryableFailure,
+            };
+            events[2].kind = EventKind::PhaseFailed;
+            events[2].state = EventState::Failed;
+            // Retain the exact transcript as host-local failed evidence. The
+            // lifecycle test revalidates it through the public transcript API.
+            let mut transcript = Vec::new();
+            for event in &events {
+                write_record(&mut transcript, event)?;
+            }
+            write_record(&mut transcript, &result)?;
+            write_new_output(
+                &root,
+                Path::new("outputs/failure-transcript.jsonl"),
+                &transcript,
+            )?;
+        }
         Behavior::PartialResult | Behavior::PartialOutput => result.partial_result = true,
         Behavior::CorruptArtifactEvidence => result.provenance[2].value.clear(),
         Behavior::ContradictoryArtifactEvidence => events[1].artifact_refs.clear(),
@@ -367,7 +405,10 @@ fn run() -> ProviderResult<()> {
         | Behavior::ExtraOutput
         | Behavior::NonzeroAfterSuccess
         | Behavior::SuccessWithHostRejection => {}
-        Behavior::AwaitInterruption | Behavior::StdoutOverflow | Behavior::StderrOverflow => {
+        Behavior::AwaitInterruption
+        | Behavior::SignalTermination
+        | Behavior::StdoutOverflow
+        | Behavior::StderrOverflow => {
             unreachable!("non-artifact behaviors return before evidence construction")
         }
     }
