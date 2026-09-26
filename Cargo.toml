@@ -26,6 +26,11 @@ nix = { version = "0.30.1", default-features = false, features = ["process", "si
 
 [dev-dependencies]
 
+# Conformance tests copy and hash the exact executable repeatedly. Debug symbols
+# are not part of the contract; omit them to keep the PR fixture budget bounded.
+[profile.test]
+debug = 0
+
 [lints.rust]
 unsafe_code = "forbid"
 

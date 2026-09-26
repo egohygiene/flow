@@ -1,0 +1,995 @@
+{
+  "schema_version": "flow.acceptance-scenario-catalog/v1",
+  "fixture_version": "1.0.0",
+  "tier": "pull-request",
+  "budget": {
+    "timeout_ms": 30000,
+    "max_receipt_bytes": 16384,
+    "max_artifact_bytes": 1048576,
+    "max_artifacts": 4,
+    "repetitions": 2
+  },
+  "known_gaps": [
+    "Synthetic providers only; no released holon compatibility or domain-format validation.",
+    "Unix symlink-capable PR host required; no Windows conformance claim.",
+    "Memory and kernel network/filesystem isolation are not enforced by this trusted-unconfined kit.",
+    "No durable interruption, retry, checkpoint, or resume; owned by Flow #49 and #31.",
+    "No signature verification, authenticated publisher, atomic filesystem snapshot, descriptor-bound launch, or descendant containment.",
+    "Only normalized receipts are portable; rejected raw evidence and authority profiles may contain private values.",
+    "Free-form provenance is structurally checked; it is not an authoritative content digest."
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "scenario:acceptance-resolution-compatible",
+      "family": "resolution",
+      "recipe": "compatible",
+      "expected": {
+        "boundary": "resolution",
+        "code": "selected",
+        "terminal_state": "complete",
+        "evidence_state": "complete",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-missing-provider",
+      "family": "resolution",
+      "recipe": "missing-provider",
+      "expected": {
+        "boundary": "resolution",
+        "code": "no-compatible-provider",
+        "terminal_state": "unsupported",
+        "evidence_state": "unsupported",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-missing-observation",
+      "family": "resolution",
+      "recipe": "missing-observation",
+      "expected": {
+        "boundary": "resolution",
+        "code": "blocked",
+        "terminal_state": "unavailable",
+        "evidence_state": "unavailable",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-unavailable",
+      "family": "resolution",
+      "recipe": "unavailable",
+      "expected": {
+        "boundary": "resolution",
+        "code": "blocked",
+        "terminal_state": "unavailable",
+        "evidence_state": "unavailable",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-stale-version",
+      "family": "resolution",
+      "recipe": "stale-version",
+      "expected": {
+        "boundary": "resolution",
+        "code": "no-compatible-provider",
+        "terminal_state": "unsupported",
+        "evidence_state": "unsupported",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-future-version",
+      "family": "resolution",
+      "recipe": "future-version",
+      "expected": {
+        "boundary": "resolution",
+        "code": "no-compatible-provider",
+        "terminal_state": "unsupported",
+        "evidence_state": "unsupported",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-publisher-mismatch",
+      "family": "resolution",
+      "recipe": "publisher-mismatch",
+      "expected": {
+        "boundary": "resolution",
+        "code": "no-compatible-provider",
+        "terminal_state": "unsupported",
+        "evidence_state": "unsupported",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-integrity-mismatch",
+      "family": "resolution",
+      "recipe": "integrity-mismatch",
+      "expected": {
+        "boundary": "resolution",
+        "code": "no-compatible-provider",
+        "terminal_state": "unsupported",
+        "evidence_state": "unsupported",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-future-flow",
+      "family": "resolution",
+      "recipe": "future-flow",
+      "expected": {
+        "boundary": "resolution",
+        "code": "no-compatible-provider",
+        "terminal_state": "unsupported",
+        "evidence_state": "unsupported",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-future-contract",
+      "family": "resolution",
+      "recipe": "future-contract",
+      "expected": {
+        "boundary": "resolution",
+        "code": "no-compatible-provider",
+        "terminal_state": "unsupported",
+        "evidence_state": "unsupported",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-missing-capability",
+      "family": "resolution",
+      "recipe": "missing-capability",
+      "expected": {
+        "boundary": "resolution",
+        "code": "no-compatible-provider",
+        "terminal_state": "unsupported",
+        "evidence_state": "unsupported",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-observation-mismatch",
+      "family": "resolution",
+      "recipe": "observation-mismatch",
+      "expected": {
+        "boundary": "resolution",
+        "code": "blocked",
+        "terminal_state": "unavailable",
+        "evidence_state": "unavailable",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-permission-denied",
+      "family": "resolution",
+      "recipe": "permission-denied",
+      "expected": {
+        "boundary": "resolution",
+        "code": "blocked",
+        "terminal_state": "unavailable",
+        "evidence_state": "unavailable",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-malformed-manifest",
+      "family": "resolution",
+      "recipe": "malformed-manifest",
+      "expected": {
+        "boundary": "resolution",
+        "code": "malformed",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-conflict",
+      "family": "resolution",
+      "recipe": "conflict",
+      "expected": {
+        "boundary": "resolution",
+        "code": "conflict",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-fallback-forbidden",
+      "family": "resolution",
+      "recipe": "fallback-forbidden",
+      "expected": {
+        "boundary": "resolution",
+        "code": "blocked",
+        "terminal_state": "unavailable",
+        "evidence_state": "unavailable",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-fallback-explicit-resume",
+      "family": "resolution",
+      "recipe": "fallback-explicit-resume",
+      "expected": {
+        "boundary": "resolution",
+        "code": "blocked",
+        "terminal_state": "unavailable",
+        "evidence_state": "unavailable",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-fallback-before-effects",
+      "family": "resolution",
+      "recipe": "fallback-before-effects",
+      "expected": {
+        "boundary": "resolution",
+        "code": "selected",
+        "terminal_state": "complete",
+        "evidence_state": "complete",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-resolution-fallback-after-invocation",
+      "family": "resolution",
+      "recipe": "fallback-after-invocation",
+      "expected": {
+        "boundary": "transcript",
+        "code": "nonzero-exit",
+        "terminal_state": "failed",
+        "evidence_state": "failed",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-schema-manifest",
+      "family": "contract",
+      "recipe": "schema-manifest",
+      "expected": {
+        "boundary": "contract",
+        "code": "unsupported-schema",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-schema-lock",
+      "family": "contract",
+      "recipe": "schema-lock",
+      "expected": {
+        "boundary": "contract",
+        "code": "unsupported-schema",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-schema-bindings",
+      "family": "contract",
+      "recipe": "schema-bindings",
+      "expected": {
+        "boundary": "contract",
+        "code": "unsupported-schema",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-schema-scenario",
+      "family": "contract",
+      "recipe": "schema-scenario",
+      "expected": {
+        "boundary": "contract",
+        "code": "unsupported-schema",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-schema-invocation",
+      "family": "contract",
+      "recipe": "schema-invocation",
+      "expected": {
+        "boundary": "contract",
+        "code": "unsupported-schema",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-schema-subjects",
+      "family": "contract",
+      "recipe": "schema-subjects",
+      "expected": {
+        "boundary": "contract",
+        "code": "unsupported-schema",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-schema-result",
+      "family": "contract",
+      "recipe": "schema-result",
+      "expected": {
+        "boundary": "contract",
+        "code": "unsupported-schema",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-schema-event",
+      "family": "contract",
+      "recipe": "schema-event",
+      "expected": {
+        "boundary": "contract",
+        "code": "unsupported-schema",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-executable-mismatch",
+      "family": "contract",
+      "recipe": "executable-mismatch",
+      "expected": {
+        "boundary": "preflight",
+        "code": "subject-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-invocation-configuration-schema",
+      "family": "contract",
+      "recipe": "invocation-configuration-schema",
+      "expected": {
+        "boundary": "preflight",
+        "code": "context-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-invocation-publisher",
+      "family": "contract",
+      "recipe": "invocation-publisher",
+      "expected": {
+        "boundary": "preflight",
+        "code": "context-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-invocation-capability",
+      "family": "contract",
+      "recipe": "invocation-capability",
+      "expected": {
+        "boundary": "preflight",
+        "code": "context-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-invocation-authorization",
+      "family": "contract",
+      "recipe": "invocation-authorization",
+      "expected": {
+        "boundary": "preflight",
+        "code": "context-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-invocation-output",
+      "family": "contract",
+      "recipe": "invocation-output",
+      "expected": {
+        "boundary": "preflight",
+        "code": "context-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-result-configuration",
+      "family": "contract",
+      "recipe": "result-configuration",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-result-authorization",
+      "family": "contract",
+      "recipe": "result-authorization",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-result-capability",
+      "family": "contract",
+      "recipe": "result-capability",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-result-version",
+      "family": "contract",
+      "recipe": "result-version",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-result-integrity",
+      "family": "contract",
+      "recipe": "result-integrity",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-result-provenance",
+      "family": "contract",
+      "recipe": "result-provenance",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-result-duplicate-output",
+      "family": "contract",
+      "recipe": "result-duplicate-output",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-contract-result-terminal-contradiction",
+      "family": "contract",
+      "recipe": "result-terminal-contradiction",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-absolute-path",
+      "family": "artifact",
+      "recipe": "absolute-path",
+      "expected": {
+        "boundary": "observation",
+        "code": "invalid-bindings",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-parent-traversal",
+      "family": "artifact",
+      "recipe": "parent-traversal",
+      "expected": {
+        "boundary": "observation",
+        "code": "invalid-bindings",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-nested-escape",
+      "family": "artifact",
+      "recipe": "nested-escape",
+      "expected": {
+        "boundary": "observation",
+        "code": "invalid-bindings",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-windows-path",
+      "family": "artifact",
+      "recipe": "windows-path",
+      "expected": {
+        "boundary": "observation",
+        "code": "invalid-bindings",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-duplicate-identity",
+      "family": "artifact",
+      "recipe": "duplicate-identity",
+      "expected": {
+        "boundary": "observation",
+        "code": "invalid-bindings",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-duplicate-port",
+      "family": "artifact",
+      "recipe": "duplicate-port",
+      "expected": {
+        "boundary": "observation",
+        "code": "invalid-bindings",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-duplicate-locator",
+      "family": "artifact",
+      "recipe": "duplicate-locator",
+      "expected": {
+        "boundary": "observation",
+        "code": "invalid-bindings",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-file-as-directory",
+      "family": "artifact",
+      "recipe": "file-as-directory",
+      "expected": {
+        "boundary": "observation",
+        "code": "kind-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-directory-as-file",
+      "family": "artifact",
+      "recipe": "directory-as-file",
+      "expected": {
+        "boundary": "observation",
+        "code": "kind-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-symlink",
+      "family": "artifact",
+      "recipe": "symlink",
+      "expected": {
+        "boundary": "observation",
+        "code": "symlink",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-parent-symlink",
+      "family": "artifact",
+      "recipe": "parent-symlink",
+      "expected": {
+        "boundary": "observation",
+        "code": "symlink",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-changed-input-before-observation",
+      "family": "artifact",
+      "recipe": "changed-input-before-observation",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "evidence-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-digest-conflict",
+      "family": "artifact",
+      "recipe": "digest-conflict",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "evidence-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-undeclared-output-type",
+      "family": "artifact",
+      "recipe": "undeclared-output-type",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "evidence-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-duplicate-event",
+      "family": "artifact",
+      "recipe": "duplicate-event",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "evidence-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-stale-invocation",
+      "family": "artifact",
+      "recipe": "stale-invocation",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "evidence-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-stale-binding",
+      "family": "artifact",
+      "recipe": "stale-binding",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "evidence-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-changed-output",
+      "family": "artifact",
+      "recipe": "changed-output",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "observation-changed",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-changed-input-after-observation",
+      "family": "artifact",
+      "recipe": "changed-input-after-observation",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "observation-changed",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-removed-output",
+      "family": "artifact",
+      "recipe": "removed-output",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "reobservation-failed",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-accepted",
+      "family": "artifact",
+      "recipe": "accepted",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "accepted",
+        "terminal_state": "complete",
+        "evidence_state": "complete",
+        "accepted": true
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-artifact-observed-empty",
+      "family": "artifact",
+      "recipe": "observed-empty",
+      "expected": {
+        "boundary": "observation",
+        "code": "observed-empty",
+        "terminal_state": "complete",
+        "evidence_state": "observed-empty",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-success",
+      "family": "provider",
+      "recipe": "success",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "accepted",
+        "terminal_state": "complete",
+        "evidence_state": "complete",
+        "accepted": true
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-warning",
+      "family": "provider",
+      "recipe": "warning",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "accepted",
+        "terminal_state": "complete",
+        "evidence_state": "complete",
+        "accepted": true
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-partial-result",
+      "family": "provider",
+      "recipe": "partial-result",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "incomplete-result",
+        "terminal_state": "partial",
+        "evidence_state": "incomplete",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-partial-output",
+      "family": "provider",
+      "recipe": "partial-output",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "incomplete-result",
+        "terminal_state": "partial",
+        "evidence_state": "incomplete",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-missing-output",
+      "family": "provider",
+      "recipe": "missing-output",
+      "expected": {
+        "boundary": "observation",
+        "code": "missing-artifact",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-extra-output",
+      "family": "provider",
+      "recipe": "extra-output",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "evidence-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-contradictory-artifact-evidence",
+      "family": "provider",
+      "recipe": "contradictory-artifact-evidence",
+      "expected": {
+        "boundary": "acceptance",
+        "code": "evidence-mismatch",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-corrupt-artifact-evidence",
+      "family": "provider",
+      "recipe": "corrupt-artifact-evidence",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-nonzero-after-success",
+      "family": "provider",
+      "recipe": "nonzero-after-success",
+      "expected": {
+        "boundary": "transcript",
+        "code": "nonzero-exit",
+        "terminal_state": "failed",
+        "evidence_state": "failed",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-stdout-overflow",
+      "family": "provider",
+      "recipe": "stdout-overflow",
+      "expected": {
+        "boundary": "transcript",
+        "code": "stdout-limit",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-stderr-overflow",
+      "family": "provider",
+      "recipe": "stderr-overflow",
+      "expected": {
+        "boundary": "transcript",
+        "code": "stderr-limit",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-invalid-event",
+      "family": "provider",
+      "recipe": "invalid-event",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-event",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-invalid-result",
+      "family": "provider",
+      "recipe": "invalid-result",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-provider-success-with-host-rejection",
+      "family": "provider",
+      "recipe": "success-with-host-rejection",
+      "expected": {
+        "boundary": "transcript",
+        "code": "host-rejection",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-privacy-operational-stream",
+      "family": "privacy",
+      "recipe": "operational-stream",
+      "expected": {
+        "boundary": "privacy",
+        "code": "canaries-absent",
+        "terminal_state": "complete",
+        "evidence_state": "complete",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-privacy-argv-environment",
+      "family": "privacy",
+      "recipe": "argv-environment",
+      "expected": {
+        "boundary": "privacy",
+        "code": "canaries-absent",
+        "terminal_state": "complete",
+        "evidence_state": "complete",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-privacy-event-diagnostic",
+      "family": "privacy",
+      "recipe": "event-diagnostic",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-event",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    },
+    {
+      "scenario_id": "scenario:acceptance-privacy-result-diagnostic",
+      "family": "privacy",
+      "recipe": "result-diagnostic",
+      "expected": {
+        "boundary": "transcript",
+        "code": "invalid-result",
+        "terminal_state": "invalid",
+        "evidence_state": "invalid",
+        "accepted": false
+      }
+    }
+  ]
+}

@@ -1,5 +1,9 @@
 # Hermetic orchestration provider kit
 
+The issue #30 [acceptance matrix](acceptance-scenarios.md) consumes this kit
+through test-owned recipes. It adds executable coverage receipts and explicit
+gaps while retaining the package, process, and artifact boundaries below.
+
 ## Purpose and checkpoint boundary
 
 The hermetic provider kit is Flow-owned conformance infrastructure for issue

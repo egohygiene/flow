@@ -143,6 +143,7 @@ or a sandbox.
 - [Process authority and isolation](docs/integrations/authority-isolation.md)
 - [Artifact binding contract](docs/integrations/artifact-bindings.md)
 - [Scenario fixture contract](docs/integrations/scenario-fixtures.md)
+- [Executable acceptance matrix](docs/integrations/acceptance-scenarios.md)
 - [Hermetic provider kit](docs/integrations/hermetic-provider-kit.md)
 - [Versioned contracts](contracts/README.md)
 - [Roadmap](ROADMAP.md)
