@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/run-artifact.v1.schema.json",
+  "title": "Flow run artifact v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "role",
+    "observation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.run-artifact/v1"
+    },
+    "role": {
+      "enum": [
+        "input",
+        "output"
+      ]
+    },
+    "observation": {
+      "$ref": "artifact-observations.v1.schema.json#/properties/artifacts/items"
+    }
+  }
+}

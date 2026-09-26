@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/run-state.v1.schema.json",
+  "title": "Flow run state v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "sequence",
+    "previous_digest",
+    "plan_digest",
+    "plan",
+    "steps",
+    "authority_decisions",
+    "recovery_decisions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.run-state/v1"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4095
+    },
+    "previous_digest": {
+      "type": "string",
+      "pattern": "^([a-f0-9]{64})?$"
+    },
+    "plan_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "plan": {
+      "$ref": "run-plan.v1.schema.json"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "step_id",
+          "attempt",
+          "status",
+          "checkpoint",
+          "failure"
+        ],
+        "properties": {
+          "step_id": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^step:[a-z0-9][a-z0-9._-]*$"
+          },
+          "attempt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4095
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "running",
+              "succeeded",
+              "failed",
+              "cancelled",
+              "denied",
+              "abandoned"
+            ]
+          },
+          "checkpoint": {
+            "anyOf": [
+              {
+                "$ref": "run-checkpoint.v1.schema.json"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "failure": {
+            "anyOf": [
+              {
+                "enum": [
+                  "cancelled",
+                  "timed-out",
+                  "process",
+                  "artifact-observation",
+                  "artifact-acceptance"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "maxItems": 256,
+      "minItems": 1
+    },
+    "authority_decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "run-authority.v1.schema.json"
+      },
+      "maxItems": 4096
+    },
+    "recovery_decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "run-recovery.v1.schema.json"
+      },
+      "maxItems": 4096
+    }
+  }
+}

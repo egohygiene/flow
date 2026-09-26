@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/run-recovery.v1.schema.json",
+  "title": "Flow run recovery v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "decision_id",
+    "step_id",
+    "attempt",
+    "action",
+    "authorization_id",
+    "profile_digest",
+    "acknowledged_uncertain_effects"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.run-recovery/v1"
+    },
+    "decision_id": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^decision:[a-z0-9][a-z0-9._-]*$"
+    },
+    "step_id": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^step:[a-z0-9][a-z0-9._-]*$"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4095
+    },
+    "action": {
+      "enum": [
+        "retry",
+        "abandon"
+      ]
+    },
+    "authorization_id": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^authorization:[a-z0-9][a-z0-9._-]*$"
+    },
+    "profile_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "acknowledged_uncertain_effects": {
+      "type": "boolean",
+      "const": true
+    }
+  }
+}

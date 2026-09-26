@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/run-plan.v1.schema.json",
+  "title": "Flow run plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "run_id",
+    "steps"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.run-plan/v1"
+    },
+    "plan_id": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^plan:[a-z0-9][a-z0-9._-]*$"
+    },
+    "run_id": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^run:[a-z0-9][a-z0-9._-]*$"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "step_id",
+          "depends_on",
+          "context"
+        ],
+        "properties": {
+          "step_id": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^step:[a-z0-9][a-z0-9._-]*$"
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^step:[a-z0-9][a-z0-9._-]*$"
+            },
+            "maxItems": 256
+          },
+          "context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "run_id",
+              "invocation_id",
+              "invocation_digest",
+              "provider",
+              "interface",
+              "capability_id",
+              "capability_digest",
+              "configuration_schema",
+              "configuration_digest",
+              "configuration_values_digest",
+              "subject_lock_digest",
+              "authorization_id",
+              "authority_profile_digest",
+              "enforcement_evidence_digest",
+              "grants_digest",
+              "bindings"
+            ],
+            "properties": {
+              "run_id": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^run:[a-z0-9][a-z0-9._-]*$"
+              },
+              "invocation_id": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^invocation:[a-z0-9][a-z0-9._-]*$"
+              },
+              "invocation_digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "provider": {
+                "$ref": "extension-invocation.v1.schema.json#/properties/extension"
+              },
+              "interface": {
+                "$ref": "extension-invocation.v1.schema.json#/properties/interface"
+              },
+              "capability_id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+              },
+              "capability_digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "configuration_schema": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "configuration_digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "configuration_values_digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "subject_lock_digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "authorization_id": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^authorization:[a-z0-9][a-z0-9._-]*$"
+              },
+              "authority_profile_digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "enforcement_evidence_digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "grants_digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "bindings": {
+                "$ref": "artifact-bindings.v1.schema.json"
+              }
+            }
+          }
+        }
+      },
+      "maxItems": 256,
+      "minItems": 1
+    }
+  }
+}

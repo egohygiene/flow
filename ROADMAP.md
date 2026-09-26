@@ -30,18 +30,19 @@ supersedes: []
 > older active-checkpoint and queue text below where they conflict. Re-query
 > live issue, release, and CI state before starting a branch.
 
-PR #60 merged on 2026-09-24 as
-[`c653c3667dd1879bd7009f83a4906ab6ae9ba832`](https://github.com/egohygiene/flow/commit/c653c3667dd1879bd7009f83a4906ab6ae9ba832),
-completing the hermetic provider-kit closeout. The exact next Flow checkpoint is
-[#30](https://github.com/egohygiene/flow/issues/30).
+#30 is complete: [PR #61](https://github.com/egohygiene/flow/pull/61) merged as
+`dfb16b347975e3292dc2928c8c48463f51dcf6d1`, with green
+[default-branch CI](https://github.com/egohygiene/flow/actions/runs/36209682152).
+Its [acceptance matrix](docs/integrations/acceptance-scenarios.md) proves 81
+scenarios twice on Rust 1.85 and stable.
 
-The #30 review candidate adds the
-[executable acceptance matrix](docs/integrations/acceptance-scenarios.md):
-versioned deterministic recipes, exact typed outcomes, two fresh-root receipts
-per case, PR budgets, and machine-readable coverage/gaps. Its scope ends at
-single-execution acceptance and refusal. After this candidate merges and the
-default-branch gate passes, #49 is next. FLO-Q03 remains active until the later
-real released-provider adapters satisfy its two-adapter exit criterion.
+The #49 review candidate adds [durable prepared execution](docs/integrations/durable-state.md):
+versioned plans and state, atomic immutable snapshots, workspace locking,
+accepted checkpoints, fresh resume eligibility, and explicit recovery decisions.
+After this candidate merges and the default-branch gate passes, #31 is next.
+FLO-Q03 remains active until real released-provider adapters satisfy its
+remaining exit criteria. [#62](https://github.com/egohygiene/flow/issues/62) is
+later documentation visualization work and does not block this sequence.
 
 ### Central Flow chain
 

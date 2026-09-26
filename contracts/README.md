@@ -1,7 +1,7 @@
 # Flow contract set
 
 This directory contains Flow-owned suite interchange contracts. The initial
-contract set is version `0.6.0`, status `provisional`, in the v1 compatibility
+contract set is version `0.7.0`, status `provisional`, in the v1 compatibility
 family. Provisional means versioned and testable, not stable for production.
 
 | Contract | Purpose |
@@ -22,6 +22,14 @@ family. Provisional means versioned and testable, not stable for production.
 | `flow.extension-result/v1` | partial/final outcomes, failures, validation, provenance, and explanation |
 | `flow.extension-resolution/v1` | deterministic selection, rejection, conflict, and fallback evidence |
 | `flow.scenario-manifest/v1` | stable scenario identity, immutable fixture topology, typed expectations, execution budgets, and bounded coverage claims |
+| `flow.run-plan/v1` | immutable prepared execution intent and exact step context |
+| `flow.run-state/v1` | durable step state, decisions, checkpoints, and predecessor identity |
+| `flow.run-checkpoint/v1` | accepted artifacts and validation bound to plan, context, and attempt |
+| `flow.run-artifact/v1` | input/output role and retained host observation |
+| `flow.run-authority/v1` | launch grant or explicit operator denial |
+| `flow.run-validation/v1` | accepted evidence and validator implementation identities |
+| `flow.run-recovery/v1` | explicit retry/abandon decision and uncertainty acknowledgement |
+| `flow.run-snapshot/v1` | atomic-storage envelope with state integrity digest |
 
 `contract-set.v1.json` is the machine-readable index. Schemas live in
 `schemas/`; deterministic examples live in `examples/`; extension compatibility
@@ -79,6 +87,13 @@ The Rust and Python implementations independently reproduce the checked-in
 SHA-256 catalog. CI validates drift but never regenerates or rewrites canonical
 fixtures.
 
+The durable state contracts are described in
+[`docs/integrations/durable-state.md`](../docs/integrations/durable-state.md).
+Their schemas reuse repository-local schema references; the validator resolves
+these offline and never retrieves arbitrary URLs. The Rust state/store validators
+also enforce context, digest, and transition invariants. Examples under
+`fixtures/state/` are synthetic data, not current execution attestations.
+
 `compatibility.flow_version_requirement` is parsed with Rust's `semver`
 `VersionReq` grammar and must use comma-separated comparators. For example,
 `>=0.1.0, <0.2.0` is a bounded range; `>=0.1.0 <0.2.0` is invalid. Invalid or
@@ -100,7 +115,9 @@ package/executable observer, authority preflight, and bounded
 `trusted-unconfined` local runner are not real provider adapters. They do not
 prove publisher authenticity, signatures, transparency, domain-output
 validity, operating-system sandboxing, authenticated host evidence,
-descriptor-bound launch, descendant containment, checkpoints, or resume.
+descriptor-bound launch, or descendant containment. The durable coordinator adds
+Flow-owned checkpoints and resume eligibility; provider-native checkpoint restore,
+automatic recovery scheduling, and real-provider lifecycle proof remain later work.
 
 For this checkpoint, the caller owns configuration canonicalization and digest
 generation plus authorization issuance, authorization ID, and grants digest.

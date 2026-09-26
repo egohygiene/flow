@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.8.0
+version: 0.9.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-21
+updated: 2026-09-25
 governed_by:
   - architecture-decisions
 depends_on:
@@ -64,8 +64,11 @@ justifies separate ADRs.
 | [ADR-0008](decisions/ADR-0008-locked-execution-subjects.md) | Require exact locked package and executable subjects | Accepted | 2026-09-21 | None | Authenticity evidence, launch-time file binding, or transitive runtime identity changes the subject boundary |
 | [ADR-0009](decisions/ADR-0009-process-authority-isolation.md) | Bind process authority to explicit isolation evidence | Accepted | 2026-09-21 | None | A real sandbox, authenticated host evidence, or new authority dimension changes the preflight boundary |
 | [ADR-0010](decisions/ADR-0010-bounded-direct-process-supervision.md) | Bound direct provider launch and supervision | Accepted | 2026-09-21 | None | Sandbox enforcement, descriptor-bound launch, process-tree containment, or durable interruption changes the runner boundary |
+| [ADR-0011](decisions/ADR-0011-durable-run-state.md) | Persist prepared intent and acceptance in immutable local snapshots | Proposed | Pending review | None | Migration, distributed writers, automatic recovery, authenticated state, or stronger durability changes the boundary |
 
 ## Active decisions
+
+ADR-0011 is proposed with Flow #49 and remains subject to maintainer review.
 
 The indexed ADRs are authoritative. Summaries in other documents must link back
 to them rather than recreate rationale.

@@ -1,0 +1,10 @@
+{
+  "schema_version": "flow.run-recovery/v2",
+  "decision_id": "decision:retry-example",
+  "step_id": "step:inspect",
+  "attempt": 1,
+  "action": "retry",
+  "authorization_id": "authorization:durable-example",
+  "profile_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+  "acknowledged_uncertain_effects": true
+}

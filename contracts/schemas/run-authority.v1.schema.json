@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/run-authority.v1.schema.json",
+  "title": "Flow run authority v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "step_id",
+    "attempt",
+    "granted",
+    "authorization_id",
+    "profile_digest",
+    "enforcement_digest",
+    "grants_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.run-authority/v1"
+    },
+    "step_id": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^step:[a-z0-9][a-z0-9._-]*$"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4095
+    },
+    "granted": {
+      "type": "boolean"
+    },
+    "authorization_id": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^authorization:[a-z0-9][a-z0-9._-]*$"
+    },
+    "profile_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "enforcement_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "grants_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/run-snapshot.v1.schema.json",
+  "title": "Flow run snapshot v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "state_digest",
+    "state"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.run-snapshot/v1"
+    },
+    "state_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "state": {
+      "$ref": "run-state.v1.schema.json"
+    }
+  }
+}

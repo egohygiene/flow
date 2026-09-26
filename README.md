@@ -27,7 +27,10 @@ subjects; require exact correlated process authority/isolation evidence; accept
 explicitly bound artifacts; and validate a closed scenario manifest for
 synthetic orchestration fixtures. It does not copy holon source or claim a
 product orchestrator, CLI, real provider adapter, operating-system sandbox,
-scenario runner, durable run state, or resume support.
+general scenario executor, automatic recovery scheduler, or public resume CLI.
+Prepared process execution now has [durable run state](docs/integrations/durable-state.md)
+with immutable plans, atomic snapshots, verified checkpoints, status inspection,
+and explicit recovery decisions.
 
 ## Executable checkpoint
 
@@ -58,6 +61,8 @@ binary is a synthetic conformance provider; it is not a public Flow CLI:
 - artifact bindings map immutable input and candidate-output IDs to portable
   root-relative locators; Flow observes file/directory bytes beneath one root
   and returns an accepted set only after exact host/provider correlation;
+- `RunStore` persists prepared intent and authority before launch, records accepted
+  checkpoints after validation, and reopens with typed stale/corrupt-state refusal;
 - `flow.scenario-manifest/v1` pins synthetic inputs, providers, topology,
   expectations, resource budgets, coverage gaps, and cross-language canonical
   digests without defining plans or runs; and
@@ -75,6 +80,7 @@ cargo run --example hermetic_extension --locked
 cargo run --example hermetic_process_transport --locked
 cargo run --example scenario_manifest --locked
 cargo test --test hermetic_provider_kit --locked
+cargo test --test durable_state --locked
 ```
 
 `EventSink` is a fallible, authoritative execution observer, not a best-effort

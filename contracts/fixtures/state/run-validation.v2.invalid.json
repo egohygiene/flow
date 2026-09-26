@@ -1,0 +1,10 @@
+{
+  "schema_version": "flow.run-validation/v2",
+  "profile": "flow.accept-artifacts/v1",
+  "implementation_version": "0.1.0",
+  "implementation_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "platform": "linux",
+  "invocation_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+  "execution_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "artifacts_digest": "b054d38b4f2ca943473fab2217e6386c642b3e4bce46e3b43ef07bcfabae6022"
+}

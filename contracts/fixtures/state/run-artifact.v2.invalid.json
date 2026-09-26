@@ -1,0 +1,14 @@
+{
+  "schema_version": "flow.run-artifact/v2",
+  "role": "input",
+  "observation": {
+    "artifact_id": "artifact:synthetic-collection",
+    "port": "port:collection",
+    "media_type": "application/vnd.flow.collection-reference+json",
+    "kind": "file",
+    "locator": "inputs/source collection.json",
+    "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+    "size_bytes": 128,
+    "manifest": []
+  }
+}

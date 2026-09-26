@@ -93,6 +93,9 @@ jobs:
       - name: Reject incomplete acceptance reports
         run: python3 tools/test_acceptance_report.py
 
+      - name: Check durable contract references and closed shapes
+        run: python3 tools/test_durable_contracts.py
+
       - name: Validate architecture specifications
         run: python3 .agents/specs/validate-specs.py
 
@@ -101,3 +104,29 @@ jobs:
 
       - name: Validate repository agents
         run: python3 .agents/agents/validate-agents.py
+
+  durable-portability:
+    name: Durable state ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      RUSTUP_TOOLCHAIN: stable
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo data
+        uses: Swatinem/rust-cache@v2
+
+      - name: Verify atomic commit interruption boundaries
+        run: cargo test --lib state::store::tests --locked
+
+      - name: Verify portable state, process crashes, and workspace locking
+        run: cargo test --test durable_state --locked

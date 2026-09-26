@@ -1,5 +1,9 @@
 # Bounded local process runner
 
+For execution that must survive host restarts, use the
+[durable coordinator](durable-state.md). This document describes its underlying
+in-memory process boundary.
+
 ## Purpose and scope
 
 `LocalProcessRunner` turns Flow's validated process contracts into one real
