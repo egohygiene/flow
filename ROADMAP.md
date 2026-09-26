@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.1
+version: 1.3.2
 status: draft
 owners:
   - egohygiene
@@ -88,6 +88,9 @@ Renderflow: #415 → (#416 + #417) → #418 → #419 → Flow #52
              #406 remains the parallel/later localization lane
 
 Aniflow:    #8 → #13 → #32 → #33 → #34 → bounded #24 closeout → #10 → Flow #51
+
+Creative artifact forest:
+Renderflow #421 → #422–#430 → Flow #10 exhaustive comic workflow
 ```
 
 The suite therefore has four useful parallel ready fronts:
