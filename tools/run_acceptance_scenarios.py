@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Execute Flow #30 recipes and retain only checked, normalized portable receipts.
+"""Execute Flow #30/#65 recipes and retain checked, normalized portable receipts.
 
 This is a test driver, not a Flow runtime. Rust owns assertions and public API
 execution; this driver checks completeness and writes a bounded coverage report.
@@ -8,13 +8,15 @@ execution; this driver checks completeness and writes a bounded coverage report.
 import argparse
 import hashlib
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
+import bounded_test_process
+import lifecycle_reports
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "tests/fixtures/acceptance-scenarios.v1.json"
+LIFECYCLE_CATALOG = ROOT / "tests/fixtures/lifecycle-scenarios.v1.json"
 MARKER = "FLOW_ACCEPTANCE_RECEIPT="
 FAMILIES = {"resolution", "contract", "artifact", "provider", "privacy"}
 
@@ -26,9 +28,11 @@ def digest(data):
 def source_identity():
     """Pin the tested recipe, provider, contracts, and implementation bytes."""
     paths = {"Cargo.toml", "Cargo.lock", "LICENSE", "tests/hermetic_provider_kit.rs",
-             "tools/run_acceptance_scenarios.py"}
+             "tools/run_acceptance_scenarios.py", "tools/bounded_test_process.py",
+             "tools/bounded_test_runner.py", "tools/lifecycle_reports.py",
+             "tools/test_lifecycle_report.py", ".github/workflows/ci.yml"}
     paths.add("tests/durable_state.rs")
-    for directory in ["src", "contracts", "tests/scenario_matrix", "tests/durable_execution", "tests/graph_recovery", "tests/fixtures", "tests/common"]:
+    for directory in ["src", "contracts", "tests/scenario_matrix", "tests/durable_execution", "tests/graph_recovery", "tests/lifecycle_matrix", "tests/fixtures", "tests/common"]:
         paths.update(str(path.relative_to(ROOT)) for path in (ROOT / directory).rglob("*")
                      if path.is_file() and "__pycache__" not in path.parts)
     entries = {path: digest((ROOT / path).read_bytes()) for path in sorted(paths)}
@@ -68,43 +72,59 @@ def verify_receipts(catalog, output):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=Path("target/acceptance-scenarios.v1.report.json"))
-    parser.add_argument("--all-targets", action="store_true", help="Also execute the rest of the required Rust test suite.")
+    parser.add_argument("--output", type=Path, help="Primary report path (defaults to target/<selected>-scenarios.v1.report.json).")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--all-targets", action="store_true", help="Execute all Rust targets and verify both acceptance and lifecycle coverage.")
+    selection.add_argument("--lifecycle-only", action="store_true", help="Execute and verify the durable lifecycle corpus only.")
+    parser.add_argument("--lifecycle-output", type=Path, default=Path("target/lifecycle-scenarios.v1.report.json"), help="Additional lifecycle report path with --all-targets.")
     parser.add_argument("--cargo", default="cargo", help="Cargo executable; dependencies must already be cached.")
     args = parser.parse_args()
-    report_path = args.output if args.output.is_absolute() else ROOT / args.output
+    selected = "lifecycle" if args.lifecycle_only else "acceptance"
+    output = args.output or Path(f"target/{selected}-scenarios.v1.report.json")
+    report_path = output if output.is_absolute() else ROOT / output
+    lifecycle_path = args.lifecycle_output if args.lifecycle_output.is_absolute() else ROOT / args.lifecycle_output
+    if args.all_targets and lifecycle_path.resolve() == report_path.resolve():
+        raise ValueError("acceptance and lifecycle reports require distinct paths")
     # A failed run must never leave an older successful report at this target.
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.unlink(missing_ok=True)
     report_path.with_suffix(".failure.log").unlink(missing_ok=True)
+    if args.all_targets:
+        lifecycle_path.parent.mkdir(parents=True, exist_ok=True)
+        lifecycle_path.unlink(missing_ok=True)
     catalog = json.loads(CATALOG.read_text())
     if catalog["schema_version"] != "flow.acceptance-scenario-catalog/v1":
         raise ValueError("unsupported catalog version")
-    if os.name != "posix":
-        raise ValueError("the PR matrix requires a Unix symlink-capable host")
     before = source_identity()
-    command = [args.cargo, "test", "--locked", "--offline"]
-    command += ["--all-targets"] if args.all_targets else ["--test", "hermetic_provider_kit", "scenario_matrix::"]
-    command += ["--", "--nocapture"]
-    result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, timeout=600, check=False)
+    command = bounded_test_process.cargo_command(args.cargo, ROOT)
+    command += ["--all-targets"] if args.all_targets else ["--test", "hermetic_provider_kit", "lifecycle_matrix::executable_lifecycle_matrix" if args.lifecycle_only else "scenario_matrix::"]
+    # A concurrent fork briefly inherits other workers' flock descriptors before
+    # exec. Isolate test-owned run workspaces; explicit contention tests still run.
+    command += ["--", "--nocapture", "--test-threads=1"]
+    try:
+        result = bounded_test_process.run(command, cwd=ROOT)
+    except bounded_test_process.BudgetExceeded as error:
+        report_path.with_suffix(".failure.log").write_bytes(error.output)
+        raise
     if result.returncode:
         # Retained locally for diagnosis. Raw test/provider text is not portable.
         log = report_path.with_suffix(".failure.log")
-        log.write_text((result.stdout + result.stderr)[-4_194_304:])
+        log.write_text(result.stdout)
         raise ValueError(f"Rust tests failed; inspect local diagnostics at {log}")
-    if len(result.stdout.encode()) + len(result.stderr.encode()) > 4_194_304:
-        raise ValueError("test output exceeds the 4 MiB driver budget")
-    receipts = verify_receipts(catalog, result.stdout)
+    receipts = [] if args.lifecycle_only else verify_receipts(catalog, result.stdout)
+    lifecycle_catalog = json.loads(LIFECYCLE_CATALOG.read_text())
+    lifecycle_receipts = lifecycle_reports.verify_receipts(lifecycle_catalog, result.stdout, before) if args.all_targets or args.lifecycle_only else []
     after = source_identity()
     if before != after:
         changed = sorted(path for path in before["files"].keys() | after["files"].keys()
                          if before["files"].get(path) != after["files"].get(path))
         raise ValueError(f"source bytes changed during validation: {', '.join(changed)}")
+    toolchain = subprocess.check_output([args.cargo, "--version"], text=True, timeout=10).strip()
     report = {
         "schema_version": "flow.acceptance-scenario-report/v1",
         "catalog_digest": digest(CATALOG.read_bytes()),
         "source_identity": before,
-        "toolchain": subprocess.check_output([args.cargo, "--version"], text=True).strip(),
+        "toolchain": toolchain,
         "tier": catalog["tier"],
         "status": "passed",
         "scenario_count": len(receipts),
@@ -115,10 +135,19 @@ def main():
         "known_gaps": catalog["known_gaps"],
         "receipts": receipts,
     }
-    temporary = report_path.with_suffix(".tmp")
+    if args.lifecycle_only:
+        report = lifecycle_reports.report(lifecycle_catalog, LIFECYCLE_CATALOG.read_bytes(), lifecycle_receipts, before, toolchain)
+    write_report(report_path, report)
+    print(f"PASS: {report['scenario_count']} {selected} scenarios, two fresh roots each; {report_path}")
+    if args.all_targets:
+        write_report(lifecycle_path, lifecycle_reports.report(lifecycle_catalog, LIFECYCLE_CATALOG.read_bytes(), lifecycle_receipts, before, toolchain))
+        print(f"PASS: {len(lifecycle_receipts)} lifecycle scenarios, two fresh roots each; {lifecycle_path}")
+
+
+def write_report(path, report):
+    temporary = path.with_suffix(".tmp")
     temporary.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
-    temporary.replace(report_path)
-    print(f"PASS: {len(receipts)} acceptance scenarios, two fresh roots each; {report_path}")
+    temporary.replace(path)
 
 
 if __name__ == "__main__":

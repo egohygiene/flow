@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.3
+version: 1.3.4
 status: draft
 owners:
   - egohygiene
@@ -43,9 +43,14 @@ It adds [durable prepared execution](docs/integrations/durable-state.md):
 versioned plans and state, atomic immutable snapshots, workspace locking,
 accepted checkpoints, fresh resume eligibility, and explicit recovery decisions.
 #31 is active through three dependency-ordered review checkpoints:
-[#64](https://github.com/egohygiene/flow/issues/64) adds fresh graph assessment and
-safe dependent execution; [#65](https://github.com/egohygiene/flow/issues/65) adds
-the deterministic durable lifecycle corpus; [#66](https://github.com/egohygiene/flow/issues/66)
+[#64](https://github.com/egohygiene/flow/issues/64) merged through
+[PR #67](https://github.com/egohygiene/flow/pull/67) as
+`83f1ea161aa5aba03da5de6b287005252000cd4b`, with green
+[default-branch CI](https://github.com/egohygiene/flow/actions/runs/36226457853).
+It adds fresh graph assessment and safe dependent execution.
+[#65](https://github.com/egohygiene/flow/issues/65) adds the
+[deterministic durable lifecycle corpus](docs/integrations/lifecycle-scenarios.md)
+with 34 recipes executed twice, fresh-process restarts, and bounded receipts; [#66](https://github.com/egohygiene/flow/issues/66)
 proves authority, duplicate-effect prevention, and recovery residuals. Land one
 review PR and verify default-branch CI before starting the next checkpoint.
 FLO-Q03 remains active until real released-provider adapters satisfy its
@@ -104,7 +109,8 @@ Renderflow #421 → #422–#430 → Flow #10 exhaustive comic workflow
 ```
 
 The suite therefore has four useful parallel ready fronts:
-Flow #30, Renderflow #415, Optiflow #88, and Aniflow #8. Keep provider domain
+Flow #65 (then #66 after merge and green default-branch CI), Renderflow #415,
+Optiflow #88, and Aniflow #8. Keep provider domain
 logic in the provider repositories and consume only immutable public contracts
 from Flow.
 

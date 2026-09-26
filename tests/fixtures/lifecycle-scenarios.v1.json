@@ -1,0 +1,3955 @@
+{
+  "schema_version": "flow.lifecycle-scenario-catalog/v1",
+  "fixture_version": "1.0.0",
+  "tier": "pull-request-linux",
+  "budget": {
+    "repetitions": 2,
+    "timeout_ms": 60000,
+    "max_receipt_bytes": 32768,
+    "max_snapshots": 16,
+    "max_history_bytes": 2097152,
+    "max_artifacts": 16,
+    "max_artifact_bytes": 1048576,
+    "max_fixture_bytes": 134217728,
+    "max_process_address_space_bytes": 4294967296,
+    "max_process_file_bytes": 16777216,
+    "max_driver_output_bytes": 4194304,
+    "driver_timeout_seconds": 600,
+    "test_threads": 1
+  },
+  "known_gaps": [
+    "Authority transition/effect counters and residual cleanup qualification remain Flow #66.",
+    "Synthetic trusted-unconfined providers only; no real holon, sandbox, or descendant-containment qualification.",
+    "Host exits occur after intent before launch, or after direct-provider reaping before acceptance; live-child host death and every instruction/commit crash window are not covered.",
+    "Linux corpus only; existing macOS/Windows durable-store jobs provide narrower portability evidence.",
+    "No migration, automatic retry/scheduling, provider-native checkpoints, exactly-once effects, or hardware/power-loss guarantee.",
+    "Address-space and file-size limits are per process, not an aggregate process-tree memory quota; fixture/history totals are checked after each recipe.",
+    "Rust workers run serially to isolate fork-inherited test locks; concurrent unrelated host spawning is not qualified, while explicit workspace contention tests still run."
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "scenario:lifecycle-cancel-before-launch",
+      "recipe": "cancel-before-launch",
+      "mode": "success",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "cancelled-before-launch",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "cancelled",
+                "attempt": 0,
+                "failure": "cancelled",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "cancelled",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-cancel-after-intent",
+      "recipe": "cancel-after-intent",
+      "mode": "success",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "cancelled-before-launch",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "cancelled",
+                "attempt": 1,
+                "failure": "cancelled",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "cancelled",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-cancel-during-provider",
+      "recipe": "cancel-during-provider",
+      "mode": "await-interruption",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "cancelled",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "cancelled",
+                "attempt": 1,
+                "failure": "cancelled",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "cancelled",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-timeout",
+      "recipe": "timeout",
+      "mode": "await-interruption",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "timed-out",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "timed-out",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-nonzero-exit",
+      "recipe": "nonzero-exit",
+      "mode": "nonzero-after-success",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "process-exit-7",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "process",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-signal-termination",
+      "recipe": "signal-termination",
+      "mode": "signal-termination",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "process-signal",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "process",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-stdout-limit",
+      "recipe": "stdout-limit",
+      "mode": "stdout-overflow",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "stdout-limit",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "process",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-stderr-limit",
+      "recipe": "stderr-limit",
+      "mode": "stderr-overflow",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "stderr-limit",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "process",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-partial-output",
+      "recipe": "partial-output",
+      "mode": "partial-output",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "partial-output-rejected",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "artifact-acceptance",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-cancel-between-steps",
+      "recipe": "cancel-between-steps",
+      "mode": "success",
+      "graph": true,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "cancelled-between-steps",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "cancelled",
+                "attempt": 0,
+                "failure": "cancelled",
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "first-complete",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "cancelled",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-completed-restart",
+      "recipe": "completed-restart",
+      "mode": "success",
+      "graph": false,
+      "recovery": "reuse-accepted-work",
+      "expected": {
+        "code": "completed-reused",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-restart",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "reopened",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-partial-restart",
+      "recipe": "partial-restart",
+      "mode": "success",
+      "graph": true,
+      "recovery": "continue-ready-work",
+      "expected": {
+        "code": "partial-run-resumed",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-restart",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "reopened",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-host-exit-after-intent",
+      "recipe": "host-exit-after-intent",
+      "mode": "success",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "uncertain-intent-retained",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "reopened",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "running",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "running",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-host-exit-after-provider",
+      "recipe": "host-exit-after-provider",
+      "mode": "success",
+      "graph": false,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "uncertain-intent-retained",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "reopened",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "running",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "running",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-retry-interrupted",
+      "recipe": "retry-interrupted",
+      "mode": "success",
+      "graph": false,
+      "recovery": "retry-with-acknowledgement",
+      "expected": {
+        "code": "interrupted-retry-succeeded",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 2,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 2,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "reopened",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "running",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "retry-approved",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-retry-cancelled",
+      "recipe": "retry-cancelled",
+      "mode": "success",
+      "graph": false,
+      "recovery": "retry-with-acknowledgement",
+      "expected": {
+        "code": "explicit-retry-succeeded",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "cancelled",
+                "attempt": 0,
+                "failure": "cancelled",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "recovery-required",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "cancelled",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "retry-approved",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-retry-without-ack",
+      "recipe": "retry-without-ack",
+      "mode": "success",
+      "graph": false,
+      "recovery": "refuse-retry",
+      "expected": {
+        "code": "unacknowledged-retry-refused",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "cancelled",
+                "attempt": 0,
+                "failure": "cancelled",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "cancelled",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-abandon-terminal",
+      "recipe": "abandon-terminal",
+      "mode": "partial-output",
+      "graph": false,
+      "recovery": "abandon-invalid-evidence",
+      "expected": {
+        "code": "explicit-abandon",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "artifact-acceptance",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "abandoned",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "abandon"
+            ]
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "recovery-required",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "abandoned",
+                "eligibility": "abandoned",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-retry-completed",
+      "recipe": "retry-completed",
+      "mode": "success",
+      "graph": false,
+      "recovery": "reuse-accepted-work",
+      "expected": {
+        "code": "completed-retry-refused",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-changed-input",
+      "recipe": "changed-input",
+      "mode": "success",
+      "graph": true,
+      "recovery": "rebuild-current-context",
+      "expected": {
+        "code": "stale-branch-invalidated",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "invalidated",
+                "stale_boundary": "inputs",
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "invalidated",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-changed-configuration",
+      "recipe": "changed-configuration",
+      "mode": "success",
+      "graph": true,
+      "recovery": "rebuild-current-context",
+      "expected": {
+        "code": "stale-branch-invalidated",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "invalidated",
+                "stale_boundary": "configuration",
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "invalidated",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-changed-provider",
+      "recipe": "changed-provider",
+      "mode": "success",
+      "graph": true,
+      "recovery": "rebuild-current-context",
+      "expected": {
+        "code": "stale-branch-invalidated",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "invalidated",
+                "stale_boundary": "provider",
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "invalidated",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-changed-implementation",
+      "recipe": "changed-implementation",
+      "mode": "success",
+      "graph": true,
+      "recovery": "rebuild-current-context",
+      "expected": {
+        "code": "stale-branch-invalidated",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "invalidated",
+                "stale_boundary": "provider",
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "invalidated",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-changed-artifact",
+      "recipe": "changed-artifact",
+      "mode": "success",
+      "graph": true,
+      "recovery": "rebuild-current-context",
+      "expected": {
+        "code": "stale-branch-invalidated",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "invalidated",
+                "stale_boundary": "artifacts",
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "invalidated",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-changed-validator",
+      "recipe": "changed-validator",
+      "mode": "success",
+      "graph": true,
+      "recovery": "rebuild-current-context",
+      "expected": {
+        "code": "stale-branch-invalidated",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "invalidated",
+                "stale_boundary": "validation",
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "invalidated",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-changed-plan",
+      "recipe": "changed-plan",
+      "mode": "success",
+      "graph": false,
+      "recovery": "rebuild-current-context",
+      "expected": {
+        "code": "changed-plan-refused",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-changed-validation-profile",
+      "recipe": "changed-validation-profile",
+      "mode": "success",
+      "graph": false,
+      "recovery": "preserve-and-repair-store",
+      "expected": {
+        "code": "invalid-validation-profile",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-corrupt-checkpoint",
+      "recipe": "corrupt-checkpoint",
+      "mode": "success",
+      "graph": false,
+      "recovery": "preserve-and-repair-store",
+      "expected": {
+        "code": "invalid-checkpoint-context",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-corrupt-checksum",
+      "recipe": "corrupt-checksum",
+      "mode": "success",
+      "graph": false,
+      "recovery": "preserve-and-repair-store",
+      "expected": {
+        "code": "corrupt-snapshot",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-incomplete-write",
+      "recipe": "incomplete-write",
+      "mode": "success",
+      "graph": false,
+      "recovery": "preserve-and-repair-store",
+      "expected": {
+        "code": "incomplete-write",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-future-schema",
+      "recipe": "future-schema",
+      "mode": "success",
+      "graph": false,
+      "recovery": "preserve-and-repair-store",
+      "expected": {
+        "code": "unsupported-schema",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-malformed-state",
+      "recipe": "malformed-state",
+      "mode": "success",
+      "graph": false,
+      "recovery": "preserve-and-repair-store",
+      "expected": {
+        "code": "malformed-state",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-retryable-provider-failure",
+      "recipe": "retryable-provider-failure",
+      "mode": "retryable-failure",
+      "graph": false,
+      "recovery": "retry-with-acknowledgement",
+      "expected": {
+        "code": "retryable-provider-failure-approved",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "artifact-acceptance",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "recovery-required",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-terminal-provider-failure",
+      "recipe": "terminal-provider-failure",
+      "mode": "terminal-failure",
+      "graph": false,
+      "recovery": "abandon-invalid-evidence",
+      "expected": {
+        "code": "terminal-validation-failure-abandoned",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "artifact-acceptance",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "abandoned",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "abandon"
+            ]
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "recovery-required",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "abandoned",
+                "eligibility": "abandoned",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -44,7 +44,8 @@ python3 tools/run_acceptance_scenarios.py
 python3 tools/run_acceptance_scenarios.py --all-targets
 ```
 
-The driver uses `cargo test --locked --offline` and writes
+The Linux driver uses `cargo test --locked --offline` with one Rust test worker
+to isolate fork-inherited test locks (explicit contention tests still run), and writes
 `target/acceptance-scenarios.v1.report.json`. It removes an older report before
 starting, fails on any failed Rust test or missing/duplicate/unexpected receipt,
 and records the catalog digest, tested source-file digests, Cargo version,
@@ -57,12 +58,15 @@ The PR catalog budgets 30 seconds per execution, two executions per case,
 16 KiB per receipt, four immediate output entries, and 1 MiB of generated
 regular-file output. The fixed recipes create only files and empty directories;
 this output-count budget is not a general recursive filesystem quota. The
-driver has a 600-second Cargo wait timeout and a 4 MiB post-capture test-log
-acceptance limit; it is not a general descendant-process supervisor. Provider
+Linux driver enforces a 600-second command deadline and a 4 MiB output limit
+while capturing. A Cargo target runner limits each test/provider process to
+4 GiB address space and each written file to 16 MiB; compilation is excluded
+from these kernel limits. Failed or timed-out test commands have their process
+group killed and reaped. This is test supervision, not production containment. Provider
 stdout/stderr and process deadlines remain enforced by the existing locked kit
 limits. Budget measurements exclude compilation from the per-case time, but
-include compilation in the driver timeout. Memory, whole-filesystem limits,
-and kernel network isolation remain explicit gaps.
+include compilation in the driver timeout. Aggregate process-tree memory,
+whole-filesystem quotas, and kernel network isolation remain explicit gaps.
 
 The test profile omits debug symbols because the exact provider executable is
 copied and hashed repeatedly. This keeps generated package size and PR time
@@ -83,7 +87,9 @@ validator; the receipt identifies the validator outcome, not a second launch.
 The kit is synthetic. Real released providers, native format validators,
 cryptographic publisher authentication, OS sandboxing, atomic filesystem
 snapshots, descriptor-bound launch, and descendant containment are not proven.
-Flow #49 owns durable state; #31 owns retry and resume. The scenario catalog
+The [durable lifecycle corpus](lifecycle-scenarios.md) separately qualifies
+#49/#64 state and recovery APIs for #31. `--all-targets` verifies both corpora
+and retains both reports. This acceptance scenario catalog
 does not expand those checkpoints or claim that two synthetic fixtures are
 two real provider adapters.
 
