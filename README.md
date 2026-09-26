@@ -30,7 +30,9 @@ product orchestrator, CLI, real provider adapter, operating-system sandbox,
 general scenario executor, automatic recovery scheduler, or public resume CLI.
 Prepared process execution now has [durable run state](docs/integrations/durable-state.md)
 with immutable plans, atomic snapshots, verified checkpoints, status inspection,
-and explicit recovery decisions.
+explicit recovery decisions, and fresh dependency-graph assessment before
+caller-selected downstream execution. Stale prerequisites invalidate their
+descendants for reuse while unrelated valid branches retain their eligibility.
 
 ## Executable checkpoint
 

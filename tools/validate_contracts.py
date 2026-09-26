@@ -1770,6 +1770,7 @@ def main() -> int:
         "flow.run-recovery/v1",
         "flow.run-state/v1",
         "flow.run-snapshot/v1",
+        "flow.run-assessment/v1",
         "flow.artifact-bindings/v1",
         "flow.artifact-observations/v1",
         "flow.artifact/v1",

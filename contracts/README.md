@@ -1,7 +1,7 @@
 # Flow contract set
 
 This directory contains Flow-owned suite interchange contracts. The initial
-contract set is version `0.7.0`, status `provisional`, in the v1 compatibility
+contract set is version `0.8.0`, status `provisional`, in the v1 compatibility
 family. Provisional means versioned and testable, not stable for production.
 
 | Contract | Purpose |
@@ -30,6 +30,7 @@ family. Provisional means versioned and testable, not stable for production.
 | `flow.run-validation/v1` | accepted evidence and validator implementation identities |
 | `flow.run-recovery/v1` | explicit retry/abandon decision and uncertainty acknowledgement |
 | `flow.run-snapshot/v1` | atomic-storage envelope with state integrity digest |
+| `flow.run-assessment/v1` | read-only current graph eligibility correlated to exact saved state |
 
 `contract-set.v1.json` is the machine-readable index. Schemas live in
 `schemas/`; deterministic examples live in `examples/`; extension compatibility

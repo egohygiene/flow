@@ -28,7 +28,7 @@ def source_identity():
     paths = {"Cargo.toml", "Cargo.lock", "LICENSE", "tests/hermetic_provider_kit.rs",
              "tools/run_acceptance_scenarios.py"}
     paths.add("tests/durable_state.rs")
-    for directory in ["src", "contracts", "tests/scenario_matrix", "tests/durable_execution", "tests/fixtures", "tests/common"]:
+    for directory in ["src", "contracts", "tests/scenario_matrix", "tests/durable_execution", "tests/graph_recovery", "tests/fixtures", "tests/common"]:
         paths.update(str(path.relative_to(ROOT)) for path in (ROOT / directory).rglob("*")
                      if path.is_file() and "__pycache__" not in path.parts)
     entries = {path: digest((ROOT / path).read_bytes()) for path in sorted(paths)}

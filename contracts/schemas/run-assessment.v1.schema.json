@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/run-assessment.v1.schema.json",
+  "title": "Flow run assessment v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_digest",
+    "state_digest",
+    "sequence",
+    "steps"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.run-assessment/v1"
+    },
+    "plan_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "state_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4095
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "step_id",
+          "recorded_status",
+          "eligibility",
+          "stale_boundary",
+          "blocked_by"
+        ],
+        "properties": {
+          "step_id": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^step:[a-z0-9][a-z0-9._-]*$"
+          },
+          "recorded_status": {
+            "enum": [
+              "pending",
+              "running",
+              "succeeded",
+              "failed",
+              "cancelled",
+              "denied",
+              "abandoned"
+            ]
+          },
+          "eligibility": {
+            "enum": [
+              "ready",
+              "reusable",
+              "invalidated",
+              "dependency-blocked",
+              "approval-required",
+              "abandoned"
+            ]
+          },
+          "stale_boundary": {
+            "anyOf": [
+              {
+                "enum": [
+                  "invocation",
+                  "provider",
+                  "capability",
+                  "configuration",
+                  "authority",
+                  "bindings",
+                  "inputs",
+                  "artifacts",
+                  "validation"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "blocked_by": {
+            "type": "array",
+            "maxItems": 256,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^step:[a-z0-9][a-z0-9._-]*$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

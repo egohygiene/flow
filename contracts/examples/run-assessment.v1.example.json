@@ -1,0 +1,15 @@
+{
+  "schema_version": "flow.run-assessment/v1",
+  "plan_digest": "0e91d3a2af624fd222d6cf2aa1b005b8d9b3ad2f3e9951cde35b2e9e99b102d1",
+  "state_digest": "8796604491ccdbab553b73b319608fbbc824da503645927e810b7577a40442d3",
+  "sequence": 0,
+  "steps": [
+    {
+      "step_id": "step:inspect",
+      "recorded_status": "pending",
+      "eligibility": "ready",
+      "stale_boundary": null,
+      "blocked_by": []
+    }
+  ]
+}
