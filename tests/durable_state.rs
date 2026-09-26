@@ -58,10 +58,15 @@ fn state_files(root: &Path) -> Vec<(String, Vec<u8>)> {
         .unwrap()
         .map(|entry| {
             let entry = entry.unwrap();
-            (
-                entry.file_name().into_string().unwrap(),
-                fs::read(entry.path()).unwrap(),
-            )
+            let bytes = if entry.file_name() == "workspace.lock" {
+                // Windows byte-range locks also forbid reads through other handles.
+                // The empty coordination file has no persisted payload to compare.
+                assert_eq!(entry.metadata().unwrap().len(), 0);
+                Vec::new()
+            } else {
+                fs::read(entry.path()).unwrap()
+            };
+            (entry.file_name().into_string().unwrap(), bytes)
         })
         .collect();
     files.sort_by(|a, b| a.0.cmp(&b.0));
