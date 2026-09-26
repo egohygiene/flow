@@ -30,7 +30,7 @@ def verify_receipts(catalog, output, source_identity):
     if set(catalog) != {"schema_version", "fixture_version", "tier", "budget", "known_gaps", "scenarios"}:
         raise ValueError("unknown or missing catalog fields")
     if (catalog["schema_version"] != "flow.lifecycle-scenario-catalog/v1"
-            or catalog["fixture_version"] != "1.0.0" or catalog["tier"] != "pull-request-linux"):
+            or catalog["fixture_version"] != "1.1.0" or catalog["tier"] != "pull-request-linux"):
         raise ValueError("unsupported lifecycle catalog")
     if catalog["budget"] != BUDGET or not catalog["known_gaps"]:
         raise ValueError("unsupported lifecycle budgets or missing gaps")

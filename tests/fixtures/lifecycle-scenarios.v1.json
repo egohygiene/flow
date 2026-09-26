@@ -1,6 +1,6 @@
 {
   "schema_version": "flow.lifecycle-scenario-catalog/v1",
-  "fixture_version": "1.0.0",
+  "fixture_version": "1.1.0",
   "tier": "pull-request-linux",
   "budget": {
     "repetitions": 2,
@@ -18,13 +18,14 @@
     "test_threads": 1
   },
   "known_gaps": [
-    "Authority transition/effect counters and residual cleanup qualification remain Flow #66.",
+    "Effect counters are harmless local witnesses. Upload uses the network permission; paid-service requests use the AI-provider permission. Neither is a separate billing or transfer guarantee.",
     "Synthetic trusted-unconfined providers only; no real holon, sandbox, or descendant-containment qualification.",
     "Host exits occur after intent before launch, or after direct-provider reaping before acceptance; live-child host death and every instruction/commit crash window are not covered.",
     "Linux corpus only; existing macOS/Windows durable-store jobs provide narrower portability evidence.",
     "No migration, automatic retry/scheduling, provider-native checkpoints, exactly-once effects, or hardware/power-loss guarantee.",
     "Address-space and file-size limits are per process, not an aggregate process-tree memory quota; fixture/history totals are checked after each recipe.",
-    "Rust workers run serially to isolate fork-inherited test locks; concurrent unrelated host spawning is not qualified, while explicit workspace contention tests still run."
+    "Rust workers run serially to isolate fork-inherited test locks; concurrent unrelated host spawning is not qualified, while explicit workspace contention tests still run.",
+    "Cleanup faults occur inside a synthetic provider after partial disposable-file cleanup; Flow retains evidence but implements no automatic cleanup or compensation."
   ],
   "scenarios": [
     {
@@ -3949,6 +3950,3952 @@
             ]
           }
         ]
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-deny-source-mutation",
+      "recipe": "deny-source-mutation",
+      "mode": "effect-success",
+      "graph": true,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "authority-denied-before-effects",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "denied",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "denied",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "independent-complete",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 0,
+              "granted": false
+            },
+            {
+              "step_id": "step:c",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "catalog-blocked",
+            "profile-exceeds-grants",
+            "denied-step",
+            "dependent-blocked"
+          ],
+          "residual": "none"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-deny-upload",
+      "recipe": "deny-upload",
+      "mode": "effect-success",
+      "graph": true,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "authority-denied-before-effects",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "denied",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "denied",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "independent-complete",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 0,
+              "granted": false
+            },
+            {
+              "step_id": "step:c",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "catalog-blocked",
+            "profile-exceeds-grants",
+            "denied-step",
+            "dependent-blocked"
+          ],
+          "residual": "none"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-deny-publication",
+      "recipe": "deny-publication",
+      "mode": "effect-success",
+      "graph": true,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "authority-denied-before-effects",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "denied",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "denied",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "independent-complete",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 0,
+              "granted": false
+            },
+            {
+              "step_id": "step:c",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "catalog-blocked",
+            "profile-exceeds-grants",
+            "denied-step",
+            "dependent-blocked"
+          ],
+          "residual": "none"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-deny-signing",
+      "recipe": "deny-signing",
+      "mode": "effect-success",
+      "graph": true,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "authority-denied-before-effects",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "denied",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "denied",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "independent-complete",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 0,
+              "granted": false
+            },
+            {
+              "step_id": "step:c",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "catalog-blocked",
+            "profile-exceeds-grants",
+            "denied-step",
+            "dependent-blocked"
+          ],
+          "residual": "none"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-deny-network",
+      "recipe": "deny-network",
+      "mode": "effect-success",
+      "graph": true,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "authority-denied-before-effects",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "denied",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "denied",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "independent-complete",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 0,
+              "granted": false
+            },
+            {
+              "step_id": "step:c",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "catalog-blocked",
+            "profile-exceeds-grants",
+            "denied-step",
+            "dependent-blocked"
+          ],
+          "residual": "none"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-deny-paid-service",
+      "recipe": "deny-paid-service",
+      "mode": "effect-success",
+      "graph": true,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "authority-denied-before-effects",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "denied",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "denied",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "independent-complete",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 0,
+              "granted": false
+            },
+            {
+              "step_id": "step:c",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "catalog-blocked",
+            "profile-exceeds-grants",
+            "denied-step",
+            "dependent-blocked"
+          ],
+          "residual": "none"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-deny-destructive",
+      "recipe": "deny-destructive",
+      "mode": "effect-success",
+      "graph": true,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "authority-denied-before-effects",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "denied",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "denied",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "denied",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "denied",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "independent-complete",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 0,
+              "granted": false
+            },
+            {
+              "step_id": "step:c",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "catalog-blocked",
+            "profile-exceeds-grants",
+            "denied-step",
+            "dependent-blocked"
+          ],
+          "residual": "none"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-effect-completed-reuse",
+      "recipe": "effect-completed-reuse",
+      "mode": "effect-success",
+      "graph": true,
+      "recovery": "reuse-accepted-work",
+      "expected": {
+        "code": "accepted-effects-not-repeated",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 5,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 6,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-restart",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "reopened",
+            "sequence": 6,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 6,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "accepted",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "reused-without-relaunch",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 1,
+              "granted": true
+            },
+            {
+              "step_id": "step:c",
+              "attempt": 1,
+              "granted": true
+            },
+            {
+              "step_id": "step:b",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "completed-execution",
+            "completed-retry"
+          ],
+          "residual": "none"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-effect-stale-authority",
+      "recipe": "effect-stale-authority",
+      "mode": "effect-success",
+      "graph": true,
+      "recovery": "rebuild-current-context",
+      "expected": {
+        "code": "stale-authority-blocks-descendants",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "succeeded",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "before-change",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "invalidated",
+                "stale_boundary": "authority",
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "invalidated",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "authority-invalidated",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 1,
+              "granted": true
+            },
+            {
+              "step_id": "step:c",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "stale-authority",
+            "dependent-invalidated"
+          ],
+          "residual": "none"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-effect-retry-failed",
+      "recipe": "effect-retry-failed",
+      "mode": "effect-fail-once",
+      "graph": false,
+      "recovery": "retry-with-acknowledgement",
+      "expected": {
+        "code": "acknowledged-effect-retry",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "process",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 2,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 5,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 2,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "recovery-required",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "retry-approved",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 5,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "refused-without-authority",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "approval-does-not-launch",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "after-explicit-retry",
+              "counters": [
+                {
+                  "launches": 2,
+                  "effects": 2,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 1,
+              "granted": true
+            },
+            {
+              "step_id": "step:a",
+              "attempt": 2,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "unapproved-execution",
+            "missing-acknowledgement",
+            "wrong-authorization",
+            "wrong-grants"
+          ],
+          "residual": "retained-before-retry"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-effect-retry-interrupted",
+      "recipe": "effect-retry-interrupted",
+      "mode": "effect-success",
+      "graph": false,
+      "recovery": "retry-with-acknowledgement",
+      "expected": {
+        "code": "acknowledged-effect-retry",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 2,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "succeeded",
+                "attempt": 2,
+                "failure": null,
+                "checkpoint": true
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "recovery-required",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "running",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "retry-approved",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 4,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "succeeded",
+                "eligibility": "reusable",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "refused-without-authority",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "approval-does-not-launch",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "after-explicit-retry",
+              "counters": [
+                {
+                  "launches": 2,
+                  "effects": 2,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 1,
+              "granted": true
+            },
+            {
+              "step_id": "step:a",
+              "attempt": 2,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "unapproved-execution",
+            "missing-acknowledgement",
+            "wrong-authorization",
+            "wrong-grants"
+          ],
+          "residual": "retained-before-retry"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-effect-abandon-interrupted",
+      "recipe": "effect-abandon-interrupted",
+      "mode": "effect-success",
+      "graph": false,
+      "recovery": "abandon-invalid-evidence",
+      "expected": {
+        "code": "uncertain-effects-abandoned",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "abandoned",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "abandon"
+            ]
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "recovery-required",
+            "sequence": 1,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "running",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "abandoned",
+                "eligibility": "abandoned",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "refused-without-authority",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "abandoned-with-evidence",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "unapproved-execution",
+            "missing-acknowledgement",
+            "wrong-authorization",
+            "wrong-grants",
+            "abandoned-execution"
+          ],
+          "residual": "retained-after-abandon"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-effect-recovery-decision-replay",
+      "recipe": "effect-recovery-decision-replay",
+      "mode": "effect-failure",
+      "graph": false,
+      "recovery": "abandon-invalid-evidence",
+      "expected": {
+        "code": "replayed-recovery-refused",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "process",
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 3,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 4,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 2,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 5,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 2,
+                "failure": "process",
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry"
+            ]
+          },
+          {
+            "sequence": 6,
+            "steps": [
+              {
+                "status": "abandoned",
+                "attempt": 2,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": [
+              "retry",
+              "abandon"
+            ]
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "recovery-required",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "retry-approved",
+            "sequence": 3,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 6,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "abandoned",
+                "eligibility": "abandoned",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "refused-without-authority",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "approval-does-not-launch",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "after-explicit-retry",
+              "counters": [
+                {
+                  "launches": 2,
+                  "effects": 2,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 1,
+              "granted": true
+            },
+            {
+              "step_id": "step:a",
+              "attempt": 2,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "unapproved-execution",
+            "missing-acknowledgement",
+            "wrong-authorization",
+            "wrong-grants",
+            "replayed-decision"
+          ],
+          "residual": "retained-after-abandon"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-cleanup-cancelled",
+      "recipe": "cleanup-cancelled",
+      "mode": "cleanup-cancelled",
+      "graph": true,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "cleanup-incomplete-evidence-retained",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "cancelled",
+                "attempt": 1,
+                "failure": "cancelled",
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "cleanup-incomplete",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "cancelled",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "cancelled",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "residuals-preserved",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 1,
+                  "cleanup_items_removed": 1
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "unapproved-execution",
+            "dependent-blocked"
+          ],
+          "residual": "cleanup-cancelled"
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario:lifecycle-cleanup-failed",
+      "recipe": "cleanup-failed",
+      "mode": "cleanup-failed",
+      "graph": true,
+      "recovery": "operator-decision-required",
+      "expected": {
+        "code": "cleanup-incomplete-evidence-retained",
+        "history": [
+          {
+            "sequence": 0,
+            "steps": [
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 1,
+            "steps": [
+              {
+                "status": "running",
+                "attempt": 1,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          },
+          {
+            "sequence": 2,
+            "steps": [
+              {
+                "status": "failed",
+                "attempt": 1,
+                "failure": "process",
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              },
+              {
+                "status": "pending",
+                "attempt": 0,
+                "failure": null,
+                "checkpoint": false
+              }
+            ],
+            "recovery": []
+          }
+        ],
+        "assessments": [
+          {
+            "at": "initial",
+            "sequence": 0,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "cleanup-incomplete",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          },
+          {
+            "at": "final",
+            "sequence": 2,
+            "steps": [
+              {
+                "step_id": "step:a",
+                "recorded_status": "failed",
+                "eligibility": "approval-required",
+                "stale_boundary": null,
+                "blocked_by": []
+              },
+              {
+                "step_id": "step:b",
+                "recorded_status": "pending",
+                "eligibility": "dependency-blocked",
+                "stale_boundary": null,
+                "blocked_by": [
+                  "step:a"
+                ]
+              },
+              {
+                "step_id": "step:c",
+                "recorded_status": "pending",
+                "eligibility": "ready",
+                "stale_boundary": null,
+                "blocked_by": []
+              }
+            ]
+          }
+        ],
+        "safety": {
+          "observations": [
+            {
+              "at": "initial",
+              "counters": [
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            },
+            {
+              "at": "residuals-preserved",
+              "counters": [
+                {
+                  "launches": 1,
+                  "effects": 1,
+                  "cleanup_started": 1,
+                  "cleanup_items_removed": 1
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                },
+                {
+                  "launches": 0,
+                  "effects": 0,
+                  "cleanup_started": 0,
+                  "cleanup_items_removed": 0
+                }
+              ]
+            }
+          ],
+          "authority": [
+            {
+              "step_id": "step:a",
+              "attempt": 1,
+              "granted": true
+            }
+          ],
+          "refusals": [
+            "unapproved-execution",
+            "dependent-blocked"
+          ],
+          "residual": "cleanup-failed"
+        }
       }
     }
   ]

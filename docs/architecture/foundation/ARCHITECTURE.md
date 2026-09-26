@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.13.1
+version: 0.13.2
 status: draft
 owners:
   - egohygiene
@@ -139,6 +139,14 @@ and explicit recovery decisions. Its versioned receipts are conformance evidence
 not executable plans, authorization tokens, or a second runtime state model.
 Portable reports contain allowlisted identities and typed outcomes; raw operational
 evidence stays local. The lifecycle guide owns recipe coverage and resource limits.
+
+Counter-backed conformance additionally checks that recorded authority and intent
+precede provider launch, accepted work is not relaunched, and unresolved attempts
+require matching recovery authority. Synthetic provider cleanup may fail or be
+cancelled after removing disposable work. Flow preserves the unaccepted candidate,
+unfinished work, and failure history; it does not infer complete cleanup or perform
+automatic compensation. Explicitly acknowledged retries may repeat an uncertain
+effect. These proofs do not establish exactly-once behavior for unconfined providers.
 
 ### External adapters
 
@@ -290,7 +298,9 @@ assessment, and explicit recovery decisions described above. Issue #64 requires
 fresh prerequisite evidence for graph assessment and dependent execution without
 adding a scheduler or rewriting accepted history. Issue #65 adds the bounded
 [durable lifecycle corpus](../../integrations/lifecycle-scenarios.md), including
-fresh-process restart and deterministic recovery receipts. Flow does not yet supply
+fresh-process restart and deterministic recovery receipts. Issue #66 extends it
+with authority denials, observable effect counters, and retained cleanup residuals
+using the existing public APIs, without changing runtime schemas. Flow does not yet supply
 the public CLI, real holon adapters, signature or transparency verification,
 provider-native artifact validation, an atomic filesystem snapshot, an
 operating-system sandbox or authenticated enforcement evidence,

@@ -56,6 +56,11 @@ enum Behavior {
     InvalidEvent,
     InvalidResult,
     SuccessWithHostRejection,
+    EffectSuccess,
+    EffectFailure,
+    EffectFailOnce,
+    CleanupCancelled,
+    CleanupFailed,
 }
 
 impl Behavior {
@@ -79,6 +84,11 @@ impl Behavior {
             "invalid-event" => Ok(Self::InvalidEvent),
             "invalid-result" => Ok(Self::InvalidResult),
             "success-with-host-rejection" => Ok(Self::SuccessWithHostRejection),
+            "effect-success" => Ok(Self::EffectSuccess),
+            "effect-failure" => Ok(Self::EffectFailure),
+            "effect-fail-once" => Ok(Self::EffectFailOnce),
+            "cleanup-cancelled" => Ok(Self::CleanupCancelled),
+            "cleanup-failed" => Ok(Self::CleanupFailed),
             _ => Err(invalid_input("unsupported hermetic provider mode").into()),
         }
     }
@@ -135,14 +145,15 @@ fn run() -> ProviderResult<()> {
         invocation.configuration.values.len() == 2,
         "configuration contains an unsupported field",
     )?;
-    if behavior == Behavior::AwaitInterruption {
+    if matches!(
+        behavior,
+        Behavior::AwaitInterruption | Behavior::CleanupCancelled
+    ) {
         if arguments.lifecycle_control.is_none() {
-            return Err(invalid_input("await-interruption requires --lifecycle-control").into());
+            return Err(invalid_input("interruption mode requires --lifecycle-control").into());
         }
     } else if arguments.lifecycle_control.is_some() {
-        return Err(
-            invalid_input("--lifecycle-control is supported only by await-interruption").into(),
-        );
+        return Err(invalid_input("--lifecycle-control requires an interruption mode").into());
     }
 
     match behavior {
@@ -173,6 +184,17 @@ fn run() -> ProviderResult<()> {
     )?;
     ensure(root_metadata.is_dir(), "artifact root must be a directory")?;
     let root = fs::canonicalize(&arguments.artifact_root)?;
+    let effect_mode = matches!(
+        behavior,
+        Behavior::EffectSuccess
+            | Behavior::EffectFailure
+            | Behavior::EffectFailOnce
+            | Behavior::CleanupCancelled
+            | Behavior::CleanupFailed
+    );
+    if effect_mode {
+        append_effect_record(&root, "launch")?;
+    }
 
     if behavior == Behavior::AwaitInterruption {
         let lifecycle_control = arguments
@@ -261,6 +283,21 @@ fn run() -> ProviderResult<()> {
         )?;
     }
     let output_digest = digest_bytes(&artifact_bytes);
+    if effect_mode {
+        let attempts = append_effect_record(&root, "effect")?;
+        if behavior == Behavior::EffectFailure
+            || (behavior == Behavior::EffectFailOnce && attempts == 1)
+        {
+            eprintln!("FLOW_EFFECT_PRIVATE_CANARY: synthetic effect completed before failure");
+            std::process::exit(NONZERO_AFTER_SUCCESS_EXIT_CODE);
+        }
+        if matches!(
+            behavior,
+            Behavior::CleanupCancelled | Behavior::CleanupFailed
+        ) {
+            synthetic_cleanup(&root, behavior, arguments.lifecycle_control.as_deref())?;
+        }
+    }
 
     let consumed_artifacts = vec![input_binding.artifact_id.clone()];
     let mut produced_artifacts = vec![output_binding.artifact_id.clone()];
@@ -404,8 +441,13 @@ fn run() -> ProviderResult<()> {
         | Behavior::MissingOutput
         | Behavior::ExtraOutput
         | Behavior::NonzeroAfterSuccess
+        | Behavior::EffectSuccess
+        | Behavior::EffectFailOnce
         | Behavior::SuccessWithHostRejection => {}
         Behavior::AwaitInterruption
+        | Behavior::EffectFailure
+        | Behavior::CleanupCancelled
+        | Behavior::CleanupFailed
         | Behavior::SignalTermination
         | Behavior::StdoutOverflow
         | Behavior::StderrOverflow => {
@@ -687,6 +729,61 @@ fn write_lifecycle_readiness(root: &Path, locator: &Path) -> ProviderResult<()> 
     drop(output);
     fs::rename(temporary_path, path)?;
     Ok(())
+}
+
+// Test-only local witnesses. No network, signing, publication, paid service,
+// source mutation, or real collection cleanup is performed by these modes.
+fn append_effect_record(root: &Path, record: &str) -> ProviderResult<usize> {
+    let locator = Path::new("outputs/effect-journal.txt");
+    let path = if root.join(locator).exists() {
+        canonical_input_path(root, locator)?
+    } else {
+        confined_new_output_path(root, locator)?
+    };
+    let previous = if path.exists() {
+        fs::read_to_string(&path)?
+    } else {
+        String::new()
+    };
+    ensure(previous.len() < 512, "effect witness budget exceeded")?;
+    let mut file = OpenOptions::new().create(true).append(true).open(path)?;
+    writeln!(file, "{record}")?;
+    file.sync_all()?;
+    Ok(previous.lines().filter(|line| *line == record).count() + 1)
+}
+
+fn synthetic_cleanup(
+    root: &Path,
+    behavior: Behavior,
+    control: Option<&Path>,
+) -> ProviderResult<()> {
+    append_effect_record(root, "cleanup-started")?;
+    // Remove only a disposable synthetic file, preserving the source, candidate,
+    // and a second item of unfinished work. Readiness follows the partial cleanup.
+    let disposable = Path::new("outputs/cleanup-disposable.txt");
+    write_new_output(root, disposable, b"disposable fixture\n")?;
+    let pending = confined_new_output_path(root, Path::new("outputs/cleanup-pending"))?;
+    fs::create_dir(&pending)?;
+    write_new_output(
+        root,
+        Path::new("outputs/cleanup-pending/evidence.txt"),
+        b"FLOW_CLEANUP_PRIVATE_CANARY: unfinished cleanup\n",
+    )?;
+    fs::remove_file(canonical_input_path(root, disposable)?)?;
+    append_effect_record(root, "cleanup-item-removed")?;
+    if behavior == Behavior::CleanupCancelled {
+        write_lifecycle_readiness(
+            root,
+            control.ok_or_else(|| invalid_input("missing cleanup control"))?,
+        )?;
+        loop {
+            std::thread::park();
+        }
+    }
+    // A real deterministic filesystem failure, independent of user permissions:
+    // removing a nonempty directory must fail. Preserve its contents on failure.
+    fs::remove_dir(pending)?;
+    Err(invalid_input("cleanup unexpectedly removed unfinished evidence").into())
 }
 
 fn write_overflow(writer: &mut impl Write, limit: u64) -> ProviderResult<()> {

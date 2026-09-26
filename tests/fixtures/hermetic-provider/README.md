@@ -101,7 +101,7 @@ At runtime the host passes only literal long-form arguments:
 - `--artifact-bindings <portable locator>` selects one
   `flow.artifact-bindings/v1` document beneath that root.
 - `--lifecycle-control <portable locator>` is optional and is accepted only by
-  the `await-interruption` lifecycle mode. The conformance harness uses
+  the `await-interruption` and `cleanup-cancelled` lifecycle modes. The conformance harness uses
   `outputs/lifecycle-control.json`.
 
 The provider accepts one LF-terminated `flow.extension-invocation/v1` document
@@ -134,6 +134,18 @@ runtime `mode` values are:
 | `invalid-event` | Emits a duplicate/non-increasing event sequence. |
 | `invalid-result` | Emits a result with an authorization identity that conflicts with the invocation. |
 | `success-with-host-rejection` | Emits valid success-shaped evidence so a rejecting caller-owned `EventSink` can exercise the host boundary. |
+| `signal-termination` | Raises a real Unix termination signal before producing artifacts. |
+| `retryable-failure` / `terminal-failure` | Retains a local transcript with typed provider/validation failure and a private canary; no acceptance. |
+| `effect-success` | Records bounded local launch/effect witnesses and writes the normal candidate. |
+| `effect-failure` / `effect-fail-once` | Records the same witnesses and candidate, then exits `7` on every attempt or only the first effect respectively. |
+| `cleanup-cancelled` | After candidate creation, removes one disposable fixture file, preserves unfinished evidence, signals readiness, and waits for cancellation. |
+| `cleanup-failed` | Performs the same partial cleanup, then fails to remove a nonempty fixture directory; candidate and unfinished evidence remain. |
+
+Effect/cleanup modes append only fixed witness records to
+`outputs/effect-journal.txt`, bounded to 512 bytes by the fixture. They never perform
+real external effects or mutate original inputs. Cleanup residual evidence is
+private fixture data; only allowlisted counters/dispositions and candidate digests
+enter the [lifecycle receipts](../../../docs/integrations/lifecycle-scenarios.md).
 
 `unavailable` and `incompatible` are harness-only resolution cases. They are
 not runtime modes because both reject selection before an invocation exists.

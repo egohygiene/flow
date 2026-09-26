@@ -24,7 +24,7 @@ impl Node {
         let prepared = kit.prepare_lifecycle_named(
             CAPABILITIES[0],
             mode,
-            mode == "await-interruption",
+            matches!(mode, "await-interruption" | "cleanup-cancelled"),
             &format!("lifecycle-{index}"),
         );
         let artifacts = kit.root.path().join(WORKSPACE_LOCATOR);

@@ -22,7 +22,7 @@ def receipt(case):
     identity = dict.fromkeys(reports.IDENTITY_FIELDS, "a" * 64)
     identity["input_digest"] = next(iter(SOURCE["files"].values()))
     return dict(schema_version="flow.lifecycle-scenario-receipt/v1", scenario_id=case["scenario_id"],
-                recipe_digest=reports.canonical_digest({"fixture_version": "1.0.0", "case": case}),
+                recipe_digest=reports.canonical_digest({"fixture_version": CATALOG["fixture_version"], "case": case}),
                 fixture_identity=[identity] * (3 if case["graph"] else 1),
                 outcome=deepcopy(case["expected"]), recovery=case["recovery"],
                 plan_digest="b" * 64, history_digest="c" * 64,
@@ -93,6 +93,26 @@ class ReceiptGate(unittest.TestCase):
         self.receipts[0]["raw_stderr"] = "x" * reports.BUDGET["max_receipt_bytes"]
         with self.assertRaisesRegex(ValueError, "exceeds budget"):
             self.verify()
+
+    def test_effect_authority_and_residual_evidence_cannot_be_changed_or_omitted(self):
+        index = next(index for index, row in enumerate(self.receipts)
+                     if row["scenario_id"] == "scenario:lifecycle-cleanup-failed")
+        mutations = [
+            lambda safety: safety["observations"][-1]["counters"][0].update(effects=0),
+            lambda safety: safety["authority"][0].update(granted=False),
+            lambda safety: safety.update(residual="none"),
+            lambda safety: safety.update(refusals=[]),
+            lambda safety: safety.update(raw_stderr="FLOW_CLEANUP_PRIVATE_CANARY"),
+        ]
+        for mutate in mutations:
+            rows = deepcopy(self.receipts)
+            mutate(rows[index]["outcome"]["safety"])
+            with self.subTest(mutation=mutate), self.assertRaises(ValueError):
+                self.verify(rows)
+        rows = deepcopy(self.receipts)
+        del rows[index]["outcome"]["safety"]
+        with self.assertRaises(ValueError):
+            self.verify(rows)
 
 
 @unittest.skipUnless(sys.platform == "linux", "Linux resource qualification")

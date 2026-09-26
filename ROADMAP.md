@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.4
+version: 1.3.5
 status: draft
 owners:
   - egohygiene
@@ -48,11 +48,21 @@ accepted checkpoints, fresh resume eligibility, and explicit recovery decisions.
 `83f1ea161aa5aba03da5de6b287005252000cd4b`, with green
 [default-branch CI](https://github.com/egohygiene/flow/actions/runs/36226457853).
 It adds fresh graph assessment and safe dependent execution.
-[#65](https://github.com/egohygiene/flow/issues/65) adds the
+[#65](https://github.com/egohygiene/flow/issues/65) merged through
+[PR #68](https://github.com/egohygiene/flow/pull/68) as
+`6db839facc822707e9e3a9d74dda044faac77fe7`. It adds the
 [deterministic durable lifecycle corpus](docs/integrations/lifecycle-scenarios.md)
-with 34 recipes executed twice, fresh-process restarts, and bounded receipts; [#66](https://github.com/egohygiene/flow/issues/66)
-proves authority, duplicate-effect prevention, and recovery residuals. Land one
-review PR and verify default-branch CI before starting the next checkpoint.
+with 34 initial recipes executed twice, fresh-process restarts, and bounded receipts.
+[#66](https://github.com/egohygiene/flow/issues/66) adds 15 counter-backed authority,
+duplicate-effect, recovery-approval, and cleanup-residual recipes, bringing the
+corpus to 49. Its guide reconciles all original #31 acceptance criteria. Keep #31
+and #66 open until maintainer merge; #13 still requires the real-provider proofs.
+
+The maintainer's 2026-09-26 instruction supersedes older CI-wait wording: hand back
+each bounded PR after focused local checks, report unverified gates honestly, and
+do not wait for hosted or default-branch CI. Keep one review checkpoint at a time;
+the maintainer owns merges. This changes handoff timing, not CI definitions or
+the final release/audit evidence requirements.
 FLO-Q03 remains active until real released-provider adapters satisfy its
 remaining exit criteria. [#62](https://github.com/egohygiene/flow/issues/62) is
 later documentation visualization work and does not block this sequence.
@@ -108,9 +118,10 @@ Creative artifact forest:
 Renderflow #421 → #422–#430 → Flow #10 exhaustive comic workflow
 ```
 
-The suite therefore has four useful parallel ready fronts:
-Flow #65 (then #66 after merge and green default-branch CI), Renderflow #415,
-Optiflow #88, and Aniflow #8. Keep provider domain
+The current review checkpoint is Flow #66. After its maintainer merge, the agreed
+Optiflow-first queue is #88 → #89 → #90 → #91 → #92 → #96 → #93, followed by
+#94 → #95. Renderflow #415 and Aniflow #8 remain independent provider fronts.
+Re-query live dependencies before starting any of them. Keep provider domain
 logic in the provider repositories and consume only immutable public contracts
 from Flow.
 
