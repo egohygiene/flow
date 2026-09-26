@@ -35,6 +35,14 @@ PR #60 merged on 2026-09-24 as
 completing the hermetic provider-kit closeout. The exact next Flow checkpoint is
 [#30](https://github.com/egohygiene/flow/issues/30).
 
+The #30 review candidate adds the
+[executable acceptance matrix](docs/integrations/acceptance-scenarios.md):
+versioned deterministic recipes, exact typed outcomes, two fresh-root receipts
+per case, PR budgets, and machine-readable coverage/gaps. Its scope ends at
+single-execution acceptance and refusal. After this candidate merges and the
+default-branch gate passes, #49 is next. FLO-Q03 remains active until the later
+real released-provider adapters satisfy its two-adapter exit criterion.
+
 ### Central Flow chain
 
 1. [#30](https://github.com/egohygiene/flow/issues/30) — prove compatibility,

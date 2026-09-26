@@ -1,5 +1,8 @@
 mod common;
 
+#[path = "scenario_matrix/mod.rs"]
+mod scenario_matrix;
+
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};

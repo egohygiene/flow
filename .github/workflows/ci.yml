@@ -43,8 +43,16 @@ jobs:
       - name: Lint all targets
         run: cargo clippy --all-targets --all-features --locked -- -D warnings
 
-      - name: Test all targets
-        run: cargo test --all-targets --locked
+      - name: Test all targets and verify acceptance coverage
+        run: python3 tools/run_acceptance_scenarios.py --all-targets
+
+      - name: Retain normalized acceptance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-scenarios-${{ matrix.toolchain }}
+          path: target/acceptance-scenarios.v1.report.json
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Test documentation
         run: cargo test --doc --locked
@@ -81,6 +89,9 @@ jobs:
 
       - name: Check deterministic scenario sources
         run: python3 tools/generate_scenario_sources.py --check
+
+      - name: Reject incomplete acceptance reports
+        run: python3 tools/test_acceptance_report.py
 
       - name: Validate architecture specifications
         run: python3 .agents/specs/validate-specs.py

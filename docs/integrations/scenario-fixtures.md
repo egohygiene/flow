@@ -159,6 +159,14 @@ contract rather than an executor.
 
 ## Checked-in corpus
 
+Issue #30 adds an [executable acceptance matrix](acceptance-scenarios.md) on
+top of this contract. Its test-owned catalog reuses the terminal/evidence
+vocabulary and public provider-kit boundaries, with two fresh-root executions
+per recipe and a completeness-checked JSON report. It does not interpret an
+arbitrary scenario manifest as an executable plan. Illustrative digests in the
+original intent fixtures are never presented as the executed package identity;
+runtime receipts retain the actual finalized kit digests.
+
 The corpus includes a single-provider success example plus multi-provider,
 interrupted, observed-empty, and expected-unavailable fixtures. The unavailable
 fixture is a valid negative scenario; it is distinct from malformed manifest
