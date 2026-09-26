@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.0
+version: 1.3.1
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-24
+updated: 2026-09-25
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -23,6 +23,81 @@ supersedes: []
 
 # Flow Roadmap
 
+## 2026-09-25 live suite handoff
+
+> [!IMPORTANT]
+> This is the current near-term execution handoff for agents. It supersedes
+> older active-checkpoint and queue text below where they conflict. Re-query
+> live issue, release, and CI state before starting a branch.
+
+PR #60 merged on 2026-09-24 as
+[`c653c3667dd1879bd7009f83a4906ab6ae9ba832`](https://github.com/egohygiene/flow/commit/c653c3667dd1879bd7009f83a4906ab6ae9ba832),
+completing the hermetic provider-kit closeout. The exact next Flow checkpoint is
+[#30](https://github.com/egohygiene/flow/issues/30).
+
+### Central Flow chain
+
+1. [#30](https://github.com/egohygiene/flow/issues/30) — prove compatibility,
+   artifact, provider-failure, diagnostic, and privacy scenarios.
+2. [#49](https://github.com/egohygiene/flow/issues/49) — persist versioned
+   plans, runs, checkpoints, validation evidence, authority decisions, and
+   recovery state.
+3. [#31](https://github.com/egohygiene/flow/issues/31) — prove interruption,
+   retry, resume, invalidation, and authority transitions against durable state.
+4. After #49, integrate immutable provider releases as they become available:
+   [#50](https://github.com/egohygiene/flow/issues/50) for Optiflow,
+   [#52](https://github.com/egohygiene/flow/issues/52) for Renderflow, and
+   [#51](https://github.com/egohygiene/flow/issues/51) for Aniflow. These adapter
+   tasks may proceed in parallel with #31 when their own release dependencies
+   are satisfied.
+5. [#53](https://github.com/egohygiene/flow/issues/53) — ship the supported
+   Flow CLI and reconcile the vertical slice in [#3](https://github.com/egohygiene/flow/issues/3).
+6. [#32](https://github.com/egohygiene/flow/issues/32) and
+   [#33](https://github.com/egohygiene/flow/issues/33) — prove clean-room static
+   publication and temporal workflows with released providers.
+7. [#34](https://github.com/egohygiene/flow/issues/34) — turn those scenarios
+   into the clean-room compatibility and regression release gate.
+8. [#54](https://github.com/egohygiene/flow/issues/54) — publish Flow's first
+   immutable integration-candidate release after #3 and #34, with an explicit
+   disposition for the observability work under
+   [#14](https://github.com/egohygiene/flow/issues/14).
+
+[#10](https://github.com/egohygiene/flow/issues/10), the exhaustive comic and
+multilingual orchestration workload, consumes this maturing foundation and the
+Renderflow localization lane. It is a concrete application/proving lane, not a
+hidden prerequisite for #54 unless a later reviewed dependency decision makes
+it one.
+
+### Provider release lanes feeding Flow
+
+```text
+Optiflow:   #88 → #89 → #90 → #91 → #92 → #96 → #93
+                         └─ read-only #89 can feed Flow #50
+             #65 fixtures → #94
+                    #93 + #94 → #95
+
+Renderflow: #415 → (#416 + #417) → #418 → #419 → Flow #52
+             #406 remains the parallel/later localization lane
+
+Aniflow:    #8 → #13 → #32 → #33 → #34 → bounded #24 closeout → #10 → Flow #51
+```
+
+The suite therefore has four useful parallel ready fronts:
+Flow #30, Renderflow #415, Optiflow #88, and Aniflow #8. Keep provider domain
+logic in the provider repositories and consume only immutable public contracts
+from Flow.
+
+### Finish-line sequence
+
+After the provider lanes and Flow integration/release work, complete the
+provider post-roadmap audits
+([Optiflow #61](https://github.com/egohygiene/optiflow/issues/61),
+[Renderflow #409](https://github.com/egohygiene/renderflow/issues/409), and
+[Aniflow #17](https://github.com/egohygiene/aniflow/issues/17)) before the final
+suite-level Flow audit in [#12](https://github.com/egohygiene/flow/issues/12).
+Audit findings should become bounded remediation issues rather than silently
+expanding the active implementation issue.
+
 <!-- BEGIN ROADMAP EXECUTION SNAPSHOT -->
 <!-- roadmap-manifest
 schema: hygiene.roadmap/v1alpha1
@@ -30,7 +105,7 @@ repository: egohygiene/flow
 visibility: public
 publication: central
 route: /roadmap/flow/
-updated: 2026-09-24
+updated: 2026-09-25
 -->
 ## 2026-09-24 execution snapshot
 
