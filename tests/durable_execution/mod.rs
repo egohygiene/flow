@@ -333,12 +333,10 @@ fn durable_dependency_status_blocks_launch_and_abandonment_survives_reopen() {
     plan.steps[0].depends_on = vec![predecessor.step_id.clone()];
     plan.steps.insert(0, predecessor);
     let mut store = RunStore::create(&fixture.workspace(), plan.clone()).unwrap();
-    assert_eq!(
-        store
-            .assess(&plan, "step:inspect", &fixture.context())
-            .unwrap(),
-        ResumeEligibility::DependencyBlocked
-    );
+    assert!(matches!(
+        store.assess(&plan, "step:inspect", &fixture.context()),
+        Err(StateError::DependencyEvidenceRequired)
+    ));
     assert!(
         store
             .execute(

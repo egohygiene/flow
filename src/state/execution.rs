@@ -1,5 +1,6 @@
 use std::path::Path;
 
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use thiserror::Error;
 
@@ -29,10 +30,12 @@ pub struct ProcessStepContext<'a> {
     pub bindings: &'a ArtifactBindingSet,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum ResumeEligibility {
     Ready,
     Reusable,
+    Invalidated,
     ApprovalRequired,
     DependencyBlocked,
     Abandoned,
@@ -170,37 +173,45 @@ impl ProcessStepContext<'_> {
 }
 
 impl RunStore {
-    /// Assess current evidence against the caller's expected complete plan.
+    /// Assess a root step against the caller's expected complete plan.
     ///
     /// `Reusable` is an eligibility decision about recorded acceptance, not a
     /// reconstructed `AcceptedArtifactSet` or permission to launch a provider.
     ///
     /// # Errors
     /// Refuses changed plans, configuration, inputs, subjects, authority, validation
-    /// implementations, and output evidence. This method writes no state.
+    /// implementations, and output evidence. Dependent steps require `assess_run`.
+    /// This method writes no state.
     pub fn assess(
         &self,
         expected_plan: &RunPlan,
         step_id: &str,
         context: &ProcessStepContext<'_>,
     ) -> Result<ResumeEligibility, StateError> {
-        self.ensure_usable()?;
+        self.check_expected_plan(expected_plan)?;
+        let index = self.state.step_index(step_id)?;
+        if !self.state.plan.steps[index].depends_on.is_empty() {
+            return Err(StateError::DependencyEvidenceRequired);
+        }
+        self.assess_local(index, context)
+    }
+
+    pub(super) fn check_expected_plan(&self, expected_plan: &RunPlan) -> Result<(), StateError> {
+        self.validate_current()?;
         if expected_plan.digest()? != self.state.plan_digest {
             return Err(StateError::Stale {
                 boundary: StateBoundary::Plan,
             });
         }
-        let index = self.state.step_index(step_id)?;
+        Ok(())
+    }
+
+    pub(super) fn assess_local(
+        &self,
+        index: usize,
+        context: &ProcessStepContext<'_>,
+    ) -> Result<ResumeEligibility, StateError> {
         self.check_context(index, context)?;
-        let planned = &self.state.plan.steps[index];
-        if planned.depends_on.iter().any(|id| {
-            self.state
-                .steps
-                .iter()
-                .any(|s| &s.step_id == id && s.status != RunStepStatus::Succeeded)
-        }) {
-            return Ok(ResumeEligibility::DependencyBlocked);
-        }
         let step = &self.state.steps[index];
         match step.status {
             RunStepStatus::Pending => Ok(ResumeEligibility::Ready),
@@ -293,11 +304,11 @@ impl RunStore {
     /// The store remains locked throughout the attempt. Any failure to commit the
     /// terminal result is an error; the prior running record remains uncertain.
     /// Existing completed steps are never executed again by this method.
+    /// Dependent steps require `execute_in_plan` with complete current contexts.
     ///
     /// # Errors
     /// Returns typed coordination, cancellation, process, observation, or acceptance
     /// failures. Raw provider errors remain caller-local and are never serialized.
-    #[allow(clippy::too_many_lines)]
     pub fn execute(
         &mut self,
         step_id: &str,
@@ -309,6 +320,18 @@ impl RunStore {
         if self.assess(&self.state.plan, step_id, context)? != ResumeEligibility::Ready {
             return Err(StateError::Transition.into());
         }
+        self.execute_ready(step_id, context, secrets, cancellation, events)
+    }
+
+    #[allow(clippy::too_many_lines)]
+    pub(super) fn execute_ready(
+        &mut self,
+        step_id: &str,
+        context: &ProcessStepContext<'_>,
+        secrets: &dyn SecretResolver,
+        cancellation: &dyn CancellationSignal,
+        events: &mut dyn EventSink,
+    ) -> Result<AcceptedArtifactSet, DurableExecutionError> {
         if cancellation.is_cancelled() {
             self.cancel_pending(step_id)?;
             return Err(DurableExecutionError::CancelledBeforeLaunch);
@@ -547,6 +570,7 @@ pub fn validation_implementation_digest() -> String {
         include_bytes!("model.rs"),
         include_bytes!("store.rs"),
         include_bytes!("execution.rs"),
+        include_bytes!("assessment.rs"),
         include_bytes!("../../Cargo.lock"),
     ];
     let mut hasher = Sha256::new();

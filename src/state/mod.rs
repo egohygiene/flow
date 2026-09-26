@@ -4,10 +4,12 @@
 //! Reopening never launches a provider or recreates opaque trust tokens. See
 //! `docs/integrations/durable-state.md` for storage and recovery limits.
 
+mod assessment;
 mod execution;
 mod model;
 mod store;
 
+pub use assessment::{RUN_ASSESSMENT_V1, RunAssessment, RunStepAssessment, RunStepContext};
 pub use execution::{
     DurableExecutionError, ProcessStepContext, RecoveryApproval, ResumeEligibility,
     validation_implementation_digest,
@@ -15,13 +17,14 @@ pub use execution::{
 pub use model::*;
 pub use store::RunStore;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 use thiserror::Error;
 
 /// A precise boundary whose current evidence disagrees with saved intent.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum StateBoundary {
     Plan,
     Invocation,
@@ -62,6 +65,12 @@ pub enum StateError {
     Transition,
     #[error("step identifier does not exist in this plan")]
     UnknownStep,
+    #[error("dependent steps require fresh evidence for the complete plan")]
+    DependencyEvidenceRequired,
+    #[error("current contexts must identify every step exactly once in plan order")]
+    ContextInventory,
+    #[error("fresh graph assessment refused execution: {eligibility:?}")]
+    Ineligible { eligibility: ResumeEligibility },
     #[error("the store must be reopened after a failed commit")]
     ReopenRequired,
     #[error("workspace I/O failed during {operation}")]

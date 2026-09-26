@@ -121,6 +121,15 @@ impl RunStore {
         }
     }
 
+    pub(super) fn validate_current(&self) -> Result<(), StateError> {
+        self.ensure_usable()?;
+        let (on_disk, _) = load_history(&self.root)?;
+        if on_disk != self.state {
+            return Err(StateError::Corrupt);
+        }
+        Ok(())
+    }
+
     pub(super) fn commit(&mut self, mut next: RunState) -> Result<(), StateError> {
         if self.poisoned {
             return Err(StateError::ReopenRequired);

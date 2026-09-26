@@ -6,6 +6,9 @@ mod scenario_matrix;
 #[path = "durable_execution/mod.rs"]
 mod durable_execution;
 
+#[path = "graph_recovery/mod.rs"]
+mod graph_recovery;
+
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -2040,6 +2043,21 @@ impl KitFixture {
         mode: &str,
         lifecycle_control: bool,
     ) -> PreparedLifecycleRun {
+        self.prepare_lifecycle_named(
+            capability,
+            mode,
+            lifecycle_control,
+            &format!("hermetic-{mode}"),
+        )
+    }
+
+    fn prepare_lifecycle_named(
+        &self,
+        capability: CapabilitySpec,
+        mode: &str,
+        lifecycle_control: bool,
+        identity: &str,
+    ) -> PreparedLifecycleRun {
         let resolution = self.resolve_case(
             capability,
             &format!("hermetic-{}-{mode}", capability.name),
@@ -2059,7 +2077,7 @@ impl KitFixture {
         ]);
         let invocation = ExtensionInvocation {
             schema_version: flow::EXTENSION_INVOCATION_V1.to_owned(),
-            invocation_id: format!("invocation:hermetic-{mode}"),
+            invocation_id: format!("invocation:{identity}"),
             run_id: format!("run:hermetic-{mode}"),
             phase: InvocationPhase::Execute,
             extension: InvocationExtension {
@@ -2075,7 +2093,7 @@ impl KitFixture {
                 protocol: resolved.execution_mode().protocol.clone(),
             },
             input_artifacts: vec![InputArtifact {
-                artifact_id: INPUT_ID.to_owned(),
+                artifact_id: self.bindings.inputs[0].artifact_id.clone(),
                 digest: self.bindings.inputs[0].expected_digest.clone(),
             }],
             expected_output_types: vec![capability.output_media_type.to_owned()],

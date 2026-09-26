@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.12.0
+version: 0.13.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-25
+updated: 2026-09-26
 governed_by:
   - architecture-architecture
 depends_on:
@@ -121,9 +121,17 @@ State contains typed decisions, identities, relative artifact bindings, and
 allowlisted validation evidence. Secret values, configuration values, raw process
 streams, and provider-authored messages remain outside the store. The workspace
 is trusted local state, not a cryptographically authenticated or sandboxed store.
-ADR-0011 owns the persistence, migration, and recovery rationale. Graph scheduling,
-automatic retry, provider-native checkpoints, and downstream invalidation policy
-remain later orchestration work.
+ADR-0011 owns the persistence, migration, and recovery rationale. ADR-0012 adds
+read-only graph assessment: a complete current context inventory and the exact
+saved plan are required before classifying every step in dependency order.
+Completed prerequisites must be freshly reusable, not merely historically
+succeeded. Stale evidence invalidates that step and every descendant for reuse;
+unrelated branches retain their independently assessed eligibility. Pending or
+unresolved prerequisites block their descendants. These assessments never rewrite
+accepted history or grant execution authority. Dependent execution recomputes
+the assessment, and single-step entry points refuse dependent steps. Automatic
+scheduling, retry, cross-plan migration, and provider-native checkpoints remain
+later orchestration work.
 
 ### External adapters
 
@@ -271,7 +279,9 @@ workspace, and two fresh roots must produce equal portable evidence and output
 bytes. This is conformance infrastructure, not a scenario-manifest executor or
 production graph scheduler. Issue #49 adds the versioned durable coordinator,
 immutable prepared plans, atomic snapshots, accepted checkpoints, fresh reuse
-assessment, and explicit recovery decisions described above. Flow does not yet supply
+assessment, and explicit recovery decisions described above. Issue #64 requires
+fresh prerequisite evidence for graph assessment and dependent execution without
+adding a scheduler or rewriting accepted history. Flow does not yet supply
 the public CLI, real holon adapters, signature or transparency verification,
 provider-native artifact validation, an atomic filesystem snapshot, an
 operating-system sandbox or authenticated enforcement evidence,

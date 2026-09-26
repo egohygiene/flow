@@ -1,6 +1,6 @@
 {
   "schema_version": "flow.contract-set/v1",
-  "contract_set_version": "0.7.0",
+  "contract_set_version": "0.8.0",
   "status": "provisional",
   "contracts": [
     {
@@ -190,6 +190,14 @@
       "example": "examples/run-snapshot.v1.example.json",
       "invalid_examples": [
         "fixtures/state/run-snapshot.v2.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.run-assessment/v1",
+      "schema": "schemas/run-assessment.v1.schema.json",
+      "example": "examples/run-assessment.v1.example.json",
+      "invalid_examples": [
+        "fixtures/state/run-assessment.v2.invalid.json"
       ]
     }
   ]

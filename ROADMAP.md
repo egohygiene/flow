@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.2
+version: 1.3.3
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-25
+updated: 2026-09-26
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -23,7 +23,7 @@ supersedes: []
 
 # Flow Roadmap
 
-## 2026-09-25 live suite handoff
+## 2026-09-26 live suite handoff
 
 > [!IMPORTANT]
 > This is the current near-term execution handoff for agents. It supersedes
@@ -36,10 +36,18 @@ supersedes: []
 Its [acceptance matrix](docs/integrations/acceptance-scenarios.md) proves 81
 scenarios twice on Rust 1.85 and stable.
 
-The #49 review candidate adds [durable prepared execution](docs/integrations/durable-state.md):
+#49 merged through [PR #63](https://github.com/egohygiene/flow/pull/63) at
+`711fbe3c19c0e080ab6c67b74d7945cd29675a74`, with
+[default-branch CI green](https://github.com/egohygiene/flow/actions/runs/36213631491).
+It adds [durable prepared execution](docs/integrations/durable-state.md):
 versioned plans and state, atomic immutable snapshots, workspace locking,
 accepted checkpoints, fresh resume eligibility, and explicit recovery decisions.
-After this candidate merges and the default-branch gate passes, #31 is next.
+#31 is active through three dependency-ordered review checkpoints:
+[#64](https://github.com/egohygiene/flow/issues/64) adds fresh graph assessment and
+safe dependent execution; [#65](https://github.com/egohygiene/flow/issues/65) adds
+the deterministic durable lifecycle corpus; [#66](https://github.com/egohygiene/flow/issues/66)
+proves authority, duplicate-effect prevention, and recovery residuals. Land one
+review PR and verify default-branch CI before starting the next checkpoint.
 FLO-Q03 remains active until real released-provider adapters satisfy its
 remaining exit criteria. [#62](https://github.com/egohygiene/flow/issues/62) is
 later documentation visualization work and does not block this sequence.
@@ -53,6 +61,7 @@ later documentation visualization work and does not block this sequence.
    recovery state.
 3. [#31](https://github.com/egohygiene/flow/issues/31) — prove interruption,
    retry, resume, invalidation, and authority transitions against durable state.
+   Ordered children: #64 → #65 → #66; the parent remains open until all pass.
 4. After #49, integrate immutable provider releases as they become available:
    [#50](https://github.com/egohygiene/flow/issues/50) for Optiflow,
    [#52](https://github.com/egohygiene/flow/issues/52) for Renderflow, and

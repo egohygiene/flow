@@ -47,6 +47,23 @@ class DurableContracts(unittest.TestCase):
         value["observation"]["source_bytes"] = "private"
         self.assertTrue(self.validate("run-artifact", value))
 
+    def test_assessment_closed_vocabulary_and_bounded_dependency_inventory(self):
+        original = load_object(CONTRACTS / "examples/run-assessment.v1.example.json")
+        self.assertEqual(self.validate("run-assessment", original), [])
+        for mutation in ["version", "status", "private", "duplicate", "boundary"]:
+            value = copy.deepcopy(original)
+            if mutation == "version":
+                value["schema_version"] = "flow.run-assessment/v2"
+            elif mutation == "status":
+                value["steps"][0]["eligibility"] = "authorized"
+            elif mutation == "private":
+                value["steps"][0]["provider_message"] = "private canary"
+            elif mutation == "duplicate":
+                value["steps"][0]["blocked_by"] = ["step:a", "step:a"]
+            else:
+                value["steps"][0]["stale_boundary"] = "plan"
+            self.assertTrue(self.validate("run-assessment", value), mutation)
+
 
 if __name__ == "__main__":
     unittest.main()
