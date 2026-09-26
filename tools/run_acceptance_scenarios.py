@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Execute Flow #30/#65 recipes and retain checked, normalized portable receipts.
+"""Execute Flow #30/#65/#66 recipes and retain checked, normalized portable receipts.
 
 This is a test driver, not a Flow runtime. Rust owns assertions and public API
 execution; this driver checks completeness and writes a bounded coverage report.

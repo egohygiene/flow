@@ -13,6 +13,7 @@ use std::time::Instant;
 
 mod fixture;
 mod recipes;
+mod safety;
 use fixture::Fixture;
 
 const CATALOG: &str = include_str!("../fixtures/lifecycle-scenarios.v1.json");
@@ -63,6 +64,8 @@ struct Outcome {
     code: String,
     history: Vec<Frame>,
     assessments: Vec<Assessment>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    safety: Option<safety::SafetyEvidence>,
 }
 
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -180,7 +183,7 @@ fn check_budget(fixture: &Fixture, budget: &Budget) {
 fn executable_lifecycle_matrix() {
     let catalog: Catalog = serde_json::from_str(CATALOG).unwrap();
     assert_eq!(catalog.schema_version, "flow.lifecycle-scenario-catalog/v1");
-    assert_eq!(catalog.fixture_version, "1.0.0");
+    assert_eq!(catalog.fixture_version, "1.1.0");
     assert_eq!(catalog.tier, "pull-request-linux");
     assert!(!catalog.known_gaps.is_empty());
     assert_eq!(catalog.budget.repetitions, 2);
@@ -237,7 +240,13 @@ fn executable_lifecycle_matrix() {
                     .collect(),
             };
             let encoded = serde_json::to_string(&receipt).unwrap();
-            assert!(!encoded.contains("FLOW_LIFECYCLE_FAILURE_PRIVATE_CANARY"));
+            for canary in [
+                "FLOW_LIFECYCLE_FAILURE_PRIVATE_CANARY",
+                "FLOW_EFFECT_PRIVATE_CANARY",
+                "FLOW_CLEANUP_PRIVATE_CANARY",
+            ] {
+                assert!(!encoded.contains(canary));
+            }
             assert!(encoded.len() <= catalog.budget.max_receipt_bytes);
             for node in &fixture.nodes {
                 for private in [

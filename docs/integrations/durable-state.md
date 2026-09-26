@@ -3,8 +3,9 @@
 Flow #49 adds a library API for persistent execution of fully prepared process
 steps. It builds on the exact subject, authority, transcript, and artifact gates.
 Flow #64 adds fresh graph eligibility and safe caller-selected dependent
-execution. There is no product CLI or graph scheduler. #31 continues through
-#65 (the [lifecycle corpus](lifecycle-scenarios.md)) and #66 (authority/effect and residual-state proofs);
+execution. There is no product CLI or graph scheduler. #31 is qualified by
+#65 and #66 through the [lifecycle corpus](lifecycle-scenarios.md), including
+authority/effect and residual-state proofs;
 #53 owns the supported CLI.
 
 ## Public entry points
@@ -205,7 +206,7 @@ cover deterministic fresh-root/reopen reports, transitive and branch invalidatio
 all local identity boundaries, complete inventories, stale-report non-authority,
 the single-step bypass, blocked future inputs, and preserved history. The
 acceptance driver includes these test sources in its evidence identity and runs
-them with `--all-targets`, along with the 34-row [lifecycle receipt corpus](lifecycle-scenarios.md)
-from #65. The latter runs every recipe twice, includes fresh-process recovery,
+them with `--all-targets`, along with the 49-row [lifecycle receipt corpus](lifecycle-scenarios.md)
+from #65/#66. The latter runs every recipe twice, includes fresh-process recovery,
 and checks bounded portable reports.
 macOS/Windows CI runs the portable store suite; Linux runs the full provider matrix.

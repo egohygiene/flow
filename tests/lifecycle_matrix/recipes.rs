@@ -76,6 +76,12 @@ fn execute_error(fixture: &Fixture, store: &mut RunStore, recipe: &str) -> &'sta
 pub(super) fn run(fixture: &mut Fixture, recipe: &str) -> Outcome {
     let mut store = RunStore::create(&fixture.workspace(), fixture.plan.clone()).unwrap();
     let initial = fixture.assess(&store, "initial");
+    if recipe.starts_with("deny-")
+        || recipe.starts_with("effect-")
+        || recipe.starts_with("cleanup-")
+    {
+        return super::safety::run(fixture, store, initial, recipe);
+    }
     match recipe {
         "retryable-provider-failure" | "terminal-provider-failure" => {
             classified_failure(fixture, store, initial, recipe)
@@ -152,7 +158,7 @@ pub(super) fn run(fixture: &mut Fixture, recipe: &str) -> Outcome {
     }
 }
 
-fn finish(
+pub(super) fn finish(
     fixture: &Fixture,
     store: RunStore,
     mut assessments: Vec<Assessment>,
@@ -171,6 +177,7 @@ fn finish(
         code: code.to_owned(),
         history: before,
         assessments,
+        safety: None,
     }
 }
 
@@ -409,6 +416,7 @@ fn drift(fixture: &mut Fixture, mut store: RunStore, initial: Assessment, recipe
             code: code.to_owned(),
             history: before,
             assessments,
+            safety: None,
         };
     }
     let mut store = RunStore::open(&fixture.workspace()).unwrap();
@@ -424,6 +432,7 @@ fn drift(fixture: &mut Fixture, mut store: RunStore, initial: Assessment, recipe
             code: "changed-plan-refused".to_owned(),
             history: before,
             assessments,
+            safety: None,
         };
     }
     let after = history(&fixture.workspace());
