@@ -1,0 +1,82 @@
+{
+  "schema_version": "flow.run-snapshot/v2",
+  "state_digest": "8796604491ccdbab553b73b319608fbbc824da503645927e810b7577a40442d3",
+  "state": {
+    "schema_version": "flow.run-state/v1",
+    "sequence": 0,
+    "previous_digest": "",
+    "plan_digest": "0e91d3a2af624fd222d6cf2aa1b005b8d9b3ad2f3e9951cde35b2e9e99b102d1",
+    "plan": {
+      "schema_version": "flow.run-plan/v1",
+      "plan_id": "plan:durable-example",
+      "run_id": "run:durable-example",
+      "steps": [
+        {
+          "step_id": "step:inspect",
+          "depends_on": [],
+          "context": {
+            "run_id": "run:durable-example",
+            "invocation_id": "invocation:durable-example",
+            "invocation_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "provider": {
+              "extension_id": "org.egohygiene.synthetic-adapters",
+              "version": "0.1.0",
+              "publisher_id": "org.egohygiene",
+              "integrity": "1111111111111111111111111111111111111111111111111111111111111111"
+            },
+            "interface": {
+              "kind": "process",
+              "name": "synthetic-process",
+              "protocol": "flow.extension-invocation/v1"
+            },
+            "capability_id": "optiflow/inspect-collection",
+            "capability_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "configuration_schema": "synthetic.optiflow-inspect/v1",
+            "configuration_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+            "configuration_values_digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "subject_lock_digest": "4444444444444444444444444444444444444444444444444444444444444444",
+            "authorization_id": "authorization:durable-example",
+            "authority_profile_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+            "enforcement_evidence_digest": "6666666666666666666666666666666666666666666666666666666666666666",
+            "grants_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+            "bindings": {
+              "schema_version": "flow.artifact-bindings/v1",
+              "binding_set_id": "bindings:synthetic-optiflow-scan",
+              "digest_algorithm": "sha256",
+              "inputs": [
+                {
+                  "artifact_id": "artifact:synthetic-collection",
+                  "port": "port:collection",
+                  "media_type": "application/vnd.flow.collection-reference+json",
+                  "kind": "file",
+                  "locator": "inputs/source collection.json",
+                  "expected_digest": "2222222222222222222222222222222222222222222222222222222222222222"
+                }
+              ],
+              "outputs": [
+                {
+                  "artifact_id": "artifact:synthetic-collection-evidence",
+                  "port": "port:evidence",
+                  "media_type": "application/vnd.optiflow.collection-evidence+json",
+                  "kind": "directory",
+                  "locator": "outputs/evidence bundle"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "steps": [
+      {
+        "step_id": "step:inspect",
+        "attempt": 0,
+        "status": "pending",
+        "checkpoint": null,
+        "failure": null
+      }
+    ],
+    "authority_decisions": [],
+    "recovery_decisions": []
+  }
+}

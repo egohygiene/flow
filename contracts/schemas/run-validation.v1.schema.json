@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/run-validation.v1.schema.json",
+  "title": "Flow run validation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile",
+    "implementation_version",
+    "implementation_digest",
+    "platform",
+    "invocation_digest",
+    "execution_digest",
+    "artifacts_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.run-validation/v1"
+    },
+    "profile": {
+      "const": "flow.accept-artifacts/v1"
+    },
+    "implementation_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "implementation_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "platform": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "invocation_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "execution_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "artifacts_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

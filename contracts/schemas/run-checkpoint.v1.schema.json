@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/contracts/run-checkpoint.v1.schema.json",
+  "title": "Flow run checkpoint v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "checkpoint_id",
+    "plan_digest",
+    "context_digest",
+    "attempt",
+    "artifacts",
+    "validation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.run-checkpoint/v1"
+    },
+    "checkpoint_id": {
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^checkpoint:[a-z0-9][a-z0-9._-]*$"
+    },
+    "plan_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "context_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4095
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "run-artifact.v1.schema.json"
+      },
+      "maxItems": 4096,
+      "minItems": 1
+    },
+    "validation": {
+      "$ref": "run-validation.v1.schema.json"
+    }
+  }
+}

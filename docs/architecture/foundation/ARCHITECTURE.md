@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.11.0
+version: 0.12.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-24
+updated: 2026-09-25
 governed_by:
   - architecture-architecture
 depends_on:
@@ -100,6 +100,30 @@ opaque authorization token only after the resolution, invocation, matched
 execution subjects, profile, and evidence agree. The evidence is caller-
 attested: correlation is implemented, while operating-system enforcement and
 evidence authentication are not.
+
+### Durable execution state
+
+Flow owns an explicit run workspace and a versioned immutable plan. The durable
+coordinator records authorization and execution intent before entering the local
+runner, then records a checkpoint only after the existing transcript and artifact
+acceptance gates succeed. In-memory seams remain available for conformance and
+unit tests; supported persistent execution enters through the durable coordinator.
+
+Snapshots are immutable, ordered, digest-linked documents committed by a
+same-directory rename under an exclusive workspace lock. Reopening validates the
+whole retained sequence and never infers completion from output files. Interrupted
+attempts require an explicit recovery decision. Reuse assessment compares the
+plan, inputs, provider and capability identities, configuration, authority,
+implementation profile, and freshly observed artifacts. Deserialized evidence
+does not reconstruct opaque execution or authorization tokens.
+
+State contains typed decisions, identities, relative artifact bindings, and
+allowlisted validation evidence. Secret values, configuration values, raw process
+streams, and provider-authored messages remain outside the store. The workspace
+is trusted local state, not a cryptographically authenticated or sandboxed store.
+ADR-0011 owns the persistence, migration, and recovery rationale. Graph scheduling,
+automatic retry, provider-native checkpoints, and downstream invalidation policy
+remain later orchestration work.
 
 ### External adapters
 
@@ -245,12 +269,14 @@ authority, local-process execution, artifact observation, and acceptance. The
 second stage consumes the exact accepted first-stage artifact in the same
 workspace, and two fresh roots must produce equal portable evidence and output
 bytes. This is conformance infrastructure, not a scenario-manifest executor or
-production graph scheduler. Flow does not yet supply
+production graph scheduler. Issue #49 adds the versioned durable coordinator,
+immutable prepared plans, atomic snapshots, accepted checkpoints, fresh reuse
+assessment, and explicit recovery decisions described above. Flow does not yet supply
 the public CLI, real holon adapters, signature or transparency verification,
 provider-native artifact validation, an atomic filesystem snapshot, an
 operating-system sandbox or authenticated enforcement evidence,
-descriptor-bound execution, process-tree containment, durable run state,
-checkpoints, retry, or resume. Structural units beyond these library seams
+descriptor-bound execution, process-tree containment, automatic retry/resume,
+or provider-native checkpoint restoration. Structural units beyond these library seams
 remain constraints for later adapter and orchestration work, not claims about
 current source layout.
 

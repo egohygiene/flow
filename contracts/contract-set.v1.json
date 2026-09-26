@@ -1,6 +1,6 @@
 {
   "schema_version": "flow.contract-set/v1",
-  "contract_set_version": "0.6.0",
+  "contract_set_version": "0.7.0",
   "status": "provisional",
   "contracts": [
     {
@@ -123,6 +123,73 @@
         "fixtures/scenarios/missing-identity.v1.invalid.json",
         "fixtures/scenarios/mutable-reference.v1.invalid.json",
         "fixtures/scenarios/unknown-version.v1.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.run-plan/v1",
+      "schema": "schemas/run-plan.v1.schema.json",
+      "example": "examples/run-plan.v1.example.json",
+      "invalid_examples": [
+        "fixtures/state/run-plan.v2.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.run-artifact/v1",
+      "schema": "schemas/run-artifact.v1.schema.json",
+      "example": "examples/run-artifact.v1.example.json",
+      "invalid_examples": [
+        "fixtures/state/run-artifact.v2.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.run-validation/v1",
+      "schema": "schemas/run-validation.v1.schema.json",
+      "example": "examples/run-validation.v1.example.json",
+      "invalid_examples": [
+        "fixtures/state/run-validation.v2.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.run-checkpoint/v1",
+      "schema": "schemas/run-checkpoint.v1.schema.json",
+      "example": "examples/run-checkpoint.v1.example.json",
+      "invalid_examples": [
+        "fixtures/state/run-checkpoint.v2.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.run-authority/v1",
+      "schema": "schemas/run-authority.v1.schema.json",
+      "example": "examples/run-authority.v1.example.json",
+      "invalid_examples": [
+        "fixtures/state/run-authority.v2.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.run-recovery/v1",
+      "schema": "schemas/run-recovery.v1.schema.json",
+      "example": "examples/run-recovery.v1.example.json",
+      "invalid_examples": [
+        "fixtures/state/run-recovery.v2.invalid.json"
+      ]
+    },
+    {
+      "id": "flow.run-state/v1",
+      "schema": "schemas/run-state.v1.schema.json",
+      "example": "examples/run-state.v1.example.json",
+      "invalid_examples": [
+        "fixtures/state/run-state.v2.invalid.json"
+      ],
+      "fixtures": [
+        "fixtures/state/completed.v1.fixture.json"
+      ]
+    },
+    {
+      "id": "flow.run-snapshot/v1",
+      "schema": "schemas/run-snapshot.v1.schema.json",
+      "example": "examples/run-snapshot.v1.example.json",
+      "invalid_examples": [
+        "fixtures/state/run-snapshot.v2.invalid.json"
       ]
     }
   ]

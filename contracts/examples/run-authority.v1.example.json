@@ -1,0 +1,10 @@
+{
+  "schema_version": "flow.run-authority/v1",
+  "step_id": "step:inspect",
+  "attempt": 1,
+  "granted": true,
+  "authorization_id": "authorization:durable-example",
+  "profile_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+  "enforcement_digest": "6666666666666666666666666666666666666666666666666666666666666666",
+  "grants_digest": "7777777777777777777777777777777777777777777777777777777777777777"
+}

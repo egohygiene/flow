@@ -7,7 +7,8 @@
 //! authority/isolation preflight. Its local runner can launch the exact
 //! trusted-unconfined executable with bounded transport, timeout/cancellation
 //! control, and direct-child reaping; sandboxing, descendant containment, and
-//! durable recovery remain separate work.
+//! automatic graph recovery remain separate work. The durable coordinator stores
+//! prepared intent, acceptance, and explicit recovery decisions in a local workspace.
 
 pub mod artifacts;
 pub mod authority;
@@ -19,6 +20,7 @@ pub mod hermetic;
 pub mod process;
 pub mod runner;
 pub mod scenario;
+pub mod state;
 
 pub use artifacts::*;
 pub use authority::*;
@@ -41,3 +43,4 @@ pub use runner::{
     ProcessRunnerError, ProcessWorker, SecretResolver, SecretValue,
 };
 pub use scenario::*;
+pub use state::*;

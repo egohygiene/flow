@@ -139,17 +139,39 @@ def validate_instance(
     if root_schema is None:
         root_schema = schema
 
+    alternatives = schema.get("anyOf")
+    if isinstance(alternatives, list):
+        matches = False
+        for alternative in alternatives:
+            alternative_errors: list[str] = []
+            validate_instance(instance, alternative, location, alternative_errors, root_schema)
+            matches = matches or not alternative_errors
+        require(matches, f"{location}: does not match any permitted shape", errors)
+
     reference = schema.get("$ref")
     if isinstance(reference, str):
         target: Any = root_schema
-        if reference.startswith("#/"):
-            for raw_segment in reference[2:].split("/"):
+        fragment = reference
+        if not reference.startswith("#"):
+            filename, _, pointer = reference.partition("#")
+            if re.fullmatch(r"[a-z][a-z0-9.-]*\.schema\.json", filename) is None:
+                errors.append(f"{location}: unsupported schema reference {reference}")
+                return
+            path = CONTRACTS / "schemas" / filename
+            if not path.is_file():
+                errors.append(f"{location}: missing local schema reference {reference}")
+                return
+            root_schema = load_object(path)
+            target = root_schema
+            fragment = "#" + pointer if pointer else "#"
+        if fragment.startswith("#/"):
+            for raw_segment in fragment[2:].split("/"):
                 segment = raw_segment.replace("~1", "/").replace("~0", "~")
                 if not isinstance(target, dict) or segment not in target:
                     errors.append(f"{location}: unresolved schema reference {reference}")
                     return
                 target = target[segment]
-        else:
+        elif fragment != "#":
             errors.append(f"{location}: unsupported schema reference {reference}")
             return
         if not isinstance(target, dict):
@@ -164,6 +186,7 @@ def validate_instance(
         "string": lambda value: isinstance(value, str),
         "integer": lambda value: isinstance(value, int) and not isinstance(value, bool),
         "boolean": lambda value: isinstance(value, bool),
+        "null": lambda value: value is None,
     }
     if expected_type in type_checks and not type_checks[expected_type](instance):
         errors.append(f"{location}: expected {expected_type}")
@@ -176,6 +199,8 @@ def validate_instance(
     if isinstance(instance, str):
         if "minLength" in schema:
             require(len(instance) >= schema["minLength"], f"{location}: string is too short", errors)
+        if "maxLength" in schema:
+            require(len(instance) <= schema["maxLength"], f"{location}: string is too long", errors)
         if "pattern" in schema:
             require(bool(re.search(schema["pattern"], instance)), f"{location}: does not match pattern", errors)
     if isinstance(instance, int) and not isinstance(instance, bool) and "minimum" in schema:
@@ -1737,6 +1762,14 @@ def main() -> int:
                 rejected_invalid_instances += 1
 
     expected = {
+        "flow.run-plan/v1",
+        "flow.run-artifact/v1",
+        "flow.run-validation/v1",
+        "flow.run-checkpoint/v1",
+        "flow.run-authority/v1",
+        "flow.run-recovery/v1",
+        "flow.run-state/v1",
+        "flow.run-snapshot/v1",
         "flow.artifact-bindings/v1",
         "flow.artifact-observations/v1",
         "flow.artifact/v1",
