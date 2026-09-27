@@ -7,6 +7,8 @@ implementations.
   directions.
 - [Capability matrix](capability-matrix.md) records the evidence baseline and
   gates future adapter claims.
+- [Optiflow v0.1.1 read-only adapter](optiflow-v0.1.1-read-only.md) pins the
+  immutable native CLI, effects, receipt, clean-room fixture, and refusal scope.
 - [First slice](first-slice-restore-and-assess.md) bounds the initial executable
   orchestration outcome.
 - [Federated extension contract](extension-contract.md) defines extension
@@ -46,6 +48,8 @@ and
 [ADR-0009](../architecture/governance/decisions/ADR-0009-process-authority-isolation.md).
 The bounded runner is governed by
 [ADR-0010](../architecture/governance/decisions/ADR-0010-bounded-direct-process-supervision.md).
+The native Optiflow adapter is proposed under
+[ADR-0013](../architecture/governance/decisions/ADR-0013-optiflow-native-read-only-adapter.md).
 
 ## Implementation status
 

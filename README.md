@@ -25,8 +25,10 @@ neutral process transcript. Flow can also launch one exact authorized
 control, and direct-child reaping; observe exact locked package/executable
 subjects; require exact correlated process authority/isolation evidence; accept
 explicitly bound artifacts; and validate a closed scenario manifest for
-synthetic orchestration fixtures. It does not copy holon source or claim a
-product orchestrator, CLI, real provider adapter, operating-system sandbox,
+synthetic orchestration fixtures. The first released-provider library adapter
+pins [Optiflow v0.1.1 read-only inspection](docs/integrations/optiflow-v0.1.1-read-only.md)
+and retains a separate durable attempt receipt. It does not copy holon source
+or claim a product orchestrator, public Flow CLI, mutation adapter, operating-system sandbox,
 general scenario executor, automatic recovery scheduler, or public resume CLI.
 Prepared process execution now has [durable run state](docs/integrations/durable-state.md)
 with immutable plans, atomic snapshots, verified checkpoints, status inspection,
@@ -175,10 +177,9 @@ FLO-Q03. The process seam still does not implement authenticity verification,
 operating-system sandbox enforcement, authenticated host evidence,
 descriptor-bound launch, or process-tree containment, and the scenario contract
 is not an executor.
-Current descriptions of Aniflow, Optiflow, and Renderflow are grounded in their default
-branches as inspected on 2026-08-13. The holons remain independently released
-repositories; real provider adapters and the restore-and-assess workflow remain
-follow-up work.
+The holons remain independently released repositories. Optiflow v0.1.1 is
+the first pinned real provider adapter; Aniflow and Renderflow adapters and
+the restore-and-assess workflow remain follow-up work.
 
 ## License
 

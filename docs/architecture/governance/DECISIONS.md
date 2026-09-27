@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.10.0
+version: 0.10.1
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-26
+updated: 2026-09-27
 governed_by:
   - architecture-decisions
 depends_on:
@@ -66,12 +66,14 @@ justifies separate ADRs.
 | [ADR-0010](decisions/ADR-0010-bounded-direct-process-supervision.md) | Bound direct provider launch and supervision | Accepted | 2026-09-21 | None | Sandbox enforcement, descriptor-bound launch, process-tree containment, or durable interruption changes the runner boundary |
 | [ADR-0011](decisions/ADR-0011-durable-run-state.md) | Persist prepared intent and acceptance in immutable local snapshots | Proposed | Pending review | None | Migration, distributed writers, automatic recovery, authenticated state, or stronger durability changes the boundary |
 | [ADR-0012](decisions/ADR-0012-fresh-graph-assessment.md) | Require fresh prerequisite evidence for durable graph execution | Proposed | Pending review | None | Scheduling, cross-plan reuse, or concurrent artifact mutation changes the assessment boundary |
+| [ADR-0013](decisions/ADR-0013-optiflow-native-read-only-adapter.md) | Pin Optiflow v0.1.1 behind a native read-only adapter | Proposed | Pending review | None | A released mutation contract, native protocol revision, or generic graph composition changes this boundary |
 
 ## Active decisions
 
 ADR-0011 is proposed with Flow #49 and remains subject to maintainer review.
 Its implementation merged in PR #63. ADR-0012 is proposed with Flow #64, the
-first bounded checkpoint under #31.
+first bounded checkpoint under #31. ADR-0013 is proposed with Flow #50 for
+the first independently verified released-provider integration.
 
 The indexed ADRs are authoritative. Summaries in other documents must link back
 to them rather than recreate rationale.

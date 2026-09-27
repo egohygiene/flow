@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.13.2
+version: 0.13.3
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-26
+updated: 2026-09-27
 governed_by:
   - architecture-architecture
 depends_on:
@@ -187,6 +187,26 @@ transcript validator as the sole promotion path to `ValidatedExecution`.
 This runner is not a sandbox. It does not authenticate host evidence, constrain
 filesystem/network/subprocess authority, contain descendants, or bind the
 fresh digest observation to the host's later executable file object.
+
+The first released-provider adapter pins the immutable Optiflow v0.1.1
+executable and consumes its native `optiflow.command-result.v1` single JSON
+document. It does not translate native stdout into a synthetic Flow JSON Lines
+transcript. Its public library API probes the exact release, exposes only
+read-only scan, report, and exact-duplicate review-plan capabilities, and
+rejects mutation capabilities individually. It clears the child environment,
+disables configuration discovery and media probing, constrains traversal, and
+checks source root and filesystem identity between steps. Flow independently
+verifies each committed provider artifact set, its member bytes and schema
+bindings, and the review-only plan safety fields.
+
+The adapter records a separate `flow.optiflow-read-only-receipt/v1` local
+attempt before launch and after scan, report, and plan. A reopened intermediate
+attempt requires review; a completed receipt must still match its retained
+artifact bytes. This receipt is local audit evidence, not an execution grant,
+checkpoint in the generic durable graph, provider signature, sandbox claim, or
+approval. The existing Flow JSONL runner and durable graph contracts remain
+unchanged. ADR-0013 owns this native-protocol exception and the staged handoff
+to later composition.
 
 ### Extension lifecycle
 
