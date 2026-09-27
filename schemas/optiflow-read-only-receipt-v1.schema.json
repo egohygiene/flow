@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/egohygiene/flow/schemas/optiflow-read-only-receipt-v1.schema.json",
+  "title": "Flow Optiflow v0.1.1 read-only attempt receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "attempt_id", "status", "provider", "source", "state_directory", "environment", "capabilities", "commands", "source_run_id", "source_set_id", "plan_id", "plan_sha256", "approval", "recovery", "duplicate_logical_bytes", "physical_savings_bytes", "failure"],
+  "properties": {
+    "schema_version": { "const": "flow.optiflow-read-only-receipt/v1" },
+    "attempt_id": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["scanning", "reporting", "planning", "complete", "partial", "refused"] },
+    "provider": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "source_revision", "target", "archive_sha256", "executable_sha256", "interface"],
+      "properties": {
+        "version": { "const": "0.1.1" },
+        "source_revision": { "const": "b82599a2231e997d42fd9f26f4b59587f4ae14cf" },
+        "target": { "enum": ["x86_64-unknown-linux-gnu", "aarch64-apple-darwin", "x86_64-apple-darwin"] },
+        "archive_sha256": { "$ref": "#/$defs/sha256" },
+        "executable_sha256": { "$ref": "#/$defs/sha256" },
+        "interface": { "const": "optiflow.command-result.v1" }
+      }
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["root", "filesystem_id", "file_id"],
+      "properties": {
+        "root": { "$ref": "#/$defs/native_path" },
+        "filesystem_id": { "type": "integer", "minimum": 0 },
+        "file_id": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "state_directory": { "$ref": "#/$defs/native_path" },
+    "environment": { "const": "cleared; no config; no media probe; no network grant" },
+    "capabilities": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scan", "report", "plan-exact-duplicates", "dry-run", "quarantine", "restore", "finalize"],
+      "properties": {
+        "scan": { "const": "available-read-only" },
+        "report": { "const": "available-read-only" },
+        "plan-exact-duplicates": { "const": "available-read-only" },
+        "dry-run": { "const": "unsupported-by-pinned-release" },
+        "quarantine": { "const": "unsupported-by-pinned-release" },
+        "restore": { "const": "unsupported-by-pinned-release" },
+        "finalize": { "const": "unsupported-by-pinned-release" }
+      }
+    },
+    "commands": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/command" } },
+    "source_run_id": { "$ref": "#/$defs/nullable_id" },
+    "source_set_id": { "$ref": "#/$defs/nullable_id" },
+    "plan_id": { "$ref": "#/$defs/nullable_id" },
+    "plan_sha256": { "anyOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] },
+    "approval": { "type": "null" },
+    "recovery": { "enum": ["required-if-interrupted", "inspect-provider-state-before-retry", "no-source-mutation", "none"] },
+    "duplicate_logical_bytes": { "type": ["integer", "null"], "minimum": 0 },
+    "physical_savings_bytes": { "type": "null" },
+    "failure": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["code", "detail", "provider_diagnostics", "provider_stdout_sha256"],
+          "properties": {
+            "code": { "type": "string", "minLength": 1 },
+            "detail": { "type": "string", "minLength": 1 },
+            "provider_diagnostics": { "type": "array", "items": { "type": "object" } },
+            "provider_stdout_sha256": { "anyOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "nullable_id": { "type": ["string", "null"] },
+    "native_path": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false, "required": ["encoding", "value"],
+          "properties": { "encoding": { "const": "utf8" }, "value": { "type": "string" } }
+        },
+        {
+          "type": "object", "additionalProperties": false, "required": ["encoding", "base64"],
+          "properties": { "encoding": { "const": "unix_bytes" }, "base64": { "type": "string" } }
+        }
+      ]
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "schema", "path", "size_bytes", "sha256", "blake3_256"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "schema": { "type": "string", "minLength": 1 },
+        "path": { "$ref": "#/$defs/native_path" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "blake3_256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "command": {
+      "type": "object", "additionalProperties": false,
+      "required": ["command", "arguments", "outcome", "coverage", "stdout_sha256", "diagnostics", "set_id", "marker_sha256", "artifacts"],
+      "properties": {
+        "command": { "enum": ["scan", "report", "plan"] },
+        "arguments": { "type": "array", "items": { "$ref": "#/$defs/native_path" } },
+        "outcome": { "enum": ["success", "partial_success"] },
+        "coverage": { "enum": ["complete", "partial"] },
+        "stdout_sha256": { "$ref": "#/$defs/sha256" },
+        "diagnostics": { "type": "array", "items": { "type": "object" } },
+        "set_id": { "type": "string", "minLength": 1 },
+        "marker_sha256": { "$ref": "#/$defs/sha256" },
+        "artifacts": { "type": "array", "minItems": 2, "maxItems": 4, "items": { "$ref": "#/$defs/artifact" } }
+      }
+    }
+  }
+}

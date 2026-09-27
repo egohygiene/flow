@@ -17,6 +17,7 @@ pub mod contracts;
 pub mod execution;
 pub mod execution_subjects;
 pub mod hermetic;
+pub mod optiflow;
 pub mod process;
 pub mod runner;
 pub mod scenario;

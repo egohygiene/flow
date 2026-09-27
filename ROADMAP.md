@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.5
+version: 1.3.6
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-26
+updated: 2026-09-27
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -22,6 +22,22 @@ supersedes: []
 ---
 
 # Flow Roadmap
+
+## 2026-09-27 Optiflow read-only adapter handoff
+
+Flow #50 now proposes a pinned Optiflow v0.1.1 native CLI library adapter for
+read-only scan, report, and exact-duplicate review planning. The
+[compatibility receipt](docs/integrations/optiflow-v0.1.1-read-only.md)
+records source revision, archive/executable digests, contract schemas,
+declared effects, Linux synthetic proof, and macOS native-execution gap. The
+adapter writes versioned local evidence; dry-run, quarantine, restore, and
+finalization remain explicitly unsupported. The maintainer owns PR merge.
+
+After review/merge, Flow #53 may compose this read-only capability into the
+suite CLI alongside other released-provider adapters. Flow #73 separately
+qualifies a v0.2 mutation release after Optiflow #93; Flow #74 owns the later
+PNG integration after Optiflow #95. Older queue snapshots below are historical
+where they conflict with this handoff and the live Flow #11 issue.
 
 ## 2026-09-26 live suite handoff
 
