@@ -1271,16 +1271,8 @@ fn capture(
         .stderr
         .take()
         .ok_or(AdapterError::InvalidEvidence("stderr pipe"))?;
-    let stdout = thread::spawn(move || {
-        out.take((MAX_STDOUT + 1) as u64)
-            .bytes()
-            .collect::<io::Result<Vec<_>>>()
-    });
-    let stderr = thread::spawn(move || {
-        err.take((MAX_STDERR + 1) as u64)
-            .bytes()
-            .collect::<io::Result<Vec<_>>>()
-    });
+    let stdout = thread::spawn(move || read_capped(out, MAX_STDOUT));
+    let stderr = thread::spawn(move || read_capped(err, MAX_STDERR));
     let start = Instant::now();
     let status = loop {
         match child.try_wait() {
@@ -1312,6 +1304,12 @@ fn capture(
         stdout,
         stderr,
     })
+}
+
+fn read_capped(stream: impl Read, limit: usize) -> io::Result<Vec<u8>> {
+    let mut bytes = Vec::new();
+    stream.take((limit + 1) as u64).read_to_end(&mut bytes)?;
+    Ok(bytes)
 }
 
 fn persist(path: &Path, receipt: &ReadOnlyReceipt, first: bool) -> Result<(), AdapterError> {
