@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.6
+version: 1.3.7
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-27
+updated: 2026-10-02
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -22,6 +22,20 @@ supersedes: []
 ---
 
 # Flow Roadmap
+
+## Maintained suite dependency view
+
+The [Flow suite dependency map](docs/roadmaps/flow-suite-dependency-map.md)
+connects the independent provider lanes to the complete, inspectable comic
+artifact-tree outcome. It preserves the original Mermaid source, current
+evidence states, scoped dependencies and the update protocol. Its time-qualified
+snapshot supersedes older execution-status claims below where they conflict;
+live issues and repository evidence remain authoritative.
+
+Use the [current documentation handoff](docs/work/11/HANDOFF.md) to resume this
+capture. Detailed tracker state belongs in that dependency view and GitHub,
+while this document retains strategic horizons. Optional capability lanes do
+not silently become first-release requirements.
 
 ## 2026-09-27 Optiflow read-only adapter handoff
 

@@ -1,0 +1,226 @@
+flowchart TB
+  subgraph G0["Flow first install"]
+    direction TB
+    F50["#50 Optiflow read-only"]
+    F51["#51 Aniflow adapter"]
+    F52["#52 Renderflow adapter"]
+    F53["#53 CLI"]
+    F3["#3 Vertical slice"]
+    F32["#32 Static proof"]
+    F33["#33 Temporal proof"]
+    F34["#34 Clean-room gate"]
+    F13["#13 Fixture parent"]
+    F70["#70 Local-file UX"]
+    F71["#71 Suite package"]
+    F54["#54 First release"]
+  end
+  subgraph G1["Renderflow publication"]
+    direction TB
+    R414["#414 EPUB parent"]
+    R415["#415 Ordered collection"]
+    R416["#416 Print PDF"]
+    R417["#417 Fixed EPUB"]
+    R418["#418 EPUB validation"]
+    R419["#419 Provider release"]
+    R412["#412 Adversarial corpus"]
+    R413["#413 Comic fixtures"]
+  end
+  subgraph G2["Aniflow first release"]
+    direction TB
+    A8["#8 Demucs"]
+    A13["#13 Audio evidence"]
+    A32["#32 Temporal correctness"]
+    A33["#33 Validation"]
+    A34["#34 Reuse and controls"]
+    A24["#24 Media corpus"]
+    A10["#10 Provider release"]
+  end
+  subgraph G3["Optiflow upgrades"]
+    direction TB
+    O111["#111 macOS APFS"]
+    O93["#93 v0.2 qualification"]
+    O65["#65 Media corpus"]
+    O94["#94 OxiPNG candidate"]
+    O95["#95 PNG replacement"]
+  end
+  subgraph G4["Flow later capabilities"]
+    direction TB
+    F73["#73 Exact dedup adapter"]
+    F74["#74 PNG adapter"]
+    F75["#75 Music-video adapter"]
+    F10["#10 Comic everything"]
+    F62["#62 Scenario docs"]
+  end
+  subgraph G5["Aniflow music video"]
+    direction TB
+    A36["#36 Frame import and repair"]
+    A37["#37 Upscale recovery"]
+    A38["#38 Toolchain doctor"]
+    A35["#35 Music-video profile"]
+    A39["#39 Watermark experiment"]
+    A40["#40 Profile release"]
+  end
+  subgraph G6["Renderflow broader product"]
+    direction TB
+    R406["#406 Localization"]
+    R421["#421 Forest parent"]
+    R422["#422 Forest planner"]
+    R423["#423 Screenplay model"]
+    R424["#424 Scripttool adapter"]
+    R425["#425 Fountain PDF"]
+    R426["#426 PDF recovery"]
+    R427["#427 Timed text"]
+    R428["#428 Speech transcript"]
+    R429["#429 Creative doctor"]
+    R430["#430 Forest proof"]
+    R367["#367 Product roadmap"]
+    R397["#397 Sonic DNA"]
+    R378["#378 Article copilot"]
+    R379["#379 Editorial profile"]
+    R350["#350 Slides"]
+    R349["#349 Podcast"]
+    R420["#420 HTTP API"]
+  end
+  subgraph G7["Flow observability"]
+    direction TB
+    F15["#15 Signal contract"]
+    F16["#16 Two CLI pilots"]
+    F17["#17 OTel proof"]
+    F18["#18 Crate decision"]
+    F19["#19 Package if selected"]
+    F20["#20 Suite migration"]
+    F21["#21 Diagnostics"]
+    F22["#22 Help"]
+    F14["#14 Obs parent"]
+  end
+  subgraph G8["Governance and finish"]
+    direction TB
+    F9["Flow #9 ADR"]
+    R405["Render #405 ADR"]
+    O60["Opti #60 ADR"]
+    A14["Ani #14 ADR"]
+    R409["Render #409 audit"]
+    O61["Opti #61 audit"]
+    A17["Ani #17 audit"]
+    F12["Flow #12 audit"]
+    F72["Flow #72 Stable suite"]
+    F11["Flow #11 completion"]
+  end
+  R415 --> R416
+  R415 --> R417
+  R417 --> R418
+  R416 --> R419
+  R418 --> R419
+  R412 --> R413
+  R419 --> R413
+  A8 --> A13
+  A13 --> A32
+  A32 --> A33
+  A33 --> A34
+  A34 --> A24
+  A24 --> A10
+  O111 --> O93
+  O93 --> O95
+  O94 --> O95
+  R419 --> F52
+  A10 --> F51
+  F50 --> F53
+  F51 --> F53
+  F52 --> F53
+  F53 --> F3
+  F3 --> F32
+  F3 --> F33
+  F32 --> F34
+  F33 --> F34
+  F34 --> F13
+  F53 --> F70
+  F32 --> F70
+  F33 --> F70
+  F70 --> F71
+  F3 --> F54
+  F34 --> F54
+  F71 --> F54
+  O93 --> F73
+  F50 --> F73
+  F73 --> F74
+  O95 --> F74
+  A33 --> A36
+  A33 --> A37
+  A36 --> A35
+  A37 --> A35
+  A38 --> A35
+  A35 --> A40
+  A10 --> A40
+  A40 --> F75
+  F51 --> F75
+  R422 --> R423
+  R423 --> R424
+  R423 --> R425
+  R423 --> R426
+  R427 --> R428
+  R422 --> R430
+  R423 --> R430
+  R424 --> R430
+  R425 --> R430
+  R426 --> R430
+  R427 --> R430
+  R428 --> R430
+  R429 --> R430
+  R406 --> F10
+  R430 --> F10
+  F32 --> F10
+  A13 --> R397
+  A13 --> R349
+  R378 --> R379
+  F15 --> F16
+  F16 --> F17
+  F17 --> F18
+  F18 --> F19
+  F18 --> F20
+  F19 --> F20
+  F20 --> F21
+  F15 --> F22
+  F21 --> F14
+  F22 --> F14
+  R419 --> R409
+  A10 --> A17
+  O93 --> O61
+  F54 --> F12
+  F13 --> F12
+  R409 --> F72
+  A17 --> F72
+  O61 --> F72
+  F12 --> F72
+  F54 --> F72
+  F72 --> F11
+  R418 -.->|parent close| R414
+  R430 -.->|parent close| R421
+  R430 -.->|reconcile| R367
+  R413 -.->|fixture subset| F32
+  R412 -.->|fixture subset| F33
+  O65 -.->|fixture subset| O94
+  O65 -.->|fixture subset| F32
+  A24 -.->|fixture subset| F33
+  R406 -.->|fixture subset| R413
+  F34 -.->|docs| F62
+  F62 -.->|review| F12
+  F10 -.->|scope| F12
+  F14 -.->|disposition| F54
+  F14 -.->|scope| F12
+  R367 -.->|scope| R409
+  O95 -.->|scope| O61
+  A40 -.->|scope| A17
+  A39 -.->|optional| A40
+  A37 -.->|experiment| A39
+  F9 -.->|ADR gate| F12
+  R405 -.->|ADR gate| R409
+  O60 -.->|ADR gate| O61
+  A14 -.->|ADR gate| A17
+  F73 -.->|later| F11
+  F74 -.->|later| F11
+  F75 -.->|later| F11
+  R420 -.->|optional| R367
+  R397 -.->|profile| R367
+  R379 -.->|profile| R367
+  R350 -.->|profile| R367
+  R349 -.->|profile| R367
