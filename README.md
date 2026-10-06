@@ -37,8 +37,9 @@ caller-selected downstream execution. Stale prerequisites invalidate their
 descendants for reuse while unrelated valid branches retain their eligibility.
 
 Follow the [maintained suite dependency map](docs/roadmaps/flow-suite-dependency-map.md)
-for the comic artifact-tree path, current implementation/validation state and
-the preserved original Mermaid roadmap.
+for the suite completion path, current implementation/validation state and
+the preserved original Mermaid roadmap. The [full completion diagram](docs/roadmaps/flow-suite-completion.svg)
+retains old milestones, marks completed issues NUKED and includes newer work.
 
 ## Executable checkpoint
 

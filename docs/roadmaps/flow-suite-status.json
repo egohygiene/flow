@@ -1,0 +1,3571 @@
+{
+  "schema": "flow.suite-roadmap-snapshot/v1",
+  "snapshot_at": "2026-10-06T16:18:58.475611+00:00",
+  "repositories": {
+    "flow": {
+      "main": "4621df7437e0fdb278f025c75e9feb7298eb7bd9",
+      "open_issues": 30,
+      "open_prs": 0,
+      "release_summary": "No published release"
+    },
+    "renderflow": {
+      "main": "8e866f91aa8b20255f25a553031f25fa98aa3856",
+      "open_issues": 23,
+      "open_prs": 0,
+      "release_summary": "Release preparation only"
+    },
+    "optiflow": {
+      "main": "c5dbcd1761e810aea228389b8ba017acc97a411e",
+      "open_issues": 8,
+      "open_prs": 1,
+      "release_summary": "v0.1.1 published; read-only"
+    },
+    "aniflow": {
+      "main": "08cb2a83dbe288f6d893a278cbeb34905cc19a49",
+      "open_issues": 17,
+      "open_prs": 1,
+      "release_summary": "No published release"
+    }
+  },
+  "original_node_count": 80,
+  "original_source": "archive/flow-suite-dependencies-2026-09-27.mmd",
+  "original_sha256": "e6697b351459e28f6466cd5fe63ed5081a1814a65cbde6f8fb962be7846f0e5d",
+  "nodes": [
+    {
+      "id": "F23",
+      "repo": "flow",
+      "number": 23,
+      "title": "Extension execution seam",
+      "status": "nuked",
+      "note": "Completed bounded foundation; evidence remains linked in the issue.",
+      "group": "Foundations",
+      "url": "https://github.com/egohygiene/flow/issues/23",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-16T10:32:37Z",
+      "observed_issue_updated_at": "2026-09-16T12:14:25Z"
+    },
+    {
+      "id": "F25",
+      "repo": "flow",
+      "number": 25,
+      "title": "Provider process boundary",
+      "status": "nuked",
+      "note": "Completed bounded foundation; evidence remains linked in the issue.",
+      "group": "Foundations",
+      "url": "https://github.com/egohygiene/flow/issues/25",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-16T17:44:10Z",
+      "observed_issue_updated_at": "2026-09-21T17:47:30Z"
+    },
+    {
+      "id": "F28",
+      "repo": "flow",
+      "number": 28,
+      "title": "Scenario contract",
+      "status": "nuked",
+      "note": "Completed bounded foundation; evidence remains linked in the issue.",
+      "group": "Foundations",
+      "url": "https://github.com/egohygiene/flow/issues/28",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-20T04:01:09Z",
+      "observed_issue_updated_at": "2026-09-20T12:29:16Z"
+    },
+    {
+      "id": "F29",
+      "repo": "flow",
+      "number": 29,
+      "title": "Hermetic provider kit",
+      "status": "nuked",
+      "note": "Completed bounded foundation; evidence remains linked in the issue.",
+      "group": "Foundations",
+      "url": "https://github.com/egohygiene/flow/issues/29",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-20T04:01:23Z",
+      "observed_issue_updated_at": "2026-09-25T21:03:19Z"
+    },
+    {
+      "id": "F30",
+      "repo": "flow",
+      "number": 30,
+      "title": "Acceptance scenarios",
+      "status": "nuked",
+      "note": "Completed bounded foundation; evidence remains linked in the issue.",
+      "group": "Foundations",
+      "url": "https://github.com/egohygiene/flow/issues/30",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-20T04:01:37Z",
+      "observed_issue_updated_at": "2026-09-26T01:56:41Z"
+    },
+    {
+      "id": "F49",
+      "repo": "flow",
+      "number": 49,
+      "title": "Durable run state",
+      "status": "nuked",
+      "note": "Completed bounded foundation; evidence remains linked in the issue.",
+      "group": "Foundations",
+      "url": "https://github.com/egohygiene/flow/issues/49",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:52:56Z",
+      "observed_issue_updated_at": "2026-09-26T03:39:18Z"
+    },
+    {
+      "id": "F31",
+      "repo": "flow",
+      "number": 31,
+      "title": "Recovery and authority proof",
+      "status": "nuked",
+      "note": "Completed bounded foundation; evidence remains linked in the issue.",
+      "group": "Foundations",
+      "url": "https://github.com/egohygiene/flow/issues/31",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-20T04:01:51Z",
+      "observed_issue_updated_at": "2026-09-26T15:48:08Z"
+    },
+    {
+      "id": "F50",
+      "repo": "flow",
+      "number": 50,
+      "title": "Optiflow read-only",
+      "status": "nuked",
+      "note": "Merged read-only Optiflow adapter; mutation is a separate lane.",
+      "group": "Foundations",
+      "url": "https://github.com/egohygiene/flow/issues/50",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:53:38Z",
+      "observed_issue_updated_at": "2026-09-27T18:39:09Z"
+    },
+    {
+      "id": "F51",
+      "repo": "flow",
+      "number": 51,
+      "title": "Aniflow adapter",
+      "status": "blocked",
+      "note": "Needs Aniflow #10 immutable release.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/51",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-22T17:53:38Z",
+      "observed_issue_updated_at": "2026-09-27T14:25:45Z"
+    },
+    {
+      "id": "F52",
+      "repo": "flow",
+      "number": 52,
+      "title": "Renderflow adapter",
+      "status": "blocked",
+      "note": "Needs Renderflow #419 immutable release.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/52",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-22T17:53:39Z",
+      "observed_issue_updated_at": "2026-09-22T17:53:39Z"
+    },
+    {
+      "id": "F53",
+      "repo": "flow",
+      "number": 53,
+      "title": "CLI",
+      "status": "blocked",
+      "note": "Released adapters into doctor / plan / run / status / resume.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/53",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-22T17:54:14Z",
+      "observed_issue_updated_at": "2026-09-22T17:54:14Z"
+    },
+    {
+      "id": "F3",
+      "repo": "flow",
+      "number": 3,
+      "title": "Vertical slice",
+      "status": "epic",
+      "note": "Core exists; real released-provider vertical slice remains.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/3",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-08-19T03:02:00Z",
+      "observed_issue_updated_at": "2026-09-26T03:39:19Z"
+    },
+    {
+      "id": "F32",
+      "repo": "flow",
+      "number": 32,
+      "title": "Static proof",
+      "status": "blocked",
+      "note": "Prove static publication using installed release artifacts.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/32",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-20T04:02:10Z",
+      "observed_issue_updated_at": "2026-09-20T04:02:10Z"
+    },
+    {
+      "id": "F33",
+      "repo": "flow",
+      "number": 33,
+      "title": "Temporal proof",
+      "status": "blocked",
+      "note": "Prove temporal workflows using installed release artifacts.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/33",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-20T04:02:25Z",
+      "observed_issue_updated_at": "2026-09-20T04:02:25Z"
+    },
+    {
+      "id": "F34",
+      "repo": "flow",
+      "number": 34,
+      "title": "Clean-room gate",
+      "status": "blocked",
+      "note": "Clean-room compatibility, bounded tiers and regressions.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/34",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-20T04:02:42Z",
+      "observed_issue_updated_at": "2026-09-20T04:02:42Z"
+    },
+    {
+      "id": "F13",
+      "repo": "flow",
+      "number": 13,
+      "title": "Fixture parent",
+      "status": "epic",
+      "note": "Earlier fixture children done; released-provider proofs remain.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/13",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T11:15:01Z",
+      "observed_issue_updated_at": "2026-09-26T15:41:43Z"
+    },
+    {
+      "id": "F70",
+      "repo": "flow",
+      "number": 70,
+      "title": "Local-file UX",
+      "status": "blocked",
+      "note": "Simple local-file workflows after CLI and static/temporal proof.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/70",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T14:21:17Z",
+      "observed_issue_updated_at": "2026-09-27T14:21:17Z"
+    },
+    {
+      "id": "F71",
+      "repo": "flow",
+      "number": 71,
+      "title": "Suite package",
+      "status": "blocked",
+      "note": "Installable suite bundle and honest package/channel names.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/71",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T14:21:46Z",
+      "observed_issue_updated_at": "2026-09-27T14:21:46Z"
+    },
+    {
+      "id": "F54",
+      "repo": "flow",
+      "number": 54,
+      "title": "First release",
+      "status": "blocked",
+      "note": "First immutable candidate; observability needs explicit disposition.",
+      "group": "First usable install",
+      "url": "https://github.com/egohygiene/flow/issues/54",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-22T17:54:15Z",
+      "observed_issue_updated_at": "2026-09-27T14:23:31Z"
+    },
+    {
+      "id": "F10",
+      "repo": "flow",
+      "number": 10,
+      "title": "Comic everything",
+      "status": "blocked",
+      "note": "Comic/localization tree; retained, reviewed upscale candidates.",
+      "group": "Workflow extensions",
+      "url": "https://github.com/egohygiene/flow/issues/10",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-13T17:21:42Z",
+      "observed_issue_updated_at": "2026-10-05T21:04:02Z"
+    },
+    {
+      "id": "F73",
+      "repo": "flow",
+      "number": 73,
+      "title": "Exact dedup adapter",
+      "status": "blocked",
+      "note": "Only after qualified Optiflow v0.2 (#93).",
+      "group": "Workflow extensions",
+      "url": "https://github.com/egohygiene/flow/issues/73",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T14:24:59Z",
+      "observed_issue_updated_at": "2026-09-27T14:24:59Z"
+    },
+    {
+      "id": "F74",
+      "repo": "flow",
+      "number": 74,
+      "title": "PNG adapter",
+      "status": "blocked",
+      "note": "Only after PNG replacement release (#95) and #73.",
+      "group": "Workflow extensions",
+      "url": "https://github.com/egohygiene/flow/issues/74",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T14:25:08Z",
+      "observed_issue_updated_at": "2026-09-27T14:25:08Z"
+    },
+    {
+      "id": "F75",
+      "repo": "flow",
+      "number": 75,
+      "title": "Music-video adapter",
+      "status": "blocked",
+      "note": "Only after Aniflow music-video release (#40).",
+      "group": "Workflow extensions",
+      "url": "https://github.com/egohygiene/flow/issues/75",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T14:25:31Z",
+      "observed_issue_updated_at": "2026-09-27T14:25:31Z"
+    },
+    {
+      "id": "F78",
+      "repo": "flow",
+      "number": 78,
+      "title": "Reusable AMV preset",
+      "status": "blocked",
+      "note": "Selectable AMV steps; consumes #75, not a second engine.",
+      "group": "Workflow extensions",
+      "url": "https://github.com/egohygiene/flow/issues/78",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-03T14:53:22Z",
+      "observed_issue_updated_at": "2026-10-03T14:53:22Z"
+    },
+    {
+      "id": "F62",
+      "repo": "flow",
+      "number": 62,
+      "title": "Scenario docs",
+      "status": "planned",
+      "note": "Visual scenario catalog; #28/#30 prerequisites complete.",
+      "group": "Workflow extensions",
+      "url": "https://github.com/egohygiene/flow/issues/62",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T01:14:22Z",
+      "observed_issue_updated_at": "2026-09-26T01:14:22Z"
+    },
+    {
+      "id": "F15",
+      "repo": "flow",
+      "number": 15,
+      "title": "Signal contract",
+      "status": "planned",
+      "note": "Contract and privacy design; no instrumentation yet.",
+      "group": "Observability",
+      "url": "https://github.com/egohygiene/flow/issues/15",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T15:20:54Z",
+      "observed_issue_updated_at": "2026-09-15T15:25:28Z"
+    },
+    {
+      "id": "F16",
+      "repo": "flow",
+      "number": 16,
+      "title": "Two CLI pilots",
+      "status": "blocked",
+      "note": "Acceptance remains in the linked issue.",
+      "group": "Observability",
+      "url": "https://github.com/egohygiene/flow/issues/16",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T15:21:24Z",
+      "observed_issue_updated_at": "2026-09-15T15:25:29Z"
+    },
+    {
+      "id": "F17",
+      "repo": "flow",
+      "number": 17,
+      "title": "OTel proof",
+      "status": "blocked",
+      "note": "Acceptance remains in the linked issue.",
+      "group": "Observability",
+      "url": "https://github.com/egohygiene/flow/issues/17",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T15:21:56Z",
+      "observed_issue_updated_at": "2026-09-15T15:25:30Z"
+    },
+    {
+      "id": "F18",
+      "repo": "flow",
+      "number": 18,
+      "title": "Crate decision",
+      "status": "blocked",
+      "note": "Decide whether a shared package is justified.",
+      "group": "Observability",
+      "url": "https://github.com/egohygiene/flow/issues/18",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T15:22:23Z",
+      "observed_issue_updated_at": "2026-09-15T15:25:31Z"
+    },
+    {
+      "id": "F19",
+      "repo": "flow",
+      "number": 19,
+      "title": "Package if selected",
+      "status": "optional",
+      "note": "Only if #18 selects a shared package.",
+      "group": "Observability",
+      "url": "https://github.com/egohygiene/flow/issues/19",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T15:22:55Z",
+      "observed_issue_updated_at": "2026-09-15T15:25:33Z"
+    },
+    {
+      "id": "F20",
+      "repo": "flow",
+      "number": 20,
+      "title": "Suite migration",
+      "status": "blocked",
+      "note": "Acceptance remains in the linked issue.",
+      "group": "Observability",
+      "url": "https://github.com/egohygiene/flow/issues/20",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T15:23:26Z",
+      "observed_issue_updated_at": "2026-09-15T15:25:34Z"
+    },
+    {
+      "id": "F21",
+      "repo": "flow",
+      "number": 21,
+      "title": "Diagnostics",
+      "status": "blocked",
+      "note": "Acceptance remains in the linked issue.",
+      "group": "Observability",
+      "url": "https://github.com/egohygiene/flow/issues/21",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T15:23:58Z",
+      "observed_issue_updated_at": "2026-09-15T15:25:35Z"
+    },
+    {
+      "id": "F22",
+      "repo": "flow",
+      "number": 22,
+      "title": "Help",
+      "status": "blocked",
+      "note": "Acceptance remains in the linked issue.",
+      "group": "Observability",
+      "url": "https://github.com/egohygiene/flow/issues/22",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T15:24:24Z",
+      "observed_issue_updated_at": "2026-09-15T15:25:36Z"
+    },
+    {
+      "id": "F14",
+      "repo": "flow",
+      "number": 14,
+      "title": "Obs parent",
+      "status": "epic",
+      "note": "Full observability or explicit first-release disposition.",
+      "group": "Observability",
+      "url": "https://github.com/egohygiene/flow/issues/14",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T15:20:03Z",
+      "observed_issue_updated_at": "2026-09-15T15:25:50Z"
+    },
+    {
+      "id": "F9",
+      "repo": "flow",
+      "number": 9,
+      "title": "ADR",
+      "status": "external",
+      "note": "External ADR platform gates; not a product-code blocker.",
+      "group": "Stable-suite finish",
+      "url": "https://github.com/egohygiene/flow/issues/9",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-12T17:05:09Z",
+      "observed_issue_updated_at": "2026-09-12T17:05:09Z"
+    },
+    {
+      "id": "F12",
+      "repo": "flow",
+      "number": 12,
+      "title": "audit",
+      "status": "blocked",
+      "note": "Provider audits first, then suite reconciliation and remediation.",
+      "group": "Stable-suite finish",
+      "url": "https://github.com/egohygiene/flow/issues/12",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-13T19:19:32Z",
+      "observed_issue_updated_at": "2026-09-27T14:23:37Z"
+    },
+    {
+      "id": "F72",
+      "repo": "flow",
+      "number": 72,
+      "title": "Stable suite",
+      "status": "blocked",
+      "note": "Stable releases, compatibility lock and clean-install proof.",
+      "group": "Stable-suite finish",
+      "url": "https://github.com/egohygiene/flow/issues/72",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T14:22:15Z",
+      "observed_issue_updated_at": "2026-09-27T14:22:15Z"
+    },
+    {
+      "id": "F11",
+      "repo": "flow",
+      "number": 11,
+      "title": "completion",
+      "status": "epic",
+      "note": "Close last with evidence and explicit post-v1 dispositions.",
+      "group": "Stable-suite finish",
+      "url": "https://github.com/egohygiene/flow/issues/11",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-13T17:49:10Z",
+      "observed_issue_updated_at": "2026-10-02T13:51:56Z"
+    },
+    {
+      "id": "R415",
+      "repo": "renderflow",
+      "number": 415,
+      "title": "Ordered collection",
+      "status": "nuked",
+      "note": "Ordered publication collections merged.",
+      "group": "Publication foundation",
+      "url": "https://github.com/egohygiene/renderflow/issues/415",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:49:41Z",
+      "observed_issue_updated_at": "2026-09-27T22:38:17Z"
+    },
+    {
+      "id": "R416",
+      "repo": "renderflow",
+      "number": 416,
+      "title": "Print PDF",
+      "status": "nuked",
+      "note": "Print-interior PDF route merged.",
+      "group": "Publication foundation",
+      "url": "https://github.com/egohygiene/renderflow/issues/416",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:49:42Z",
+      "observed_issue_updated_at": "2026-09-28T01:41:00Z"
+    },
+    {
+      "id": "R417",
+      "repo": "renderflow",
+      "number": 417,
+      "title": "Fixed EPUB",
+      "status": "nuked",
+      "note": "Fixed-layout EPUB route merged.",
+      "group": "Publication foundation",
+      "url": "https://github.com/egohygiene/renderflow/issues/417",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:49:43Z",
+      "observed_issue_updated_at": "2026-09-28T05:31:39Z"
+    },
+    {
+      "id": "R418",
+      "repo": "renderflow",
+      "number": 418,
+      "title": "EPUB validation",
+      "status": "nuked",
+      "note": "EPUB validation merged; not publisher acceptance.",
+      "group": "Publication foundation",
+      "url": "https://github.com/egohygiene/renderflow/issues/418",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:49:43Z",
+      "observed_issue_updated_at": "2026-09-28T15:45:11Z"
+    },
+    {
+      "id": "R414",
+      "repo": "renderflow",
+      "number": 414,
+      "title": "EPUB parent",
+      "status": "nuked",
+      "note": "EPUB parent closed; publication remains in #419.",
+      "group": "Publication foundation",
+      "url": "https://github.com/egohygiene/renderflow/issues/414",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T16:00:31Z",
+      "observed_issue_updated_at": "2026-09-28T15:48:05Z"
+    },
+    {
+      "id": "R419",
+      "repo": "renderflow",
+      "number": 419,
+      "title": "Provider release",
+      "status": "qualification",
+      "note": "Release preparation merged; no GitHub release published.",
+      "group": "Publication foundation",
+      "url": "https://github.com/egohygiene/renderflow/issues/419",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-22T17:49:44Z",
+      "observed_issue_updated_at": "2026-09-22T17:49:44Z"
+    },
+    {
+      "id": "R433",
+      "repo": "renderflow",
+      "number": 433,
+      "title": "Real-artifact gallery",
+      "status": "nuked",
+      "note": "Three-input real-artifact gallery merged.",
+      "group": "Corpus and comic composition",
+      "url": "https://github.com/egohygiene/renderflow/issues/433",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T02:15:30Z",
+      "observed_issue_updated_at": "2026-09-28T03:14:29Z"
+    },
+    {
+      "id": "R412",
+      "repo": "renderflow",
+      "number": 412,
+      "title": "Adversarial corpus",
+      "status": "epic",
+      "note": "Gallery exists; broader adversarial corpus remains.",
+      "group": "Corpus and comic composition",
+      "url": "https://github.com/egohygiene/renderflow/issues/412",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T11:14:57Z",
+      "observed_issue_updated_at": "2026-09-16T21:35:07Z"
+    },
+    {
+      "id": "R413",
+      "repo": "renderflow",
+      "number": 413,
+      "title": "Comic fixtures",
+      "status": "planned",
+      "note": "Small synthetic comic pack; extend existing corpus.",
+      "group": "Corpus and comic composition",
+      "url": "https://github.com/egohygiene/renderflow/issues/413",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-16T21:34:50Z",
+      "observed_issue_updated_at": "2026-09-16T21:34:50Z"
+    },
+    {
+      "id": "R406",
+      "repo": "renderflow",
+      "number": 406,
+      "title": "Localization",
+      "status": "planned",
+      "note": "Layered composition and locale branches; preserve originals.",
+      "group": "Corpus and comic composition",
+      "url": "https://github.com/egohygiene/renderflow/issues/406",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-13T17:20:57Z",
+      "observed_issue_updated_at": "2026-09-13T17:20:57Z"
+    },
+    {
+      "id": "R422",
+      "repo": "renderflow",
+      "number": 422,
+      "title": "Forest planner",
+      "status": "planned",
+      "note": "Cycle-safe, deduplicated targets; no new provider required.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/422",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T02:30:19Z",
+      "observed_issue_updated_at": "2026-09-26T02:30:19Z"
+    },
+    {
+      "id": "R423",
+      "repo": "renderflow",
+      "number": 423,
+      "title": "Screenplay model",
+      "status": "planned",
+      "note": "Schema/design can start independently of #422.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/423",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T02:30:20Z",
+      "observed_issue_updated_at": "2026-09-26T02:30:20Z"
+    },
+    {
+      "id": "R424",
+      "repo": "renderflow",
+      "number": 424,
+      "title": "Scripttool adapter",
+      "status": "blocked",
+      "note": "Needs #423 screenplay model.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/424",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T02:30:23Z",
+      "observed_issue_updated_at": "2026-09-26T02:32:34Z"
+    },
+    {
+      "id": "R425",
+      "repo": "renderflow",
+      "number": 425,
+      "title": "Fountain PDF",
+      "status": "blocked",
+      "note": "Needs #423 screenplay model.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/425",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T02:30:24Z",
+      "observed_issue_updated_at": "2026-09-26T02:32:37Z"
+    },
+    {
+      "id": "R426",
+      "repo": "renderflow",
+      "number": 426,
+      "title": "PDF recovery",
+      "status": "blocked",
+      "note": "Needs #423; recovery must record information loss.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/426",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T02:30:26Z",
+      "observed_issue_updated_at": "2026-09-26T02:30:26Z"
+    },
+    {
+      "id": "R427",
+      "repo": "renderflow",
+      "number": 427,
+      "title": "Timed text",
+      "status": "planned",
+      "note": "Independent timed-text and embedded subtitle extraction.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/427",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T02:30:28Z",
+      "observed_issue_updated_at": "2026-09-26T02:30:28Z"
+    },
+    {
+      "id": "R428",
+      "repo": "renderflow",
+      "number": 428,
+      "title": "Speech transcript",
+      "status": "blocked",
+      "note": "Needs #427 transcript contract.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/428",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T02:30:30Z",
+      "observed_issue_updated_at": "2026-09-26T02:32:39Z"
+    },
+    {
+      "id": "R429",
+      "repo": "renderflow",
+      "number": 429,
+      "title": "Creative doctor",
+      "status": "planned",
+      "note": "Consolidates optional tools; does not block adapter work.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/429",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T02:30:33Z",
+      "observed_issue_updated_at": "2026-09-26T02:30:33Z"
+    },
+    {
+      "id": "R430",
+      "repo": "renderflow",
+      "number": 430,
+      "title": "Forest proof",
+      "status": "blocked",
+      "note": "Integrate #422–#429 and hand off truthful artifacts to Flow.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/430",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T02:30:34Z",
+      "observed_issue_updated_at": "2026-09-26T02:30:34Z"
+    },
+    {
+      "id": "R421",
+      "repo": "renderflow",
+      "number": 421,
+      "title": "Forest parent",
+      "status": "epic",
+      "note": "Forest parent closes after child acceptance.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/421",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-26T02:28:48Z",
+      "observed_issue_updated_at": "2026-09-26T02:30:49Z"
+    },
+    {
+      "id": "R378",
+      "repo": "renderflow",
+      "number": 378,
+      "title": "Article copilot",
+      "status": "planned",
+      "note": "Editorial agent; coordinate metadata with #379.",
+      "group": "Additional product lanes",
+      "url": "https://github.com/egohygiene/renderflow/issues/378",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-07T05:58:54Z",
+      "observed_issue_updated_at": "2026-09-07T05:58:54Z"
+    },
+    {
+      "id": "R379",
+      "repo": "renderflow",
+      "number": 379,
+      "title": "Editorial profile",
+      "status": "planned",
+      "note": "Editorial rendering; no Copilot runtime dependency.",
+      "group": "Additional product lanes",
+      "url": "https://github.com/egohygiene/renderflow/issues/379",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-07T05:59:19Z",
+      "observed_issue_updated_at": "2026-09-07T05:59:19Z"
+    },
+    {
+      "id": "R350",
+      "repo": "renderflow",
+      "number": 350,
+      "title": "Slides",
+      "status": "optional",
+      "note": "Optional Slidev profile; provider/asset qualification owed.",
+      "group": "Additional product lanes",
+      "url": "https://github.com/egohygiene/renderflow/issues/350",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-08-30T14:31:03Z",
+      "observed_issue_updated_at": "2026-08-30T14:31:03Z"
+    },
+    {
+      "id": "R397",
+      "repo": "renderflow",
+      "number": 397,
+      "title": "Sonic DNA",
+      "status": "planned",
+      "note": "Audio evidence prerequisites implemented; integration remains.",
+      "group": "Additional product lanes",
+      "url": "https://github.com/egohygiene/renderflow/issues/397",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-11T19:53:44Z",
+      "observed_issue_updated_at": "2026-09-11T19:53:44Z"
+    },
+    {
+      "id": "R349",
+      "repo": "renderflow",
+      "number": 349,
+      "title": "Podcast",
+      "status": "optional",
+      "note": "Research-first briefings and optional audio derivatives.",
+      "group": "Additional product lanes",
+      "url": "https://github.com/egohygiene/renderflow/issues/349",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-08-29T10:11:38Z",
+      "observed_issue_updated_at": "2026-08-29T10:11:38Z"
+    },
+    {
+      "id": "R420",
+      "repo": "renderflow",
+      "number": 420,
+      "title": "HTTP API",
+      "status": "optional",
+      "note": "Optional HTTP/job-service lane, outside first CLI release.",
+      "group": "Additional product lanes",
+      "url": "https://github.com/egohygiene/renderflow/issues/420",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-23T22:28:54Z",
+      "observed_issue_updated_at": "2026-09-23T22:28:54Z"
+    },
+    {
+      "id": "R367",
+      "repo": "renderflow",
+      "number": 367,
+      "title": "Product roadmap",
+      "status": "epic",
+      "note": "Product umbrella; forest, profiles and Flow proof remain.",
+      "group": "Additional product lanes",
+      "url": "https://github.com/egohygiene/renderflow/issues/367",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-08-31T18:08:14Z",
+      "observed_issue_updated_at": "2026-09-26T02:31:45Z"
+    },
+    {
+      "id": "R405",
+      "repo": "renderflow",
+      "number": 405,
+      "title": "ADR",
+      "status": "external",
+      "note": "External ADR platform gates remain.",
+      "group": "Renderflow closeout",
+      "url": "https://github.com/egohygiene/renderflow/issues/405",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-12T17:03:46Z",
+      "observed_issue_updated_at": "2026-09-12T17:03:46Z"
+    },
+    {
+      "id": "R409",
+      "repo": "renderflow",
+      "number": 409,
+      "title": "audit",
+      "status": "blocked",
+      "note": "After active product/release work; before final Flow audit.",
+      "group": "Renderflow closeout",
+      "url": "https://github.com/egohygiene/renderflow/issues/409",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-13T19:19:34Z",
+      "observed_issue_updated_at": "2026-09-13T19:19:34Z"
+    },
+    {
+      "id": "O88",
+      "repo": "optiflow",
+      "number": 88,
+      "title": "Filesystem corpus",
+      "status": "nuked",
+      "note": "Bounded filesystem corpus merged; #65 stays open.",
+      "group": "Inspection and Linux transactions",
+      "url": "https://github.com/egohygiene/optiflow/issues/88",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:45:48Z",
+      "observed_issue_updated_at": "2026-09-26T17:55:12Z"
+    },
+    {
+      "id": "O89",
+      "repo": "optiflow",
+      "number": 89,
+      "title": "Read-only v0.1.1",
+      "status": "nuked",
+      "note": "Signed read-only v0.1.1 published; no mutation authority.",
+      "group": "Inspection and Linux transactions",
+      "url": "https://github.com/egohygiene/optiflow/issues/89",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:45:49Z",
+      "observed_issue_updated_at": "2026-09-26T19:23:03Z"
+    },
+    {
+      "id": "O90",
+      "repo": "optiflow",
+      "number": 90,
+      "title": "Approval and dry-run",
+      "status": "nuked",
+      "note": "Approval/dry-run implementation; unreleased transaction path.",
+      "group": "Inspection and Linux transactions",
+      "url": "https://github.com/egohygiene/optiflow/issues/90",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:45:50Z",
+      "observed_issue_updated_at": "2026-09-26T23:19:31Z"
+    },
+    {
+      "id": "O91",
+      "repo": "optiflow",
+      "number": 91,
+      "title": "Linux quarantine",
+      "status": "nuked",
+      "note": "Linux quarantine implemented; not native Mac qualification.",
+      "group": "Inspection and Linux transactions",
+      "url": "https://github.com/egohygiene/optiflow/issues/91",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:45:51Z",
+      "observed_issue_updated_at": "2026-09-27T01:53:45Z"
+    },
+    {
+      "id": "O106",
+      "repo": "optiflow",
+      "number": 106,
+      "title": "CI baseline repair",
+      "status": "nuked",
+      "note": "Bounded CI baseline repair complete; current checks not rerun.",
+      "group": "Inspection and Linux transactions",
+      "url": "https://github.com/egohygiene/optiflow/issues/106",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-27T02:03:24Z",
+      "observed_issue_updated_at": "2026-09-27T02:12:23Z"
+    },
+    {
+      "id": "O92",
+      "repo": "optiflow",
+      "number": 92,
+      "title": "Linux recovery",
+      "status": "nuked",
+      "note": "Linux resume/restore/cleanup implemented.",
+      "group": "Inspection and Linux transactions",
+      "url": "https://github.com/egohygiene/optiflow/issues/92",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:45:52Z",
+      "observed_issue_updated_at": "2026-09-27T08:34:17Z"
+    },
+    {
+      "id": "O96",
+      "repo": "optiflow",
+      "number": 96,
+      "title": "Linux finalization",
+      "status": "nuked",
+      "note": "Linux retained-copy finalization; not general source disposal.",
+      "group": "Inspection and Linux transactions",
+      "url": "https://github.com/egohygiene/optiflow/issues/96",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:46:39Z",
+      "observed_issue_updated_at": "2026-09-27T09:45:48Z"
+    },
+    {
+      "id": "O111",
+      "repo": "optiflow",
+      "number": 111,
+      "title": "macOS APFS",
+      "status": "draft",
+      "note": "PR #122 draft; checks deferred. Mac cross-volume mutation/finalization unavailable; ACL proposal unadopted.",
+      "group": "Mac and optimization",
+      "url": "https://github.com/egohygiene/optiflow/issues/111",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T14:22:42Z",
+      "observed_issue_updated_at": "2026-10-06T01:42:06Z"
+    },
+    {
+      "id": "O93",
+      "repo": "optiflow",
+      "number": 93,
+      "title": "v0.2 qualification",
+      "status": "blocked",
+      "note": "After #111: native pilots, recovery, signing and v0.2 release.",
+      "group": "Mac and optimization",
+      "url": "https://github.com/egohygiene/optiflow/issues/93",
+      "original": true,
+      "github_state": "open",
+      "state_reason": "reopened",
+      "created_at": "2026-09-22T17:45:52Z",
+      "observed_issue_updated_at": "2026-09-27T14:22:50Z"
+    },
+    {
+      "id": "O112",
+      "repo": "optiflow",
+      "number": 112,
+      "title": "PNG corpus",
+      "status": "nuked",
+      "note": "PNG/provider fixture tranche merged via PR #113.",
+      "group": "Mac and optimization",
+      "url": "https://github.com/egohygiene/optiflow/issues/112",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T17:09:06Z",
+      "observed_issue_updated_at": "2026-10-05T20:22:46Z"
+    },
+    {
+      "id": "O94",
+      "repo": "optiflow",
+      "number": 94,
+      "title": "OxiPNG candidate",
+      "status": "nuked",
+      "note": "Producer merged; real OxiPNG/MSRV/native checks owed.",
+      "group": "Mac and optimization",
+      "url": "https://github.com/egohygiene/optiflow/issues/94",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:45:53Z",
+      "observed_issue_updated_at": "2026-10-05T20:22:47Z"
+    },
+    {
+      "id": "O95",
+      "repo": "optiflow",
+      "number": 95,
+      "title": "PNG replacement",
+      "status": "blocked",
+      "note": "After #93 + #94; preserve restorable originals; v0.3.",
+      "group": "Mac and optimization",
+      "url": "https://github.com/egohygiene/optiflow/issues/95",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-22T17:45:54Z",
+      "observed_issue_updated_at": "2026-09-22T17:52:55Z"
+    },
+    {
+      "id": "O121",
+      "repo": "optiflow",
+      "number": 121,
+      "title": "Recursive low-space workflow",
+      "status": "blocked",
+      "note": "After #95; qualified PNG subset, one candidate + scratch, explicit original disposal.",
+      "group": "Mac and optimization",
+      "url": "https://github.com/egohygiene/optiflow/issues/121",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-05T14:05:25Z",
+      "observed_issue_updated_at": "2026-10-05T14:05:25Z"
+    },
+    {
+      "id": "O65",
+      "repo": "optiflow",
+      "number": 65,
+      "title": "Media corpus",
+      "status": "epic",
+      "note": "Broader media/compatibility/resource corpus remains.",
+      "group": "Mac and optimization",
+      "url": "https://github.com/egohygiene/optiflow/issues/65",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T11:14:59Z",
+      "observed_issue_updated_at": "2026-09-26T19:21:35Z"
+    },
+    {
+      "id": "O115",
+      "repo": "optiflow",
+      "number": 115,
+      "title": "Release names",
+      "status": "external",
+      "note": "Wait for a compatible published Relay naming contract.",
+      "group": "Optiflow closeout",
+      "url": "https://github.com/egohygiene/optiflow/issues/115",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-28T21:21:26Z",
+      "observed_issue_updated_at": "2026-09-28T21:21:26Z"
+    },
+    {
+      "id": "O60",
+      "repo": "optiflow",
+      "number": 60,
+      "title": "ADR",
+      "status": "external",
+      "note": "External ADR platform gates remain.",
+      "group": "Optiflow closeout",
+      "url": "https://github.com/egohygiene/optiflow/issues/60",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-12T17:05:08Z",
+      "observed_issue_updated_at": "2026-09-12T17:05:08Z"
+    },
+    {
+      "id": "O61",
+      "repo": "optiflow",
+      "number": 61,
+      "title": "audit",
+      "status": "blocked",
+      "note": "Audit after active work; not after Flow #11 closes.",
+      "group": "Optiflow closeout",
+      "url": "https://github.com/egohygiene/optiflow/issues/61",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-13T19:19:33Z",
+      "observed_issue_updated_at": "2026-09-13T19:19:33Z"
+    },
+    {
+      "id": "A8",
+      "repo": "aniflow",
+      "number": 8,
+      "title": "Demucs",
+      "status": "nuked",
+      "note": "Demucs implementation merged; native/model scope stays bounded.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/8",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-08-22T20:36:35Z",
+      "observed_issue_updated_at": "2026-09-28T18:23:22Z"
+    },
+    {
+      "id": "A42",
+      "repo": "aniflow",
+      "number": 42,
+      "title": "Audio analysis contract",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/42",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T18:30:29Z",
+      "observed_issue_updated_at": "2026-10-01T16:40:33Z"
+    },
+    {
+      "id": "A43",
+      "repo": "aniflow",
+      "number": 43,
+      "title": "Offline technical inspection",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/43",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T18:30:29Z",
+      "observed_issue_updated_at": "2026-09-28T19:40:37Z"
+    },
+    {
+      "id": "A44",
+      "repo": "aniflow",
+      "number": 44,
+      "title": "Loudness, peak and silence",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/44",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T18:30:30Z",
+      "observed_issue_updated_at": "2026-09-28T20:22:53Z"
+    },
+    {
+      "id": "A55",
+      "repo": "aniflow",
+      "number": 55,
+      "title": "High-rate true peak",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/55",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T19:59:50Z",
+      "observed_issue_updated_at": "2026-09-28T21:48:00Z"
+    },
+    {
+      "id": "A45",
+      "repo": "aniflow",
+      "number": 45,
+      "title": "Stem lineage",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/45",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T18:30:31Z",
+      "observed_issue_updated_at": "2026-09-28T22:41:26Z"
+    },
+    {
+      "id": "A46",
+      "repo": "aniflow",
+      "number": 46,
+      "title": "Tempo, beat and key",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/46",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T18:30:32Z",
+      "observed_issue_updated_at": "2026-09-29T00:08:16Z"
+    },
+    {
+      "id": "A47",
+      "repo": "aniflow",
+      "number": 47,
+      "title": "Timed-text conversion",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/47",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T18:30:54Z",
+      "observed_issue_updated_at": "2026-09-29T02:07:32Z"
+    },
+    {
+      "id": "A48",
+      "repo": "aniflow",
+      "number": 48,
+      "title": "Offline transcription",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/48",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T18:30:55Z",
+      "observed_issue_updated_at": "2026-09-29T15:59:09Z"
+    },
+    {
+      "id": "A49",
+      "repo": "aniflow",
+      "number": 49,
+      "title": "Reviewed lyric alignment",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/49",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T18:30:56Z",
+      "observed_issue_updated_at": "2026-09-29T18:20:06Z"
+    },
+    {
+      "id": "A50",
+      "repo": "aniflow",
+      "number": 50,
+      "title": "MIDI candidates",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/50",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T18:30:56Z",
+      "observed_issue_updated_at": "2026-10-01T03:40:19Z"
+    },
+    {
+      "id": "A51",
+      "repo": "aniflow",
+      "number": 51,
+      "title": "Audio workflow handoff",
+      "status": "nuked",
+      "note": "Bounded implementation complete; historical local evidence retained. Wider platform/release proof remains.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/51",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-28T18:30:57Z",
+      "observed_issue_updated_at": "2026-10-01T17:53:12Z"
+    },
+    {
+      "id": "A13",
+      "repo": "aniflow",
+      "number": 13,
+      "title": "Audio evidence",
+      "status": "nuked",
+      "note": "Typed audio/lyrics/MIDI source merged; #64 owns residual checks.",
+      "group": "Audio foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/13",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-11T19:52:54Z",
+      "observed_issue_updated_at": "2026-10-01T17:53:14Z"
+    },
+    {
+      "id": "A32",
+      "repo": "aniflow",
+      "number": 32,
+      "title": "Temporal correctness",
+      "status": "nuked",
+      "note": "Temporal implementation merged; qualification owed to #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/32",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:47:45Z",
+      "observed_issue_updated_at": "2026-10-01T21:58:16Z"
+    },
+    {
+      "id": "A66",
+      "repo": "aniflow",
+      "number": 66,
+      "title": "Layered validation contracts",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/66",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-01T22:34:41Z",
+      "observed_issue_updated_at": "2026-10-02T01:43:39Z"
+    },
+    {
+      "id": "A67",
+      "repo": "aniflow",
+      "number": 67,
+      "title": "Runtime validation gates",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/67",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-01T22:34:42Z",
+      "observed_issue_updated_at": "2026-10-02T01:43:40Z"
+    },
+    {
+      "id": "A68",
+      "repo": "aniflow",
+      "number": 68,
+      "title": "Validation handoff",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/68",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-01T22:34:44Z",
+      "observed_issue_updated_at": "2026-10-02T01:43:40Z"
+    },
+    {
+      "id": "A33",
+      "repo": "aniflow",
+      "number": 33,
+      "title": "Validation",
+      "status": "nuked",
+      "note": "Validation implementation merged; qualification owed to #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/33",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:47:45Z",
+      "observed_issue_updated_at": "2026-10-02T01:43:39Z"
+    },
+    {
+      "id": "A71",
+      "repo": "aniflow",
+      "number": 71,
+      "title": "Cache identity and ownership",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/71",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T05:37:09Z",
+      "observed_issue_updated_at": "2026-10-02T11:28:12Z"
+    },
+    {
+      "id": "A72",
+      "repo": "aniflow",
+      "number": 72,
+      "title": "Cross-run reuse",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/72",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T05:37:10Z",
+      "observed_issue_updated_at": "2026-10-02T11:28:13Z"
+    },
+    {
+      "id": "A73",
+      "repo": "aniflow",
+      "number": 73,
+      "title": "Cache controls and handoff",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/73",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T05:37:11Z",
+      "observed_issue_updated_at": "2026-10-02T11:28:12Z"
+    },
+    {
+      "id": "A34",
+      "repo": "aniflow",
+      "number": 34,
+      "title": "Reuse and controls",
+      "status": "nuked",
+      "note": "Reuse/controls merged; qualification owed to #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/34",
+      "original": true,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-09-22T17:47:46Z",
+      "observed_issue_updated_at": "2026-10-02T11:28:11Z"
+    },
+    {
+      "id": "A75",
+      "repo": "aniflow",
+      "number": 75,
+      "title": "Corpus recipes",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/75",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T13:09:11Z",
+      "observed_issue_updated_at": "2026-10-02T17:48:23Z"
+    },
+    {
+      "id": "A76",
+      "repo": "aniflow",
+      "number": 76,
+      "title": "Corpus consumers",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/76",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T13:09:12Z",
+      "observed_issue_updated_at": "2026-10-02T17:48:25Z"
+    },
+    {
+      "id": "A77",
+      "repo": "aniflow",
+      "number": 77,
+      "title": "Corpus gates",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/77",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T13:09:13Z",
+      "observed_issue_updated_at": "2026-10-02T17:48:24Z"
+    },
+    {
+      "id": "A24",
+      "repo": "aniflow",
+      "number": 24,
+      "title": "Media corpus",
+      "status": "epic",
+      "note": "#75–#77 merged; broader corpus and qualification remain.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/24",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-15T11:15:00Z",
+      "observed_issue_updated_at": "2026-10-02T18:31:25Z"
+    },
+    {
+      "id": "A89",
+      "repo": "aniflow",
+      "number": 89,
+      "title": "Artifact-set identities",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/89",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T20:30:30Z",
+      "observed_issue_updated_at": "2026-10-02T21:18:59Z"
+    },
+    {
+      "id": "A90",
+      "repo": "aniflow",
+      "number": 90,
+      "title": "Complete output-set execution",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/90",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T20:30:30Z",
+      "observed_issue_updated_at": "2026-10-02T21:19:00Z"
+    },
+    {
+      "id": "A91",
+      "repo": "aniflow",
+      "number": 91,
+      "title": "Multi-artifact handoff",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/91",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T20:30:31Z",
+      "observed_issue_updated_at": "2026-10-02T21:19:02Z"
+    },
+    {
+      "id": "A69",
+      "repo": "aniflow",
+      "number": 69,
+      "title": "Multiple artifacts per port",
+      "status": "nuked",
+      "note": "Multiple artifacts per port merged; checks owed to #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/69",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-01T22:54:09Z",
+      "observed_issue_updated_at": "2026-10-02T21:18:58Z"
+    },
+    {
+      "id": "A93",
+      "repo": "aniflow",
+      "number": 93,
+      "title": "Native WAV inspection",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/93",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-03T14:53:23Z",
+      "observed_issue_updated_at": "2026-10-03T16:21:49Z"
+    },
+    {
+      "id": "A94",
+      "repo": "aniflow",
+      "number": 94,
+      "title": "Native signal measurements",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/94",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-03T14:53:23Z",
+      "observed_issue_updated_at": "2026-10-03T16:21:49Z"
+    },
+    {
+      "id": "A95",
+      "repo": "aniflow",
+      "number": 95,
+      "title": "Native audio handoff",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/95",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-03T14:53:24Z",
+      "observed_issue_updated_at": "2026-10-03T16:21:50Z"
+    },
+    {
+      "id": "A80",
+      "repo": "aniflow",
+      "number": 80,
+      "title": "Native audio inspection",
+      "status": "nuked",
+      "note": "Native inspection merged; loudness/true peak still unavailable.",
+      "group": "Temporal foundations",
+      "url": "https://github.com/egohygiene/aniflow/issues/80",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T15:18:37Z",
+      "observed_issue_updated_at": "2026-10-03T16:21:48Z"
+    },
+    {
+      "id": "A85",
+      "repo": "aniflow",
+      "number": 85,
+      "title": "Release candidate identity",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "First release",
+      "url": "https://github.com/egohygiene/aniflow/issues/85",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T17:53:28Z",
+      "observed_issue_updated_at": "2026-10-02T19:45:07Z"
+    },
+    {
+      "id": "A86",
+      "repo": "aniflow",
+      "number": 86,
+      "title": "Deterministic platform bundles",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "First release",
+      "url": "https://github.com/egohygiene/aniflow/issues/86",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T17:53:29Z",
+      "observed_issue_updated_at": "2026-10-02T19:45:08Z"
+    },
+    {
+      "id": "A87",
+      "repo": "aniflow",
+      "number": 87,
+      "title": "Release handoff and docs",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "First release",
+      "url": "https://github.com/egohygiene/aniflow/issues/87",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-02T17:53:32Z",
+      "observed_issue_updated_at": "2026-10-02T19:45:07Z"
+    },
+    {
+      "id": "A64",
+      "repo": "aniflow",
+      "number": 64,
+      "title": "Deferred validation",
+      "status": "qualification",
+      "note": "Known cancellation failure plus accumulated deferred checks.",
+      "group": "First release",
+      "url": "https://github.com/egohygiene/aniflow/issues/64",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-01T17:51:44Z",
+      "observed_issue_updated_at": "2026-10-05T11:29:45Z"
+    },
+    {
+      "id": "A10",
+      "repo": "aniflow",
+      "number": 10,
+      "title": "Provider release",
+      "status": "qualification",
+      "note": "Release preparation merged; Egolint #29 and qualification remain.",
+      "group": "First release",
+      "url": "https://github.com/egohygiene/aniflow/issues/10",
+      "original": true,
+      "github_state": "open",
+      "state_reason": "reopened",
+      "created_at": "2026-08-31T02:37:23Z",
+      "observed_issue_updated_at": "2026-10-02T19:46:40Z"
+    },
+    {
+      "id": "A97",
+      "repo": "aniflow",
+      "number": 97,
+      "title": "Provider profile contract",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/97",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-04T15:31:08Z",
+      "observed_issue_updated_at": "2026-10-05T13:19:32Z"
+    },
+    {
+      "id": "A98",
+      "repo": "aniflow",
+      "number": 98,
+      "title": "Toolchain diagnostics",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/98",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-04T15:31:09Z",
+      "observed_issue_updated_at": "2026-10-05T13:19:36Z"
+    },
+    {
+      "id": "A99",
+      "repo": "aniflow",
+      "number": 99,
+      "title": "Toolchain examples and handoff",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/99",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-04T15:31:10Z",
+      "observed_issue_updated_at": "2026-10-05T13:19:33Z"
+    },
+    {
+      "id": "A101",
+      "repo": "aniflow",
+      "number": 101,
+      "title": "Bounded FFmpeg/ffprobe probes",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/101",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-04T15:52:01Z",
+      "observed_issue_updated_at": "2026-10-05T13:19:33Z"
+    },
+    {
+      "id": "A102",
+      "repo": "aniflow",
+      "number": 102,
+      "title": "macOS probe adapter",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/102",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-04T16:31:26Z",
+      "observed_issue_updated_at": "2026-10-05T13:19:34Z"
+    },
+    {
+      "id": "A103",
+      "repo": "aniflow",
+      "number": 103,
+      "title": "Bound native preflight",
+      "status": "nuked",
+      "note": "Bounded implementation merged; qualification remains under #64.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/103",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-05T11:16:11Z",
+      "observed_issue_updated_at": "2026-10-05T13:19:35Z"
+    },
+    {
+      "id": "A104",
+      "repo": "aniflow",
+      "number": 104,
+      "title": "Audio registration preparation",
+      "status": "draft",
+      "note": "PR #105 draft; inert audio registration documents; unrun tests.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/104",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-05T17:44:54Z",
+      "observed_issue_updated_at": "2026-10-05T18:00:04Z"
+    },
+    {
+      "id": "A38",
+      "repo": "aniflow",
+      "number": 38,
+      "title": "Toolchain doctor",
+      "status": "epic",
+      "note": "Doctor/preflight merged; registration and broader tools remain.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/38",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T11:37:31Z",
+      "observed_issue_updated_at": "2026-10-05T18:00:02Z"
+    },
+    {
+      "id": "A36",
+      "repo": "aniflow",
+      "number": 36,
+      "title": "Frame import and repair",
+      "status": "planned",
+      "note": "Immutable workspace import and explicit repair ranges.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/36",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T11:37:30Z",
+      "observed_issue_updated_at": "2026-09-27T11:37:30Z"
+    },
+    {
+      "id": "A37",
+      "repo": "aniflow",
+      "number": 37,
+      "title": "Upscale recovery",
+      "status": "planned",
+      "note": "Bounded chunk/per-frame Upscayl recovery; native proof owed.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/37",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T11:37:30Z",
+      "observed_issue_updated_at": "2026-09-27T11:37:30Z"
+    },
+    {
+      "id": "A35",
+      "repo": "aniflow",
+      "number": 35,
+      "title": "Music-video profile",
+      "status": "epic",
+      "note": "Compose repair, upscale and validated delivery.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/35",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T11:34:21Z",
+      "observed_issue_updated_at": "2026-10-02T15:28:04Z"
+    },
+    {
+      "id": "A40",
+      "repo": "aniflow",
+      "number": 40,
+      "title": "Profile release",
+      "status": "blocked",
+      "note": "After #35 + #10; qualify and release music-video profile.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/40",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T14:25:19Z",
+      "observed_issue_updated_at": "2026-09-27T14:25:19Z"
+    },
+    {
+      "id": "A79",
+      "repo": "aniflow",
+      "number": 79,
+      "title": "Manual release-preparation pilot",
+      "status": "epic",
+      "note": "Runbook merged; actual pilot and human review remain.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/79",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-02T15:15:54Z",
+      "observed_issue_updated_at": "2026-10-06T00:19:52Z"
+    },
+    {
+      "id": "A83",
+      "repo": "aniflow",
+      "number": 83,
+      "title": "Destination exports",
+      "status": "planned",
+      "note": "Prepare destination copies; posting stays separate.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/83",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-02T15:18:39Z",
+      "observed_issue_updated_at": "2026-10-02T15:18:39Z"
+    },
+    {
+      "id": "A82",
+      "repo": "aniflow",
+      "number": 82,
+      "title": "Provenance and timestamp receipts",
+      "status": "planned",
+      "note": "Exact final bytes, provenance bundle and recoverable OTS proofs.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/82",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-02T15:18:39Z",
+      "observed_issue_updated_at": "2026-10-02T15:18:39Z"
+    },
+    {
+      "id": "A39",
+      "repo": "aniflow",
+      "number": 39,
+      "title": "Watermark experiment",
+      "status": "optional",
+      "note": "Optional experiment; not required for clean delivery.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/39",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-27T11:37:32Z",
+      "observed_issue_updated_at": "2026-09-27T11:49:34Z"
+    },
+    {
+      "id": "A81",
+      "repo": "aniflow",
+      "number": 81,
+      "title": "Creator watermarks",
+      "status": "optional",
+      "note": "Optional creator mark; stereo/native quality unqualified.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/81",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-02T15:18:38Z",
+      "observed_issue_updated_at": "2026-10-02T15:18:38Z"
+    },
+    {
+      "id": "A106",
+      "repo": "aniflow",
+      "number": 106,
+      "title": "Temporal restoration experiment",
+      "status": "optional",
+      "note": "Optional deflicker/restoration/interpolation; manual trial owed.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/106",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-06T00:19:31Z",
+      "observed_issue_updated_at": "2026-10-06T00:26:05Z"
+    },
+    {
+      "id": "A14",
+      "repo": "aniflow",
+      "number": 14,
+      "title": "ADR",
+      "status": "external",
+      "note": "External ADR platform gates remain.",
+      "group": "Aniflow closeout",
+      "url": "https://github.com/egohygiene/aniflow/issues/14",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-12T17:04:45Z",
+      "observed_issue_updated_at": "2026-09-22T17:55:52Z"
+    },
+    {
+      "id": "A17",
+      "repo": "aniflow",
+      "number": 17,
+      "title": "audit",
+      "status": "blocked",
+      "note": "Provider audit before final Flow audit/stable release.",
+      "group": "Aniflow closeout",
+      "url": "https://github.com/egohygiene/aniflow/issues/17",
+      "original": true,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-09-13T19:19:33Z",
+      "observed_issue_updated_at": "2026-09-13T19:19:33Z"
+    },
+    {
+      "id": "O_H04",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.4 Image profiles",
+      "status": "horizon",
+      "note": "Broader image conversions; needs bounded issue decomposition.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H05",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.5 Audio/video optimization",
+      "status": "horizon",
+      "note": "Product horizon; not delivered by the PNG transaction path.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H06",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.6 Perceptual relationships",
+      "status": "horizon",
+      "note": "Similarity/containment horizon; exact dedup is narrower.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H07",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.7 Collections and portable state",
+      "status": "horizon",
+      "note": "Longer-term product scope; named implementation issues needed.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H08",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.8 Policy and review UX",
+      "status": "horizon",
+      "note": "Automation/review horizon; not implicit mutation authority.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H09",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.9 Stable-contract beta",
+      "status": "horizon",
+      "note": "Broader product qualification beyond current release gates.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H10",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v1.0 macOS/Linux GA",
+      "status": "horizon",
+      "note": "Reconcile supported scope before claiming full Optiflow completion.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "F50",
+      "target": "F53",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F50",
+      "target": "F73",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F51",
+      "target": "F53",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F51",
+      "target": "F75",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F52",
+      "target": "F53",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F53",
+      "target": "F3",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F53",
+      "target": "F70",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F3",
+      "target": "F32",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F3",
+      "target": "F33",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F3",
+      "target": "F54",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F32",
+      "target": "F34",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F32",
+      "target": "F70",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F32",
+      "target": "F10",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F33",
+      "target": "F34",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F33",
+      "target": "F70",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F34",
+      "target": "F13",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F34",
+      "target": "F54",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F13",
+      "target": "F12",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F70",
+      "target": "F71",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F71",
+      "target": "F54",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F54",
+      "target": "F12",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F54",
+      "target": "F72",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R415",
+      "target": "R416",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R415",
+      "target": "R417",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R416",
+      "target": "R419",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R416",
+      "target": "R413",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R417",
+      "target": "R418",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R418",
+      "target": "R419",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R418",
+      "target": "R413",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R418",
+      "target": "R414",
+      "kind": "scoped",
+      "label": "parent close"
+    },
+    {
+      "source": "R419",
+      "target": "F52",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R419",
+      "target": "R409",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R412",
+      "target": "F33",
+      "kind": "scoped",
+      "label": "fixture subset; [R413](https://github.com/egohygiene/renderflow/issues/413): corpus coordination"
+    },
+    {
+      "source": "R413",
+      "target": "F32",
+      "kind": "scoped",
+      "label": "fixture subset"
+    },
+    {
+      "source": "A8",
+      "target": "A13",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A13",
+      "target": "R397",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A13",
+      "target": "R349",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A32",
+      "target": "A33",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A33",
+      "target": "A34",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A33",
+      "target": "A36",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A33",
+      "target": "A69",
+      "kind": "scoped",
+      "label": "cardinality follow-up"
+    },
+    {
+      "source": "A34",
+      "target": "A75",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A24",
+      "target": "F33",
+      "kind": "scoped",
+      "label": "fixture subset; [A10](https://github.com/egohygiene/aniflow/issues/10): bounded corpus qualification"
+    },
+    {
+      "source": "A10",
+      "target": "F51",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A10",
+      "target": "A40",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A10",
+      "target": "A17",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A64",
+      "target": "A10",
+      "kind": "scoped",
+      "label": "required release checks"
+    },
+    {
+      "source": "A75",
+      "target": "A76",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A76",
+      "target": "A77",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A77",
+      "target": "A10",
+      "kind": "scoped",
+      "label": "bounded corpus handoff"
+    },
+    {
+      "source": "O111",
+      "target": "O93",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O93",
+      "target": "O95",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O93",
+      "target": "F73",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O93",
+      "target": "O61",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O94",
+      "target": "O95",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O95",
+      "target": "F74",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O95",
+      "target": "O61",
+      "kind": "scoped",
+      "label": "scope"
+    },
+    {
+      "source": "O112",
+      "target": "O94",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F73",
+      "target": "F74",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F73",
+      "target": "F11",
+      "kind": "scoped",
+      "label": "later"
+    },
+    {
+      "source": "F74",
+      "target": "F11",
+      "kind": "scoped",
+      "label": "later"
+    },
+    {
+      "source": "F75",
+      "target": "F11",
+      "kind": "scoped",
+      "label": "later"
+    },
+    {
+      "source": "F10",
+      "target": "F12",
+      "kind": "scoped",
+      "label": "scope"
+    },
+    {
+      "source": "F62",
+      "target": "F12",
+      "kind": "scoped",
+      "label": "review"
+    },
+    {
+      "source": "A36",
+      "target": "A35",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A37",
+      "target": "A35",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A37",
+      "target": "A39",
+      "kind": "scoped",
+      "label": "experiment"
+    },
+    {
+      "source": "A35",
+      "target": "A40",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A39",
+      "target": "A40",
+      "kind": "scoped",
+      "label": "optional"
+    },
+    {
+      "source": "A40",
+      "target": "F75",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A40",
+      "target": "A17",
+      "kind": "scoped",
+      "label": "scope"
+    },
+    {
+      "source": "R406",
+      "target": "F10",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R406",
+      "target": "R413",
+      "kind": "scoped",
+      "label": "fixture subset"
+    },
+    {
+      "source": "R422",
+      "target": "R430",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R423",
+      "target": "R424",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R423",
+      "target": "R425",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R423",
+      "target": "R426",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R423",
+      "target": "R430",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R424",
+      "target": "R430",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R425",
+      "target": "R430",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R426",
+      "target": "R430",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R427",
+      "target": "R428",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R427",
+      "target": "R430",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R428",
+      "target": "R430",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R429",
+      "target": "R430",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R430",
+      "target": "F10",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R430",
+      "target": "R421",
+      "kind": "scoped",
+      "label": "parent close; [R367](https://github.com/egohygiene/renderflow/issues/367): reconcile"
+    },
+    {
+      "source": "R367",
+      "target": "R409",
+      "kind": "scoped",
+      "label": "scope"
+    },
+    {
+      "source": "R397",
+      "target": "R367",
+      "kind": "scoped",
+      "label": "profile"
+    },
+    {
+      "source": "R379",
+      "target": "R367",
+      "kind": "scoped",
+      "label": "profile"
+    },
+    {
+      "source": "R350",
+      "target": "R367",
+      "kind": "scoped",
+      "label": "profile"
+    },
+    {
+      "source": "R349",
+      "target": "R367",
+      "kind": "scoped",
+      "label": "profile"
+    },
+    {
+      "source": "R420",
+      "target": "R367",
+      "kind": "scoped",
+      "label": "optional"
+    },
+    {
+      "source": "F15",
+      "target": "F16",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F15",
+      "target": "F22",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F16",
+      "target": "F17",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F17",
+      "target": "F18",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F18",
+      "target": "F19",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F18",
+      "target": "F20",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F20",
+      "target": "F21",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F21",
+      "target": "F14",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F22",
+      "target": "F14",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F14",
+      "target": "F54",
+      "kind": "scoped",
+      "label": "disposition; [F12](https://github.com/egohygiene/flow/issues/12): scope"
+    },
+    {
+      "source": "F9",
+      "target": "F12",
+      "kind": "scoped",
+      "label": "ADR gate"
+    },
+    {
+      "source": "R405",
+      "target": "R409",
+      "kind": "scoped",
+      "label": "ADR gate"
+    },
+    {
+      "source": "O60",
+      "target": "O61",
+      "kind": "scoped",
+      "label": "ADR gate"
+    },
+    {
+      "source": "A14",
+      "target": "A17",
+      "kind": "scoped",
+      "label": "ADR gate"
+    },
+    {
+      "source": "R409",
+      "target": "F72",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O61",
+      "target": "F72",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A17",
+      "target": "F72",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F12",
+      "target": "F72",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F72",
+      "target": "F11",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "R378",
+      "target": "R379",
+      "kind": "scoped",
+      "label": "paired content contract"
+    },
+    {
+      "source": "F19",
+      "target": "F20",
+      "kind": "scoped",
+      "label": "only if package selected"
+    },
+    {
+      "source": "R422",
+      "target": "R423",
+      "kind": "scoped",
+      "label": "exhaustive integration only"
+    },
+    {
+      "source": "F28",
+      "target": "F62",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F30",
+      "target": "F62",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F23",
+      "target": "F25",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F25",
+      "target": "F29",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F28",
+      "target": "F29",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F29",
+      "target": "F30",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F30",
+      "target": "F49",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F49",
+      "target": "F31",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F31",
+      "target": "F53",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F49",
+      "target": "F51",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F49",
+      "target": "F52",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "F75",
+      "target": "F78",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A40",
+      "target": "F78",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O88",
+      "target": "O89",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O88",
+      "target": "O90",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O90",
+      "target": "O91",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O91",
+      "target": "O92",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O92",
+      "target": "O96",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O96",
+      "target": "O111",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O89",
+      "target": "O93",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O89",
+      "target": "F50",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O95",
+      "target": "O121",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A85",
+      "target": "A86",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A86",
+      "target": "A87",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A97",
+      "target": "A98",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A98",
+      "target": "A99",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A101",
+      "target": "A102",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A103",
+      "target": "A104",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A32",
+      "target": "A36",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A80",
+      "target": "A83",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A87",
+      "target": "A10",
+      "kind": "scoped",
+      "label": "release-preparation tranche"
+    },
+    {
+      "source": "A104",
+      "target": "A38",
+      "kind": "scoped",
+      "label": "registration subset"
+    },
+    {
+      "source": "A80",
+      "target": "A38",
+      "kind": "scoped",
+      "label": "native audio profile"
+    },
+    {
+      "source": "A36",
+      "target": "A37",
+      "kind": "sequence",
+      "label": "recommended work order"
+    },
+    {
+      "source": "A35",
+      "target": "A83",
+      "kind": "scoped",
+      "label": "delivery integration"
+    },
+    {
+      "source": "A83",
+      "target": "A82",
+      "kind": "scoped",
+      "label": "final exported byte subjects"
+    },
+    {
+      "source": "A80",
+      "target": "A79",
+      "kind": "scoped",
+      "label": "pilot coverage"
+    },
+    {
+      "source": "A81",
+      "target": "A79",
+      "kind": "scoped",
+      "label": "pilot coverage"
+    },
+    {
+      "source": "A82",
+      "target": "A79",
+      "kind": "scoped",
+      "label": "pilot coverage"
+    },
+    {
+      "source": "A83",
+      "target": "A79",
+      "kind": "scoped",
+      "label": "pilot coverage"
+    },
+    {
+      "source": "A106",
+      "target": "A79",
+      "kind": "scoped",
+      "label": "pilot coverage"
+    },
+    {
+      "source": "A39",
+      "target": "A82",
+      "kind": "scoped",
+      "label": "if selected: transform before final hashes"
+    },
+    {
+      "source": "A81",
+      "target": "A82",
+      "kind": "scoped",
+      "label": "if selected: transform before final hashes"
+    },
+    {
+      "source": "A106",
+      "target": "A82",
+      "kind": "scoped",
+      "label": "if selected: transform before final hashes"
+    },
+    {
+      "source": "A106",
+      "target": "A83",
+      "kind": "scoped",
+      "label": "timing and color coordination"
+    },
+    {
+      "source": "R433",
+      "target": "R412",
+      "kind": "scoped",
+      "label": "completed gallery tranche"
+    },
+    {
+      "source": "R424",
+      "target": "R429",
+      "kind": "scoped",
+      "label": "toolchain consolidation"
+    },
+    {
+      "source": "R425",
+      "target": "R429",
+      "kind": "scoped",
+      "label": "toolchain consolidation"
+    },
+    {
+      "source": "R426",
+      "target": "R429",
+      "kind": "scoped",
+      "label": "toolchain consolidation"
+    },
+    {
+      "source": "R427",
+      "target": "R429",
+      "kind": "scoped",
+      "label": "toolchain consolidation"
+    },
+    {
+      "source": "R428",
+      "target": "R429",
+      "kind": "scoped",
+      "label": "toolchain consolidation"
+    },
+    {
+      "source": "R409",
+      "target": "F12",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "O61",
+      "target": "F12",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A17",
+      "target": "F12",
+      "kind": "required",
+      "label": ""
+    },
+    {
+      "source": "A13",
+      "target": "A32",
+      "kind": "sequence",
+      "label": "historical implementation order"
+    },
+    {
+      "source": "A33",
+      "target": "A37",
+      "kind": "scoped",
+      "label": "validation acceptance coordination"
+    },
+    {
+      "source": "A34",
+      "target": "A24",
+      "kind": "scoped",
+      "label": "bounded cache corpus coverage"
+    },
+    {
+      "source": "A99",
+      "target": "A101",
+      "kind": "sequence",
+      "label": "toolchain checkpoint order"
+    },
+    {
+      "source": "A102",
+      "target": "A103",
+      "kind": "sequence",
+      "label": "toolchain checkpoint order"
+    },
+    {
+      "source": "A38",
+      "target": "A35",
+      "kind": "scoped",
+      "label": "selected profile and toolchain readiness"
+    },
+    {
+      "source": "O65",
+      "target": "F32",
+      "kind": "scoped",
+      "label": "exact required immutable fixture subset"
+    },
+    {
+      "source": "A42",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A43",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A44",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A45",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A46",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A47",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A48",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A49",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A50",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A51",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A55",
+      "target": "A13",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A66",
+      "target": "A33",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A67",
+      "target": "A33",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A68",
+      "target": "A33",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A71",
+      "target": "A34",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A72",
+      "target": "A34",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A73",
+      "target": "A34",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A89",
+      "target": "A69",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A90",
+      "target": "A69",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A91",
+      "target": "A69",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A93",
+      "target": "A80",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A94",
+      "target": "A80",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "A95",
+      "target": "A80",
+      "kind": "scoped",
+      "label": "completed implementation tranche"
+    },
+    {
+      "source": "O_H04",
+      "target": "O_H05",
+      "kind": "sequence",
+      "label": "product horizon order; scope not yet decomposed"
+    },
+    {
+      "source": "O_H05",
+      "target": "O_H06",
+      "kind": "sequence",
+      "label": "product horizon order; scope not yet decomposed"
+    },
+    {
+      "source": "O_H06",
+      "target": "O_H07",
+      "kind": "sequence",
+      "label": "product horizon order; scope not yet decomposed"
+    },
+    {
+      "source": "O_H07",
+      "target": "O_H08",
+      "kind": "sequence",
+      "label": "product horizon order; scope not yet decomposed"
+    },
+    {
+      "source": "O_H08",
+      "target": "O_H09",
+      "kind": "sequence",
+      "label": "product horizon order; scope not yet decomposed"
+    },
+    {
+      "source": "O_H09",
+      "target": "O_H10",
+      "kind": "sequence",
+      "label": "product horizon order; scope not yet decomposed"
+    }
+  ],
+  "external_gates": [
+    {
+      "id": "hygiene/15",
+      "state": "closed",
+      "state_reason": "completed",
+      "url": "https://github.com/egohygiene/hygiene/issues/15",
+      "title": "Define the global Architecture Decision Record standard and inheritance contract",
+      "updated_at": "2026-09-12T17:22:26Z"
+    },
+    {
+      "id": "holon/6",
+      "state": "closed",
+      "state_reason": "completed",
+      "url": "https://github.com/egohygiene/holon/issues/6",
+      "title": "Add ADR scaffolding and inherited repository decision policy",
+      "updated_at": "2026-09-12T19:00:28Z"
+    },
+    {
+      "id": "relay/5",
+      "state": "open",
+      "state_reason": null,
+      "url": "https://github.com/egohygiene/relay/issues/5",
+      "title": "Validate architecture and repository structure in CI",
+      "updated_at": "2026-08-22T19:27:29Z"
+    },
+    {
+      "id": "relay/27",
+      "state": "open",
+      "state_reason": null,
+      "url": "https://github.com/egohygiene/relay/issues/27",
+      "title": "Build the Repository Intelligence experience",
+      "updated_at": "2026-09-26T20:32:17Z"
+    },
+    {
+      "id": "relay/33",
+      "state": "open",
+      "state_reason": null,
+      "url": "https://github.com/egohygiene/relay/issues/33",
+      "title": "Publish deterministic Repository Intelligence through reusable GitHub Actions",
+      "updated_at": "2026-09-26T18:09:34Z"
+    },
+    {
+      "id": "pace/5",
+      "state": "open",
+      "state_reason": null,
+      "url": "https://github.com/egohygiene/pace/issues/5",
+      "title": "[Capability 1] Roll out and reconcile the ADR baseline and Decisions views across the fleet",
+      "updated_at": "2026-09-28T17:10:23Z"
+    },
+    {
+      "id": "egolint/29",
+      "state": "open",
+      "state_reason": "reopened",
+      "url": "https://github.com/egohygiene/egolint/issues/29",
+      "title": "feat(releases): validate semantic release, changelog, and version-source conformance",
+      "updated_at": "2026-09-19T22:48:50Z"
+    },
+    {
+      "id": "relay/71",
+      "state": "open",
+      "state_reason": null,
+      "url": "https://github.com/egohygiene/relay/issues/71",
+      "title": "Separate consumer release names from validation profiles",
+      "updated_at": "2026-09-28T21:26:23Z"
+    }
+  ],
+  "open_prs": [
+    {
+      "repo": "optiflow",
+      "number": 122,
+      "head": "e5090aafcfbdecd8aae7ce216ca53333b9995182",
+      "draft": true,
+      "issue": "O111"
+    },
+    {
+      "repo": "aniflow",
+      "number": 105,
+      "head": "afc444aff8fd108c4ce7d2fd48bf208c02f640a6",
+      "draft": true,
+      "issue": "A104"
+    }
+  ]
+}

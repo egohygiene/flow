@@ -4,3 +4,6 @@ __pycache__/
 *.pyc
 dist/
 /target/
+
+# Raster export from the committed roadmap snapshot, renderer and SVG.
+/docs/roadmaps/flow-suite-completion.png
