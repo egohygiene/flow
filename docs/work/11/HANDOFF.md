@@ -1,5 +1,40 @@
 # Flow #11 completion-roadmap handoff
 
+## October 15, 2026 — provider execution-order refresh
+
+The maintainer requested an updated order for completing the three independent
+providers. Continue this documentation work on existing draft PR #79, branch
+`docs/flow-suite-completion-map-2026-10-06`; inspected head
+`1ac888d45de4a5d3b1b8290a8b0cbc43a2d975e6`, main
+`4621df7437e0fdb278f025c75e9feb7298eb7bd9`. Re-query before any further write.
+
+- Added the [bounded provider execution order](../../roadmaps/flow-suite-execution-order-2026-10-15.md)
+  with live main pins and preserved draft Aniflow #105/#115 and Optiflow #122.
+- Recorded remaining implementation versus qualification, direct independent
+  provider use, immutable-release bridges and baseline versus optional features.
+  Live bridge reads confirm Flow #50 completed; #51/#52/#73/#74/#75/#78 remain
+  open. Release-contract gates Relay #71 and Egolint #29 remain open.
+- Linked the note at the top of the maintained dependency map. Its October 6
+  full JSON/graph/census remains dated historical evidence, not a fresh complete
+  Flow inventory. No graph, JSON, renderer, original node or archive was changed.
+- Public provider/suite evidence only. No consumer content or private source,
+  identifiers, approvals or implementation/test evidence is included.
+- ADR not required: execution-order documentation preserves current ownership,
+  public contracts and authority; no architecture/runtime decision changes.
+
+Documentation verification: offline UTF-8/LF, public-namespace/privacy and
+Markdown target checks pass for all three changed documents: 691 links,
+15 relative targets resolved against the candidate/base tree and 676 public
+GitHub targets checked for URL syntax/namespace, without an HTTP link crawl.
+No schema-bearing source changed; graph/JSON/renderer/archive assets are untouched.
+Product compiler/build, tests, lint, schemas, native/model/media/volume/package
+execution and hosted CI
+remain deferred and were not run, dispatched or polled. No product implementation,
+merge, release, provider action or consequential effect is authorized by this
+planning note. Keep PR #79 draft for maintainer review.
+
+The October 6 handoff below is preserved as the previous observation boundary.
+
 ## Checkpoint and authority
 
 - Parent: [Flow #11](https://github.com/egohygiene/flow/issues/11).

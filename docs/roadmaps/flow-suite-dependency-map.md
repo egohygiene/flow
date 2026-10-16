@@ -1,5 +1,12 @@
 # Flow suite roadmap to completion
 
+> **Latest provider execution-order refresh: October 15, 2026.** Read the
+> [bounded three-provider execution order](flow-suite-execution-order-2026-10-15.md)
+> for current Renderflow, Aniflow and Optiflow pins, existing drafts, remaining
+> qualification and release gates. The full graph, JSON and counts below retain
+> their **October 6** observation boundary; they were not regenerated or promoted
+> to a fresh complete Flow inventory by that refresh.
+
 **Snapshot: October 6, 2026.** The suite has substantial merged foundations,
 but a complete installable Flow suite is still ahead. Optiflow has a published
 **read-only v0.1.1**; Flow, Renderflow and Aniflow have no published GitHub
