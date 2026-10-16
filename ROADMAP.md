@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.7
+version: 1.3.8
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-10-02
+updated: 2026-10-06
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -26,9 +26,13 @@ supersedes: []
 ## Maintained suite dependency view
 
 The [Flow suite dependency map](docs/roadmaps/flow-suite-dependency-map.md)
-connects the independent provider lanes to the complete, inspectable comic
-artifact-tree outcome. It preserves the original Mermaid source, current
-evidence states, scoped dependencies and the update protocol. Its time-qualified
+connects the independent provider lanes to an installable suite and the full
+retained product backlog, including the inspectable comic artifact-tree outcome.
+The October 6 refresh preserves all 80 original nodes, includes every open issue
+and newer completed checkpoints, and marks bounded completed issues NUKED.
+Open the [full completion diagram](docs/roadmaps/flow-suite-completion.svg) or
+[editable Mermaid source](docs/roadmaps/flow-suite-completion.mmd). It preserves
+current evidence states, scoped dependencies and the update protocol. Its time-qualified
 snapshot supersedes older execution-status claims below where they conflict;
 live issues and repository evidence remain authoritative.
 

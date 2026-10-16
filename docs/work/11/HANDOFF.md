@@ -1,86 +1,115 @@
-# Flow #11 dependency-map documentation handoff
+# Flow #11 completion-roadmap handoff
+
+## October 15, 2026 — provider execution-order refresh
+
+The maintainer requested an updated order for completing the three independent
+providers. Continue this documentation work on existing draft PR #79, branch
+`docs/flow-suite-completion-map-2026-10-06`; inspected head
+`1ac888d45de4a5d3b1b8290a8b0cbc43a2d975e6`, main
+`4621df7437e0fdb278f025c75e9feb7298eb7bd9`. Re-query before any further write.
+
+- Added the [bounded provider execution order](../../roadmaps/flow-suite-execution-order-2026-10-15.md)
+  with live main pins and preserved draft Aniflow #105/#115 and Optiflow #122.
+- Recorded remaining implementation versus qualification, direct independent
+  provider use, immutable-release bridges and baseline versus optional features.
+  Live bridge reads confirm Flow #50 completed; #51/#52/#73/#74/#75/#78 remain
+  open. Release-contract gates Relay #71 and Egolint #29 remain open.
+- Linked the note at the top of the maintained dependency map. Its October 6
+  full JSON/graph/census remains dated historical evidence, not a fresh complete
+  Flow inventory. No graph, JSON, renderer, original node or archive was changed.
+- Public provider/suite evidence only. No consumer content or private source,
+  identifiers, approvals or implementation/test evidence is included.
+- ADR not required: execution-order documentation preserves current ownership,
+  public contracts and authority; no architecture/runtime decision changes.
+
+Documentation verification: offline UTF-8/LF, public-namespace/privacy and
+Markdown target checks pass for all three changed documents: 691 links,
+15 relative targets resolved against the candidate/base tree and 676 public
+GitHub targets checked for URL syntax/namespace, without an HTTP link crawl.
+No schema-bearing source changed; graph/JSON/renderer/archive assets are untouched.
+Product compiler/build, tests, lint, schemas, native/model/media/volume/package
+execution and hosted CI
+remain deferred and were not run, dispatched or polled. No product implementation,
+merge, release, provider action or consequential effect is authorized by this
+planning note. Keep PR #79 draft for maintainer review.
+
+The October 6 handoff below is preserved as the previous observation boundary.
 
 ## Checkpoint and authority
 
 - Parent: [Flow #11](https://github.com/egohygiene/flow/issues/11).
-- Role: documentation and bounded live reconciliation.
-- Request: capture the existing suite tree durably and update its observed state.
+- Request: update the entire suite roadmap, preserve the attached diagram's
+  old issues, mark completed issues **NUKED**, and include issues created since.
+- Role: documentation reconciliation and visual authoring only.
 - Strategy: worker-strategy v0.1.0 at
-  `db5f4bd339f9266758c74c3435d47c8005f89a8e`, implementation-first scheduling.
-- Scope: documentation only; the proposed Renderflow #422 implementation remains
-  unstarted. No sibling repository or tracker state is changed by this candidate.
-- Stop: reviewable draft PR, then return to the maintainer; no merge or CI dispatch.
+  `db5f4bd339f9266758c74c3435d47c8005f89a8e`.
+- Stop: reviewable draft roadmap PR and updated Flow #11 navigation, then return
+  to the maintainer. No merge, release, product implementation or CI dispatch.
+- Existing Optiflow and Aniflow work remains paused at its recorded draft heads.
+  Do not restart it from a stale roadmap summary.
 
 ## Base and candidate
 
-- Observed at: 2026-10-02T15:16:39.663Z.
-- Verified Flow base: `2102c3d48998d6fa00da3751e2ae409dfa8b6d6c` (`main`).
-- Candidate branch: `docs/flow-suite-dependency-map`.
-- Candidate commit and PR: supplied by the containing GitHub branch/PR, not
-  guessed in this file. A commit cannot contain its own eventual SHA.
-- The [map snapshot](../../roadmaps/flow-suite-dependency-map.md) records all four
-  observed heads, all open issues/PRs and the source/evidence limitations.
+- Observation date: October 6, 2026; exact assembly timestamp is in the
+  [documentation snapshot](../../roadmaps/flow-suite-status.json).
+- Flow base: `4621df7437e0fdb278f025c75e9feb7298eb7bd9` (`main`).
+- Branch: `docs/flow-suite-completion-map-2026-10-06`.
+- Candidate commit and PR are identified by the containing GitHub branch/PR;
+  this file does not guess its own eventual commit SHA.
+- [Maintained map](../../roadmaps/flow-suite-dependency-map.md),
+  [full diagram](../../roadmaps/flow-suite-completion.svg), and
+  [editable Mermaid](../../roadmaps/flow-suite-completion.mmd).
 
-## Outcome and acceptance
+## Delivered scope
 
-- Preserve the original public Mermaid block byte-for-byte in
-  `docs/roadmaps/archive/flow-suite-dependencies-2026-09-27.mmd`.
-- Provide a maintained, readable current map in
-  `docs/roadmaps/flow-suite-dependency-map.md`, covering all 80 original nodes and
-  seven newly open checkpoints, with explicit relationship corrections.
-- Keep authored/merged work, passing evidence, failures and release state
-  separate. Preserve open parent criteria and known pending work.
-- Link the map and this handoff from root navigation, and document future updates.
+- Recovered and viewed the supplied diagram. Its nine lanes match the already
+  archived September 27 source. The archive is unchanged, with SHA-256
+  `e6697b351459e28f6466cd5fe63ed5081a1814a65cbde6f8fb962be7846f0e5d`.
+- Retained all 80 original nodes and all 78 observed open issues. Included
+  newer closed implementation checkpoints and earlier completed foundations:
+  **143 issues, 65 NUKED, plus seven strategic Optiflow horizons**.
+- All issue creations since September 27 are represented in the inspected live
+  all-state collections, which reach before that cutoff. Older closed history
+  is selected for context, not claimed exhaustive.
+- Recorded 205 relationships; hard prerequisites, scoped integration and
+  chosen work order are separate. Original archive edges remain historical.
+- Added deterministic offline SVG/PNG authoring from the documentation JSON.
+  SVG is committed; PNG is a reproducible ignored export. The full atlas has
+  every node; focused Mermaid views and the edge table explain dependencies.
+- Separated first usable candidate, stable supported suite, remaining named
+  product lanes and longer-term pre-v1 Optiflow horizons. No completion
+  percentage is inferred from unequal parent/child issues.
 
-## Material changes and decisions
+## Review and evidence boundary
 
-The map belongs in Flow because it coordinates independent holons. Domain
-acceptance stays in each provider's issues. The original issue comment remains
-provenance; the archived source is historical and the new views are maintained.
-Root ROADMAP receives navigation and a metadata patch, not a new issue queue.
-No architecture ownership, runtime interface, workflow or product behavior changes.
+Live source/API reads covered issue, PR, main-head and release state. Independent
+source reviews corrected overstated dependency edges and misattributed short
+toolchain titles. Document generation and visual inspection are authoring work,
+not product qualification. The original source is byte-preserved.
 
-The original upload could not be retrieved, so image identity/preservation is
-unverified. Source reconstruction uses the already public issue comment only.
+All product tests, compiler/build, lint/format, schema/drift, native/model,
+smoke/package, physical-volume work and hosted CI remain deferred. No passing
+product result is claimed. Mermaid source has not been rendered: no renderer
+is installed, and no installation was attempted. The rendered SVG and PNG use
+the same JSON through Matplotlib; they group work rather than drawing every
+relationship. The commit requests `[skip ci]`; that is not a CI result.
 
-## Checks and deferred work
+No runtime interfaces, provider ownership, architecture decisions, release
+assets or supported capabilities change. Root ROADMAP receives navigation and
+a metadata patch, keeping detailed issue inventory in the maintained map.
 
-One-off authoring inspection, `python .inspection/check_docs.py`: exit 0.
-This temporary inspection is not a committed repository command. It checked:
+## Existing work and next action
 
-- The archived Mermaid block exactly matches the recovered source and its
-  recorded SHA-256 digest.
-- All 80 original issues are retained; the current inventory contains 87 issues,
-  all 76 observed open issues, and seven observed open PRs.
-- All 125 relationships reference known issues; required edges have no cycle.
-- Nine Mermaid blocks use the inspected syntax subset and resolve their nodes.
-- All 43 relative links resolve against the observed base tree and these files.
-- Markdown fences/headings, added-line whitespace, and root navigation diffs.
+- Optiflow draft [PR #122](https://github.com/egohygiene/optiflow/pull/122), head
+  `e5090aafcfbdecd8aae7ce216ca53333b9995182`: four authored, unvalidated #111
+  checkpoints. Native qualification remains open; the ACL proposal is inert.
+- Aniflow draft [PR #105](https://github.com/egohygiene/aniflow/pull/105), head
+  `afc444aff8fd108c4ce7d2fd48bf208c02f640a6`: #104 registration preparation under
+  #38. Broader checks remain under #64; no immutable release exists.
+- Renderflow #419 remains unpublished despite merged release preparation.
+  Flow #52 and #51 still need immutable Renderflow and Aniflow releases.
 
-The inspected candidate is based on the Flow SHA above. Existing ROADMAP hard
-breaks are preserved. These source checks are not a Mermaid parser, rendered
-layout review, or the repository's full documentation validation suite.
-
-Product test execution, Rust builds/lint, full local CI reproduction and fleet
-audit are not applicable to this docs-only change. Their existing product
-obligations are preserved in the map rather than reported as executed here.
-Mermaid rendering is deferred because no local renderer is available; static
-source checks do not prove layout or GitHub rendering. No renderer installation
-or remote CI dispatch is included. The docs commit requests `[skip ci]` because
-draft PRs otherwise trigger Flow's existing CI; the request is not a passing result.
-
-## Reconciliation and next action
-
-Known parallel work: Optiflow PR #113 includes merged-into-branch PR #114;
-Aniflow draft PR #78 contains unqualified corpus work. Five Optiflow dependency
-PRs remain open. The maps do not authorize their merge or recreate their code.
-
-Before continuing, recheck Flow main and this draft PR against the recorded base.
-Review the documentation and any changed upstream evidence. After maintainer
-direction, either revise the map or start one separately bounded Renderflow #422
-checkpoint, beginning with target deduplication in `planning.rs` and synthetic
-regressions. Record its own acceptance, focused-check budget and deferred
-tests/docs/local CI/audit before implementation; stop at its draft PR.
-
-Current Flow main has no root CONTINUITY.md. This handoff is linked from ROADMAP;
-adding a new continuity entrypoint is not silently bundled into this capture.
+Return the roadmap and draft PR for discussion. Before resuming a product
+checkpoint, reread its current handoff and live branch state, set one bounded
+acceptance target, and preserve the maintainer's deferred-check instructions.
+The independent next-work choices and full finish paths are in the map.
