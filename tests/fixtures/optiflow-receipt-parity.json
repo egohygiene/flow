@@ -1,0 +1,2442 @@
+{
+  "schema_version": "flow.optiflow-receipt-parity-tests/v1",
+  "description": "Portable synthetic receipt data. Runtime tests substitute canonical @STATE@/@SOURCE@ roots and real artifact identities before applying the same case operations. Schema validity describes JSON shape; runtime additionally checks semantic correlation and local evidence. These are not native provider qualification fixtures.",
+  "base": {
+    "schema_version": "flow.optiflow-read-only-receipt/v1",
+    "attempt_id": "synthetic-receipt-parity",
+    "status": "complete",
+    "provider": {
+      "version": "0.1.1",
+      "source_revision": "b82599a2231e997d42fd9f26f4b59587f4ae14cf",
+      "target": "x86_64-unknown-linux-gnu",
+      "archive_sha256": "5e8a0eea84f5ab55fe75fc8a8abc2e9d36e3512537b754262b1f34a9c40aae31",
+      "executable_sha256": "46af9399f3785607f835d9a805a8daa42c93597772c6ee812911615ea4b76280",
+      "interface": "optiflow.command-result.v1"
+    },
+    "source": {
+      "root": {
+        "encoding": "utf8",
+        "value": "@SOURCE@"
+      },
+      "filesystem_id": 0,
+      "file_id": 0
+    },
+    "state_directory": {
+      "encoding": "utf8",
+      "value": "@STATE@"
+    },
+    "environment": "cleared; no config; no media probe; no network grant",
+    "capabilities": {
+      "scan": "available-read-only",
+      "report": "available-read-only",
+      "plan-exact-duplicates": "available-read-only",
+      "dry-run": "unsupported-by-pinned-release",
+      "quarantine": "unsupported-by-pinned-release",
+      "restore": "unsupported-by-pinned-release",
+      "finalize": "unsupported-by-pinned-release"
+    },
+    "commands": [
+      {
+        "command": "scan",
+        "arguments": [
+          {
+            "encoding": "utf8",
+            "value": "scan"
+          },
+          {
+            "encoding": "utf8",
+            "value": "--state-directory"
+          },
+          {
+            "encoding": "utf8",
+            "value": "@STATE@"
+          }
+        ],
+        "outcome": "success",
+        "coverage": "complete",
+        "stdout_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "diagnostics": [],
+        "set_id": "00000000-0000-4000-8000-000000000001",
+        "marker_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "artifacts": [
+          {
+            "kind": "effective_policy",
+            "schema": "optiflow.effective-policy.v1",
+            "path": {
+              "encoding": "utf8",
+              "value": "@STATE@/runs/source-run/effective-policy.json"
+            },
+            "size_bytes": 0,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "kind": "report",
+            "schema": "optiflow.report.v6",
+            "path": {
+              "encoding": "utf8",
+              "value": "@STATE@/runs/source-run/report.json"
+            },
+            "size_bytes": 0,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "kind": "run",
+            "schema": "optiflow.run.v5",
+            "path": {
+              "encoding": "utf8",
+              "value": "@STATE@/runs/source-run/run.json"
+            },
+            "size_bytes": 0,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "kind": "artifact_set",
+            "schema": "optiflow.artifact-set.v1",
+            "path": {
+              "encoding": "utf8",
+              "value": "@STATE@/runs/source-run/artifact-set.json"
+            },
+            "size_bytes": 0,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ]
+      },
+      {
+        "command": "report",
+        "arguments": [
+          {
+            "encoding": "utf8",
+            "value": "report"
+          },
+          {
+            "encoding": "utf8",
+            "value": "--state-directory"
+          },
+          {
+            "encoding": "utf8",
+            "value": "@STATE@"
+          }
+        ],
+        "outcome": "success",
+        "coverage": "complete",
+        "stdout_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "diagnostics": [],
+        "set_id": "00000000-0000-4000-8000-000000000001",
+        "marker_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "artifacts": [
+          {
+            "kind": "effective_policy",
+            "schema": "optiflow.effective-policy.v1",
+            "path": {
+              "encoding": "utf8",
+              "value": "@STATE@/runs/source-run/effective-policy.json"
+            },
+            "size_bytes": 0,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "kind": "report",
+            "schema": "optiflow.report.v6",
+            "path": {
+              "encoding": "utf8",
+              "value": "@STATE@/runs/source-run/report.json"
+            },
+            "size_bytes": 0,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "kind": "run",
+            "schema": "optiflow.run.v5",
+            "path": {
+              "encoding": "utf8",
+              "value": "@STATE@/runs/source-run/run.json"
+            },
+            "size_bytes": 0,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "kind": "artifact_set",
+            "schema": "optiflow.artifact-set.v1",
+            "path": {
+              "encoding": "utf8",
+              "value": "@STATE@/runs/source-run/artifact-set.json"
+            },
+            "size_bytes": 0,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ]
+      },
+      {
+        "command": "plan",
+        "arguments": [
+          {
+            "encoding": "utf8",
+            "value": "plan"
+          },
+          {
+            "encoding": "utf8",
+            "value": "--state-directory"
+          },
+          {
+            "encoding": "utf8",
+            "value": "@STATE@"
+          }
+        ],
+        "outcome": "success",
+        "coverage": "complete",
+        "stdout_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "diagnostics": [],
+        "set_id": "00000000-0000-4000-8000-000000000002",
+        "marker_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "artifacts": [
+          {
+            "kind": "plan",
+            "schema": "optiflow.plan.v5",
+            "path": {
+              "encoding": "utf8",
+              "value": "@STATE@/plans/attempt.json"
+            },
+            "size_bytes": 0,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "kind": "artifact_set",
+            "schema": "optiflow.artifact-set.v1",
+            "path": {
+              "encoding": "utf8",
+              "value": "@STATE@/plans/attempt.json.artifact-set.json"
+            },
+            "size_bytes": 0,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ]
+      }
+    ],
+    "source_run_id": "00000000-0000-4000-8000-000000000004",
+    "source_set_id": "00000000-0000-4000-8000-000000000001",
+    "plan_id": "00000000-0000-4000-8000-000000000003",
+    "plan_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "approval": null,
+    "recovery": "none",
+    "duplicate_logical_bytes": 0,
+    "physical_savings_bytes": null,
+    "failure": null
+  },
+  "cases": [
+    {
+      "id": "valid-complete",
+      "operations": [],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": false
+    },
+    {
+      "id": "valid-partial",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "partial"
+        },
+        {
+          "op": "replace",
+          "path": "/commands/0/outcome",
+          "value": "partial_success"
+        },
+        {
+          "op": "replace",
+          "path": "/commands/0/coverage",
+          "value": "partial"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": false
+    },
+    {
+      "id": "valid-scanning",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "scanning"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": true
+    },
+    {
+      "id": "valid-reporting",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "reporting"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": true
+    },
+    {
+      "id": "valid-planning",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "planning"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": true
+    },
+    {
+      "id": "valid-refused-prefix-0",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "refused"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "no-source-mutation"
+        },
+        {
+          "op": "replace",
+          "path": "/failure",
+          "value": {
+            "code": "synthetic_refusal",
+            "detail": "Deliberate public synthetic refusal",
+            "provider_diagnostics": [],
+            "provider_stdout_sha256": null
+          }
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": false
+    },
+    {
+      "id": "valid-refused-prefix-1",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "refused"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "no-source-mutation"
+        },
+        {
+          "op": "replace",
+          "path": "/failure",
+          "value": {
+            "code": "synthetic_refusal",
+            "detail": "Deliberate public synthetic refusal",
+            "provider_diagnostics": [],
+            "provider_stdout_sha256": null
+          }
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": false
+    },
+    {
+      "id": "valid-refused-prefix-2",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "refused"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "no-source-mutation"
+        },
+        {
+          "op": "replace",
+          "path": "/failure",
+          "value": {
+            "code": "synthetic_refusal",
+            "detail": "Deliberate public synthetic refusal",
+            "provider_diagnostics": [],
+            "provider_stdout_sha256": null
+          }
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": false
+    },
+    {
+      "id": "valid-refused-prefix-3",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "refused"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "no-source-mutation"
+        },
+        {
+          "op": "replace",
+          "path": "/failure",
+          "value": {
+            "code": "synthetic_refusal",
+            "detail": "Deliberate public synthetic refusal",
+            "provider_diagnostics": [],
+            "provider_stdout_sha256": null
+          }
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": false
+    },
+    {
+      "id": "valid-refused-recovery",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "refused"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "inspect-provider-state-before-retry"
+        },
+        {
+          "op": "replace",
+          "path": "/failure",
+          "value": {
+            "code": "synthetic_refusal",
+            "detail": "Deliberate public synthetic refusal",
+            "provider_diagnostics": [],
+            "provider_stdout_sha256": null
+          }
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": true
+    },
+    {
+      "id": "audit-complete-without-artifacts",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/artifacts",
+          "value": []
+        },
+        {
+          "op": "replace",
+          "path": "/commands/1/artifacts",
+          "value": []
+        },
+        {
+          "op": "replace",
+          "path": "/commands/2/artifacts",
+          "value": []
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "audit-wrong-environment",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/environment",
+          "value": "incorrect environment claim"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "audit-extra-capability",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/capabilities",
+          "value": {
+            "scan": "available-read-only",
+            "report": "available-read-only",
+            "plan-exact-duplicates": "available-read-only",
+            "dry-run": "unsupported-by-pinned-release",
+            "quarantine": "unsupported-by-pinned-release",
+            "restore": "unsupported-by-pinned-release",
+            "finalize": "unsupported-by-pinned-release",
+            "undeclared-capability": "available-read-only"
+          }
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "audit-missing-nullable-field",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "scanning"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "remove",
+          "path": "/source_run_id"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "audit-unknown-native-path-property",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/state_directory",
+          "value": {
+            "encoding": "utf8",
+            "value": "@STATE@",
+            "unknown": "extra"
+          }
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "missing-required-source_set_id",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "scanning"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "remove",
+          "path": "/source_set_id"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "missing-required-plan_id",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "scanning"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "remove",
+          "path": "/plan_id"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "missing-required-plan_sha256",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "scanning"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "remove",
+          "path": "/plan_sha256"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "missing-required-approval",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "scanning"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "remove",
+          "path": "/approval"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "missing-required-duplicate_logical_bytes",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "scanning"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "remove",
+          "path": "/duplicate_logical_bytes"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "missing-required-physical_savings_bytes",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "scanning"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "remove",
+          "path": "/physical_savings_bytes"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "missing-required-failure",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "scanning"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "remove",
+          "path": "/failure"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "missing-required-failure-provider-stdout",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "refused"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/failure",
+          "value": {
+            "code": "synthetic_refusal",
+            "detail": "Deliberate public synthetic refusal",
+            "provider_diagnostics": [],
+            "provider_stdout_sha256": null
+          }
+        },
+        {
+          "op": "remove",
+          "path": "/failure/provider_stdout_sha256"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "missing-plan-artifact",
+      "operations": [
+        {
+          "op": "remove",
+          "path": "/commands/2/artifacts/0"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "missing-plan-marker",
+      "operations": [
+        {
+          "op": "remove",
+          "path": "/commands/2/artifacts/1"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-missing-plan-role",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/2/artifacts/0/kind",
+          "value": "report"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-duplicate-plan-role",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/2/artifacts/1/kind",
+          "value": "plan"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-missing-scan-role",
+      "operations": [
+        {
+          "op": "remove",
+          "path": "/commands/0/artifacts/0"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-duplicate-scan-role",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/artifacts/0/kind",
+          "value": "report"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-wrong-artifact-schema",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/artifacts/0/schema",
+          "value": "unknown.schema.v1"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-marker-digest-mismatch",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/marker_sha256",
+          "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-plan-digest-mismatch",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-absent-complete-plan-digest",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-outcome-coverage-disagreement",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/coverage",
+          "value": "partial"
+        },
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "partial"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-wrong-command-order",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/command",
+          "value": "report"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "schema-valid-complete-with-partial-command",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/outcome",
+          "value": "partial_success"
+        },
+        {
+          "op": "replace",
+          "path": "/commands/0/coverage",
+          "value": "partial"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-digest-short-stdout",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/stdout_sha256",
+          "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-digest-uppercase-marker",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/marker_sha256",
+          "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-digest-nonhex-artifact",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/artifacts/0/sha256",
+          "value": "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-digest-long-blake3",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/artifacts/0/blake3_256",
+          "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-digest-bad-plan",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": "bad"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-digest-short-provider",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/provider/executable_sha256",
+          "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-command-diagnostic-object",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/diagnostics",
+          "value": [
+            "not-an-object"
+          ]
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-failure-diagnostic-object",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "refused"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/failure",
+          "value": {
+            "code": "synthetic_refusal",
+            "detail": "Deliberate public synthetic refusal",
+            "provider_diagnostics": [],
+            "provider_stdout_sha256": null
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/failure/provider_diagnostics",
+          "value": [
+            null
+          ]
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-command-enum",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/command",
+          "value": "quarantine"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-command-outcome",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/outcome",
+          "value": "failed"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-command-coverage",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/coverage",
+          "value": "unknown"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-status-enum",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "succeeded"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-recovery-enum",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "automatic-retry"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-capability-state",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/capabilities/scan",
+          "value": "unsupported-by-pinned-release"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-command-count",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands",
+          "value": [
+            {
+              "command": "scan",
+              "arguments": [
+                {
+                  "encoding": "utf8",
+                  "value": "scan"
+                },
+                {
+                  "encoding": "utf8",
+                  "value": "--state-directory"
+                },
+                {
+                  "encoding": "utf8",
+                  "value": "@STATE@"
+                }
+              ],
+              "outcome": "success",
+              "coverage": "complete",
+              "stdout_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "diagnostics": [],
+              "set_id": "00000000-0000-4000-8000-000000000001",
+              "marker_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "artifacts": [
+                {
+                  "kind": "effective_policy",
+                  "schema": "optiflow.effective-policy.v1",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/runs/source-run/effective-policy.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                },
+                {
+                  "kind": "report",
+                  "schema": "optiflow.report.v6",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/runs/source-run/report.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                },
+                {
+                  "kind": "run",
+                  "schema": "optiflow.run.v5",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/runs/source-run/run.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                },
+                {
+                  "kind": "artifact_set",
+                  "schema": "optiflow.artifact-set.v1",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/runs/source-run/artifact-set.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              ]
+            },
+            {
+              "command": "report",
+              "arguments": [
+                {
+                  "encoding": "utf8",
+                  "value": "report"
+                },
+                {
+                  "encoding": "utf8",
+                  "value": "--state-directory"
+                },
+                {
+                  "encoding": "utf8",
+                  "value": "@STATE@"
+                }
+              ],
+              "outcome": "success",
+              "coverage": "complete",
+              "stdout_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "diagnostics": [],
+              "set_id": "00000000-0000-4000-8000-000000000001",
+              "marker_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "artifacts": [
+                {
+                  "kind": "effective_policy",
+                  "schema": "optiflow.effective-policy.v1",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/runs/source-run/effective-policy.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                },
+                {
+                  "kind": "report",
+                  "schema": "optiflow.report.v6",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/runs/source-run/report.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                },
+                {
+                  "kind": "run",
+                  "schema": "optiflow.run.v5",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/runs/source-run/run.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                },
+                {
+                  "kind": "artifact_set",
+                  "schema": "optiflow.artifact-set.v1",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/runs/source-run/artifact-set.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              ]
+            },
+            {
+              "command": "plan",
+              "arguments": [
+                {
+                  "encoding": "utf8",
+                  "value": "plan"
+                },
+                {
+                  "encoding": "utf8",
+                  "value": "--state-directory"
+                },
+                {
+                  "encoding": "utf8",
+                  "value": "@STATE@"
+                }
+              ],
+              "outcome": "success",
+              "coverage": "complete",
+              "stdout_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "diagnostics": [],
+              "set_id": "00000000-0000-4000-8000-000000000002",
+              "marker_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "artifacts": [
+                {
+                  "kind": "plan",
+                  "schema": "optiflow.plan.v5",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/plans/attempt.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                },
+                {
+                  "kind": "artifact_set",
+                  "schema": "optiflow.artifact-set.v1",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/plans/attempt.json.artifact-set.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              ]
+            },
+            {
+              "command": "plan",
+              "arguments": [
+                {
+                  "encoding": "utf8",
+                  "value": "plan"
+                },
+                {
+                  "encoding": "utf8",
+                  "value": "--state-directory"
+                },
+                {
+                  "encoding": "utf8",
+                  "value": "@STATE@"
+                }
+              ],
+              "outcome": "success",
+              "coverage": "complete",
+              "stdout_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "diagnostics": [],
+              "set_id": "00000000-0000-4000-8000-000000000002",
+              "marker_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "artifacts": [
+                {
+                  "kind": "plan",
+                  "schema": "optiflow.plan.v5",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/plans/attempt.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                },
+                {
+                  "kind": "artifact_set",
+                  "schema": "optiflow.artifact-set.v1",
+                  "path": {
+                    "encoding": "utf8",
+                    "value": "@STATE@/plans/attempt.json.artifact-set.json"
+                  },
+                  "size_bytes": 0,
+                  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                  "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-artifact-count",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/artifacts",
+          "value": [
+            {
+              "kind": "effective_policy",
+              "schema": "optiflow.effective-policy.v1",
+              "path": {
+                "encoding": "utf8",
+                "value": "@STATE@/runs/source-run/effective-policy.json"
+              },
+              "size_bytes": 0,
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+            },
+            {
+              "kind": "report",
+              "schema": "optiflow.report.v6",
+              "path": {
+                "encoding": "utf8",
+                "value": "@STATE@/runs/source-run/report.json"
+              },
+              "size_bytes": 0,
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+            },
+            {
+              "kind": "run",
+              "schema": "optiflow.run.v5",
+              "path": {
+                "encoding": "utf8",
+                "value": "@STATE@/runs/source-run/run.json"
+              },
+              "size_bytes": 0,
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+            },
+            {
+              "kind": "artifact_set",
+              "schema": "optiflow.artifact-set.v1",
+              "path": {
+                "encoding": "utf8",
+                "value": "@STATE@/runs/source-run/artifact-set.json"
+              },
+              "size_bytes": 0,
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+            },
+            {
+              "kind": "effective_policy",
+              "schema": "optiflow.effective-policy.v1",
+              "path": {
+                "encoding": "utf8",
+                "value": "@STATE@/runs/source-run/effective-policy.json"
+              },
+              "size_bytes": 0,
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "blake3_256": "0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          ]
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-approval-authority",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/approval",
+          "value": "approved"
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-physical-savings-claim",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/physical_savings_bytes",
+          "value": 1
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "invalid-negative-byte-count",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": -1
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "empty-attempt-identity",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/attempt_id",
+          "value": ""
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "empty-command-set-identity",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/set_id",
+          "value": ""
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "empty-artifact-kind",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/artifacts/0/kind",
+          "value": ""
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "empty-artifact-schema",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/artifacts/0/schema",
+          "value": ""
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "empty-failure-code",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "refused"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/failure",
+          "value": {
+            "code": "synthetic_refusal",
+            "detail": "Deliberate public synthetic refusal",
+            "provider_diagnostics": [],
+            "provider_stdout_sha256": null
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/failure/code",
+          "value": ""
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "empty-failure-detail",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/status",
+          "value": "refused"
+        },
+        {
+          "op": "replace",
+          "path": "/recovery",
+          "value": "required-if-interrupted"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/2"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/1"
+        },
+        {
+          "op": "remove",
+          "path": "/commands/0"
+        },
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/plan_sha256",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/duplicate_logical_bytes",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/failure",
+          "value": {
+            "code": "synthetic_refusal",
+            "detail": "Deliberate public synthetic refusal",
+            "provider_diagnostics": [],
+            "provider_stdout_sha256": null
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/failure/detail",
+          "value": ""
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "unknown-unix-path-property",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/source/root",
+          "value": {
+            "encoding": "unix_bytes",
+            "base64": "L3N5bnRoZXRpYw==",
+            "unknown": "extra"
+          }
+        }
+      ],
+      "schema_valid": false,
+      "runtime_valid": false
+    },
+    {
+      "id": "artifact-path-parent-traversal",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/2/artifacts/0/path/value",
+          "value": "@STATE@/../outside.json"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "artifact-path-outside-state",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/2/artifacts/0/path/value",
+          "value": "@SOURCE@/outside.json"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "artifact-path-relative",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/2/artifacts/0/path/value",
+          "value": "relative.json"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "artifact-bytes-tampered",
+      "operations": [],
+      "schema_valid": true,
+      "runtime_valid": false,
+      "file_effect": "tamper-plan"
+    },
+    {
+      "id": "artifact-is-symlink",
+      "operations": [],
+      "schema_valid": true,
+      "runtime_valid": false,
+      "file_effect": "artifact-symlink"
+    },
+    {
+      "id": "outer-plan-identity-mismatch",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/plan_id",
+          "value": "00000000-0000-4000-8000-000000000099"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "outer-run-identity-mismatch",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/source_run_id",
+          "value": "00000000-0000-4000-8000-000000000099"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "outer-source-set-identity-mismatch",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/source_set_id",
+          "value": "00000000-0000-4000-8000-000000000099"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "scan-marker-set-identity-mismatch",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/set_id",
+          "value": "00000000-0000-4000-8000-000000000099"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "report-marker-set-identity-mismatch",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/1/set_id",
+          "value": "00000000-0000-4000-8000-000000000099"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "plan-marker-set-identity-mismatch",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/2/set_id",
+          "value": "00000000-0000-4000-8000-000000000099"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "native-marker-source-linkage-mismatch",
+      "operations": [],
+      "schema_valid": true,
+      "runtime_valid": false,
+      "file_effect": "marker-source-set"
+    },
+    {
+      "id": "native-marker-member-digest-mismatch",
+      "operations": [],
+      "schema_valid": true,
+      "runtime_valid": false,
+      "file_effect": "marker-member-digest"
+    },
+    {
+      "id": "native-plan-identity-mismatch",
+      "operations": [],
+      "schema_valid": true,
+      "runtime_valid": false,
+      "file_effect": "plan-identity"
+    },
+    {
+      "id": "valid-relative-unix-byte-argument",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/arguments/0",
+          "value": {
+            "encoding": "unix_bytes",
+            "base64": "c2Nhbg=="
+          }
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": false
+    },
+    {
+      "id": "valid-object-diagnostic",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/commands/0/diagnostics",
+          "value": [
+            {
+              "code": "synthetic_notice",
+              "detail": "Public synthetic metadata"
+            }
+          ]
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": true,
+      "needs_recovery": false
+    },
+    {
+      "id": "state-relative",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/state_directory/value",
+          "value": "relative"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "state-parent-traversal",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/state_directory/value",
+          "value": "@STATE@/../local state"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "state-overlaps-source",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/state_directory/value",
+          "value": "@SOURCE@/state"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "source-overlaps-state",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/source/root/value",
+          "value": "@STATE@/source"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "source-relative",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/source/root/value",
+          "value": "relative"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    },
+    {
+      "id": "source-parent-traversal",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/source/root/value",
+          "value": "@SOURCE@/../source 🌿 with spaces"
+        }
+      ],
+      "schema_valid": true,
+      "runtime_valid": false
+    }
+  ]
+}

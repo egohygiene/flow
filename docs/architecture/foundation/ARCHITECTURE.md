@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.13.3
+version: 0.13.4
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-27
+updated: 2026-10-21
 governed_by:
   - architecture-architecture
 depends_on:
@@ -201,8 +201,16 @@ bindings, and the review-only plan safety fields.
 
 The adapter records a separate `flow.optiflow-read-only-receipt/v1` local
 attempt before launch and after scan, report, and plan. A reopened intermediate
-attempt requires review; a completed receipt must still match its retained
-artifact bytes. This receipt is local audit evidence, not an execution grant,
+attempt requires review. Saving and reopening share one pure receipt-contract
+gate: closed shapes and explicit nullable fields, pinned environment and
+capabilities, ordered command evidence and exact artifact roles, digest forms,
+and status consistency. Completion requires a present plan digest correlated
+with the retained plan artifact; absent values never count as matching proof.
+Reopening additionally confines and re-hashes the recorded artifact files, then
+binds source/run/plan/set identities and marker members to those same observed
+native bytes. It never authenticates an editable local record.
+Independent schema/runtime fixtures cover this native receipt outside the
+generic suite contract-set manifest. This receipt is local audit evidence, not an execution grant,
 checkpoint in the generic durable graph, provider signature, sandbox claim, or
 approval. The existing Flow JSONL runner and durable graph contracts remain
 unchanged. ADR-0013 owns this native-protocol exception and the staged handoff

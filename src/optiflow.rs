@@ -31,6 +31,16 @@ const MAX_STDERR: usize = 64 * 1024;
 const MAX_ARTIFACT: u64 = 16 * 1024 * 1024;
 const SCAN_DEADLINE: Duration = Duration::from_secs(120);
 const SHORT_DEADLINE: Duration = Duration::from_secs(30);
+const RECEIPT_ENVIRONMENT: &str = "cleared; no config; no media probe; no network grant";
+const RECEIPT_CAPABILITIES: [(&str, Capability); 7] = [
+    ("scan", Capability::Scan),
+    ("report", Capability::Report),
+    ("plan-exact-duplicates", Capability::PlanExactDuplicates),
+    ("dry-run", Capability::DryRun),
+    ("quarantine", Capability::Quarantine),
+    ("restore", Capability::Restore),
+    ("finalize", Capability::Finalize),
+];
 
 /// The pinned release archives and their executable digests. The Linux
 /// executable was exercised locally; the two macOS archives were inspected and
@@ -150,7 +160,7 @@ impl AdapterError {
 
 /// Lossless provider path. Non-UTF-8 paths retain their original Unix bytes.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
-#[serde(tag = "encoding", rename_all = "snake_case")]
+#[serde(tag = "encoding", rename_all = "snake_case", deny_unknown_fields)]
 pub enum NativePath {
     Utf8 { value: String },
     UnixBytes { base64: String },
@@ -298,7 +308,27 @@ pub struct FailureEvidence {
     pub code: String,
     pub detail: String,
     pub provider_diagnostics: Vec<Value>,
+    #[serde(deserialize_with = "deserialize_required_nullable")]
     pub provider_stdout_sha256: Option<String>,
+}
+
+impl FailureEvidence {
+    fn validate(&self) -> Result<(), AdapterError> {
+        if self.code.is_empty()
+            || self.detail.is_empty()
+            || self
+                .provider_diagnostics
+                .iter()
+                .any(|item| !item.is_object())
+            || self
+                .provider_stdout_sha256
+                .as_deref()
+                .is_some_and(|digest| !valid_receipt_digest(digest))
+        {
+            return Err(AdapterError::InvalidEvidence("receipt failure evidence"));
+        }
+        Ok(())
+    }
 }
 
 /// A local, durable attempt record. An intermediate status after reopen is
@@ -315,85 +345,42 @@ pub struct ReadOnlyReceipt {
     pub environment: String,
     pub capabilities: BTreeMap<String, CapabilityState>,
     pub commands: Vec<CommandEvidence>,
+    #[serde(deserialize_with = "deserialize_required_nullable")]
     pub source_run_id: Option<String>,
+    #[serde(deserialize_with = "deserialize_required_nullable")]
     pub source_set_id: Option<String>,
+    #[serde(deserialize_with = "deserialize_required_nullable")]
     pub plan_id: Option<String>,
+    #[serde(deserialize_with = "deserialize_required_nullable")]
     pub plan_sha256: Option<String>,
+    #[serde(deserialize_with = "deserialize_required_nullable")]
     pub approval: Option<String>,
     pub recovery: String,
+    #[serde(deserialize_with = "deserialize_required_nullable")]
     pub duplicate_logical_bytes: Option<u64>,
+    #[serde(deserialize_with = "deserialize_required_nullable")]
     pub physical_savings_bytes: Option<u64>,
+    #[serde(deserialize_with = "deserialize_required_nullable")]
     pub failure: Option<FailureEvidence>,
+}
+
+// Unlike Serde's default Option handling, an omitted key is not explicit null.
+fn deserialize_required_nullable<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    Option::<T>::deserialize(deserializer)
 }
 
 impl ReadOnlyReceipt {
     /// Reopen evidence without promoting an unfinished attempt to completion.
     /// # Errors
-    /// Rejects invalid JSON, a different receipt schema, or changed evidence
-    /// files. A receipt and its hashes are local audit evidence, not a signature.
+    /// Rejects invalid or incomplete receipt contracts, inconsistent states, or
+    /// changed evidence files. Hashes remain local audit evidence, not a signature.
     pub fn load(path: &Path) -> Result<Self, AdapterError> {
         let receipt: Self = serde_json::from_slice(&read_regular(path, MAX_ARTIFACT)?)?;
-        if receipt.schema_version != RECEIPT_SCHEMA {
-            return Err(AdapterError::InvalidEvidence("receipt schema"));
-        }
-        let profile = RELEASE_PROFILES
-            .iter()
-            .find(|profile| profile.target == receipt.provider.target)
-            .ok_or(AdapterError::InvalidEvidence("receipt target"))?;
-        if receipt.provider.version != PROVIDER_VERSION
-            || receipt.provider.source_revision != PROVIDER_SOURCE_REVISION
-            || receipt.provider.interface != COMMAND_RESULT_SCHEMA
-            || receipt.provider.archive_sha256 != profile.archive_sha256
-            || receipt.provider.executable_sha256 != profile.executable_sha256
-        {
-            return Err(AdapterError::InvalidEvidence("receipt provider identity"));
-        }
-        let names = receipt
-            .commands
-            .iter()
-            .map(|command| command.command.as_str())
-            .collect::<Vec<_>>();
-        let partial = receipt
-            .commands
-            .iter()
-            .any(|command| command.coverage == "partial");
-        let consistent = match receipt.status {
-            ReceiptStatus::Scanning => names.is_empty(),
-            ReceiptStatus::Reporting => names == ["scan"],
-            ReceiptStatus::Planning => names == ["scan", "report"],
-            ReceiptStatus::Complete | ReceiptStatus::Partial => {
-                names == ["scan", "report", "plan"]
-                    && receipt.source_run_id.is_some()
-                    && receipt.source_set_id.is_some()
-                    && receipt.plan_id.is_some()
-                    && receipt.plan_sha256.as_deref()
-                        == receipt.commands[2]
-                            .artifacts
-                            .iter()
-                            .find(|artifact| artifact.kind == "plan")
-                            .map(|artifact| artifact.sha256.as_str())
-                    && receipt.failure.is_none()
-                    && receipt.recovery == "none"
-                    && partial == matches!(receipt.status, ReceiptStatus::Partial)
-            }
-            ReceiptStatus::Refused => receipt.failure.is_some(),
-        };
-        if !consistent || receipt.approval.is_some() || receipt.physical_savings_bytes.is_some() {
-            return Err(AdapterError::InvalidEvidence("receipt state or authority"));
-        }
-        for (key, capability) in [
-            ("scan", Capability::Scan),
-            ("report", Capability::Report),
-            ("plan-exact-duplicates", Capability::PlanExactDuplicates),
-            ("dry-run", Capability::DryRun),
-            ("quarantine", Capability::Quarantine),
-            ("restore", Capability::Restore),
-            ("finalize", Capability::Finalize),
-        ] {
-            if receipt.capabilities.get(key) != Some(&capability.state()) {
-                return Err(AdapterError::InvalidEvidence("receipt capability state"));
-            }
-        }
+        receipt.validate()?;
         let state = receipt.state_directory.path()?;
         for command in &receipt.commands {
             for artifact in &command.artifacts {
@@ -413,9 +400,114 @@ impl ReadOnlyReceipt {
                 {
                     return Err(AdapterError::InvalidEvidence("receipt artifact changed"));
                 }
+                validate_receipt_document(&receipt, command, artifact, &bytes)?;
             }
         }
         Ok(receipt)
+    }
+
+    /// Pure validation is shared by emitted and reopened evidence. Filesystem
+    /// re-observation stays in load; constructing a receipt never grants authority.
+    fn validate(&self) -> Result<(), AdapterError> {
+        if self.schema_version != RECEIPT_SCHEMA {
+            return Err(AdapterError::InvalidEvidence("receipt schema"));
+        }
+        if self.attempt_id.is_empty() || self.environment != RECEIPT_ENVIRONMENT {
+            return Err(AdapterError::InvalidEvidence(
+                "receipt identity or environment",
+            ));
+        }
+        validate_receipt_roots(&self.source.root, &self.state_directory)?;
+        let profile = RELEASE_PROFILES
+            .iter()
+            .find(|profile| profile.target == self.provider.target)
+            .ok_or(AdapterError::InvalidEvidence("receipt target"))?;
+        if self.provider.version != PROVIDER_VERSION
+            || self.provider.source_revision != PROVIDER_SOURCE_REVISION
+            || self.provider.interface != COMMAND_RESULT_SCHEMA
+            || self.provider.archive_sha256 != profile.archive_sha256
+            || self.provider.executable_sha256 != profile.executable_sha256
+        {
+            return Err(AdapterError::InvalidEvidence("receipt provider identity"));
+        }
+        if self.capabilities.len() != RECEIPT_CAPABILITIES.len()
+            || RECEIPT_CAPABILITIES
+                .iter()
+                .any(|(key, capability)| self.capabilities.get(*key) != Some(&capability.state()))
+        {
+            return Err(AdapterError::InvalidEvidence("receipt capability state"));
+        }
+        if self.commands.len() > 3
+            || self
+                .commands
+                .iter()
+                .zip(["scan", "report", "plan"])
+                .any(|(command, expected)| command.command != expected)
+            || self.approval.is_some()
+            || self.physical_savings_bytes.is_some()
+            || !matches!(
+                self.recovery.as_str(),
+                "required-if-interrupted"
+                    | "inspect-provider-state-before-retry"
+                    | "no-source-mutation"
+                    | "none"
+            )
+        {
+            return Err(AdapterError::InvalidEvidence("receipt state or authority"));
+        }
+        if self
+            .plan_sha256
+            .as_deref()
+            .is_some_and(|digest| !valid_receipt_digest(digest))
+        {
+            return Err(AdapterError::InvalidEvidence("receipt plan digest"));
+        }
+        if let Some(failure) = &self.failure {
+            failure.validate()?;
+        }
+        for command in &self.commands {
+            validate_receipt_command(command)?;
+        }
+        let names = self
+            .commands
+            .iter()
+            .map(|command| command.command.as_str())
+            .collect::<Vec<_>>();
+        let partial = self
+            .commands
+            .iter()
+            .any(|command| command.coverage == "partial");
+        let consistent = match self.status {
+            ReceiptStatus::Scanning => names.is_empty(),
+            ReceiptStatus::Reporting => names == ["scan"],
+            ReceiptStatus::Planning => names == ["scan", "report"],
+            ReceiptStatus::Complete | ReceiptStatus::Partial => {
+                names == ["scan", "report", "plan"]
+                    && self
+                        .source_run_id
+                        .as_deref()
+                        .is_some_and(|id| !id.is_empty())
+                    && self
+                        .source_set_id
+                        .as_deref()
+                        .is_some_and(|id| !id.is_empty())
+                    && self.plan_id.as_deref().is_some_and(|id| !id.is_empty())
+                    && self.plan_sha256.as_deref().is_some_and(|digest| {
+                        self.commands[2]
+                            .artifacts
+                            .iter()
+                            .any(|artifact| artifact.kind == "plan" && artifact.sha256 == digest)
+                    })
+                    && self.failure.is_none()
+                    && self.recovery == "none"
+                    && partial == matches!(self.status, ReceiptStatus::Partial)
+            }
+            ReceiptStatus::Refused => self.failure.is_some(),
+        };
+        if !consistent {
+            return Err(AdapterError::InvalidEvidence("receipt state or authority"));
+        }
+        Ok(())
     }
 
     #[must_use]
@@ -425,6 +517,205 @@ impl ReadOnlyReceipt {
             ReceiptStatus::Scanning | ReceiptStatus::Reporting | ReceiptStatus::Planning
         ) || self.recovery == "inspect-provider-state-before-retry"
     }
+}
+
+fn valid_receipt_digest(value: &str) -> bool {
+    value.len() == 64
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+
+fn validate_receipt_roots(source: &NativePath, state: &NativePath) -> Result<(), AdapterError> {
+    let source = source.path()?;
+    let state = state.path()?;
+    if [&source, &state].iter().any(|path| {
+        !path.is_absolute()
+            || path
+                .components()
+                .any(|part| matches!(part, Component::ParentDir | Component::CurDir))
+    }) || source.starts_with(&state)
+        || state.starts_with(&source)
+    {
+        return Err(AdapterError::PathEscape);
+    }
+    Ok(())
+}
+
+fn validate_receipt_command(command: &CommandEvidence) -> Result<(), AdapterError> {
+    let expected: &[(&str, &str)] = match command.command.as_str() {
+        "scan" | "report" => &[
+            ("effective_policy", POLICY_SCHEMA),
+            ("report", REPORT_SCHEMA),
+            ("run", RUN_SCHEMA),
+            ("artifact_set", ARTIFACT_SET_SCHEMA),
+        ],
+        "plan" => &[("plan", PLAN_SCHEMA), ("artifact_set", ARTIFACT_SET_SCHEMA)],
+        _ => return Err(AdapterError::InvalidEvidence("receipt command")),
+    };
+    if !matches!(
+        (command.outcome.as_str(), command.coverage.as_str()),
+        ("success", "complete") | ("partial_success", "partial")
+    ) || command.set_id.is_empty()
+        || !valid_receipt_digest(&command.stdout_sha256)
+        || !valid_receipt_digest(&command.marker_sha256)
+        || command.diagnostics.iter().any(|item| !item.is_object())
+        || command.artifacts.len() != expected.len()
+    {
+        return Err(AdapterError::InvalidEvidence("receipt command evidence"));
+    }
+    for (kind, schema) in expected {
+        let mut members = command
+            .artifacts
+            .iter()
+            .filter(|artifact| artifact.kind == *kind);
+        let member = members
+            .next()
+            .ok_or(AdapterError::InvalidEvidence("receipt artifact roles"))?;
+        if members.next().is_some()
+            || member.schema != *schema
+            || !valid_receipt_digest(&member.sha256)
+            || !valid_receipt_digest(&member.blake3_256)
+            || (*kind == "artifact_set" && member.sha256 != command.marker_sha256)
+        {
+            return Err(AdapterError::InvalidEvidence("receipt artifact evidence"));
+        }
+    }
+    Ok(())
+}
+
+fn require_receipt_id(value: &Value, recorded: Option<&str>) -> Result<(), AdapterError> {
+    if recorded.is_some_and(|id| !id.is_empty() && value.as_str() == Some(id)) {
+        Ok(())
+    } else {
+        Err(AdapterError::InvalidEvidence(
+            "receipt native identity binding",
+        ))
+    }
+}
+
+fn validate_receipt_document(
+    receipt: &ReadOnlyReceipt,
+    command: &CommandEvidence,
+    artifact: &ArtifactEvidence,
+    bytes: &[u8],
+) -> Result<(), AdapterError> {
+    if artifact.kind == "artifact_set" {
+        return validate_receipt_marker(receipt, command, artifact, bytes);
+    }
+    let document: Value = serde_json::from_slice(bytes)?;
+    let schema_field = if artifact.kind == "effective_policy" {
+        "/schema"
+    } else {
+        "/schema_version"
+    };
+    if field(&document, schema_field)?.as_str() != Some(artifact.schema.as_str()) {
+        return Err(AdapterError::InvalidEvidence(
+            "receipt native artifact schema",
+        ));
+    }
+    match artifact.kind.as_str() {
+        "run" | "report" => {
+            let run = if artifact.kind == "report" {
+                field(&document, "/run")?
+            } else {
+                &document
+            };
+            require_receipt_id(field(run, "/run_id")?, receipt.source_run_id.as_deref())?;
+            require_receipt_id(
+                field(run, "/artifact_set_id")?,
+                receipt.source_set_id.as_deref(),
+            )?;
+            let inputs = field(run, "/inputs")?
+                .as_array()
+                .ok_or(AdapterError::InvalidEvidence("receipt source roots"))?;
+            let root = receipt.source.root.path()?;
+            if inputs.len() != 1 || inputs[0].as_str().map(Path::new) != Some(root.as_path()) {
+                return Err(AdapterError::InvalidEvidence("receipt source root binding"));
+            }
+        }
+        "plan" => {
+            require_receipt_id(field(&document, "/plan_id")?, receipt.plan_id.as_deref())?;
+            require_receipt_id(
+                field(&document, "/source_run_id")?,
+                receipt.source_run_id.as_deref(),
+            )?;
+            require_receipt_id(
+                field(&document, "/source_artifact_set_id")?,
+                receipt.source_set_id.as_deref(),
+            )?;
+            if field(&document, "/safety/mutates_files")?.as_bool() != Some(false)
+                || field(&document, "/safety/requires_explicit_apply")?.as_bool() != Some(true)
+            {
+                return Err(AdapterError::InvalidEvidence("receipt plan safety"));
+            }
+        }
+        "effective_policy" => {}
+        _ => return Err(AdapterError::InvalidEvidence("receipt artifact role")),
+    }
+    Ok(())
+}
+
+fn validate_receipt_marker(
+    receipt: &ReadOnlyReceipt,
+    command: &CommandEvidence,
+    artifact: &ArtifactEvidence,
+    bytes: &[u8],
+) -> Result<(), AdapterError> {
+    let marker: NativeMarker = serde_json::from_slice(bytes)?;
+    let kind = if command.command == "plan" {
+        "plan"
+    } else {
+        "scan"
+    };
+    let source_set = if kind == "plan" {
+        receipt.source_set_id.as_deref()
+    } else {
+        None
+    };
+    if marker.schema != ARTIFACT_SET_SCHEMA
+        || marker.state != "committed"
+        || marker.set_kind != kind
+        || marker.set_id != command.set_id
+        || Some(marker.run_id.as_str()) != receipt.source_run_id.as_deref()
+        || marker.source_set_id.as_deref() != source_set
+        || (kind == "scan" && Some(marker.set_id.as_str()) != receipt.source_set_id.as_deref())
+        || marker.members.len() + 1 != command.artifacts.len()
+    {
+        return Err(AdapterError::InvalidEvidence(
+            "receipt artifact set binding",
+        ));
+    }
+    let marker_path = artifact.path.path()?;
+    let directory = marker_path.parent().ok_or(AdapterError::PathEscape)?;
+    for member in command
+        .artifacts
+        .iter()
+        .filter(|member| member.kind != "artifact_set")
+    {
+        let mut recorded = marker
+            .members
+            .iter()
+            .filter(|recorded| recorded.kind == member.kind);
+        let native = recorded
+            .next()
+            .ok_or(AdapterError::InvalidEvidence("receipt marker member"))?;
+        let relative = native.path.path()?;
+        if recorded.next().is_some()
+            || relative.components().count() != 1
+            || !matches!(relative.components().next(), Some(Component::Normal(_)))
+            || directory.join(&relative) != member.path.path()?
+            || native.schema != member.schema
+            || native.size_bytes != member.size_bytes
+            || native.digest.algorithm != "blake3-256"
+            || native.digest.value != member.blake3_256
+        {
+            return Err(AdapterError::InvalidEvidence(
+                "receipt marker member binding",
+            ));
+        }
+    }
+    Ok(())
 }
 
 /// A pinned native CLI, with exactly three read-only capabilities.
@@ -537,18 +828,10 @@ impl OptiflowReadOnlyAdapter {
                 .as_nanos()
         );
         let path = receipt_dir.join(format!("{attempt_id}.json"));
-        let capabilities = [
-            ("scan", Capability::Scan),
-            ("report", Capability::Report),
-            ("plan-exact-duplicates", Capability::PlanExactDuplicates),
-            ("dry-run", Capability::DryRun),
-            ("quarantine", Capability::Quarantine),
-            ("restore", Capability::Restore),
-            ("finalize", Capability::Finalize),
-        ]
-        .into_iter()
-        .map(|(key, capability)| (key.to_owned(), capability.state()))
-        .collect();
+        let capabilities = RECEIPT_CAPABILITIES
+            .into_iter()
+            .map(|(key, capability)| (key.to_owned(), capability.state()))
+            .collect();
         let mut receipt = ReadOnlyReceipt {
             schema_version: RECEIPT_SCHEMA.to_owned(),
             attempt_id: attempt_id.clone(),
@@ -556,7 +839,7 @@ impl OptiflowReadOnlyAdapter {
             provider: self.identity.clone(),
             source: source.clone(),
             state_directory: NativePath::from_path(&state),
-            environment: "cleared; no config; no media probe; no network grant".to_owned(),
+            environment: RECEIPT_ENVIRONMENT.to_owned(),
             capabilities,
             commands: Vec::new(),
             source_run_id: None,
@@ -826,6 +1109,9 @@ impl OptiflowReadOnlyAdapter {
             return Err(AdapterError::InvalidEvidence(
                 "command result schema or command",
             ));
+        }
+        if response.diagnostics.iter().any(|item| !item.is_object()) {
+            return Err(AdapterError::InvalidEvidence("provider diagnostic shape"));
         }
         let (class, coverage) = match (
             response.outcome.class.as_str(),
@@ -1313,6 +1599,7 @@ fn read_capped(stream: impl Read, limit: usize) -> io::Result<Vec<u8>> {
 }
 
 fn persist(path: &Path, receipt: &ReadOnlyReceipt, first: bool) -> Result<(), AdapterError> {
+    receipt.validate()?;
     let mut bytes = serde_json::to_vec_pretty(receipt)?;
     bytes.push(b'\n');
     let target = if first {
@@ -1339,9 +1626,53 @@ fn persist(path: &Path, receipt: &ReadOnlyReceipt, first: bool) -> Result<(), Ad
 
 #[cfg(test)]
 mod tests {
-    use super::{AdapterError, NativePath, SourceIdentity, validate_plan_paths};
+    use super::{
+        AdapterError, NativePath, RECEIPT_ENVIRONMENT, ReadOnlyReceipt, ReceiptStatus,
+        SourceIdentity, persist, validate_plan_paths,
+    };
     use serde_json::json;
     use std::fs;
+
+    #[test]
+    fn invalid_receipts_cannot_create_or_replace_durable_evidence() {
+        let suffix = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let root = std::env::temp_dir().join(format!(
+            "flow-receipt-persistence-{}-{suffix}",
+            std::process::id()
+        ));
+        fs::create_dir(&root).unwrap();
+        let root = fs::canonicalize(root).unwrap();
+        let corpus: serde_json::Value = serde_json::from_str(include_str!(
+            "../tests/fixtures/optiflow-receipt-parity.json"
+        ))
+        .unwrap();
+        let mut receipt: ReadOnlyReceipt = serde_json::from_value(corpus["base"].clone()).unwrap();
+        receipt.status = ReceiptStatus::Scanning;
+        receipt.commands.clear();
+        receipt.source_run_id = None;
+        receipt.source_set_id = None;
+        receipt.plan_id = None;
+        receipt.plan_sha256 = None;
+        receipt.recovery = "required-if-interrupted".to_owned();
+        receipt.source.root = NativePath::from_path(&root.join("source"));
+        receipt.state_directory = NativePath::from_path(&root.join("state"));
+        let path = root.join("receipt.json");
+        receipt.environment = "wrong".to_owned();
+        assert!(persist(&path, &receipt, true).is_err());
+        assert!(!path.exists());
+
+        receipt.environment = RECEIPT_ENVIRONMENT.to_owned();
+        persist(&path, &receipt, true).unwrap();
+        let original = fs::read(&path).unwrap();
+        receipt.plan_sha256 = Some("invalid digest".to_owned());
+        assert!(persist(&path, &receipt, false).is_err());
+        assert_eq!(fs::read(&path).unwrap(), original);
+        assert!(!path.with_extension("tmp").exists());
+        fs::remove_dir_all(root).unwrap();
+    }
 
     #[test]
     fn plan_candidate_escape_is_refused_even_with_a_safe_keep_path() {
