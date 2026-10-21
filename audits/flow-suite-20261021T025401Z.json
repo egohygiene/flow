@@ -1,0 +1,1482 @@
+{
+  "schema_version": "flow.audit-evidence/v1",
+  "audit_name": "flow-suite",
+  "audit_timestamp": "20261021T025401Z",
+  "repository": "egohygiene/flow",
+  "audit_status": "partial",
+  "source_revision": "af68afa5732a04c237df5fbeee6bc5e901a5c6fd",
+  "source_tree": "453b6a20675917db08b1c14d06b49c9380fe170e",
+  "source_unchanged": true,
+  "report_path": "audits/flow-suite-20261021T025401Z.md",
+  "report_sha256": "c56460949b8b1c05385e70abf546a82a9117bf115bc21180f2755ea0d10a5f94",
+  "governing_guidance": {
+    "local_auditor_spec": "2.0.0 approved",
+    "local_audit_skill": "1.0.0 draft",
+    "local_auditor_agent": "1.0.0 draft",
+    "aether_compatible_reference_commit": "dc8a16851f452763ef4f7fbe4bf057d4500b1921",
+    "aether_reference_audit_skill": "1.1.0 draft",
+    "issue_title_policy_selected": false
+  },
+  "original_inventory": {
+    "open_issue_count": 31,
+    "open_pr_count": 0,
+    "comments_reviewed": 18,
+    "comment_issue": 11,
+    "tracked_files": 429,
+    "all_original_issues_retained": true,
+    "identities": [
+      {
+        "number": 80,
+        "title": "[AI] Define optional runtime profiles, local model preparation and existing provider routing",
+        "id": 5903774357,
+        "node_id": "I_kwDOT3cirM8AAAABX-RylQ",
+        "body_sha256": "1a608dfe798ae6c69bb0ca28f5aac2f82e8fc7b46a071b05b88c9e045abd9594",
+        "labels": []
+      },
+      {
+        "number": 78,
+        "title": "[Preset] Configure a reusable anime music video workflow",
+        "id": 5690702685,
+        "node_id": "I_kwDOT3cirM8AAAABUzE7XQ",
+        "body_sha256": "9ac9a2f5a92d1fc80e2488ebb6fbafd55e2a8e23a329abdd1f1aa000a195ff13",
+        "labels": []
+      },
+      {
+        "number": 75,
+        "title": "[Adapter] Orchestrate the released Aniflow music-video profile",
+        "id": 5603422400,
+        "node_id": "I_kwDOT3cirM8AAAABTf1wwA",
+        "body_sha256": "52bf6f1c166bf17f54446ab040b393f58970e3273d99db23255db7e568aea4be",
+        "labels": []
+      },
+      {
+        "number": 74,
+        "title": "[Adapter] Consume released Optiflow lossless-PNG replacement profile",
+        "id": 5603419666,
+        "node_id": "I_kwDOT3cirM8AAAABTf1mEg",
+        "body_sha256": "0a409f9665dadefc6e1da6a787c3e8e1296a27cbc3a7cf06f520ab5ba50ffad1",
+        "labels": []
+      },
+      {
+        "number": 73,
+        "title": "[Adapter] Orchestrate released Optiflow exact-dedup transactions with explicit authority",
+        "id": 5603418356,
+        "node_id": "I_kwDOT3cirM8AAAABTf1g9A",
+        "body_sha256": "bb7671b4420986092655c9fad5daa40c6874355de4486e6f00a06cc942aa456d",
+        "labels": []
+      },
+      {
+        "number": 72,
+        "title": "[Release] Qualify a stable installable Flow suite after the provider and Flow audits",
+        "id": 5603397710,
+        "node_id": "I_kwDOT3cirM8AAAABTf0QTg",
+        "body_sha256": "85d626cf4c284e7388f7a3caee99aa4cb8dff6b25fd03b3d033848b2c48c368d",
+        "labels": []
+      },
+      {
+        "number": 71,
+        "title": "[Distribution] Install a verified Flow suite with a `flow` command and independent providers",
+        "id": 5603394670,
+        "node_id": "I_kwDOT3cirM8AAAABTf0Ebg",
+        "body_sha256": "8186c9d319f9e1c782e38f8cfd1052059ddc4a1980f6dc98981c540c9ef1df95",
+        "labels": []
+      },
+      {
+        "number": 70,
+        "title": "[Experience] Run supported Flow profiles on local files from a clean install",
+        "id": 5603391556,
+        "node_id": "I_kwDOT3cirM8AAAABTfz4RA",
+        "body_sha256": "e3ee6030061ba9b125d895b21a1bf3b88ba7e330251838d4434ce7c877cd6f9b",
+        "labels": []
+      },
+      {
+        "number": 62,
+        "title": "[Docs] Visualize supported scenarios and their verification evidence",
+        "id": 5590277877,
+        "node_id": "I_kwDOT3cirM8AAAABTTTe9Q",
+        "body_sha256": "a1d84b6343e25cb607accb4f6a64173432d22803e446dfde8a866cc450b9ae2b",
+        "labels": []
+      },
+      {
+        "number": 54,
+        "title": "[Release] Harden and publish Flow's first immutable release",
+        "id": 5543212623,
+        "node_id": "I_kwDOT3cirM8AAAABSma2Tw",
+        "body_sha256": "b7a531f0d9ae798437921ed9d0bec89abe690aad536253c7cb63a90f18f77b34",
+        "labels": []
+      },
+      {
+        "number": 53,
+        "title": "[FLO-3.7] Ship the supported Flow CLI and close the vertical slice",
+        "id": 5543212527,
+        "node_id": "I_kwDOT3cirM8AAAABSma17w",
+        "body_sha256": "60c835463a1c11ecd01f9b076077c7f10a68b4fe0f24615dc98b2c6a2d22111d",
+        "labels": []
+      },
+      {
+        "number": 52,
+        "title": "[FLO-3.6] Integrate an immutable Renderflow release",
+        "id": 5543206843,
+        "node_id": "I_kwDOT3cirM8AAAABSmafuw",
+        "body_sha256": "e868333ec3f110a6af5d7c048ac63ca7bf8bfe521f85069071d22f2586ef2fad",
+        "labels": []
+      },
+      {
+        "number": 51,
+        "title": "[FLO-3.4] Integrate an immutable Aniflow release",
+        "id": 5543206723,
+        "node_id": "I_kwDOT3cirM8AAAABSmafQw",
+        "body_sha256": "550dec8a5714436e0f6a83fc47e2dc080683f3f58f82dc06748749661474e99e",
+        "labels": []
+      },
+      {
+        "number": 34,
+        "title": "[FLO-13.7] Add clean-room compatibility, CI tiers, and regression promotion",
+        "id": 5515665631,
+        "node_id": "I_kwDOT3cirM8AAAABSMJg3w",
+        "body_sha256": "30530f3989d22b098baac6867d645532df772bbef25d178cac8578325b20cbb0",
+        "labels": []
+      },
+      {
+        "number": 33,
+        "title": "[FLO-13.6] Prove the temporal release workflow with released providers",
+        "id": 5515664655,
+        "node_id": "I_kwDOT3cirM8AAAABSMJdDw",
+        "body_sha256": "7a061707bf20823b0d1f48cbc302d395543fd74fb591b518b0e4eaeac22a4e2d",
+        "labels": []
+      },
+      {
+        "number": 32,
+        "title": "[FLO-13.5] Prove the static publication workflow with released providers",
+        "id": 5515663701,
+        "node_id": "I_kwDOT3cirM8AAAABSMJZVQ",
+        "body_sha256": "7c1aeb8b1a346b773adbcf52c7b6760ee448a7df8d86d75cad1bc86c0c62f4cc",
+        "labels": []
+      },
+      {
+        "number": 22,
+        "title": "[FLO-OBS-08] Add accessible branded root-help presentation",
+        "id": 5463931574,
+        "node_id": "I_kwDOT3cirM8AAAABRaz6tg",
+        "body_sha256": "adbe6e0b91728dba27ffb500870b8aed295ef53eaad4183fa80cdb76c52b50d1",
+        "labels": []
+      },
+      {
+        "number": 21,
+        "title": "[FLO-OBS-07] Add privacy-safe diagnostics and operator runbooks",
+        "id": 5463927140,
+        "node_id": "I_kwDOT3cirM8AAAABRazpZA",
+        "body_sha256": "6e9a569958ce8ac89e0f47f67d4198b30194f1a9851b13014085546aa27cd95e",
+        "labels": []
+      },
+      {
+        "number": 20,
+        "title": "[FLO-OBS-06] Migrate the suite and enforce observability conformance",
+        "id": 5463921474,
+        "node_id": "I_kwDOT3cirM8AAAABRazTQg",
+        "body_sha256": "1c01efd6aebea5dcdbf848e8ef6aa298eb5baa3bfaa6cea3ff8a4a52330b854e",
+        "labels": []
+      },
+      {
+        "number": 19,
+        "title": "[FLO-OBS-05] Build the selected reusable observability package",
+        "id": 5463916098,
+        "node_id": "I_kwDOT3cirM8AAAABRay-Qg",
+        "body_sha256": "fb16d29ed5ab899d3d2de0b7b00c061ac95a95b11eb814c271489b29b2761772",
+        "labels": []
+      },
+      {
+        "number": 18,
+        "title": "[FLO-OBS-04] Decide shared observability crate and repository ownership",
+        "id": 5463910182,
+        "node_id": "I_kwDOT3cirM8AAAABRaynJg",
+        "body_sha256": "6db31636126fc6d465ce32d27ab2e45a73b6d5e6f9cb7c8c78cce9f4efda8410",
+        "labels": []
+      },
+      {
+        "number": 17,
+        "title": "[FLO-OBS-03] Prove opt-in OpenTelemetry logs, metrics, and traces",
+        "id": 5463905378,
+        "node_id": "I_kwDOT3cirM8AAAABRayUYg",
+        "body_sha256": "251672915b6ac053dd2a76a4a54682fff0a0ab059ec0248eb5af1b6d5daf37e9",
+        "labels": []
+      },
+      {
+        "number": 16,
+        "title": "[FLO-OBS-02] Prove the observability profile in two holon CLIs",
+        "id": 5463899755,
+        "node_id": "I_kwDOT3cirM8AAAABRax-aw",
+        "body_sha256": "a89c5ce80e30eea5fd24d242ddd1469c0c8c6d25d191552fc69f5dbda3690da6",
+        "labels": []
+      },
+      {
+        "number": 15,
+        "title": "[FLO-OBS-01] Define the suite observability, privacy, and stream contract",
+        "id": 5463894718,
+        "node_id": "I_kwDOT3cirM8AAAABRaxqvg",
+        "body_sha256": "5dc5ace36e895e2aa8666c190cb32c3c19521a7e0188506dd5362ef2e7f6e78b",
+        "labels": []
+      },
+      {
+        "number": 14,
+        "title": "[EPIC] Establish suite-wide observability and CLI experience",
+        "id": 5463885639,
+        "node_id": "I_kwDOT3cirM8AAAABRaxHRw",
+        "body_sha256": "db5fce5830935f74759979c7b97a918dc8608ad329d6c4bb52613f2c7fd4e046",
+        "labels": []
+      },
+      {
+        "number": 13,
+        "title": "Build cross-tool orchestration and failure fixture suites",
+        "id": 5461174904,
+        "node_id": "I_kwDOT3cirM8AAAABRYLqeA",
+        "body_sha256": "58146fa459497d48b06ee3f5bdd07061d083e698a226239e0caff7bfdba0b4fa",
+        "labels": []
+      },
+      {
+        "number": 12,
+        "title": "[Audit] Post-roadmap repository, backlog, and Identity audit",
+        "id": 5442196895,
+        "node_id": "I_kwDOT3cirM8AAAABRGFVnw",
+        "body_sha256": "0564cbd92beff889c1d7779b6d35386c86f17ace3bf5b7bbddeadfc4353fb2a2",
+        "labels": []
+      },
+      {
+        "number": 11,
+        "title": "[EPIC] Finish the flow suite and prove production-ready orchestration",
+        "id": 5441724899,
+        "node_id": "I_kwDOT3cirM8AAAABRFoh4w",
+        "body_sha256": "fa759f75b779ceea3b74afc73b674191b84d9a8e7357953d02748262eefe2685",
+        "labels": []
+      },
+      {
+        "number": 10,
+        "title": "[Publication] Orchestrate exhaustive comic finalization and multilingual release workflows",
+        "id": 5441568198,
+        "node_id": "I_kwDOT3cirM8AAAABRFe9xg",
+        "body_sha256": "91876f42a73880a3e6bf692c53b40d29601b4fa2480a31ef2720eb3bfa09a288",
+        "labels": []
+      },
+      {
+        "number": 9,
+        "title": "Backfill repository ADR history and enable continuous decision capture",
+        "id": 5434787959,
+        "node_id": "I_kwDOT3cirM8AAAABQ_BIdw",
+        "body_sha256": "6db37a807cc24dd09cf58a2e99daad4b535dcb667a54489d55e990cb8b47b017",
+        "labels": []
+      },
+      {
+        "number": 3,
+        "title": "Implement a versioned cross-holon orchestration vertical slice",
+        "id": 5188460883,
+        "node_id": "I_kwDOT3cirM8AAAABNUGhUw",
+        "body_sha256": "1330c53a61134bc93084f7878564184a8a6ed7760f4f1a15afc76f394ba777cc",
+        "labels": []
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "AUDIT-001",
+      "title": "Reopened optiflow receipts can bypass their declared evidence shape",
+      "classification": "confirmed defect",
+      "severity": "medium",
+      "confidence": "high",
+      "status": "confirmed",
+      "area": "native provider receipt validation",
+      "effort": "medium",
+      "impact": "medium",
+      "observation": "The runtime loader accepts schema-invalid receipts. A synthetic complete receipt with scan/report/plan command names, no artifact evidence, and null plan_sha256 was accepted and reported needs_recovery=false. The published schema rejects its empty artifact lists. Four independent closed-shape/required/constant mutations also loaded successfully.",
+      "evidence": [
+        {
+          "type": "observed",
+          "path": "src/optiflow.rs",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/src/optiflow.rs",
+          "claim": "ReadOnlyReceipt::load checks command names and compares optional plan identities, but can accept absent identity on both sides; nested shapes and several schema constraints are not enforced."
+        },
+        {
+          "type": "observed",
+          "path": "schemas/optiflow-read-only-receipt-v1.schema.json",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/schemas/optiflow-read-only-receipt-v1.schema.json",
+          "claim": "Requires nullable keys to be present, closed native paths/capabilities, the environment constant, and at least two artifact records per command."
+        },
+        {
+          "type": "observed",
+          "path": "contracts/contract-set.v1.json",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/contracts/contract-set.v1.json",
+          "claim": "The native receipt is separate from the 25-contract manifest; the ordinary contract validator does not cover it."
+        },
+        {
+          "type": "observed",
+          "artifact": "receipt-probe/runtime-results.log",
+          "claim": "One valid scanning control and five schema-invalid synthetic variants were accepted by the frozen library on Rust 1.85.0; the complete empty-proof variant reported no recovery required."
+        },
+        {
+          "type": "observed",
+          "artifact": "receipt-probe/schema-results.json",
+          "claim": "Independent Draft 2020-12 validation accepts the control and rejects all five variants."
+        }
+      ],
+      "why_it_matters": "A local operator or consumer inspecting reopened evidence can receive a completed/non-recovery status without the artifact evidence required by that receipt's own public contract. This is a correctness and compatibility gap in local unauthenticated audit evidence, not a demonstrated authorization bypass or authenticated-provenance guarantee.",
+      "recommendation": "Add one shared, bounded validation path for emitted and reopened receipts, require present verified plan/artifact evidence before complete or partial status, and run schema/runtime parity fixtures in ordinary CI without a downloaded provider.",
+      "suggested_validation": [
+        "Retain a genuinely emitted native release receipt as a positive control.",
+        "Reject empty completed proof, absent required nullable keys, altered constants, extra capabilities and unknown nested path fields.",
+        "Preserve valid intermediate/refused/recovery semantics and changed-artifact refusal."
+      ],
+      "dependencies_or_risks": [
+        "No open implementation prerequisite; the read-only adapter foundation is merged.",
+        "Keep receipt loading local and non-authoritative; do not broaden mutation, signature or recovery authority."
+      ],
+      "coverage": {
+        "kind": "new",
+        "new_key": "receipt-contract-parity",
+        "related_existing": [
+          34,
+          50
+        ]
+      }
+    },
+    {
+      "id": "AUDIT-002",
+      "title": "Current entry documentation resumes already-completed checkpoints",
+      "classification": "documentation gap",
+      "severity": "low",
+      "confidence": "high",
+      "status": "confirmed",
+      "area": "developer experience and continuity",
+      "effort": "small",
+      "impact": "medium",
+      "observation": "The unconditional README status still presents PR #60 and #46/#29 closeout as pending and #30 as next. The architecture's current boundary still excludes real holon adapters despite the native read-only optiflow adapter. Capability/system baselines and some active strategic-step prose predate the durable kernel and first adapter. Newer dated roadmap notes correctly explain that older snapshots are historical.",
+      "evidence": [
+        {
+          "type": "observed",
+          "path": "README.md",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/README.md",
+          "claim": "Status section at lines 170–191 contains the obsolete PR #60 / #30 next-up instructions."
+        },
+        {
+          "type": "observed",
+          "path": "docs/architecture/foundation/ARCHITECTURE.md",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/docs/architecture/foundation/ARCHITECTURE.md",
+          "claim": "Current implementation boundary and adjacent native adapter account disagree about real adapter availability."
+        },
+        {
+          "type": "observed",
+          "path": "docs/architecture/foundation/SYSTEM.md",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/docs/architecture/foundation/SYSTEM.md",
+          "claim": "Release-capability baseline still names optiflow v0.1.0."
+        },
+        {
+          "type": "observed",
+          "path": "docs/integrations/capability-matrix.md",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/docs/integrations/capability-matrix.md",
+          "claim": "Historical provider snapshots and first-slice ordering need explicit current-versus-historical disposition."
+        },
+        {
+          "type": "observed",
+          "path": "docs/roadmaps/flow-suite-dependency-map.md",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/docs/roadmaps/flow-suite-dependency-map.md",
+          "claim": "Maintained October 6 map / October 15 refresh explicitly qualify date-bound counts and preserve archives."
+        },
+        {
+          "type": "observed",
+          "path": "docs/work/11/HANDOFF.md",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/docs/work/11/HANDOFF.md",
+          "claim": "Existing handoff records a documentation PR as draft although that PR is now merged into the pinned source."
+        }
+      ],
+      "why_it_matters": "A new contributor can restart delivered work or misunderstand the narrow native adapter and remaining release gates. The underlying historical receipts are useful and should remain preserved.",
+      "recommendation": "Reconcile the current README, architecture/capability entrypoints and continuation navigation against merged source and live issues; clearly date historical snapshots and retain them, original issue bodies and human decision status.",
+      "suggested_validation": [
+        "Check all stated current checkpoints against exact commits and live issue/PR states.",
+        "Verify relative links and that current entrypoints agree on kernel, native adapter, product CLI and release availability.",
+        "Do not convert proposed ADRs into accepted decisions based on merge activity."
+      ],
+      "dependencies_or_risks": [
+        "Ready now; does not require a provider release.",
+        "#62 owns a scenario gallery, while #12 is a later closeout audit; neither exactly owns this current entrypoint repair.",
+        "No local instruction requires adopting a new root continuity file during this audit."
+      ],
+      "coverage": {
+        "kind": "new",
+        "new_key": "current-documentation",
+        "related_existing": [
+          11,
+          12,
+          62
+        ]
+      }
+    },
+    {
+      "id": "AUDIT-003",
+      "title": "Unavailable native release tests are reported as ordinary passes",
+      "classification": "maintainability risk",
+      "severity": "low",
+      "confidence": "high",
+      "status": "confirmed",
+      "area": "test evidence and clean-room qualification",
+      "effort": "small",
+      "impact": "medium",
+      "observation": "Two optiflow release integration tests return immediately when FLOW_OPTIFLOW_V011_EXECUTABLE is unset. The Rust harness counts them as passed; the checked-in CI does not set or install that provider. This audit separately supplied the hash-verified released binary and actually executed both cases successfully on Linux.",
+      "evidence": [
+        {
+          "type": "observed",
+          "path": "tests/optiflow_read_only.rs",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/tests/optiflow_read_only.rs",
+          "claim": "The two native cases early-return on an absent executable instead of exposing an explicit unavailable/ignored qualification state."
+        },
+        {
+          "type": "observed",
+          "path": ".github/workflows/ci.yml",
+          "url": "https://github.com/egohygiene/flow/blob/af68afa5732a04c237df5fbeee6bc5e901a5c6fd/.github/workflows/ci.yml",
+          "claim": "All-target CI does not install or bind the optiflow v0.1.1 release."
+        },
+        {
+          "type": "observed",
+          "artifact": "native-optiflow-release-tests.json",
+          "claim": "With the downloaded executable's pinned SHA-256 and explicit environment binding, all three native adapter tests passed, including source immutability, receipt reopen/tamper refusal and overlap refusal."
+        }
+      ],
+      "why_it_matters": "A green generic test count does not establish installed-provider execution. Future release evidence must distinguish a present and executed provider from unavailable optional prerequisites.",
+      "recommendation": "Use the existing clean-room/CI-tier owner #34 for explicit provider availability reporting and a required released-provider tier; keep ordinary hermetic tests usable without downloads.",
+      "suggested_validation": [
+        "Run the tier once without the provider and observe an explicit unavailable/skip result.",
+        "Run with a wrong digest and verify refusal.",
+        "Run with the pinned installed artifact and retain native evidence separately from hermetic scenario receipts."
+      ],
+      "dependencies_or_risks": [
+        "Already covered by #34 acceptance for explicit unavailable/skipped states and immutable installed providers.",
+        "Final #34 acceptance still waits for its real static and temporal proofs; bounded reporting preparation may proceed earlier."
+      ],
+      "coverage": {
+        "kind": "existing",
+        "issues": [
+          34
+        ]
+      }
+    }
+  ],
+  "proposed_new_issue_keys": [
+    "receipt-contract-parity",
+    "current-documentation"
+  ],
+  "existing_coverage": {
+    "AUDIT-003": [
+      34
+    ]
+  },
+  "validation": {
+    "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7",
+    "cargo": "cargo 1.85.0 (d73d2caf9 2024-12-31)",
+    "build_jobs": 2,
+    "test_threads": 1,
+    "python": "3.12",
+    "PyYAML": "6.0.3",
+    "jsonschema": "4.26.0",
+    "python_commands": [
+      {
+        "command": [
+          "python3",
+          "tools/validate_contracts.py"
+        ],
+        "started_at": "2026-10-21T02:37:16.256512+00:00",
+        "finished_at": "2026-10-21T02:37:16.324218+00:00",
+        "exit_code": 0,
+        "log_sha256": "64d8433a3bf6c88d9aabf9f748f6c175341934b0befeb0a0be75e87c151cda82",
+        "summary": "Validated 25 Flow contracts, 35 positive instances, and 22 rejected invalid instances (0.8.0, provisional)."
+      },
+      {
+        "command": [
+          "python3",
+          "tools/generate_scenario_sources.py",
+          "--check"
+        ],
+        "started_at": "2026-10-21T02:37:16.324308+00:00",
+        "finished_at": "2026-10-21T02:37:16.376662+00:00",
+        "exit_code": 0,
+        "log_sha256": "97e431bc81b3874cf8112cbfc456d934d6e4d501d67f986ff629abd1b72419d3",
+        "summary": "Validated 5 deterministic scenario source recipes."
+      },
+      {
+        "command": [
+          "python3",
+          "tools/test_acceptance_report.py"
+        ],
+        "started_at": "2026-10-21T02:37:16.376688+00:00",
+        "finished_at": "2026-10-21T02:37:16.442969+00:00",
+        "exit_code": 0,
+        "log_sha256": "464e0ee629edf74de09ef21e4232fbcedc26588ff7cc23c470f47fe2da88c255",
+        "summary": "....."
+      },
+      {
+        "command": [
+          "python3",
+          "tools/test_lifecycle_report.py"
+        ],
+        "started_at": "2026-10-21T02:37:16.442991+00:00",
+        "finished_at": "2026-10-21T02:37:16.806908+00:00",
+        "exit_code": 0,
+        "log_sha256": "0a54c42c57d02dec16b9f5d84f566dbf00b45f3c01bd815b8689a965045fdf50",
+        "summary": "..........."
+      },
+      {
+        "command": [
+          "python3",
+          "tools/test_durable_contracts.py"
+        ],
+        "started_at": "2026-10-21T02:37:16.806930+00:00",
+        "finished_at": "2026-10-21T02:37:16.875903+00:00",
+        "exit_code": 0,
+        "log_sha256": "1e43b905e11ca028139fe5078016515111aaf7cebf8d6a3e224b7d03b9cb6ac9",
+        "summary": "......"
+      },
+      {
+        "command": [
+          "python3",
+          ".agents/specs/validate-specs.py"
+        ],
+        "started_at": "2026-10-21T02:37:16.875925+00:00",
+        "finished_at": "2026-10-21T02:37:16.974086+00:00",
+        "exit_code": 0,
+        "log_sha256": "163b4172b608a75b50c64d86a720541a8068a1fe101a3570b48da42eddf1fc4f",
+        "summary": "VALIDATION PASSED -- 23 specification(s) checked, 0 errors."
+      },
+      {
+        "command": [
+          "python3",
+          ".agents/skills/validate-skills.py"
+        ],
+        "started_at": "2026-10-21T02:37:16.974110+00:00",
+        "finished_at": "2026-10-21T02:37:17.034761+00:00",
+        "exit_code": 0,
+        "log_sha256": "50839b72eb57a40544086f717ede46e18fc04a38510682a2a60ed49194b31744",
+        "summary": "Validating 29 canonical skills"
+      },
+      {
+        "command": [
+          "python3",
+          ".agents/agents/validate-agents.py"
+        ],
+        "started_at": "2026-10-21T02:37:17.034789+00:00",
+        "finished_at": "2026-10-21T02:37:17.110978+00:00",
+        "exit_code": 0,
+        "log_sha256": "eb33668aecfec9f9f73dce8d6746b502e5cb4eec39ebfa922df010df93190307",
+        "summary": "OK    [flow/.agents/agents/architect/AGENT.md]"
+      }
+    ],
+    "all_target_wrapper": {
+      "command": [
+        "python3",
+        "tools/run_acceptance_scenarios.py",
+        "--all-targets",
+        "--output",
+        "<local acceptance report>",
+        "--lifecycle-output",
+        "<local lifecycle report>"
+      ],
+      "environment": {
+        "RUSTUP_TOOLCHAIN": "1.85.0",
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_TARGET_DIR": "<outside source tree>"
+      },
+      "cargo_test_flags": [
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "repository_limits": {
+        "runtime_seconds": 600,
+        "capture_bytes": 4194304,
+        "per_process_address_space_bytes": 4294967296,
+        "per_process_file_bytes": 16777216,
+        "core_bytes": 0
+      },
+      "overall_status": "incomplete-timeout",
+      "overall_exit_code": 1,
+      "timeout_seconds": 600,
+      "prior_completed_test_groups": [
+        "ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+        "ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+        "ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s",
+        "ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+        "ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "ok. 12 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.14s",
+        "ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+      ],
+      "prior_completed_group_pass_count": 98,
+      "lifecycle_receipts_verified": 49,
+      "acceptance_receipts_observed": 51,
+      "acceptance_expected": 81,
+      "last_acceptance_receipt": "scenario:acceptance-artifact-symlink",
+      "next_catalog_case": "scenario:acceptance-artifact-parent-symlink",
+      "raw_failure_log_sha256": "138ad3186453b76b2a6a80fcd77d7f30bd1ab32179d6403cc401ae41695dac8f",
+      "source_identity_digest": "66d75b2a3f26ce2f001da4bdbccf79f2c8e3b2521abdeb031de2f6a46cc6d97a",
+      "all_target_claim": "not qualified",
+      "root_cause": "not established; no timeout or assertion budget changed; no rerun"
+    },
+    "native_release_tests": {
+      "command": [
+        "python3",
+        "tools/bounded_test_runner.py",
+        "<compiled optiflow_read_only test binary>",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_revision": "af68afa5732a04c237df5fbeee6bc5e901a5c6fd",
+      "rust": "1.85.0",
+      "test_binary_sha256": "d1db29fdd9162f776de29dee0013fee1c547bc3e86430734f6a763c41632bf46",
+      "provider_version": "0.1.1",
+      "provider_executable_sha256": "46af9399f3785607f835d9a805a8daa42c93597772c6ee812911615ea4b76280",
+      "environment": "FLOW_OPTIFLOW_V011_EXECUTABLE explicitly set to verified downloaded release binary",
+      "returncode": 0,
+      "elapsed_seconds": 3.232
+    },
+    "native_emitted_receipt_control": {
+      "source_revision": "af68afa5732a04c237df5fbeee6bc5e901a5c6fd",
+      "provider_version": "0.1.1",
+      "provider_executable_sha256": "46af9399f3785607f835d9a805a8daa42c93597772c6ee812911615ea4b76280",
+      "status": "complete",
+      "command_count": 3,
+      "commands": [
+        "scan",
+        "report",
+        "plan"
+      ],
+      "json_schema_valid": true,
+      "runtime_reopen_accepted": true,
+      "receipt_sha256": "622a2286f74d6b20ae447c4f74997507980e77385fc8f75563f91fc80f42e9bf",
+      "local_content_not_published": true
+    },
+    "receipt_parity_probe": {
+      "source_revision": "af68afa5732a04c237df5fbeee6bc5e901a5c6fd",
+      "runtime_driver_sha256": "5fdef757df9a23e5b74c802fccdcfa24bca12e5fc2360ead29f767ab4d99b36b",
+      "driver_source_sha256": "f9ca4ee17375893a2b81b33cb576e987c14dd782567181f80a79074c60e4897d",
+      "runtime_results_sha256": "42f743de8f15be199c9f260e211955c8480cf486f951fae7645e43d98ddd989a",
+      "valid_control_accepted": true,
+      "invalid_variants_accepted": 5,
+      "schema_results": [
+        {
+          "case": "control-scanning",
+          "schema_valid": true,
+          "schema_errors": [],
+          "sha256": "cdf18e4f1822431cf8bd70d59d5cf087294e4ae18540ffc90a214dea269c23df"
+        },
+        {
+          "case": "wrong-environment",
+          "schema_valid": false,
+          "schema_errors": [
+            {
+              "path": "environment",
+              "validator": "const",
+              "message": "'cleared; no config; no media probe; no network grant' was expected"
+            }
+          ],
+          "sha256": "b1b2383699703c328c902849e3a467f2f1f666952ed10b2e4dd83ee83cbd48bf"
+        },
+        {
+          "case": "extra-capability",
+          "schema_valid": false,
+          "schema_errors": [
+            {
+              "path": "capabilities",
+              "validator": "additionalProperties",
+              "message": "Additional properties are not allowed ('undeclared-capability' was unexpected)"
+            }
+          ],
+          "sha256": "068280362d1afc2d121f6da20510c0a0e44d48a1ba4626026cea847198a7a4dc"
+        },
+        {
+          "case": "missing-nullable-field",
+          "schema_valid": false,
+          "schema_errors": [
+            {
+              "path": "",
+              "validator": "required",
+              "message": "'source_run_id' is a required property"
+            }
+          ],
+          "sha256": "13e2c17ae67231c4dbd7fca6d194dabb8482c6d095fea14a25332b64ee7e5cb9"
+        },
+        {
+          "case": "unknown-path-property",
+          "schema_valid": false,
+          "schema_errors": [
+            {
+              "path": "state_directory",
+              "validator": "oneOf",
+              "message": "{'encoding': 'utf8', 'value': '/synthetic/state', 'unknown': 'extra'} is not valid under any of the given schemas"
+            }
+          ],
+          "sha256": "81614e141c925654691a315548bbe2d88f745529fcaab732ab38b010b2cb1ff3"
+        },
+        {
+          "case": "complete-without-artifacts",
+          "schema_valid": false,
+          "schema_errors": [
+            {
+              "path": "commands/0/artifacts",
+              "validator": "minItems",
+              "message": "[] is too short"
+            },
+            {
+              "path": "commands/1/artifacts",
+              "validator": "minItems",
+              "message": "[] is too short"
+            },
+            {
+              "path": "commands/2/artifacts",
+              "validator": "minItems",
+              "message": "[] is too short"
+            }
+          ],
+          "sha256": "5f7fa2cd123a8e3eb5300284e0c26ff0027b01fe02bf92a67f8c41e1fd3c3219"
+        }
+      ],
+      "independent_peer_replay": "confirmed identical behavior"
+    },
+    "downloaded_release": {
+      "downloaded_at": "2026-10-21T02:48:05.832831+00:00",
+      "url": "https://github.com/egohygiene/optiflow/releases/download/v0.1.1/binary-v0.1.1.tar.gz",
+      "bundle_sha256": "f576131f2695a218fabfaa5167fd16f17641c267194254a9e624303a8cf23e07",
+      "archive_sha256": "5e8a0eea84f5ab55fe75fc8a8abc2e9d36e3512537b754262b1f34a9c40aae31",
+      "executable_sha256": "46af9399f3785607f835d9a805a8daa42c93597772c6ee812911615ea4b76280",
+      "signature_verification_this_batch": "not executed",
+      "provider_release_immutable": false,
+      "source": "b82599a2231e997d42fd9f26f4b59587f4ae14cf"
+    },
+    "hosted_exact_source": {
+      "workflow_runs": 0,
+      "check_runs": 0,
+      "dispatched": false,
+      "polled": false
+    },
+    "not_executed": [
+      "format verification",
+      "Clippy",
+      "docs tests/examples",
+      "package/release qualification",
+      "advisory scanner",
+      "current stable Rust",
+      "native macOS/Windows",
+      "complete static/temporal multi-provider proof",
+      "real model/media/volume qualification",
+      "fresh signature/attestation verification"
+    ],
+    "raw_diagnostics_excluded": true,
+    "compiled_library_sha256": "af6f8c1c394c8c926935b9743adfa7be47b75908ad3fb3b214c6942b7c4b445c",
+    "rustc_binary_sha256": "07d5a76ba859dc045883efd538d96c7b86cf10166f4e834afbb5981012b461c3",
+    "cargo_binary_sha256": "1815642e0eaa0cf4ea86c3ba4299c21c4f2d68ae4a427881ea1f33070b2aae9b",
+    "source_identity_digest": "66d75b2a3f26ce2f001da4bdbccf79f2c8e3b2521abdeb031de2f6a46cc6d97a"
+  },
+  "issue_assessment": [
+    {
+      "number": 3,
+      "title": "Implement a versioned cross-holon orchestration vertical slice",
+      "url": "https://github.com/egohygiene/flow/issues/3",
+      "original_body_sha256": "1330c53a61134bc93084f7878564184a8a6ed7760f4f1a15afc76f394ba777cc",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "first installed suite",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Kernel foundation merged; two independently released real holons and CLI reconciliation remain.",
+      "dependencies": [
+        "flow#51",
+        "flow#52",
+        "flow#53"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 9,
+      "title": "Backfill repository ADR history and enable continuous decision capture",
+      "url": "https://github.com/egohygiene/flow/issues/9",
+      "original_body_sha256": "6db37a807cc24dd09cf58a2e99daad4b535dcb667a54489d55e990cb8b47b017",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "shared governance",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Preserve the explicit shared-system gate. Inventory the 13 existing ADRs before any scaffold migration; do not infer accepted status from merges.",
+      "dependencies": [
+        "hygiene#15 ratified pin",
+        "holon#6",
+        "relay#5",
+        "relay#27",
+        "relay#30",
+        "relay#33",
+        "pace#5"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 10,
+      "title": "[Publication] Orchestrate exhaustive comic finalization and multilingual release workflows",
+      "url": "https://github.com/egohygiene/flow/issues/10",
+      "original_body_sha256": "91876f42a73880a3e6bf692c53b40d29601b4fa2480a31ef2720eb3bfa09a288",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "optional exhaustive comic lane",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Retain localization, artifact forest, model variants, restoration of selected bytes and human review. Wider than the first suite candidate.",
+      "dependencies": [
+        "released orchestration slice",
+        "renderflow#406",
+        "renderflow#430",
+        "consumer-owned review"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 11,
+      "title": "[EPIC] Finish the flow suite and prove production-ready orchestration",
+      "url": "https://github.com/egohygiene/flow/issues/11",
+      "original_body_sha256": "fa759f75b779ceea3b74afc73b674191b84d9a8e7357953d02748262eefe2685",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "suite parent",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Use this existing complete parent, retain every original body/comment and close last with evidence and explicit owned deferrals.",
+      "dependencies": [
+        "all selected active work",
+        "flow#72"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 12,
+      "title": "[Audit] Post-roadmap repository, backlog, and Identity audit",
+      "url": "https://github.com/egohygiene/flow/issues/12",
+      "original_body_sha256": "0564cbd92beff889c1d7779b6d35386c86f17ace3bf5b7bbddeadfc4353fb2a2",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "stable suite closeout",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "This checkpoint audit does not satisfy the scheduled post-release/Identity audit. Keep provider-first closeout and fresh source pins.",
+      "dependencies": [
+        "flow#54",
+        "aniflow#17",
+        "optiflow#61",
+        "renderflow#409",
+        "agreed active product scope"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 13,
+      "title": "Build cross-tool orchestration and failure fixture suites",
+      "url": "https://github.com/egohygiene/flow/issues/13",
+      "original_body_sha256": "58146fa459497d48b06ee3f5bdd07061d083e698a226239e0caff7bfdba0b4fa",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "fixture parent",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Closed #28–#31 provide synthetic proof; real released-provider fixtures and the final tier gate remain. Corpus subsets are enough for their bounded routes.",
+      "dependencies": [
+        "flow#32",
+        "flow#33",
+        "flow#34"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 14,
+      "title": "[EPIC] Establish suite-wide observability and CLI experience",
+      "url": "https://github.com/egohygiene/flow/issues/14",
+      "original_body_sha256": "db5fce5830935f74759979c7b97a918dc8608ad329d6c4bb52613f2c7fd4e046",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "parallel observability parent",
+      "ready_for_implementation": true,
+      "full_outcome_gate": true,
+      "readiness_note": "Start #15 now. Preserve #15–#22 scope and conditional package decision. First release requires explicit disposition, not every optional exporter or branded help feature.",
+      "dependencies": [
+        "flow#15 through #22; #19 conditional"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 15,
+      "title": "[FLO-OBS-01] Define the suite observability, privacy, and stream contract",
+      "url": "https://github.com/egohygiene/flow/issues/15",
+      "original_body_sha256": "5dc5ace36e895e2aa8666c190cb32c3c19521a7e0188506dd5362ef2e7f6e78b",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "ready contract work",
+      "ready_for_implementation": true,
+      "full_outcome_gate": false,
+      "readiness_note": "No unmet product prerequisite for the normative privacy/stream/correlation contract. Reconcile current source and #80's optional AI reporting mapping.",
+      "dependencies": [],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 16,
+      "title": "[FLO-OBS-02] Prove the observability profile in two holon CLIs",
+      "url": "https://github.com/egohygiene/flow/issues/16",
+      "original_body_sha256": "a89c5ce80e30eea5fd24d242ddd1469c0c8c6d25d191552fc69f5dbda3690da6",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "parallel observability",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Two repository-owned pilots after the contract; provider runtimes remain independent.",
+      "dependencies": [
+        "flow#15"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 17,
+      "title": "[FLO-OBS-03] Prove opt-in OpenTelemetry logs, metrics, and traces",
+      "url": "https://github.com/egohygiene/flow/issues/17",
+      "original_body_sha256": "251672915b6ac053dd2a76a4a54682fff0a0ab059ec0248eb5af1b6d5daf37e9",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "parallel observability",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Explicit opt-in local OTLP proof; no ordinary hosted service or network dependency.",
+      "dependencies": [
+        "flow#15",
+        "flow#16"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 18,
+      "title": "[FLO-OBS-04] Decide shared observability crate and repository ownership",
+      "url": "https://github.com/egohygiene/flow/issues/18",
+      "original_body_sha256": "6db31636126fc6d465ce32d27ab2e45a73b6d5e6f9cb7c8c78cce9f4efda8410",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "parallel ownership decision",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Decide packaging from actual pilots; evaluate existing observatory ownership without assuming a new shared crate.",
+      "dependencies": [
+        "flow#16",
+        "flow#17"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 19,
+      "title": "[FLO-OBS-05] Build the selected reusable observability package",
+      "url": "https://github.com/egohygiene/flow/issues/19",
+      "original_body_sha256": "fb16d29ed5ab899d3d2de0b7b00c061ac95a95b11eb814c271489b29b2761772",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "conditional observability package",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Build only if #18 selects extraction. A recorded no-extraction decision needs proper later disposition; this audit does not close or narrow the issue.",
+      "dependencies": [
+        "flow#18 selects package"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 20,
+      "title": "[FLO-OBS-06] Migrate the suite and enforce observability conformance",
+      "url": "https://github.com/egohygiene/flow/issues/20",
+      "original_body_sha256": "1c01efd6aebea5dcdbf848e8ef6aa298eb5baa3bfaa6cea3ff8a4a52330b854e",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "parallel observability migration",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Each holon owns implementation and release; consume the reviewed decision, package only if selected.",
+      "dependencies": [
+        "flow#18",
+        "flow#19 only if selected"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 21,
+      "title": "[FLO-OBS-07] Add privacy-safe diagnostics and operator runbooks",
+      "url": "https://github.com/egohygiene/flow/issues/21",
+      "original_body_sha256": "6e9a569958ce8ac89e0f47f67d4198b30194f1a9851b13014085546aa27cd95e",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "parallel operator diagnostics",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Local bounded redacted diagnostics and runbooks after contract and migrations; no automatic upload.",
+      "dependencies": [
+        "flow#15",
+        "flow#20"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 22,
+      "title": "[FLO-OBS-08] Add accessible branded root-help presentation",
+      "url": "https://github.com/egohygiene/flow/issues/22",
+      "original_body_sha256": "adbe6e0b91728dba27ffb500870b8aed295ef53eaad4183fa80cdb76c52b50d1",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "parallel presentation",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Accessible human root-help branding after stream contract; no machine-output contamination or new mandatory help dependency.",
+      "dependencies": [
+        "flow#15"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 32,
+      "title": "[FLO-13.5] Prove the static publication workflow with released providers",
+      "url": "https://github.com/egohygiene/flow/issues/32",
+      "original_body_sha256": "7c1aeb8b1a346b773adbcf52c7b6760ee448a7df8d86d75cad1bc86c0c62f4cc",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "first installed suite proof",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Static route uses exact released renderflow/optiflow artifacts and a minimal immutable fixture subset, not the entire comic product.",
+      "dependencies": [
+        "flow#52",
+        "renderflow#419",
+        "required provider fixture subset"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 33,
+      "title": "[FLO-13.6] Prove the temporal release workflow with released providers",
+      "url": "https://github.com/egohygiene/flow/issues/33",
+      "original_body_sha256": "7a061707bf20823b0d1f48cbc302d395543fd74fb591b518b0e4eaeac22a4e2d",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "first installed suite proof",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Temporal route needs released aniflow/renderflow and exact applicable fixture subset; do not confuse synthetic corpus implementation with shipped providers.",
+      "dependencies": [
+        "flow#51",
+        "flow#52",
+        "aniflow#10",
+        "renderflow#419",
+        "required provider fixture subset"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 34,
+      "title": "[FLO-13.7] Add clean-room compatibility, CI tiers, and regression promotion",
+      "url": "https://github.com/egohygiene/flow/issues/34",
+      "original_body_sha256": "30530f3989d22b098baac6867d645532df772bbef25d178cac8578325b20cbb0",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "first installed suite gate",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Already owns AUDIT-003: explicit unavailable/skipped versus executed provider evidence, clean-room tiers, compatibility and regression promotion. Bounded tier preparation may proceed sooner.",
+      "dependencies": [
+        "flow#32",
+        "flow#33"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 51,
+      "title": "[FLO-3.4] Integrate an immutable Aniflow release",
+      "url": "https://github.com/egohygiene/flow/issues/51",
+      "original_body_sha256": "550dec8a5714436e0f6a83fc47e2dc080683f3f58f82dc06748749661474e99e",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "first installed suite adapter",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Consume aniflow's first immutable qualified release; the later music-video release is separate.",
+      "dependencies": [
+        "aniflow#10 immutable release"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 52,
+      "title": "[FLO-3.6] Integrate an immutable Renderflow release",
+      "url": "https://github.com/egohygiene/flow/issues/52",
+      "original_body_sha256": "e868333ec3f110a6af5d7c048ac63ca7bf8bfe521f85069071d22f2586ef2fad",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "first installed suite adapter",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Consume immutable renderflow static PDF/EPUB capability; source-only implementations do not satisfy the release gate.",
+      "dependencies": [
+        "renderflow#419 immutable release"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 53,
+      "title": "[FLO-3.7] Ship the supported Flow CLI and close the vertical slice",
+      "url": "https://github.com/egohygiene/flow/issues/53",
+      "original_body_sha256": "60c835463a1c11ecd01f9b076077c7f10a68b4fe0f24615dc98b2c6a2d22111d",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "first supported CLI",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Keep declared #51 gate and static-first acceptance both visible. Staged authoring is possible; final acceptance needs an explicit resolution rather than silently deleting the aniflow dependency.",
+      "dependencies": [
+        "flow#51",
+        "flow#52"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 54,
+      "title": "[Release] Harden and publish Flow's first immutable release",
+      "url": "https://github.com/egohygiene/flow/issues/54",
+      "original_body_sha256": "b7a531f0d9ae798437921ed9d0bec89abe690aad536253c7cb63a90f18f77b34",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "first integration candidate",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "First immutable candidate after real slice, compatible clean-room evidence, file UX/distribution and explicit observability disposition.",
+      "dependencies": [
+        "flow#3",
+        "flow#34",
+        "flow#70",
+        "flow#71",
+        "flow#14 explicit disposition"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 62,
+      "title": "[Docs] Visualize supported scenarios and their verification evidence",
+      "url": "https://github.com/egohygiene/flow/issues/62",
+      "original_body_sha256": "a1d84b6343e25cb607accb4f6a64173432d22803e446dfde8a866cc450b9ae2b",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "ready scenario documentation",
+      "ready_for_implementation": true,
+      "full_outcome_gate": false,
+      "readiness_note": "Closed #28/#30 satisfy the declared prerequisites. Re-query and show 81 acceptance plus 49 lifecycle recipes accurately; distinguish native release execution and gaps.",
+      "dependencies": [],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 70,
+      "title": "[Experience] Run supported Flow profiles on local files from a clean install",
+      "url": "https://github.com/egohygiene/flow/issues/70",
+      "original_body_sha256": "e3ee6030061ba9b125d895b21a1bf3b88ba7e330251838d4434ce7c877cd6f9b",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "first installed local-file UX",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Small file/directory/ordered-collection profiles after supported CLI and real workflows; no global everything default.",
+      "dependencies": [
+        "flow#53",
+        "flow#32",
+        "flow#33"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 71,
+      "title": "[Distribution] Install a verified Flow suite with a `flow` command and independent providers",
+      "url": "https://github.com/egohygiene/flow/issues/71",
+      "original_body_sha256": "8186c9d319f9e1c782e38f8cfd1052059ddc4a1980f6dc98981c540c9ef1df95",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "first installed distribution",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Owns available package identity, a supported flow binary and independent providers. Source publish=false/test binary is intentional current status; unrelated crates.io flow is not this product.",
+      "dependencies": [
+        "flow#53",
+        "flow#70",
+        "qualified provider artifacts"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 72,
+      "title": "[Release] Qualify a stable installable Flow suite after the provider and Flow audits",
+      "url": "https://github.com/egohygiene/flow/issues/72",
+      "original_body_sha256": "85d626cf4c284e7388f7a3caee99aa4cb8dff6b25fd03b3d033848b2c48c368d",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "stable supported suite",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Stable audited capability matrix and actual clean installation after first candidate/remediation; complete or explicitly defer remaining scope.",
+      "dependencies": [
+        "flow#54",
+        "flow#12",
+        "provider closeout audits and remediation"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 73,
+      "title": "[Adapter] Orchestrate released Optiflow exact-dedup transactions with explicit authority",
+      "url": "https://github.com/egohygiene/flow/issues/73",
+      "original_body_sha256": "bb7671b4420986092655c9fad5daa40c6874355de4486e6f00a06cc942aa456d",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "optional transaction adapter",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Separate qualified optiflow v0.2 consumption with explicit authority. Does not block the first candidate.",
+      "dependencies": [
+        "optiflow#93 qualified immutable release"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 74,
+      "title": "[Adapter] Consume released Optiflow lossless-PNG replacement profile",
+      "url": "https://github.com/egohygiene/flow/issues/74",
+      "original_body_sha256": "0a409f9665dadefc6e1da6a787c3e8e1296a27cbc3a7cf06f520ab5ba50ffad1",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "optional PNG adapter",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Separate validated PNG replacement release and transaction adapter; not a first candidate gate.",
+      "dependencies": [
+        "flow#73",
+        "optiflow#95 qualified release"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 75,
+      "title": "[Adapter] Orchestrate the released Aniflow music-video profile",
+      "url": "https://github.com/egohygiene/flow/issues/75",
+      "original_body_sha256": "52bf6f1c166bf17f54446ab040b393f58970e3273d99db23255db7e568aea4be",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "optional music-video adapter",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Separate released music-video profile; does not turn optional repair, RIFE, watermark or model qualification into the baseline release gate.",
+      "dependencies": [
+        "flow#51",
+        "aniflow#40 qualified release"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 78,
+      "title": "[Preset] Configure a reusable anime music video workflow",
+      "url": "https://github.com/egohygiene/flow/issues/78",
+      "original_body_sha256": "9ac9a2f5a92d1fc80e2488ebb6fbafd55e2a8e23a329abdd1f1aa000a195ff13",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "optional reusable AMV preset",
+      "ready_for_implementation": false,
+      "full_outcome_gate": true,
+      "readiness_note": "Retain project overrides, exact selected steps, clean masters, human review, final-byte evidence and no automatic posting. Not a second execution engine.",
+      "dependencies": [
+        "flow#51",
+        "flow#75",
+        "aniflow#40"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    },
+    {
+      "number": 80,
+      "title": "[AI] Define optional runtime profiles, local model preparation and existing provider routing",
+      "url": "https://github.com/egohygiene/flow/issues/80",
+      "original_body_sha256": "1a608dfe798ae6c69bb0ca28f5aac2f82e8fc7b46a071b05b88c9e045abd9594",
+      "original_labels": [],
+      "disposition": "retain-open",
+      "lane": "optional AI integration",
+      "ready_for_implementation": true,
+      "full_outcome_gate": true,
+      "readiness_note": "Checkpoint 1 inventory/seam evaluation is startable now. Full profile, released renderflow summary proof and native operation still need staged acceptance; no router selected or model runtime delivered by this audit.",
+      "dependencies": [
+        "agreed interoperability seam",
+        "renderflow#456 released capability",
+        "selected real runtime/hardware qualification"
+      ],
+      "coverage": "existing issue retains complete original acceptance"
+    }
+  ],
+  "native_parent_assignments": [
+    {
+      "child": 51,
+      "parent": 3
+    },
+    {
+      "child": 52,
+      "parent": 3
+    },
+    {
+      "child": 53,
+      "parent": 3
+    },
+    {
+      "child": 32,
+      "parent": 13
+    },
+    {
+      "child": 33,
+      "parent": 13
+    },
+    {
+      "child": 34,
+      "parent": 13
+    },
+    {
+      "child": 15,
+      "parent": 14
+    },
+    {
+      "child": 16,
+      "parent": 14
+    },
+    {
+      "child": 17,
+      "parent": 14
+    },
+    {
+      "child": 18,
+      "parent": 14
+    },
+    {
+      "child": 19,
+      "parent": 14
+    },
+    {
+      "child": 20,
+      "parent": 14
+    },
+    {
+      "child": 21,
+      "parent": 14
+    },
+    {
+      "child": 22,
+      "parent": 14
+    },
+    {
+      "child": "receipt-contract-parity",
+      "parent": 11
+    },
+    {
+      "child": "current-documentation",
+      "parent": 11
+    },
+    {
+      "child": 62,
+      "parent": 11
+    },
+    {
+      "child": 80,
+      "parent": 11
+    },
+    {
+      "child": 3,
+      "parent": 11
+    },
+    {
+      "child": 13,
+      "parent": 11
+    },
+    {
+      "child": 70,
+      "parent": 11
+    },
+    {
+      "child": 71,
+      "parent": 11
+    },
+    {
+      "child": 54,
+      "parent": 11
+    },
+    {
+      "child": 14,
+      "parent": 11
+    },
+    {
+      "child": 73,
+      "parent": 11
+    },
+    {
+      "child": 74,
+      "parent": 11
+    },
+    {
+      "child": 75,
+      "parent": 11
+    },
+    {
+      "child": 78,
+      "parent": 11
+    },
+    {
+      "child": 10,
+      "parent": 11
+    },
+    {
+      "child": 9,
+      "parent": 11
+    },
+    {
+      "child": 12,
+      "parent": 11
+    },
+    {
+      "child": 72,
+      "parent": 11
+    }
+  ],
+  "publication_scope": {
+    "product_repairs": false,
+    "merges": false,
+    "releases": false,
+    "source_reorganization": false,
+    "continuity_framework_adoption": false,
+    "issue_closures": false,
+    "original_issue_body_replacement": false,
+    "deferred_private_egolint_appendix_read": false
+  },
+  "uncertainties": [
+    "All-target timeout root cause is not established; no code defect or environment cause inferred.",
+    "No exact-source hosted checks were returned; no earlier CI result is promoted to this source.",
+    "Digest pinning is distinct from GitHub host-enforced immutability (provider immutable=false).",
+    "Scheduled final post-release audit #12 remains open and separate."
+  ],
+  "published_ledger": {
+    "roadmap": "https://github.com/egohygiene/flow/issues/11",
+    "review": "https://github.com/egohygiene/flow/compare/main...audit/flow-suite-20261021T025401Z",
+    "new_issues": {
+      "receipt-contract-parity": {
+        "number": 81,
+        "url": "https://github.com/egohygiene/flow/issues/81",
+        "title": "Validate reopened optiflow receipts against the complete evidence contract"
+      },
+      "current-documentation": {
+        "number": 82,
+        "url": "https://github.com/egohygiene/flow/issues/82",
+        "title": "Reconcile flow's current implementation and continuation documentation"
+      }
+    },
+    "original_scope_preserved": true,
+    "publication_kind": "draft-audit-and-roadmap",
+    "product_repairs_performed": false
+  }
+}
