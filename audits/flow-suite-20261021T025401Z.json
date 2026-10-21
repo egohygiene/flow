@@ -8,7 +8,7 @@
   "source_tree": "453b6a20675917db08b1c14d06b49c9380fe170e",
   "source_unchanged": true,
   "report_path": "audits/flow-suite-20261021T025401Z.md",
-  "report_sha256": "c56460949b8b1c05385e70abf546a82a9117bf115bc21180f2755ea0d10a5f94",
+  "report_sha256": "2435802c27f3028fd594f885e12ed0f8d41fed0b13d9a3753e2860ae22eb5f55",
   "governing_guidance": {
     "local_auditor_spec": "2.0.0 approved",
     "local_audit_skill": "1.0.0 draft",
@@ -1462,7 +1462,7 @@
   ],
   "published_ledger": {
     "roadmap": "https://github.com/egohygiene/flow/issues/11",
-    "review": "https://github.com/egohygiene/flow/compare/main...audit/flow-suite-20261021T025401Z",
+    "review": "https://github.com/egohygiene/flow/pull/83",
     "new_issues": {
       "receipt-contract-parity": {
         "number": 81,
