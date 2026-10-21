@@ -1,0 +1,251 @@
+{
+  "issue": "https://github.com/egohygiene/flow/issues/81",
+  "date": "2026-10-21",
+  "base_commit": "c673654fb7ad86569d3bb32f1412f5eb2fbf2bf3",
+  "candidate_identity": "The containing PR/commit identifies the candidate. File SHA-256 values below bind the checked implementation and harness without self-referential commit metadata.",
+  "platform": "x86_64-unknown-linux-gnu",
+  "toolchain": {
+    "rust": "1.85.0",
+    "python": "3.12",
+    "jsonschema": "4.26.0",
+    "PyYAML": "6.0.3"
+  },
+  "scope": "Focused local correctness and compatibility checks, not full-suite or release qualification. Raw logs were retained locally; their hashes identify observations, not authenticated execution attestations.",
+  "source_files_sha256": {
+    ".github/workflows/ci.yml": "f9aad9ecdd5da8f456e91ea280585538be10c41e835b7bc116e3568e28f1edd7",
+    "Cargo.lock": "b7a16689cb7ec533bb4a50bf14e1035a2bf5d123e0491f5f63d6cb675891c1ac",
+    "Cargo.toml": "761f66920af6c8d59dddbe16dccba91a42b4da2148e7f6058e60729c775d4f68",
+    "docs/architecture/foundation/ARCHITECTURE.md": "979ab326ef9dd27343c1455c635893c23e041a68a84abf27756885e5b90924be",
+    "docs/integrations/optiflow-v0.1.1-read-only.md": "7130524836b9a54bfc92f6d8d2a0c81b7f36cbf1f267d168012991c1ed532fb3",
+    "docs/work/81/HANDOFF.md": "ad10bfaf4dc106ce842ea31abf5263979e554c5c39e2a0d733c5d599cf0eac08",
+    "requirements-ci.txt": "0b0709dc3105d98b29f4fc6a870c15c0cf42191498384ef8a2a32d3fcf5f34ed",
+    "schemas/optiflow-read-only-receipt-v1.schema.json": "66962c7f088389e3f6d6a53abbf0fdf07f77fc8cd88b27ccc1ba751e99fa202d",
+    "src/optiflow.rs": "46006f2fe9cc8a39e986fa7bf5c89d88e1fa69be96c65fb9cfe98ebb8430002f",
+    "tests/fixtures/optiflow-receipt-parity.json": "ffd22f47faccb50463b70c12deb53a9419db539b51a20b0e9304ebbe31fa494f",
+    "tests/optiflow_read_only.rs": "9ead83e8013399298891083ded69d51f97b9590fbfcdc5ea1259f15e80845096",
+    "tests/optiflow_receipts.rs": "f63d07dc6d46974d5a106994e8eb1cbb6352772298aa2b90d34c99c71d3ba208",
+    "tools/test_optiflow_receipts.py": "1b2bcf02cd13190368e9beccdd5dabb6773e09a145b38030dd193998da5f6cf2"
+  },
+  "native_provider": {
+    "version": "0.1.1",
+    "source_revision": "b82599a2231e997d42fd9f26f4b59587f4ae14cf",
+    "executable_sha256": "46af9399f3785607f835d9a805a8daa42c93597772c6ee812911615ea4b76280",
+    "environment": "FLOW_OPTIFLOW_V011_EXECUTABLE explicitly set to the separately installed pinned binary; synthetic disposable text sources only",
+    "coverage": "All three existing adapter tests executed: two use the actual pinned executable; the missing/incompatible-provider test uses refusal fixtures. Source bytes remain unchanged, receipt reopening succeeds, artifact tampering and overlapping paths refuse."
+  },
+  "shared_corpus": {
+    "total": 84,
+    "accepted_controls": 12,
+    "schema_invalid": 41,
+    "additional_runtime_invalid": 31,
+    "statuses": [
+      "scanning",
+      "reporting",
+      "planning",
+      "complete",
+      "partial",
+      "refused"
+    ],
+    "refusal_prefix_lengths": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "rust_boundary": "ReadOnlyReceipt::load with materialized synthetic native artifacts",
+    "schema_boundary": "Independent Draft202012Validator on the same portable mutations"
+  },
+  "baseline_replay": {
+    "base_commit": "c673654fb7ad86569d3bb32f1412f5eb2fbf2bf3",
+    "change_to_baseline": "Only the three new test/harness/corpus files copied into a detached base worktree; no product-source changes",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--test",
+      "optiflow_receipts",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 101,
+    "expected_failure": true,
+    "wrongly_accepted_count": 45,
+    "schema_invalid_wrongly_accepted_count": 27,
+    "wrongly_rejected_count": 0,
+    "wrongly_accepted_ids": [
+      "audit-complete-without-artifacts",
+      "audit-wrong-environment",
+      "audit-extra-capability",
+      "audit-missing-nullable-field",
+      "audit-unknown-native-path-property",
+      "missing-required-source_set_id",
+      "missing-required-plan_id",
+      "missing-required-plan_sha256",
+      "missing-required-approval",
+      "missing-required-duplicate_logical_bytes",
+      "missing-required-physical_savings_bytes",
+      "missing-required-failure",
+      "missing-required-failure-provider-stdout",
+      "missing-plan-marker",
+      "schema-valid-duplicate-plan-role",
+      "schema-valid-missing-scan-role",
+      "schema-valid-duplicate-scan-role",
+      "schema-valid-wrong-artifact-schema",
+      "schema-valid-marker-digest-mismatch",
+      "schema-valid-outcome-coverage-disagreement",
+      "invalid-digest-short-stdout",
+      "invalid-digest-uppercase-marker",
+      "invalid-command-diagnostic-object",
+      "invalid-failure-diagnostic-object",
+      "invalid-command-outcome",
+      "invalid-command-coverage",
+      "empty-attempt-identity",
+      "empty-command-set-identity",
+      "empty-artifact-kind",
+      "empty-artifact-schema",
+      "empty-failure-code",
+      "empty-failure-detail",
+      "unknown-unix-path-property",
+      "outer-plan-identity-mismatch",
+      "outer-run-identity-mismatch",
+      "outer-source-set-identity-mismatch",
+      "scan-marker-set-identity-mismatch",
+      "report-marker-set-identity-mismatch",
+      "plan-marker-set-identity-mismatch",
+      "native-marker-source-linkage-mismatch",
+      "native-marker-member-digest-mismatch",
+      "native-plan-identity-mismatch",
+      "source-overlaps-state",
+      "source-relative",
+      "source-parent-traversal"
+    ],
+    "log_sha256": "3cd05057113beb5b5d2722e38998665bbfa9ab356898a04d6830f7cc62ae825b"
+  },
+  "checks": [
+    {
+      "name": "rust-focused",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--lib",
+        "--test",
+        "optiflow_receipts",
+        "--test",
+        "optiflow_read_only",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.341,
+      "coverage": "3 library tests; 3 adapter tests with the pinned executable explicitly available; 1 harness executing 84 corpus cases",
+      "log_sha256": "7a2a2a02aa2df69aec19f2086cafb678d990d27b0182d095abd6944dee804799"
+    },
+    {
+      "name": "rust-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--lib",
+        "--test",
+        "optiflow_read_only",
+        "--test",
+        "optiflow_receipts",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.093,
+      "coverage": "Focused library and integration targets",
+      "log_sha256": "f176431a2418a6ab88058b00a81f877856e5297ee5034c6ba128d88888c03a18"
+    },
+    {
+      "name": "rust-docs",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--doc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.838,
+      "coverage": "2 compile-fail documentation tests",
+      "log_sha256": "92fa01ec2d9f151282340a7cee075c9e5d1d1fb4a1970aad721aa3b1d9c8f42d"
+    },
+    {
+      "name": "rust-format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.259,
+      "coverage": "Workspace formatting",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "python-parity",
+      "command": [
+        "python3",
+        "tools/test_optiflow_receipts.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.233,
+      "coverage": "2 unittest methods; all 84 schema expectations",
+      "log_sha256": "d6383b13a4eb2ffd96733ab1bd87818f09f147421aa768b45d08401be5180335"
+    },
+    {
+      "name": "contract-validation",
+      "command": [
+        "python3",
+        "tools/validate_contracts.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.062,
+      "coverage": "Existing 25 contracts, 35 positive examples, 22 negative fixtures",
+      "log_sha256": "64d8433a3bf6c88d9aabf9f748f6c175341934b0befeb0a0be75e87c151cda82"
+    },
+    {
+      "name": "architecture-specs",
+      "command": [
+        "python3",
+        ".agents/specs/validate-specs.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.086,
+      "coverage": "Applicable architecture specification validation",
+      "log_sha256": "163b4172b608a75b50c64d86a720541a8068a1fe101a3570b48da42eddf1fc4f"
+    },
+    {
+      "name": "diff-whitespace",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.005,
+      "coverage": "Changed-file whitespace check",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "review": "Independent source review covered product logic, shared fixture/harness, CI ownership and documentation. Its identity-correlation finding was fixed before this final validation. Reviewer did not execute checks.",
+  "limits": [
+    "No new hosted CI dispatch or polling; ordinary PR workflows may run automatically. No hosted green claim.",
+    "The earlier all-target acceptance wrapper reached its unchanged 600-second budget and did not qualify the entire suite. This focused checkpoint does not rerun it or raise its budget; follow-up remains Flow #34.",
+    "Previously observed moving-stable Clippy failures in unchanged source/tests remain under Flow #34; focused Clippy is Rust 1.85.0 only.",
+    "No macOS execution or Windows native-adapter qualification. The synthetic native receipt corpus is Unix-gated.",
+    "No Aniflow/Renderflow deferred product checks, private-media operation, mutation grant, paid model call, release or deployment.",
+    "Hashes and correlated local JSON are editable audit evidence, not signatures, authentication, or proof against coordinated forgery."
+  ],
+  "next_issue": "https://github.com/egohygiene/flow/issues/82"
+}

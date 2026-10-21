@@ -96,6 +96,26 @@ can start a fresh attempt after review; the adapter never automatically
 promotes or retries an uncertain attempt. The local receipt and state are
 trusted local audit data, not cryptographic authentication.
 
+Saving and reopening use the same pure contract check. All required keys must
+be present, including explicit nulls, and unknown fields in closed objects or
+tagged paths are refused. The environment and seven capability states must match
+the pinned profile. Commands retain the ordered scan/report/plan prefix, valid
+outcome/coverage pairs, object diagnostics and the exact native artifact roles
+with correlated marker digests. Complete/partial status requires a present plan
+digest and matching plan artifact. Refusals may retain any verified command
+prefix, including all three commands when final source verification fails.
+Reopening checks the recorded run, source-set, plan and command-set identifiers
+against the hashed native documents, including marker membership and the
+source-root binding. Editing an outer identifier alone cannot preserve completed
+status. These consistency checks still provide no signature or execution authority.
+
+Provider-independent receipt cases run in ordinary Rust CI. A separate Python
+Draft 2020-12 check applies the published JSON Schema to the same fixture
+mutations; runtime-only evidence/state refusals are recorded separately from
+schema shape failures. This native receipt is not part of the generic
+25-contract suite manifest. Neither check turns an editable local record into
+authenticated evidence or an execution grant.
+
 ## Reproducing the clean-room fixture
 
 From a fresh Flow checkout with Rust 1.85, verify and extract the official
@@ -104,6 +124,15 @@ release archive, then run:
 ```bash
 FLOW_OPTIFLOW_V011_EXECUTABLE="/absolute/path/to/release/optiflow" \
   cargo test --locked --test optiflow_read_only
+```
+
+Without a provider executable, run the deterministic receipt regressions and
+independent schema check:
+
+```bash
+cargo test --locked --test optiflow_receipts
+python3 -m pip install --disable-pip-version-check --requirement requirements-ci.txt
+python3 tools/test_optiflow_receipts.py
 ```
 
 The test creates only disposable text files with duplicates and Unicode

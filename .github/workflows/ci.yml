@@ -89,6 +89,9 @@ jobs:
       - name: Validate contracts
         run: python3 tools/validate_contracts.py
 
+      - name: Validate native Optiflow receipt schema and regression fixtures
+        run: python3 tools/test_optiflow_receipts.py
+
       - name: Check deterministic scenario sources
         run: python3 tools/generate_scenario_sources.py --check
 
