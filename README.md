@@ -2,8 +2,8 @@
 
 > One coherent way to inspect, plan, transform, validate, and explain content.
 
-Flow is the suite and future orchestration layer for Ego Hygiene's independently
-useful Rust tools:
+Flow is the developing orchestration library and suite architecture for Ego
+Hygiene's independently useful Rust tools:
 
 | Holon | Owns | Does not own |
 | --- | --- | --- |
@@ -36,10 +36,13 @@ explicit recovery decisions, and fresh dependency-graph assessment before
 caller-selected downstream execution. Stale prerequisites invalidate their
 descendants for reuse while unrelated valid branches retain their eligibility.
 
-Follow the [maintained suite dependency map](docs/roadmaps/flow-suite-dependency-map.md)
-for the suite completion path, current implementation/validation state and
-the preserved original Mermaid roadmap. The [full completion diagram](docs/roadmaps/flow-suite-completion.svg)
-retains old milestones, marks completed issues NUKED and includes newer work.
+Start with the [current continuation handoff](docs/work/11/HANDOFF.md) and
+[live roadmap issue #11](https://github.com/egohygiene/flow/issues/11).
+The [maintained suite dependency map](docs/roadmaps/flow-suite-dependency-map.md)
+and [completion diagram](docs/roadmaps/flow-suite-completion.svg) preserve the
+October 6, 2026 issue atlas; the linked October 15 provider note is another
+dated observation. Their counts, draft states and next-up text are historical,
+and should be re-queried before execution.
 
 ## Executable checkpoint
 
@@ -169,22 +172,36 @@ skills, agents, templates, and validators used to maintain these documents.
 
 ## Status
 
-Flow is in the **executable contract seam** phase. Issues #23, #26, #28, #36,
-#38, #40, #42, #44, and #45 are merged through PRs #24, #27, #35, #37, #39,
-#41, #43, #47, and #48. PR #60 consolidates #46's four sequential checkpoints:
-physical and evidence adversaries, deterministic single- and two-provider
-compositions, exact package/executable content-identity correlation, a closed
-behavior catalog, and the parent #29 evidence matrix. After that PR merges and
-default-branch CI is green, #46 and #29 can close and #30 becomes the next
-conformance-matrix checkpoint.
-The synthetic providers are not the two real adapters required to finish
-FLO-Q03. The process seam still does not implement authenticity verification,
-operating-system sandbox enforcement, authenticated host evidence,
-descriptor-bound launch, or process-tree containment, and the scenario contract
-is not an executor.
-The holons remain independently released repositories. Optiflow v0.1.1 is
-the first pinned real provider adapter; Aniflow and Renderflow adapters and
-the restore-and-assess workflow remain follow-up work.
+As inspected on **October 22, 2026**, at source
+`aadf053d48ce8826ee5b9ca4a134985f4e7910e3`, Flow has a merged durable library
+kernel, synthetic acceptance/lifecycle infrastructure, and a native read-only
+Optiflow v0.1.1 adapter. The saved-receipt repair is complete in
+[#81 / PR #84](https://github.com/egohygiene/flow/pull/84).
+
+The supported product CLI ([#53](https://github.com/egohygiene/flow/issues/53)),
+released Aniflow/Renderflow adapters ([#51](https://github.com/egohygiene/flow/issues/51),
+[#52](https://github.com/egohygiene/flow/issues/52)), installed workflows and
+Flow's first release ([#54](https://github.com/egohygiene/flow/issues/54)) remain
+separate work. `Cargo.toml` is not publishable; its only binary is the synthetic
+conformance provider. There is no published Flow GitHub release at this observation.
+The [capability matrix](docs/integrations/capability-matrix.md) distinguishes
+provider source, immutable releases and platform qualification.
+
+Use the [current handoff](docs/work/11/HANDOFF.md) for one continuation route;
+after this documentation checkpoint, the roadmap's next issue is
+[#15 — observability, privacy and streams](https://github.com/egohygiene/flow/issues/15).
+The first installed candidate, stable audited suite and optional product backlog
+remain different finish lines. The proposed temporal restore-and-assess workflow
+is not delivered by the library foundations alone.
+
+The [#81 validation receipt](docs/validation/flow-81-local.json) records focused
+Linux/Rust 1.85.0 checks and actual pinned native execution. Full-suite and
+moving-stable qualification remain in [#34](https://github.com/egohygiene/flow/issues/34).
+Synthetic providers do not qualify the remaining real integrations. The process
+seam still lacks publisher authentication, an operating-system sandbox,
+authenticated host evidence, descriptor-bound launch and process-tree containment.
+The scenario contract is not a general runtime executor. ADR-0011/0012/0013
+remain proposed pending human review in the [decision index](docs/architecture/governance/DECISIONS.md).
 
 ## License
 

@@ -3,6 +3,12 @@
 Flow integrates independently released holons without taking ownership of their
 implementations.
 
+For current implementation and next-work status, use the
+[continuation handoff](../work/11/HANDOFF.md) and the dated
+[capability matrix](capability-matrix.md). The merged durable kernel and native
+read-only Optiflow adapter are library surfaces; the product CLI, released
+Aniflow/Renderflow adapters and complete installed workflows remain separate.
+
 - [Suite boundaries](suite-boundaries.md) defines ownership and legal dependency
   directions.
 - [Capability matrix](capability-matrix.md) records the evidence baseline and
@@ -61,8 +67,9 @@ process request encoding and validation of caller-supplied completion, stdout,
 and stderr evidence through the same Flow-owned acceptance gate. Flow #28 /
 merged PR #35 adds a closed scenario-manifest model and a synthetic conformance
 corpus; it describes test intent and does not execute those scenarios. The
-executable reference paths remain hermetic; artifact observation is covered by
-isolated temporary-fixture tests rather than a real provider.
+reference examples for those early seams remain hermetic. Later work adds
+durable execution and the native Optiflow integration below; synthetic fixture
+coverage does not establish every released-provider or platform combination.
 
 Operator-`trusted` entries remain eligible for either execution mode.
 Operator-`sandboxed` entries may resolve only for process mode and remain

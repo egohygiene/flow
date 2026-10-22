@@ -1,5 +1,16 @@
 # Flow suite roadmap to completion
 
+> **Current continuation: October 22, 2026.** Start with the
+> [current handoff](../work/11/HANDOFF.md) and [live #11 ledger](https://github.com/egohygiene/flow/issues/11).
+> The durable kernel, read-only Optiflow adapter and #81 repair are merged.
+> After #82, #15 is next. The source/release matrix and qualification limits
+> are in the handoff. The October 6 atlas and October 15 provider note below
+> retain their original observation boundaries, counts and nodes. Their old
+> Aniflow draft states are historical; PRs #105/#115 have since merged while
+> qualification/release remains open. No graph or census was regenerated.
+
+## Preserved roadmap observations — October 6 and October 15, 2026
+
 > **Latest provider execution-order refresh: October 15, 2026.** Read the
 > [bounded three-provider execution order](flow-suite-execution-order-2026-10-15.md)
 > for current Renderflow, Aniflow and Optiflow pins, existing drafts, remaining

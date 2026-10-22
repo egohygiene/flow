@@ -14,6 +14,9 @@ Before changing architecture or source boundaries, read:
 Use the repository-local specifications and skills in `.agents/`. Their
 supported validation commands are documented in `.agents/README.md`.
 
+For current work, begin with `docs/work/11/HANDOFF.md` and re-query its linked
+issue before choosing a checkpoint. Dated roadmap snapshots remain history.
+
 ## Architectural rules
 
 - Preserve originals and evidence before transformation.

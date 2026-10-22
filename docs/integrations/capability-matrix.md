@@ -1,8 +1,37 @@
 # Provider capability matrix
 
-This is an architectural evidence baseline, not a compatibility guarantee.
-Implementation work must reinspect named provider releases and replace each
-`pending` interface decision with tested evidence.
+## Current evidence — October 22, 2026
+
+Source revisions, package versions, immutable releases and executed compatibility
+are separate evidence. This matrix does not qualify arbitrary current source or
+every platform. Re-query the [current handoff](../work/11/HANDOFF.md) and the
+owning issue before implementing an adapter.
+
+| Repository and inspected main | Release available to Flow | Supported integration evidence | Remaining owner |
+| --- | --- | --- | --- |
+| Flow `aadf053d48ce8826ee5b9ca4a134985f4e7910e3` | No published GitHub release; package `publish = false` | Durable library/kernel and native read-only Optiflow adapter merged; synthetic fixture binary only | Product CLI [#53](https://github.com/egohygiene/flow/issues/53), first candidate [#54](https://github.com/egohygiene/flow/issues/54), qualification [#34](https://github.com/egohygiene/flow/issues/34) |
+| Aniflow `7a808ff99ca8f557f6a3ba7fd373a393de0feee6` | No published GitHub release | Merged temporal/audio/toolchain implementation is source evidence; Flow adapter compatibility is not qualified | Provider release [Aniflow #10](https://github.com/egohygiene/aniflow/issues/10), deferred qualification [#64](https://github.com/egohygiene/aniflow/issues/64), Flow adapter [#51](https://github.com/egohygiene/flow/issues/51) |
+| Optiflow `d03e53f2e397af03920070d9bb6c076d7827e12b` | Read-only v0.1.1, source `b82599a2231e997d42fd9f26f4b59587f4ae14cf`; newer main is not that release | Native `optiflow.command-result.v1` CLI adapter: scan, report, exact-duplicate review plan. Pinned archive/executable identities and actual synthetic Linux execution; macOS archives pinned, native execution unverified | Completed Flow [#50](https://github.com/egohygiene/flow/issues/50)/[#81](https://github.com/egohygiene/flow/issues/81); later provider release [Optiflow #93](https://github.com/egohygiene/optiflow/issues/93), mutation/PNG adapters [#73](https://github.com/egohygiene/flow/issues/73)/[#74](https://github.com/egohygiene/flow/issues/74) |
+| Renderflow `9dac5428df38691b2922e09ea02d51b02a7f43eb` | No published GitHub release | Merged publication/transform implementation is source evidence; Flow adapter compatibility is not qualified | Provider release [Renderflow #419](https://github.com/egohygiene/renderflow/issues/419), Flow adapter [#52](https://github.com/egohygiene/flow/issues/52) |
+
+The [Optiflow integration guide](optiflow-v0.1.1-read-only.md) owns exact binary
+digests, schemas, effects and native limits. Its Flow receipt is a separate
+local audit record, not a generic graph checkpoint or mutation grant. Dry-run,
+quarantine, restore and finalize remain explicitly unsupported by this pinned
+adapter. The [#81 receipt](../validation/flow-81-local.json) records focused
+Linux/Rust 1.85.0 evidence; broader clean-room qualification remains #34.
+
+Source-only provider work and retained deferred checks cannot establish native
+readiness. An adapter decision must record exact release/artifact identity,
+interface and accepted schema versions, effects, runtime tools, observed
+outputs, deterministic compatibility, and explicit unavailable/untested states.
+
+## Prior architectural baseline — historical
+
+The original table below preserves the August 13 Aniflow/Renderflow source
+observations and the later pinned Optiflow entry. Package version labels and
+earlier ordering decisions are not current release or compatibility evidence.
+Use the current table and owning issues above for execution.
 
 | Provider snapshot | Observed domain capability | Current integration evidence | First-slice role | Adapter decision |
 | --- | --- | --- | --- | --- |

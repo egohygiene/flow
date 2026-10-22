@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-system
 title: Flow System
 kind: architecture-document
-version: 0.2.0
+version: 0.2.1
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-21
+updated: 2026-10-22
 governed_by:
   - architecture-system
 depends_on:
@@ -28,7 +28,8 @@ supersedes: []
 
 The Flow suite consists of one orchestration system, three domain holons, and a
 small set of shared contracts. This inventory assigns each major capability to
-one primary owner.
+one primary owner. It describes intended ownership; the implementation boundary
+below distinguishes delivered library capabilities from the complete suite.
 
 ## System inventory
 
@@ -63,6 +64,8 @@ probes/adapters; it must not become a duplicate media engine.
 
 ## Major interactions and runtime flows
 
+The intended end-to-end suite flow is:
+
 1. Inspect the source and preserve provenance observations.
 2. Resolve a pipeline definition against installed capabilities and policy.
 3. Produce and validate a deterministic plan.
@@ -79,10 +82,19 @@ integration; the capability matrix must verify actual contracts first.
 
 ## Assumptions and evidence gaps
 
-Aniflow currently has the broadest run orchestration behavior, Optiflow is
-deliberately read-only at v0.1.0, and Renderflow currently centers documents
-plus image/audio conversion rather than general video derivative packaging.
-Integration must preserve reality rather than rename aspiration as capability.
+At Flow source `aadf053d48ce8826ee5b9ca4a134985f4e7910e3`, the orchestration
+library includes durable prepared execution, verified checkpoints, fresh graph
+assessment and explicit recovery. Its native Optiflow adapter consumes the
+immutable read-only v0.1.1 CLI for scan, report and review planning. That adapter
+retains a separate local receipt; it does not yet participate in the generic
+durable graph. Neither surface establishes the complete interaction sequence
+above or a supported product CLI.
+
+Released Aniflow/Renderflow adapters, installed-suite workflows and a Flow
+release remain separate work. Provider source and package versions do not
+establish released compatibility. The [capability matrix](../../integrations/capability-matrix.md)
+owns the dated provider evidence; the [current handoff](../../work/11/HANDOFF.md)
+owns continuation. Integration must preserve those distinctions.
 
 ## Open questions
 
