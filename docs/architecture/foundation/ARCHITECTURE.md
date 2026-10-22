@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.13.4
+version: 0.13.5
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-10-21
+updated: 2026-10-22
 governed_by:
   - architecture-architecture
 depends_on:
@@ -32,9 +32,11 @@ implementation decisions.
 
 ### Suite applications
 
-The `flow` CLI is a thin delivery adapter over an orchestration library. It owns
-argument parsing, human presentation, stable exit mapping, and shell completion,
-but not planning or execution logic.
+The intended `flow` CLI is a thin delivery adapter over the orchestration
+library. Its responsibility is argument parsing, human presentation, stable
+exit mapping and shell completion. The supported product CLI remains
+[#53](https://github.com/egohygiene/flow/issues/53); the existing synthetic
+conformance-provider binary is not that delivery surface.
 
 ### Orchestration core
 
@@ -328,9 +330,15 @@ adding a scheduler or rewriting accepted history. Issue #65 adds the bounded
 [durable lifecycle corpus](../../integrations/lifecycle-scenarios.md), including
 fresh-process restart and deterministic recovery receipts. Issue #66 extends it
 with authority denials, observable effect counters, and retained cleanup residuals
-using the existing public APIs, without changing runtime schemas. Flow does not yet supply
-the public CLI, real holon adapters, signature or transparency verification,
-provider-native artifact validation, an atomic filesystem snapshot, an
+using the existing public APIs, without changing runtime schemas. Completed
+issue #50 supplies the native read-only Optiflow v0.1.1 adapter described
+above; #81 / merged PR #84 strengthens its saved receipt contract and native
+artifact correlation. It is a released-provider integration through a library
+API and a separate native protocol, not a generic graph checkpoint.
+
+Flow does not yet supply the supported public CLI, released Aniflow or
+Renderflow adapters, complete installed-suite workflows, signature or
+transparency verification, an atomic filesystem snapshot, an
 operating-system sandbox or authenticated enforcement evidence,
 descriptor-bound execution, process-tree containment, automatic retry/resume,
 or provider-native checkpoint restoration. Structural units beyond these library seams
@@ -345,7 +353,7 @@ current source layout.
 
 ## Validation
 
-Default-branch CI run 35558851556 validates Rust 1.85 and stable library builds,
+Historical default-branch CI run 35558851556 validated Rust 1.85 and stable library builds,
 closed contract models, deterministic resolution, the hermetic in-process and
 process-transcript seams, scenario-manifest identity, and repository
 architecture metadata plus artifact acceptance and exact execution subjects at
@@ -358,9 +366,19 @@ execution-subject schema, canonical identity, filesystem, content-mismatch,
 context-replay, contradictory-evidence, and unsupported-claim checks. Forbidden
 dependency-edge checks, CLI-thinness, signature/transparency verification,
 authenticated sandbox conformance, descriptor-bound launch, process-tree
-containment, provider-native artifact validation, and scenario execution remain
+containment, broader provider-native/domain qualification, and general scenario execution remain
 later gates for their corresponding runtime surfaces. Issue #42 adds real Unix
 direct-child conformance for literal launch state, supervised transport,
 overflow, interruption, grace, escalation, and reaping. Issue #58 additionally
 validates deterministic fixed-order composition without adding plan/run state,
 retry, checkpoint, resume, or real holon algorithms.
+
+Later merged work adds the durable coordinator and bounded native Optiflow
+checks described above. [#81's local receipt](../../validation/flow-81-local.json)
+records focused Linux/Rust 1.85.0 regression checks and actual pinned v0.1.1
+execution. This is separate from the earlier CI observation and from full-suite
+qualification. [#34](https://github.com/egohygiene/flow/issues/34) retains the
+observed all-target timeout, native unavailable/skip semantics and moving-stable
+Clippy baseline. No current all-target green or release qualification follows
+from merging these implementations. ADR-0011, ADR-0012 and ADR-0013 remain
+proposed in the [decision index](../governance/DECISIONS.md).

@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.10.1
+version: 0.10.2
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-09-27
+updated: 2026-10-22
 governed_by:
   - architecture-decisions
 depends_on:
@@ -104,3 +104,10 @@ enforcement and evidence authentication open. ADR-0010 closes the bounded
 trusted-unconfined direct-child lifecycle while leaving sandbox enforcement,
 authenticated evidence, process-tree containment, descriptor-bound execution,
 durable interruption, retry, and resume open.
+
+Those omissions describe the scope of ADR-0010, not an absence of later library
+implementation. The durable kernel and graph assessment have since merged;
+the native read-only Optiflow adapter and its receipt validation have also
+merged. ADR-0011, ADR-0012 and ADR-0013 remain **Proposed / Pending review**.
+Implementation or PR merge alone does not accept a proposed decision. Their
+original records and the accepted/superseded status of earlier ADRs are retained.

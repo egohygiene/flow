@@ -5,6 +5,15 @@ independently useful holons. Suite documents own shared intent and rules. Holon
 documents refine those rules into tool-specific capability and dependency
 boundaries.
 
+## Current implementation and continuation
+
+Use the [current handoff](../work/11/HANDOFF.md) to resume work. The durable
+library kernel and native read-only Optiflow v0.1.1 adapter are merged; the
+supported Flow CLI, remaining released-provider adapters and Flow release have
+separate gates. The [capability matrix](../integrations/capability-matrix.md)
+distinguishes source snapshots, released interfaces and native qualification.
+This reading order describes architectural ownership, not universal delivery.
+
 ## Reading order
 
 1. [Purpose](identity/PURPOSE.md)

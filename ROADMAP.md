@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.8
+version: 1.3.9
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-10-06
+updated: 2026-10-22
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -25,6 +25,16 @@ supersedes: []
 
 ## Maintained suite dependency view
 
+The [current continuation handoff](docs/work/11/HANDOFF.md) and
+[live #11 ledger](https://github.com/egohygiene/flow/issues/11) own current
+execution navigation. At the October 22, 2026 observation, the durable kernel,
+synthetic acceptance/lifecycle foundations, native read-only Optiflow adapter
+and #81 repair are merged. After #82, continue with #15. Released
+Aniflow/Renderflow adapters, product CLI and the first installed Flow candidate
+remain distinct from the stable audited suite and optional product backlog.
+The [capability matrix](docs/integrations/capability-matrix.md) owns current
+source/release evidence and explicit unqualified states.
+
 The [Flow suite dependency map](docs/roadmaps/flow-suite-dependency-map.md)
 connects the independent provider lanes to an installable suite and the full
 retained product backlog, including the inspectable comic artifact-tree outcome.
@@ -32,14 +42,23 @@ The October 6 refresh preserves all 80 original nodes, includes every open issue
 and newer completed checkpoints, and marks bounded completed issues NUKED.
 Open the [full completion diagram](docs/roadmaps/flow-suite-completion.svg) or
 [editable Mermaid source](docs/roadmaps/flow-suite-completion.mmd). It preserves
-current evidence states, scoped dependencies and the update protocol. Its time-qualified
+October 6 evidence states, scoped dependencies and the update protocol. Its time-qualified
 snapshot supersedes older execution-status claims below where they conflict;
 live issues and repository evidence remain authoritative.
 
-Use the [current documentation handoff](docs/work/11/HANDOFF.md) to resume this
-capture. Detailed tracker state belongs in that dependency view and GitHub,
+Use the handoff to resume one bounded checkpoint. Detailed tracker state
+belongs in the live #11 issue; dated dependency views preserve prior observations,
 while this document retains strategic horizons. Optional capability lanes do
 not silently become first-release requirements.
+
+## Preserved execution snapshots — September 24–27, 2026
+
+The handoffs and embedded execution manifest below, through
+`END ROADMAP EXECUTION SNAPSHOT`, retain their original dates, evidence and
+step states. Their “current,” “next” and draft instructions are historical.
+FLO-Q03 still needs remaining released-provider integrations; #30 and the
+durable kernel are already merged. The current continuation route above
+supersedes these older queues without regenerating their projection.
 
 ## 2026-09-27 Optiflow read-only adapter handoff
 
@@ -398,13 +417,15 @@ issues: []
 
 ## Strategic context
 
-Flow begins with three independently released Rust tools. Its first executable
-checkpoint is a bounded extension resolution and execution seam: merged
-in-process evidence, host-neutral process transcript validation, and one bounded
-`trusted-unconfined` local runner. It is not yet a product orchestrator or real
-provider integration. Flow will integrate named releases through public
-libraries or versioned CLI contracts. It will not consolidate repositories,
-copy sibling source, or hide missing provider capabilities inside the facade.
+Flow coordinates three independently versioned Rust tools through released
+public contracts. Its merged library includes extension resolution, validated
+execution, a bounded `trusted-unconfined` local runner, durable prepared state,
+fresh graph assessment and explicit recovery. Its first real released-provider
+integration is native read-only Optiflow v0.1.1 with a separate receipt. These
+foundations do not yet establish a product CLI, generic native graph composition
+or complete installed workflows. Remaining integrations consume named releases
+through public libraries or versioned CLI contracts, preserving each provider's
+ownership and independent use.
 
 This roadmap advances on capability evidence rather than dates.
 
@@ -433,6 +454,12 @@ one primary owner; contract documents are machine-valid; no mutable or copied
 sibling dependency is permitted.
 
 ## Now — Prove released integration seams
+
+The contract, library, process, artifact and durable foundations below are
+merged building blocks. Their delivered evidence is bounded to each surface;
+older omissions describe that checkpoint rather than the whole current library.
+The remaining strategic outcome is to compose qualified released providers into
+an installed product experience. Detailed issue order remains in the handoff.
 
 ### Freeze the federated extension contract
 
@@ -521,8 +548,9 @@ roots. It remains test-owned sequencing rather than a graph scheduler. Flow #59
 adds candidate closeout evidence for the exact materialized package layouts,
 correlated package and executable digests across the manifest, locks, and
 observations, tamper rejection, redistribution terms, behavior-to-test catalog,
-parent #29 requirement matrix, residual gaps, and #30 handoff. Parent closure
-waits for PR #60 to merge and default-branch CI to pass.
+parent #29 requirement matrix, residual gaps, and #30 handoff. That kit and the
+subsequent acceptance matrix have merged; they are no longer the next closeout
+gate. Synthetic composition remains separate from real released-provider proof.
 
 ### Verify locked package and executable subjects
 
@@ -578,7 +606,17 @@ positive/adversarial tests. It does not provide a sandbox, descendant
 containment, descriptor-bound execution, durable state, retry/resume, or a real
 provider adapter.
 
-### Pin the capability matrix
+### Compose the durable library and native adapter foundations
+
+Prepared plans, persisted intent/authority, immutable snapshots, accepted
+checkpoints, fresh dependency assessment and explicit recovery are implemented
+library surfaces. The native Optiflow adapter pins v0.1.1 read-only inspection
+and validates retained evidence, including the #81 receipt repair. Its separate
+receipt does not yet make it a generic graph checkpoint. Remaining work composes
+qualified providers and the supported CLI without weakening either boundary.
+ADR-0011/0012/0013 remain proposed pending human review.
+
+### Maintain the capability matrix
 
 Reinspect each provider at named released revisions. Record available public
 libraries, CLI commands, structured formats, side effects, runtime tools, and
@@ -638,7 +676,11 @@ general video packaging as present capability.
 **Exit evidence:** each provider remains independently buildable and releasable;
 Flow compatibility fixtures exercise only public released interfaces.
 
-## Next — Build orchestration primitives
+## Next — Deliver the orchestration CLI over existing primitives
+
+These are intended product commands, not currently installed Flow commands.
+Reuse the merged library/kernel; do not recreate persistence or recovery in
+the delivery layer.
 
 - `flow doctor`: discover provider versions and explain compatibility.
 - `flow inspect`: preserve source observations and artifact identity.
@@ -651,7 +693,8 @@ Flow compatibility fixtures exercise only public released interfaces.
 
 ## Later
 
-- Versioned events, results, provenance evidence, plans, and run manifests.
+- Extend the existing versioned events, results, plans and run-state contracts
+  for qualified suite workflows and richer provenance evidence.
 - Opt-in provenance tooling and honest derivative claims under ADR-0002.
 - Reusable signed pipeline packs and third-party adapter contracts.
 - Cross-run content-addressed caching with explicit privacy and invalidation.
