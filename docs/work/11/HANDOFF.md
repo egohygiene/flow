@@ -1,5 +1,22 @@
 # Flow #11 completion-roadmap handoff
 
+## Current draft checkpoint — October 26, 2026
+
+#82 merged through PR #85 at `69952725fb4eeb1daeb0e5c8bea7d8d82ba40670`.
+The maintainer resumed the suite implementation sprint with frequent draft
+checkpoints and executable qualification still deferred. The next ledger item,
+[#15](https://github.com/egohygiene/flow/issues/15), now has an authored proposed
+[observability profile](../../observability/README.md) and
+[continuation record](../15/HANDOFF.md) on `codex/15-observability-contract`.
+Re-query its live PR/head before editing; this entry does not claim merge,
+ADR acceptance, instrumentation, exporter or passing conformance.
+
+The pinned inventory records real stream/privacy migration gaps rather than
+declaring every tool conforming. #16 owns the subsequent separate Renderflow
+and Aniflow pilots after contract review. Existing release/adapter/CLI gates,
+optional-feature boundaries and prior roadmap history below remain unchanged.
+No product tests/build/lint/schema/native/CI were run for this draft.
+
 ## Current continuation — October 22, 2026
 
 This is the current continuation entrypoint. Re-read the linked live issue,

@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.9
+version: 1.3.10
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-10-22
+updated: 2026-10-26
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -24,6 +24,12 @@ supersedes: []
 # Flow Roadmap
 
 ## Maintained suite dependency view
+
+The October 26 draft [#15 contract checkpoint](docs/work/15/HANDOFF.md) authors
+the proposed observability/privacy/stream profile from pinned four-repository
+source evidence. It adds no runtime instrumentation or exporter and does not
+establish profile conformance. Review that contract before #16's two local CLI
+pilots; the full live ledger and installed-candidate prerequisites remain intact.
 
 The [current continuation handoff](docs/work/11/HANDOFF.md) and
 [live #11 ledger](https://github.com/egohygiene/flow/issues/11) own current

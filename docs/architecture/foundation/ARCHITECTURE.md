@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.13.5
+version: 0.14.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-10-22
+updated: 2026-10-26
 governed_by:
   - architecture-architecture
 depends_on:
@@ -234,6 +234,25 @@ references and produces a new immutable artifact. Hooks cannot rewrite plans,
 change authorization, bypass validation, or publish implicitly.
 
 ## Boundary rules
+
+### Proposed operational observability boundary
+
+The [suite observability profile](../../observability/README.md) is the proposed
+contract for #15. It keeps operational logs, aggregate metrics and causal traces
+outside deterministic planning, acceptance and checkpoint identity. Typed
+progress, diagnostics, native command results and durable evidence keep their
+existing owners. A product CLI owns its subscriber and presentation; embedded
+library callers own theirs. Telemetry export and child context propagation are
+disabled by default and require separate explicit configuration and authority.
+
+This proposal does not change the accepted Flow JSON Lines process protocol or
+the native Optiflow single-document adapter. Product machine stdout and provider
+transport stdout are separate interfaces. No exporter, common package,
+instrumentation or new runtime guarantee is delivered by this document.
+[ADR-0014](../governance/decisions/ADR-0014-operational-observability.md) records
+the new proposal; #16 owns two product pilots and their runtime evidence.
+
+### Governing structural boundaries
 
 - CLI crates depend inward on their corresponding libraries.
 - Flow orchestration depends on Flow-owned adapter ports.
