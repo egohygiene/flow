@@ -37,6 +37,11 @@ This reading order describes architectural ownership, not universal delivery.
 
 ## Holon contracts
 
+The proposed [suite observability profile](../observability/README.md) owns
+operational signal/privacy/stream vocabulary for #15. Its inventory and future
+conformance matrix keep current native behavior separate from the two planned
+CLI pilots; no exporter or shared package is introduced.
+
 - [Aniflow](holons/aniflow/README.md)
 - [Optiflow](holons/optiflow/README.md)
 - [Renderflow](holons/renderflow/README.md)

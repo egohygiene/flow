@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.10.2
+version: 0.11.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-10-22
+updated: 2026-10-26
 governed_by:
   - architecture-decisions
 depends_on:
@@ -67,8 +67,13 @@ justifies separate ADRs.
 | [ADR-0011](decisions/ADR-0011-durable-run-state.md) | Persist prepared intent and acceptance in immutable local snapshots | Proposed | Pending review | None | Migration, distributed writers, automatic recovery, authenticated state, or stronger durability changes the boundary |
 | [ADR-0012](decisions/ADR-0012-fresh-graph-assessment.md) | Require fresh prerequisite evidence for durable graph execution | Proposed | Pending review | None | Scheduling, cross-plan reuse, or concurrent artifact mutation changes the assessment boundary |
 | [ADR-0013](decisions/ADR-0013-optiflow-native-read-only-adapter.md) | Pin Optiflow v0.1.1 behind a native read-only adapter | Proposed | Pending review | None | A released mutation contract, native protocol revision, or generic graph composition changes this boundary |
+| [ADR-0014](decisions/ADR-0014-operational-observability.md) | Keep operational observability separate from domain evidence | Proposed | Pending review | None | Pilot feasibility, exported data, shared-package selection or external mapping stability changes |
 
 ## Active decisions
+
+[ADR-0014](decisions/ADR-0014-operational-observability.md) is proposed with #15.
+It records the suite operational observability boundary and remains pending
+maintainer review and the two CLI pilots. Existing ADR statuses are unchanged.
 
 ADR-0011 is proposed with Flow #49 and remains subject to maintainer review.
 Its implementation merged in PR #63. ADR-0012 is proposed with Flow #64, the
