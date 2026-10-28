@@ -1,5 +1,5 @@
 flowchart TB
-  %% Snapshot documentation only. See companion map for evidence and edge semantics.
+  %% October 28, 2026 snapshot. Issue acceptance owns scope; dotted edges are scoped/order links.
   subgraph FLOW["Flow"]
     direction TB
     subgraph flow_g0["Foundations"]
@@ -12,6 +12,8 @@ flowchart TB
       F49["#49 Durable run state — NUKED"]
       F31["#31 Recovery and authority proof — NUKED"]
       F50["#50 Optiflow read-only — NUKED"]
+      F82["#82 Current source navigation — NUKED"]
+      F81["#81 Saved receipt validation — NUKED"]
     end
     subgraph flow_g1["First usable install"]
       direction TB
@@ -35,10 +37,11 @@ flowchart TB
       F75["#75 Music-video adapter — BLOCKED"]
       F78["#78 Reusable AMV preset — BLOCKED"]
       F62["#62 Scenario docs — PLANNED"]
+      F80["#80 Optional AI runtimes — OPTIONAL"]
     end
     subgraph flow_g3["Observability"]
       direction TB
-      F15["#15 Signal contract — PLANNED"]
+      F15["#15 Signal contract — CHECKS / RELEASE OWED"]
       F16["#16 Two CLI pilots — BLOCKED"]
       F17["#17 OTel proof — BLOCKED"]
       F18["#18 Crate decision — BLOCKED"]
@@ -65,37 +68,41 @@ flowchart TB
       R417["#417 Fixed EPUB — NUKED"]
       R418["#418 EPUB validation — NUKED"]
       R414["#414 EPUB parent — NUKED"]
-      R419["#419 Provider release — QUALIFICATION / RELEASE"]
+      R419["#419 First provider release — CHECKS / RELEASE OWED"]
+      R459["#459 Current documentation — CHECKS / RELEASE OWED"]
+      R458["#458 Locked qualification baseline — IN PROGRESS"]
     end
     subgraph renderflow_g1["Corpus and comic composition"]
       direction TB
       R433["#433 Real-artifact gallery — NUKED"]
       R412["#412 Adversarial corpus — PARENT OPEN"]
       R413["#413 Comic fixtures — PLANNED"]
-      R406["#406 Localization — PLANNED"]
+      R406["#406 Localized composition — IN PROGRESS"]
     end
     subgraph renderflow_g2["Artifact forest"]
       direction TB
-      R422["#422 Forest planner — PLANNED"]
-      R423["#423 Screenplay model — PLANNED"]
-      R424["#424 Scripttool adapter — BLOCKED"]
-      R425["#425 Fountain PDF — BLOCKED"]
-      R426["#426 PDF recovery — BLOCKED"]
-      R427["#427 Timed text — PLANNED"]
-      R428["#428 Speech transcript — BLOCKED"]
-      R429["#429 Creative doctor — PLANNED"]
-      R430["#430 Forest proof — BLOCKED"]
-      R421["#421 Forest parent — PARENT OPEN"]
+      R422["#422 Forest planner — CHECKS / RELEASE OWED"]
+      R423["#423 Screenplay model — CHECKS / RELEASE OWED"]
+      R424["#424 Scripttool adapter — CHECKS / RELEASE OWED"]
+      R425["#425 Afterwriting adapter — CHECKS / RELEASE OWED"]
+      R426["#426 PDF/text recovery — CHECKS / RELEASE OWED"]
+      R427["#427 Timed-text model — CHECKS / RELEASE OWED"]
+      R428["#428 Speech transcript — CHECKS / RELEASE OWED"]
+      R429["#429 Optional toolchain evidence — IN PROGRESS"]
+      R430["#430 Creative forest proof — CHECKS / RELEASE OWED"]
+      R421["#421 Creative forest parent — PARENT OPEN"]
+      R440["#440 Original-media time maps — CHECKS / RELEASE OWED"]
     end
     subgraph renderflow_g3["Additional product lanes"]
       direction TB
-      R378["#378 Article copilot — PLANNED"]
-      R379["#379 Editorial profile — PLANNED"]
+      R378["#378 Editorial agent — OPTIONAL"]
+      R379["#379 Editorial profile — OPTIONAL"]
       R350["#350 Slides — OPTIONAL"]
-      R397["#397 Sonic DNA — PLANNED"]
+      R397["#397 Sonic DNA profile — OPTIONAL"]
       R349["#349 Podcast — OPTIONAL"]
       R420["#420 HTTP API — OPTIONAL"]
       R367["#367 Product roadmap — PARENT OPEN"]
+      R456["#456 Publication AI summaries — OPTIONAL"]
     end
     subgraph renderflow_g4["Renderflow closeout"]
       direction TB
@@ -115,31 +122,42 @@ flowchart TB
       O92["#92 Linux recovery — NUKED"]
       O96["#96 Linux finalization — NUKED"]
     end
-    subgraph optiflow_g1["Mac and optimization"]
+    subgraph optiflow_g1["Video folder goal"]
       direction TB
-      O111["#111 macOS APFS — DRAFT"]
-      O93["#93 v0.2 qualification — BLOCKED"]
+      O146["#146 Video optimization — IN PROGRESS"]
+    end
+    subgraph optiflow_g2["Mac and optimization"]
+      direction TB
+      O111["#111 Mac/APFS transactions — IN PROGRESS"]
+      O93["#93 Qualified dedup release — CHECKS / RELEASE OWED"]
       O112["#112 PNG corpus — NUKED"]
       O94["#94 OxiPNG candidate — NUKED"]
       O95["#95 PNG replacement — BLOCKED"]
-      O121["#121 Recursive low-space workflow — BLOCKED"]
+      O121["#121 Serial low-space PNG — IN PROGRESS"]
       O65["#65 Media corpus — PARENT OPEN"]
+      O137["#137 Mac fixture roots — CHECKS / RELEASE OWED"]
+      O136["#136 Corpus lock binding — CHECKS / RELEASE OWED"]
     end
-    subgraph optiflow_g2["Optiflow closeout"]
+    subgraph optiflow_g3["Optional evidence"]
+      direction TB
+      O133["#133 Evidence explanations — OPTIONAL"]
+    end
+    subgraph optiflow_g4["Optiflow closeout"]
       direction TB
       O115["#115 Release names — EXTERNAL GATE"]
       O60["#60 ADR — EXTERNAL GATE"]
       O61["#61 audit — BLOCKED"]
+      O135["#135 Optiflow completion ledger — PARENT OPEN"]
     end
-    subgraph optiflow_g3["Future product horizons"]
+    subgraph optiflow_g5["Future product horizons"]
       direction TB
-      O_H04["Horizon v0.4 Image profiles — FUTURE HORIZON"]
-      O_H05["Horizon v0.5 Audio/video optimization — FUTURE HORIZON"]
-      O_H06["Horizon v0.6 Perceptual relationships — FUTURE HORIZON"]
-      O_H07["Horizon v0.7 Collections and portable state — FUTURE HORIZON"]
-      O_H08["Horizon v0.8 Policy and review UX — FUTURE HORIZON"]
-      O_H09["Horizon v0.9 Stable-contract beta — FUTURE HORIZON"]
-      O_H10["Horizon v1.0 macOS/Linux GA — FUTURE HORIZON"]
+      O_H04["v0.4 Image profiles — FUTURE HORIZON"]
+      O_H05["v0.5 Audio/video optimization — FUTURE HORIZON"]
+      O_H06["v0.6 Perceptual relationships — FUTURE HORIZON"]
+      O_H07["v0.7 Collections and portable state — FUTURE HORIZON"]
+      O_H08["v0.8 Policy and review UX — FUTURE HORIZON"]
+      O_H09["v0.9 Stable-contract beta — FUTURE HORIZON"]
+      O_H10["v1.0 macOS/Linux GA — FUTURE HORIZON"]
     end
   end
   subgraph ANIFLOW["Aniflow"]
@@ -174,7 +192,7 @@ flowchart TB
       A75["#75 Corpus recipes — NUKED"]
       A76["#76 Corpus consumers — NUKED"]
       A77["#77 Corpus gates — NUKED"]
-      A24["#24 Media corpus — PARENT OPEN"]
+      A24["#24 Media corpus and demos — PARENT OPEN"]
       A89["#89 Artifact-set identities — NUKED"]
       A90["#90 Complete output-set execution — NUKED"]
       A91["#91 Multi-artifact handoff — NUKED"]
@@ -189,8 +207,8 @@ flowchart TB
       A85["#85 Release candidate identity — NUKED"]
       A86["#86 Deterministic platform bundles — NUKED"]
       A87["#87 Release handoff and docs — NUKED"]
-      A64["#64 Deferred validation — QUALIFICATION / RELEASE"]
-      A10["#10 Provider release — QUALIFICATION / RELEASE"]
+      A64["#64 Deferred validation — CHECKS / RELEASE OWED"]
+      A10["#10 Provider release — CHECKS / RELEASE OWED"]
     end
     subgraph aniflow_g3["Toolchain and music video"]
       direction TB
@@ -200,12 +218,15 @@ flowchart TB
       A101["#101 Bounded FFmpeg/ffprobe probes — NUKED"]
       A102["#102 macOS probe adapter — NUKED"]
       A103["#103 Bound native preflight — NUKED"]
-      A104["#104 Audio registration preparation — DRAFT"]
-      A38["#38 Toolchain doctor — PARENT OPEN"]
-      A36["#36 Frame import and repair — PLANNED"]
-      A37["#37 Upscale recovery — PLANNED"]
-      A35["#35 Music-video profile — PARENT OPEN"]
+      A104["#104 Audio registration preparation — NUKED"]
+      A38["#38 Selected toolchain — IN PROGRESS"]
+      A36["#36 Frame import and repair — NUKED"]
+      A37["#37 Upscale recovery — IN PROGRESS"]
+      A35["#35 Music-video profile — IN PROGRESS"]
       A40["#40 Profile release — BLOCKED"]
+      A114["#114 Serial RIFE checkpoint — NUKED"]
+      A111["#111 Target-resolution entry — IN PROGRESS"]
+      A110["#110 Optional RIFE finishing — IN PROGRESS"]
     end
     subgraph aniflow_g4["Creator delivery and experiments"]
       direction TB
@@ -215,11 +236,21 @@ flowchart TB
       A39["#39 Watermark experiment — OPTIONAL"]
       A81["#81 Creator watermarks — OPTIONAL"]
       A106["#106 Temporal restoration experiment — OPTIONAL"]
+      A116["#116 AMV AI review notes — OPTIONAL"]
+      A113["#113 Validated video handoff — PLANNED"]
+      A112["#112 Delivery metadata policy — PLANNED"]
+      A109["#109 Signed creator identity — OPTIONAL"]
+      A108["#108 Reviewed subtitles — PLANNED"]
+      A107["#107 Manual and review stages — IN PROGRESS"]
     end
     subgraph aniflow_g5["Aniflow closeout"]
       direction TB
       A14["#14 ADR — EXTERNAL GATE"]
       A17["#17 audit — BLOCKED"]
+      A120["#120 Reviewed Identity assets — PLANNED"]
+      A119["#119 Selected product naming — PLANNED"]
+      A118["#118 Current Aniflow docs — NUKED"]
+      A117["#117 Aniflow completion ledger — PARENT OPEN"]
     end
   end
   F50 --> F53
@@ -427,21 +458,48 @@ flowchart TB
   O_H07 -. "ORDER: product horizon order; scope not yet decomposed" .-> O_H08
   O_H08 -. "ORDER: product horizon order; scope not yet decomposed" .-> O_H09
   O_H09 -. "ORDER: product horizon order; scope not yet decomposed" .-> O_H10
+  F81 -. "receipt repair before current documentation" .-> F82
+  F15 -. "reuse operational privacy boundary" .-> F80
+  F80 -. "selected optional model profile" .-> R456
+  F80 -. "selected optional model profile" .-> A116
+  F80 -. "selected optional model profile" .-> O133
+  R458 --> R419
+  R459 -. "current release documentation acceptance" .-> R419
+  R428 --> R440
+  R440 -. "selected speech branches" .-> R430
+  O136 -. "lock-binding corpus tranche" .-> O65
+  O137 -. "native candidate fixture qualification" .-> O95
+  O146 -. "concrete video subset of broader horizon" .-> O_H05
+  O146 -. "when released video capability and adapter exist" .-> F70
+  O111 -. "later native replacement only; not candidate authoring" .-> O146
+  A114 -. "completed first interpolation checkpoint" .-> A110
+  A111 -. "selected target/prior-upscaled entry" .-> A35
+  A110 -. "only selected interpolation route" .-> A35
+  A35 -. "reuse automated recipe; broader review modes" .-> A107
+  A108 -. "selected subtitle review" .-> A107
+  A112 -. "selected delivery metadata policy" .-> A83
+  A109 -. "selected creator/release identity" .-> A82
+  A112 -. "final-byte evidence after metadata changes" .-> A82
+  A35 --> A113
+  A113 -. "optional downstream artifacts" .-> F75
+  A118 -. "completed documentation tranche" .-> A117
+  A119 -. "naming closeout" .-> A17
+  A120 -. "applicable reviewed Identity adoption" .-> A17
   classDef nuked fill:#e7f5eb,stroke:#147d53,color:#162a40
-  class F23,F25,F28,F29,F30,F49,F31,F50,R415,R416,R417,R418,R414,R433,O88,O89,O90,O91,O106,O92,O96,O112,O94,A8,A42,A43,A44,A55,A45,A46,A47,A48,A49,A50,A51,A13,A32,A66,A67,A68,A33,A71,A72,A73,A34,A75,A76,A77,A89,A90,A91,A69,A93,A94,A95,A80,A85,A86,A87,A97,A98,A99,A101,A102,A103 nuked
-  classDef draft fill:#e2f4fa,stroke:#087f9b,color:#162a40
-  class O111,A104 draft
+  class F23,F25,F28,F29,F30,F49,F31,F50,F82,F81,R415,R416,R417,R418,R414,R433,O88,O89,O90,O91,O106,O92,O96,O112,O94,A8,A42,A43,A44,A55,A45,A46,A47,A48,A49,A50,A51,A13,A32,A66,A67,A68,A33,A71,A72,A73,A34,A75,A76,A77,A89,A90,A91,A69,A93,A94,A95,A80,A85,A86,A87,A97,A98,A99,A101,A102,A103,A104,A36,A114,A118 nuked
+  classDef in_progress fill:#e6f0fd,stroke:#245d9f,color:#162a40
+  class R458,R406,R429,O146,O111,O121,A38,A37,A35,A111,A110,A107 in_progress
   classDef qualification fill:#fff1ce,stroke:#9c6100,color:#162a40
-  class R419,A64,A10 qualification
+  class F15,R419,R459,R422,R423,R424,R425,R426,R427,R428,R430,R440,O93,O137,O136,A64,A10 qualification
   classDef blocked fill:#fbe9e8,stroke:#b44044,color:#162a40
-  class F51,F52,F53,F32,F33,F34,F70,F71,F54,F10,F73,F74,F75,F78,F16,F17,F18,F20,F21,F22,F12,F72,R424,R425,R426,R428,R430,R409,O93,O95,O121,O61,A40,A17 blocked
+  class F51,F52,F53,F32,F33,F34,F70,F71,F54,F10,F73,F74,F75,F78,F16,F17,F18,F20,F21,F22,F12,F72,R409,O95,O61,A40,A17 blocked
   classDef planned fill:#ecf0f7,stroke:#4c6688,color:#162a40
-  class F62,F15,R413,R406,R422,R423,R427,R429,R378,R379,R397,A36,A37,A83,A82 planned
+  class F62,R413,A83,A82,A113,A112,A108,A120,A119 planned
   classDef epic fill:#f0ebf7,stroke:#7454a0,color:#162a40
-  class F3,F13,F14,F11,R412,R421,R367,O65,A24,A38,A35,A79 epic
+  class F3,F13,F14,F11,R412,R421,R367,O65,O135,A24,A79,A117 epic
   classDef external fill:#eceff2,stroke:#666d79,color:#162a40
   class F9,R405,O115,O60,A14 external
   classDef optional fill:#eaf4f1,stroke:#3d7775,color:#162a40
-  class F19,R350,R349,R420,A39,A81,A106 optional
+  class F80,F19,R378,R379,R350,R397,R349,R420,R456,O133,A39,A81,A106,A116,A109 optional
   classDef horizon fill:#f4ecf2,stroke:#85647c,color:#162a40
   class O_H04,O_H05,O_H06,O_H07,O_H08,O_H09,O_H10 horizon

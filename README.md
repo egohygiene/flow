@@ -38,11 +38,14 @@ descendants for reuse while unrelated valid branches retain their eligibility.
 
 Start with the [current continuation handoff](docs/work/11/HANDOFF.md) and
 [live roadmap issue #11](https://github.com/egohygiene/flow/issues/11).
+The [suite finish plan](docs/roadmaps/flow-suite-finish-plan.md) separates the
+shortest path to useful installed tools from the full retained backlog.
 The [maintained suite dependency map](docs/roadmaps/flow-suite-dependency-map.md)
-and [completion diagram](docs/roadmaps/flow-suite-completion.svg) preserve the
-October 6, 2026 issue atlas; the linked October 15 provider note is another
-dated observation. Their counts, draft states and next-up text are historical,
-and should be re-queried before execution.
+and [completion diagram](docs/roadmaps/flow-suite-completion.svg) are refreshed
+through October 28, 2026 after the suite PR merge sweep. Completed bounded
+issues remain visible as NUKED; partial source, qualification and optional work
+are distinct. The archived September diagram and October 15 provider note
+remain historical. Re-query live state before execution.
 
 ## Executable checkpoint
 

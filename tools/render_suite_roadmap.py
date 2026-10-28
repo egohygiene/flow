@@ -38,6 +38,7 @@ REPOSITORY_NAMES = {
 STATUS = {
     "nuked": ("NUKED", "#147D53", "#E7F5EB"),
     "draft": ("DRAFT", "#087F9B", "#E2F4FA"),
+    "in_progress": ("IN PROGRESS", "#245D9F", "#E6F0FD"),
     "qualification": ("CHECKS / RELEASE OWED", "#9C6100", "#FFF1CE"),
     "blocked": ("BLOCKED", "#B44044", "#FBE9E8"),
     "planned": ("PLANNED", "#4C6688", "#ECF0F7"),

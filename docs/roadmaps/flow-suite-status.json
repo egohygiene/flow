@@ -1,29 +1,29 @@
 {
   "schema": "flow.suite-roadmap-snapshot/v1",
-  "snapshot_at": "2026-10-06T16:18:58.475611+00:00",
+  "snapshot_at": "2026-10-28T19:11:31.534Z",
   "repositories": {
     "flow": {
-      "main": "4621df7437e0fdb278f025c75e9feb7298eb7bd9",
-      "open_issues": 30,
+      "main": "58b06abc3f95da56df3b763e9ddc395656cc173a",
+      "open_issues": 31,
       "open_prs": 0,
       "release_summary": "No published release"
     },
     "renderflow": {
-      "main": "8e866f91aa8b20255f25a553031f25fa98aa3856",
-      "open_issues": 23,
+      "main": "c1d1bebfd48369d18e7c46295859d76e3f831499",
+      "open_issues": 27,
       "open_prs": 0,
-      "release_summary": "Release preparation only"
+      "release_summary": "No published release"
     },
     "optiflow": {
-      "main": "c5dbcd1761e810aea228389b8ba017acc97a411e",
-      "open_issues": 8,
-      "open_prs": 1,
+      "main": "741da2c96081518d421517df174776427a4f2e08",
+      "open_issues": 13,
+      "open_prs": 0,
       "release_summary": "v0.1.1 published; read-only"
     },
     "aniflow": {
-      "main": "08cb2a83dbe288f6d893a278cbeb34905cc19a49",
-      "open_issues": 17,
-      "open_prs": 1,
+      "main": "8008e0176f45b34d2a9e74d8a26d9b3fd374b81f",
+      "open_issues": 26,
+      "open_prs": 0,
       "release_summary": "No published release"
     }
   },
@@ -152,6 +152,36 @@
       "observed_issue_updated_at": "2026-09-27T18:39:09Z"
     },
     {
+      "id": "F82",
+      "repo": "flow",
+      "number": 82,
+      "title": "Current source navigation",
+      "status": "nuked",
+      "note": "Completed documentation reconciliation in PR #85.",
+      "group": "Foundations",
+      "url": "https://github.com/egohygiene/flow/issues/82",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-21T03:00:41Z",
+      "observed_issue_updated_at": "2026-10-22T08:02:32Z"
+    },
+    {
+      "id": "F81",
+      "repo": "flow",
+      "number": 81,
+      "title": "Saved receipt validation",
+      "status": "nuked",
+      "note": "Completed in PR #84 with focused Linux proof; broader qualification remains #34.",
+      "group": "Foundations",
+      "url": "https://github.com/egohygiene/flow/issues/81",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-21T03:00:39Z",
+      "observed_issue_updated_at": "2026-10-21T07:37:34Z"
+    },
+    {
       "id": "F51",
       "repo": "flow",
       "number": 51,
@@ -194,7 +224,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-22T17:54:14Z",
-      "observed_issue_updated_at": "2026-09-22T17:54:14Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:05Z"
     },
     {
       "id": "F3",
@@ -209,7 +239,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-08-19T03:02:00Z",
-      "observed_issue_updated_at": "2026-09-26T03:39:19Z"
+      "observed_issue_updated_at": "2026-10-21T03:06:57Z"
     },
     {
       "id": "F32",
@@ -254,7 +284,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-20T04:02:42Z",
-      "observed_issue_updated_at": "2026-09-20T04:02:42Z"
+      "observed_issue_updated_at": "2026-10-21T07:33:13Z"
     },
     {
       "id": "F13",
@@ -269,7 +299,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-15T11:15:01Z",
-      "observed_issue_updated_at": "2026-09-26T15:41:43Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:01Z"
     },
     {
       "id": "F70",
@@ -277,14 +307,14 @@
       "number": 70,
       "title": "Local-file UX",
       "status": "blocked",
-      "note": "Simple local-file workflows after CLI and static/temporal proof.",
+      "note": "Profiles select step order, including optimization before or after generation; released adapters remain required.",
       "group": "First usable install",
       "url": "https://github.com/egohygiene/flow/issues/70",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-27T14:21:17Z",
-      "observed_issue_updated_at": "2026-09-27T14:21:17Z"
+      "observed_issue_updated_at": "2026-10-28T12:18:40Z"
     },
     {
       "id": "F71",
@@ -404,22 +434,37 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T01:14:22Z",
-      "observed_issue_updated_at": "2026-09-26T01:14:22Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:07Z"
+    },
+    {
+      "id": "F80",
+      "repo": "flow",
+      "number": 80,
+      "title": "Optional AI runtimes",
+      "status": "optional",
+      "note": "Existing provider routing and local model preparation; deterministic operation remains available.",
+      "group": "Workflow extensions",
+      "url": "https://github.com/egohygiene/flow/issues/80",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-17T22:30:42Z",
+      "observed_issue_updated_at": "2026-10-21T03:07:08Z"
     },
     {
       "id": "F15",
       "repo": "flow",
       "number": 15,
       "title": "Signal contract",
-      "status": "planned",
-      "note": "Contract and privacy design; no instrumentation yet.",
+      "status": "qualification",
+      "note": "Proposed profile merged in PR #86; ADR disposition and conformance remain.",
       "group": "Observability",
       "url": "https://github.com/egohygiene/flow/issues/15",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-15T15:20:54Z",
-      "observed_issue_updated_at": "2026-09-15T15:25:28Z"
+      "observed_issue_updated_at": "2026-10-27T07:16:15Z"
     },
     {
       "id": "F16",
@@ -539,7 +584,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-15T15:20:03Z",
-      "observed_issue_updated_at": "2026-09-15T15:25:50Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:03Z"
     },
     {
       "id": "F9",
@@ -554,7 +599,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-12T17:05:09Z",
-      "observed_issue_updated_at": "2026-09-12T17:05:09Z"
+      "observed_issue_updated_at": "2026-10-21T03:06:58Z"
     },
     {
       "id": "F12",
@@ -569,7 +614,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-13T19:19:32Z",
-      "observed_issue_updated_at": "2026-09-27T14:23:37Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:00Z"
     },
     {
       "id": "F72",
@@ -599,7 +644,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-13T17:49:10Z",
-      "observed_issue_updated_at": "2026-10-02T13:51:56Z"
+      "observed_issue_updated_at": "2026-10-22T08:02:33Z"
     },
     {
       "id": "R415",
@@ -680,16 +725,46 @@
       "id": "R419",
       "repo": "renderflow",
       "number": 419,
-      "title": "Provider release",
+      "title": "First provider release",
       "status": "qualification",
-      "note": "Release preparation merged; no GitHub release published.",
+      "note": "No published release. #458, #459 and exact-source installation proof remain.",
       "group": "Publication foundation",
       "url": "https://github.com/egohygiene/renderflow/issues/419",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-22T17:49:44Z",
-      "observed_issue_updated_at": "2026-09-22T17:49:44Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:05Z"
+    },
+    {
+      "id": "R459",
+      "repo": "renderflow",
+      "number": 459,
+      "title": "Current documentation",
+      "status": "qualification",
+      "note": "Corrections merged; structural and link acceptance remains deferred.",
+      "group": "Publication foundation",
+      "url": "https://github.com/egohygiene/renderflow/issues/459",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-21T02:57:39Z",
+      "observed_issue_updated_at": "2026-10-27T07:16:12Z"
+    },
+    {
+      "id": "R458",
+      "repo": "renderflow",
+      "number": 458,
+      "title": "Locked qualification baseline",
+      "status": "in_progress",
+      "note": "Schema and Snap fixes merged; Cargo-produced lock, lint and platform qualification remain.",
+      "group": "Publication foundation",
+      "url": "https://github.com/egohygiene/renderflow/issues/458",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-21T02:57:38Z",
+      "observed_issue_updated_at": "2026-10-27T07:16:13Z"
     },
     {
       "id": "R433",
@@ -719,7 +794,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-15T11:14:57Z",
-      "observed_issue_updated_at": "2026-09-16T21:35:07Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:02Z"
     },
     {
       "id": "R413",
@@ -734,202 +809,217 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-16T21:34:50Z",
-      "observed_issue_updated_at": "2026-09-16T21:34:50Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:03Z"
     },
     {
       "id": "R406",
       "repo": "renderflow",
       "number": 406,
-      "title": "Localization",
-      "status": "planned",
-      "note": "Layered composition and locale branches; preserve originals.",
+      "title": "Localized composition",
+      "status": "in_progress",
+      "note": "Six source checkpoints merged; broader typography, interchange and visual/native proof remain.",
       "group": "Corpus and comic composition",
       "url": "https://github.com/egohygiene/renderflow/issues/406",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-13T17:20:57Z",
-      "observed_issue_updated_at": "2026-09-13T17:20:57Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:00Z"
     },
     {
       "id": "R422",
       "repo": "renderflow",
       "number": 422,
       "title": "Forest planner",
-      "status": "planned",
-      "note": "Cycle-safe, deduplicated targets; no new provider required.",
+      "status": "qualification",
+      "note": "Cycle-safe planning source merged; execution qualification remains.",
       "group": "Artifact forest",
       "url": "https://github.com/egohygiene/renderflow/issues/422",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T02:30:19Z",
-      "observed_issue_updated_at": "2026-09-26T02:30:19Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:09Z"
     },
     {
       "id": "R423",
       "repo": "renderflow",
       "number": 423,
       "title": "Screenplay model",
-      "status": "planned",
-      "note": "Schema/design can start independently of #422.",
+      "status": "qualification",
+      "note": "Canonical model merged; contract and runtime qualification remain.",
       "group": "Artifact forest",
       "url": "https://github.com/egohygiene/renderflow/issues/423",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T02:30:20Z",
-      "observed_issue_updated_at": "2026-09-26T02:30:20Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:10Z"
     },
     {
       "id": "R424",
       "repo": "renderflow",
       "number": 424,
       "title": "Scripttool adapter",
-      "status": "blocked",
-      "note": "Needs #423 screenplay model.",
+      "status": "qualification",
+      "note": "Bounded Scripttool imports merged; reverse routes rejected; native/refusal proof remains.",
       "group": "Artifact forest",
       "url": "https://github.com/egohygiene/renderflow/issues/424",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T02:30:23Z",
-      "observed_issue_updated_at": "2026-09-26T02:32:34Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:11Z"
     },
     {
       "id": "R425",
       "repo": "renderflow",
       "number": 425,
-      "title": "Fountain PDF",
-      "status": "blocked",
-      "note": "Needs #423 screenplay model.",
+      "title": "Afterwriting adapter",
+      "status": "qualification",
+      "note": "PDF and analysis source merged; native and failure proof remains.",
       "group": "Artifact forest",
       "url": "https://github.com/egohygiene/renderflow/issues/425",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T02:30:24Z",
-      "observed_issue_updated_at": "2026-09-26T02:32:37Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:12Z"
     },
     {
       "id": "R426",
       "repo": "renderflow",
       "number": 426,
-      "title": "PDF recovery",
-      "status": "blocked",
-      "note": "Needs #423; recovery must record information loss.",
+      "title": "PDF/text recovery",
+      "status": "qualification",
+      "note": "Lossy recovery source merged; OCR, provider and review proof remains.",
       "group": "Artifact forest",
       "url": "https://github.com/egohygiene/renderflow/issues/426",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T02:30:26Z",
-      "observed_issue_updated_at": "2026-09-26T02:30:26Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:13Z"
     },
     {
       "id": "R427",
       "repo": "renderflow",
       "number": 427,
-      "title": "Timed text",
-      "status": "planned",
-      "note": "Independent timed-text and embedded subtitle extraction.",
+      "title": "Timed-text model",
+      "status": "qualification",
+      "note": "Timed text and text exports merged; runtime qualification remains.",
       "group": "Artifact forest",
       "url": "https://github.com/egohygiene/renderflow/issues/427",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T02:30:28Z",
-      "observed_issue_updated_at": "2026-09-26T02:30:28Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:15Z"
     },
     {
       "id": "R428",
       "repo": "renderflow",
       "number": 428,
       "title": "Speech transcript",
-      "status": "blocked",
-      "note": "Needs #427 transcript contract.",
+      "status": "qualification",
+      "note": "Source merged; native, model and timing proof remains.",
       "group": "Artifact forest",
       "url": "https://github.com/egohygiene/renderflow/issues/428",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T02:30:30Z",
-      "observed_issue_updated_at": "2026-09-26T02:32:39Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:16Z"
     },
     {
       "id": "R429",
       "repo": "renderflow",
       "number": 429,
-      "title": "Creative doctor",
-      "status": "planned",
-      "note": "Consolidates optional tools; does not block adapter work.",
+      "title": "Optional toolchain evidence",
+      "status": "in_progress",
+      "note": "Doctor source merged; exact assets, model readiness and qualification remain.",
       "group": "Artifact forest",
       "url": "https://github.com/egohygiene/renderflow/issues/429",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T02:30:33Z",
-      "observed_issue_updated_at": "2026-09-26T02:30:33Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:17Z"
     },
     {
       "id": "R430",
       "repo": "renderflow",
       "number": 430,
-      "title": "Forest proof",
-      "status": "blocked",
-      "note": "Integrate #422–#429 and hand off truthful artifacts to Flow.",
+      "title": "Creative forest proof",
+      "status": "qualification",
+      "note": "Original-export gaps filled in PR #455; composed CLI/SDK and released Flow proof remain.",
       "group": "Artifact forest",
       "url": "https://github.com/egohygiene/renderflow/issues/430",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T02:30:34Z",
-      "observed_issue_updated_at": "2026-09-26T02:30:34Z"
+      "observed_issue_updated_at": "2026-10-27T07:16:14Z"
     },
     {
       "id": "R421",
       "repo": "renderflow",
       "number": 421,
-      "title": "Forest parent",
+      "title": "Creative forest parent",
       "status": "epic",
-      "note": "Forest parent closes after child acceptance.",
+      "note": "Child source is largely merged; composed integration and qualification remain.",
       "group": "Artifact forest",
       "url": "https://github.com/egohygiene/renderflow/issues/421",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-26T02:28:48Z",
-      "observed_issue_updated_at": "2026-09-26T02:30:49Z"
+      "observed_issue_updated_at": "2026-10-28T19:03:36Z"
+    },
+    {
+      "id": "R440",
+      "repo": "renderflow",
+      "number": 440,
+      "title": "Original-media time maps",
+      "status": "qualification",
+      "note": "Explicit aligned subtitle and time-map source merged; native proof remains.",
+      "group": "Artifact forest",
+      "url": "https://github.com/egohygiene/renderflow/issues/440",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-12T17:47:19Z",
+      "observed_issue_updated_at": "2026-10-21T03:08:20Z"
     },
     {
       "id": "R378",
       "repo": "renderflow",
       "number": 378,
-      "title": "Article copilot",
-      "status": "planned",
-      "note": "Editorial agent; coordinate metadata with #379.",
+      "title": "Editorial agent",
+      "status": "optional",
+      "note": "Product extension paired with the #379 contract.",
       "group": "Additional product lanes",
       "url": "https://github.com/egohygiene/renderflow/issues/378",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-07T05:58:54Z",
-      "observed_issue_updated_at": "2026-09-07T05:58:54Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:54Z"
     },
     {
       "id": "R379",
       "repo": "renderflow",
       "number": 379,
       "title": "Editorial profile",
-      "status": "planned",
-      "note": "Editorial rendering; no Copilot runtime dependency.",
+      "status": "optional",
+      "note": "Contract before editorial agent; separate from the first release.",
       "group": "Additional product lanes",
       "url": "https://github.com/egohygiene/renderflow/issues/379",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-07T05:59:19Z",
-      "observed_issue_updated_at": "2026-09-07T05:59:19Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:55Z"
     },
     {
       "id": "R350",
@@ -944,22 +1034,22 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-08-30T14:31:03Z",
-      "observed_issue_updated_at": "2026-08-30T14:31:03Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:53Z"
     },
     {
       "id": "R397",
       "repo": "renderflow",
       "number": 397,
-      "title": "Sonic DNA",
-      "status": "planned",
-      "note": "Audio evidence prerequisites implemented; integration remains.",
+      "title": "Sonic DNA profile",
+      "status": "optional",
+      "note": "Consumes Aniflow audio evidence; separate from the first provider release.",
       "group": "Additional product lanes",
       "url": "https://github.com/egohygiene/renderflow/issues/397",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-11T19:53:44Z",
-      "observed_issue_updated_at": "2026-09-11T19:53:44Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:57Z"
     },
     {
       "id": "R349",
@@ -974,7 +1064,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-08-29T10:11:38Z",
-      "observed_issue_updated_at": "2026-08-29T10:11:38Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:52Z"
     },
     {
       "id": "R420",
@@ -989,7 +1079,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-23T22:28:54Z",
-      "observed_issue_updated_at": "2026-09-23T22:28:54Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:06Z"
     },
     {
       "id": "R367",
@@ -1004,7 +1094,22 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-08-31T18:08:14Z",
-      "observed_issue_updated_at": "2026-09-26T02:31:45Z"
+      "observed_issue_updated_at": "2026-10-28T19:03:34Z"
+    },
+    {
+      "id": "R456",
+      "repo": "renderflow",
+      "number": 456,
+      "title": "Publication AI summaries",
+      "status": "optional",
+      "note": "Source-grounded candidates using Flow #80's selected optional profiles.",
+      "group": "Additional product lanes",
+      "url": "https://github.com/egohygiene/renderflow/issues/456",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-17T22:31:52Z",
+      "observed_issue_updated_at": "2026-10-21T03:08:21Z"
     },
     {
       "id": "R405",
@@ -1019,7 +1124,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-12T17:03:46Z",
-      "observed_issue_updated_at": "2026-09-12T17:03:46Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:58Z"
     },
     {
       "id": "R409",
@@ -1034,7 +1139,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-13T19:19:34Z",
-      "observed_issue_updated_at": "2026-09-13T19:19:34Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:01Z"
     },
     {
       "id": "O88",
@@ -1142,34 +1247,49 @@
       "observed_issue_updated_at": "2026-09-27T09:45:48Z"
     },
     {
+      "id": "O146",
+      "repo": "optiflow",
+      "number": 146,
+      "title": "Video optimization",
+      "status": "in_progress",
+      "note": "Planner, probe and pipe bounds merged; memory/scratch, validation, candidates and folder work remain.",
+      "group": "Video folder goal",
+      "url": "https://github.com/egohygiene/optiflow/issues/146",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-28T11:18:42Z",
+      "observed_issue_updated_at": "2026-10-28T15:46:07Z"
+    },
+    {
       "id": "O111",
       "repo": "optiflow",
       "number": 111,
-      "title": "macOS APFS",
-      "status": "draft",
-      "note": "PR #122 draft; checks deferred. Mac cross-volume mutation/finalization unavailable; ACL proposal unadopted.",
+      "title": "Mac/APFS transactions",
+      "status": "in_progress",
+      "note": "Same-volume source merged; descriptor ACL, cross-volume, finalization and native proof remain.",
       "group": "Mac and optimization",
       "url": "https://github.com/egohygiene/optiflow/issues/111",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-27T14:22:42Z",
-      "observed_issue_updated_at": "2026-10-06T01:42:06Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:45Z"
     },
     {
       "id": "O93",
       "repo": "optiflow",
       "number": 93,
-      "title": "v0.2 qualification",
-      "status": "blocked",
-      "note": "After #111: native pilots, recovery, signing and v0.2 release.",
+      "title": "Qualified dedup release",
+      "status": "qualification",
+      "note": "Native/disposable-volume recovery proof and v0.2 publication remain.",
       "group": "Mac and optimization",
       "url": "https://github.com/egohygiene/optiflow/issues/93",
       "original": true,
       "github_state": "open",
       "state_reason": "reopened",
       "created_at": "2026-09-22T17:45:52Z",
-      "observed_issue_updated_at": "2026-09-27T14:22:50Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:43Z"
     },
     {
       "id": "O112",
@@ -1214,22 +1334,22 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-22T17:45:54Z",
-      "observed_issue_updated_at": "2026-09-22T17:52:55Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:44Z"
     },
     {
       "id": "O121",
       "repo": "optiflow",
       "number": 121,
-      "title": "Recursive low-space workflow",
-      "status": "blocked",
-      "note": "After #95; qualified PNG subset, one candidate + scratch, explicit original disposal.",
+      "title": "Serial low-space PNG",
+      "status": "in_progress",
+      "note": "Policy preparation exists; recursive replacement, disposal, recovery and qualification remain.",
       "group": "Mac and optimization",
       "url": "https://github.com/egohygiene/optiflow/issues/121",
       "original": false,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-10-05T14:05:25Z",
-      "observed_issue_updated_at": "2026-10-05T14:05:25Z"
+      "observed_issue_updated_at": "2026-10-28T11:21:07Z"
     },
     {
       "id": "O65",
@@ -1244,7 +1364,52 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-15T11:14:59Z",
-      "observed_issue_updated_at": "2026-09-26T19:21:35Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:42Z"
+    },
+    {
+      "id": "O137",
+      "repo": "optiflow",
+      "number": 137,
+      "title": "Mac fixture roots",
+      "status": "qualification",
+      "note": "Canonical-root fix merged; macOS/Linux regression proof remains.",
+      "group": "Mac and optimization",
+      "url": "https://github.com/egohygiene/optiflow/issues/137",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-21T02:57:42Z",
+      "observed_issue_updated_at": "2026-10-27T09:59:05Z"
+    },
+    {
+      "id": "O136",
+      "repo": "optiflow",
+      "number": 136,
+      "title": "Corpus lock binding",
+      "status": "qualification",
+      "note": "Binding repair merged after dependency sweep; corpus/index execution remains.",
+      "group": "Mac and optimization",
+      "url": "https://github.com/egohygiene/optiflow/issues/136",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-21T02:57:41Z",
+      "observed_issue_updated_at": "2026-10-28T14:10:49Z"
+    },
+    {
+      "id": "O133",
+      "repo": "optiflow",
+      "number": 133,
+      "title": "Evidence explanations",
+      "status": "optional",
+      "note": "Optional AI over immutable evidence; separate from baseline compression.",
+      "group": "Optional evidence",
+      "url": "https://github.com/egohygiene/optiflow/issues/133",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-17T22:31:53Z",
+      "observed_issue_updated_at": "2026-10-21T03:08:49Z"
     },
     {
       "id": "O115",
@@ -1259,7 +1424,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-28T21:21:26Z",
-      "observed_issue_updated_at": "2026-09-28T21:21:26Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:46Z"
     },
     {
       "id": "O60",
@@ -1274,7 +1439,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-12T17:05:08Z",
-      "observed_issue_updated_at": "2026-09-12T17:05:08Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:40Z"
     },
     {
       "id": "O61",
@@ -1289,7 +1454,99 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-13T19:19:33Z",
-      "observed_issue_updated_at": "2026-09-13T19:19:33Z"
+      "observed_issue_updated_at": "2026-10-21T03:08:41Z"
+    },
+    {
+      "id": "O135",
+      "repo": "optiflow",
+      "number": 135,
+      "title": "Optiflow completion ledger",
+      "status": "epic",
+      "note": "Tracks native transactions, PNG, video, qualification and retained follow-ons.",
+      "group": "Optiflow closeout",
+      "url": "https://github.com/egohygiene/optiflow/issues/135",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-21T02:57:13Z",
+      "observed_issue_updated_at": "2026-10-28T15:46:09Z"
+    },
+    {
+      "id": "O_H04",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.4 Image profiles",
+      "status": "horizon",
+      "note": "Broader image conversions; needs bounded issue decomposition.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H05",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.5 Audio/video optimization",
+      "status": "horizon",
+      "note": "Concrete video subset now tracked in #146; broader horizon remains.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H06",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.6 Perceptual relationships",
+      "status": "horizon",
+      "note": "Similarity/containment horizon; exact dedup is narrower.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H07",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.7 Collections and portable state",
+      "status": "horizon",
+      "note": "Longer-term product scope; named implementation issues needed.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H08",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.8 Policy and review UX",
+      "status": "horizon",
+      "note": "Automation/review horizon; not implicit mutation authority.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H09",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v0.9 Stable-contract beta",
+      "status": "horizon",
+      "note": "Broader product qualification beyond current release gates.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
+    },
+    {
+      "id": "O_H10",
+      "repo": "optiflow",
+      "number": null,
+      "title": "v1.0 macOS/Linux GA",
+      "status": "horizon",
+      "note": "Reconcile supported scope before claiming full Optiflow completion.",
+      "group": "Future product horizons",
+      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
+      "original": false
     },
     {
       "id": "A8",
@@ -1670,16 +1927,16 @@
       "id": "A24",
       "repo": "aniflow",
       "number": 24,
-      "title": "Media corpus",
+      "title": "Media corpus and demos",
       "status": "epic",
-      "note": "#75–#77 merged; broader corpus and qualification remain.",
+      "note": "Synthetic demonstration source merged; broader corpus and execution remain.",
       "group": "Temporal foundations",
       "url": "https://github.com/egohygiene/aniflow/issues/24",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-15T11:15:00Z",
-      "observed_issue_updated_at": "2026-10-02T18:31:25Z"
+      "observed_issue_updated_at": "2026-10-28T19:03:27Z"
     },
     {
       "id": "A89",
@@ -1859,7 +2116,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-10-01T17:51:44Z",
-      "observed_issue_updated_at": "2026-10-05T11:29:45Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:26Z"
     },
     {
       "id": "A10",
@@ -1874,7 +2131,7 @@
       "github_state": "open",
       "state_reason": "reopened",
       "created_at": "2026-08-31T02:37:23Z",
-      "observed_issue_updated_at": "2026-10-02T19:46:40Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:29Z"
     },
     {
       "id": "A97",
@@ -1971,75 +2228,75 @@
       "repo": "aniflow",
       "number": 104,
       "title": "Audio registration preparation",
-      "status": "draft",
-      "note": "PR #105 draft; inert audio registration documents; unrun tests.",
+      "status": "nuked",
+      "note": "Bounded checkpoint completed; broader toolchain/native qualification remains #38 and #64.",
       "group": "Toolchain and music video",
       "url": "https://github.com/egohygiene/aniflow/issues/104",
       "original": false,
-      "github_state": "open",
-      "state_reason": null,
+      "github_state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-10-05T17:44:54Z",
-      "observed_issue_updated_at": "2026-10-05T18:00:04Z"
+      "observed_issue_updated_at": "2026-10-17T20:35:59Z"
     },
     {
       "id": "A38",
       "repo": "aniflow",
       "number": 38,
-      "title": "Toolchain doctor",
-      "status": "epic",
-      "note": "Doctor/preflight merged; registration and broader tools remain.",
+      "title": "Selected toolchain",
+      "status": "in_progress",
+      "note": "Selected setup merged; mappings, environment/model and native proof remain.",
       "group": "Toolchain and music video",
       "url": "https://github.com/egohygiene/aniflow/issues/38",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-27T11:37:31Z",
-      "observed_issue_updated_at": "2026-10-05T18:00:02Z"
+      "observed_issue_updated_at": "2026-10-27T17:38:51Z"
     },
     {
       "id": "A36",
       "repo": "aniflow",
       "number": 36,
       "title": "Frame import and repair",
-      "status": "planned",
-      "note": "Immutable workspace import and explicit repair ranges.",
+      "status": "nuked",
+      "note": "Closed as completed October 27; native qualification remains separate.",
       "group": "Toolchain and music video",
       "url": "https://github.com/egohygiene/aniflow/issues/36",
       "original": true,
-      "github_state": "open",
-      "state_reason": null,
+      "github_state": "closed",
+      "state_reason": "completed",
       "created_at": "2026-09-27T11:37:30Z",
-      "observed_issue_updated_at": "2026-09-27T11:37:30Z"
+      "observed_issue_updated_at": "2026-10-27T17:38:47Z"
     },
     {
       "id": "A37",
       "repo": "aniflow",
       "number": 37,
       "title": "Upscale recovery",
-      "status": "planned",
-      "note": "Bounded chunk/per-frame Upscayl recovery; native proof owed.",
+      "status": "in_progress",
+      "note": "Per-frame/chunk source merged; historical-output adoption and native failure proof remain.",
       "group": "Toolchain and music video",
       "url": "https://github.com/egohygiene/aniflow/issues/37",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-27T11:37:30Z",
-      "observed_issue_updated_at": "2026-09-27T11:37:30Z"
+      "observed_issue_updated_at": "2026-10-27T17:38:49Z"
     },
     {
       "id": "A35",
       "repo": "aniflow",
       "number": 35,
       "title": "Music-video profile",
-      "status": "epic",
-      "note": "Compose repair, upscale and validated delivery.",
+      "status": "in_progress",
+      "note": "Source entry and master/delivery source merged; tails, loudness, metadata and qualification remain.",
       "group": "Toolchain and music video",
       "url": "https://github.com/egohygiene/aniflow/issues/35",
       "original": true,
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-27T11:34:21Z",
-      "observed_issue_updated_at": "2026-10-02T15:28:04Z"
+      "observed_issue_updated_at": "2026-10-28T19:03:25Z"
     },
     {
       "id": "A40",
@@ -2057,6 +2314,51 @@
       "observed_issue_updated_at": "2026-09-27T14:25:19Z"
     },
     {
+      "id": "A114",
+      "repo": "aniflow",
+      "number": 114,
+      "title": "Serial RIFE checkpoint",
+      "status": "nuked",
+      "note": "First checkpoint completed; broader #110 remains open.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/114",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-14T05:28:24Z",
+      "observed_issue_updated_at": "2026-10-17T20:38:54Z"
+    },
+    {
+      "id": "A111",
+      "repo": "aniflow",
+      "number": 111,
+      "title": "Target-resolution entry",
+      "status": "in_progress",
+      "note": "Target, bypass and preview source merged; prior-upscaled spatial-index entry remains.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/111",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-14T00:12:23Z",
+      "observed_issue_updated_at": "2026-10-28T19:03:26Z"
+    },
+    {
+      "id": "A110",
+      "repo": "aniflow",
+      "number": 110,
+      "title": "Optional RIFE finishing",
+      "status": "in_progress",
+      "note": "Serial indexed-provider source exists; final assembly, audio and derived-clock proof remain.",
+      "group": "Toolchain and music video",
+      "url": "https://github.com/egohygiene/aniflow/issues/110",
+      "original": false,
+      "github_state": "open",
+      "state_reason": "reopened",
+      "created_at": "2026-10-14T00:12:23Z",
+      "observed_issue_updated_at": "2026-10-21T03:07:31Z"
+    },
+    {
       "id": "A79",
       "repo": "aniflow",
       "number": 79,
@@ -2069,7 +2371,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-10-02T15:15:54Z",
-      "observed_issue_updated_at": "2026-10-06T00:19:52Z"
+      "observed_issue_updated_at": "2026-10-09T15:20:16Z"
     },
     {
       "id": "A83",
@@ -2084,7 +2386,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-10-02T15:18:39Z",
-      "observed_issue_updated_at": "2026-10-02T15:18:39Z"
+      "observed_issue_updated_at": "2026-10-14T00:13:28Z"
     },
     {
       "id": "A82",
@@ -2129,7 +2431,7 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-10-02T15:18:38Z",
-      "observed_issue_updated_at": "2026-10-02T15:18:38Z"
+      "observed_issue_updated_at": "2026-10-14T00:13:27Z"
     },
     {
       "id": "A106",
@@ -2144,7 +2446,97 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-10-06T00:19:31Z",
-      "observed_issue_updated_at": "2026-10-06T00:26:05Z"
+      "observed_issue_updated_at": "2026-10-14T00:13:26Z"
+    },
+    {
+      "id": "A116",
+      "repo": "aniflow",
+      "number": 116,
+      "title": "AMV AI review notes",
+      "status": "optional",
+      "note": "Optional source-bound notes using selected Flow #80 profiles.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/116",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-17T22:31:52Z",
+      "observed_issue_updated_at": "2026-10-17T22:31:52Z"
+    },
+    {
+      "id": "A113",
+      "repo": "aniflow",
+      "number": 113,
+      "title": "Validated video handoff",
+      "status": "planned",
+      "note": "Exact accepted final-video evidence for optional Flow/Renderflow artifacts.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/113",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-14T00:12:25Z",
+      "observed_issue_updated_at": "2026-10-14T00:12:25Z"
+    },
+    {
+      "id": "A112",
+      "repo": "aniflow",
+      "number": 112,
+      "title": "Delivery metadata policy",
+      "status": "planned",
+      "note": "Sanitize descriptive metadata through an allowlist while preserving playback semantics.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/112",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-14T00:12:24Z",
+      "observed_issue_updated_at": "2026-10-14T00:12:24Z"
+    },
+    {
+      "id": "A109",
+      "repo": "aniflow",
+      "number": 109,
+      "title": "Signed creator identity",
+      "status": "optional",
+      "note": "Optional creator/release identity records.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/109",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-09T15:19:51Z",
+      "observed_issue_updated_at": "2026-10-09T15:19:51Z"
+    },
+    {
+      "id": "A108",
+      "repo": "aniflow",
+      "number": 108,
+      "title": "Reviewed subtitles",
+      "status": "planned",
+      "note": "Manual SRT first, with explicit review for optional automation.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/108",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-09T15:19:50Z",
+      "observed_issue_updated_at": "2026-10-09T15:19:50Z"
+    },
+    {
+      "id": "A107",
+      "repo": "aniflow",
+      "number": 107,
+      "title": "Manual and review stages",
+      "status": "in_progress",
+      "note": "Automated recipe merged; manual handoffs and review-mode composition remain.",
+      "group": "Creator delivery and experiments",
+      "url": "https://github.com/egohygiene/aniflow/issues/107",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-09T15:19:06Z",
+      "observed_issue_updated_at": "2026-10-28T19:03:29Z"
     },
     {
       "id": "A14",
@@ -2174,84 +2566,67 @@
       "github_state": "open",
       "state_reason": null,
       "created_at": "2026-09-13T19:19:33Z",
-      "observed_issue_updated_at": "2026-09-13T19:19:33Z"
+      "observed_issue_updated_at": "2026-10-21T03:07:32Z"
     },
     {
-      "id": "O_H04",
-      "repo": "optiflow",
-      "number": null,
-      "title": "v0.4 Image profiles",
-      "status": "horizon",
-      "note": "Broader image conversions; needs bounded issue decomposition.",
-      "group": "Future product horizons",
-      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
-      "original": false
+      "id": "A120",
+      "repo": "aniflow",
+      "number": 120,
+      "title": "Reviewed Identity assets",
+      "status": "planned",
+      "note": "Adopt applicable pinned Identity assets with human review.",
+      "group": "Aniflow closeout",
+      "url": "https://github.com/egohygiene/aniflow/issues/120",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-21T02:57:37Z",
+      "observed_issue_updated_at": "2026-10-21T02:57:37Z"
     },
     {
-      "id": "O_H05",
-      "repo": "optiflow",
-      "number": null,
-      "title": "v0.5 Audio/video optimization",
-      "status": "horizon",
-      "note": "Product horizon; not delivered by the PNG transaction path.",
-      "group": "Future product horizons",
-      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
-      "original": false
+      "id": "A119",
+      "repo": "aniflow",
+      "number": 119,
+      "title": "Selected product naming",
+      "status": "planned",
+      "note": "Restore selected naming while retaining historical evidence.",
+      "group": "Aniflow closeout",
+      "url": "https://github.com/egohygiene/aniflow/issues/119",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-21T02:57:35Z",
+      "observed_issue_updated_at": "2026-10-21T02:57:35Z"
     },
     {
-      "id": "O_H06",
-      "repo": "optiflow",
-      "number": null,
-      "title": "v0.6 Perceptual relationships",
-      "status": "horizon",
-      "note": "Similarity/containment horizon; exact dedup is narrower.",
-      "group": "Future product horizons",
-      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
-      "original": false
+      "id": "A118",
+      "repo": "aniflow",
+      "number": 118,
+      "title": "Current Aniflow docs",
+      "status": "nuked",
+      "note": "Completed source documentation checkpoint; later merge receipts retain qualification limits.",
+      "group": "Aniflow closeout",
+      "url": "https://github.com/egohygiene/aniflow/issues/118",
+      "original": false,
+      "github_state": "closed",
+      "state_reason": "completed",
+      "created_at": "2026-10-21T02:57:34Z",
+      "observed_issue_updated_at": "2026-10-27T09:59:04Z"
     },
     {
-      "id": "O_H07",
-      "repo": "optiflow",
-      "number": null,
-      "title": "v0.7 Collections and portable state",
-      "status": "horizon",
-      "note": "Longer-term product scope; named implementation issues needed.",
-      "group": "Future product horizons",
-      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
-      "original": false
-    },
-    {
-      "id": "O_H08",
-      "repo": "optiflow",
-      "number": null,
-      "title": "v0.8 Policy and review UX",
-      "status": "horizon",
-      "note": "Automation/review horizon; not implicit mutation authority.",
-      "group": "Future product horizons",
-      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
-      "original": false
-    },
-    {
-      "id": "O_H09",
-      "repo": "optiflow",
-      "number": null,
-      "title": "v0.9 Stable-contract beta",
-      "status": "horizon",
-      "note": "Broader product qualification beyond current release gates.",
-      "group": "Future product horizons",
-      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
-      "original": false
-    },
-    {
-      "id": "O_H10",
-      "repo": "optiflow",
-      "number": null,
-      "title": "v1.0 macOS/Linux GA",
-      "status": "horizon",
-      "note": "Reconcile supported scope before claiming full Optiflow completion.",
-      "group": "Future product horizons",
-      "url": "https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md",
-      "original": false
+      "id": "A117",
+      "repo": "aniflow",
+      "number": 117,
+      "title": "Aniflow completion ledger",
+      "status": "epic",
+      "note": "Tracks bounded core release and separately selected optional lanes.",
+      "group": "Aniflow closeout",
+      "url": "https://github.com/egohygiene/aniflow/issues/117",
+      "original": false,
+      "github_state": "open",
+      "state_reason": null,
+      "created_at": "2026-10-21T02:57:04Z",
+      "observed_issue_updated_at": "2026-10-28T19:03:23Z"
     }
   ],
   "edges": [
@@ -3484,6 +3859,168 @@
       "target": "O_H10",
       "kind": "sequence",
       "label": "product horizon order; scope not yet decomposed"
+    },
+    {
+      "source": "F81",
+      "target": "F82",
+      "kind": "scoped",
+      "label": "receipt repair before current documentation"
+    },
+    {
+      "source": "F15",
+      "target": "F80",
+      "kind": "scoped",
+      "label": "reuse operational privacy boundary"
+    },
+    {
+      "source": "F80",
+      "target": "R456",
+      "kind": "scoped",
+      "label": "selected optional model profile"
+    },
+    {
+      "source": "F80",
+      "target": "A116",
+      "kind": "scoped",
+      "label": "selected optional model profile"
+    },
+    {
+      "source": "F80",
+      "target": "O133",
+      "kind": "scoped",
+      "label": "selected optional model profile"
+    },
+    {
+      "source": "R458",
+      "target": "R419",
+      "kind": "required",
+      "label": "locked baseline and qualification"
+    },
+    {
+      "source": "R459",
+      "target": "R419",
+      "kind": "scoped",
+      "label": "current release documentation acceptance"
+    },
+    {
+      "source": "R428",
+      "target": "R440",
+      "kind": "required",
+      "label": "explicit timing alignment"
+    },
+    {
+      "source": "R440",
+      "target": "R430",
+      "kind": "scoped",
+      "label": "selected speech branches"
+    },
+    {
+      "source": "O136",
+      "target": "O65",
+      "kind": "scoped",
+      "label": "lock-binding corpus tranche"
+    },
+    {
+      "source": "O137",
+      "target": "O95",
+      "kind": "scoped",
+      "label": "native candidate fixture qualification"
+    },
+    {
+      "source": "O146",
+      "target": "O_H05",
+      "kind": "scoped",
+      "label": "concrete video subset of broader horizon"
+    },
+    {
+      "source": "O146",
+      "target": "F70",
+      "kind": "scoped",
+      "label": "when released video capability and adapter exist"
+    },
+    {
+      "source": "O111",
+      "target": "O146",
+      "kind": "scoped",
+      "label": "later native replacement only; not candidate authoring"
+    },
+    {
+      "source": "A114",
+      "target": "A110",
+      "kind": "scoped",
+      "label": "completed first interpolation checkpoint"
+    },
+    {
+      "source": "A111",
+      "target": "A35",
+      "kind": "scoped",
+      "label": "selected target/prior-upscaled entry"
+    },
+    {
+      "source": "A110",
+      "target": "A35",
+      "kind": "scoped",
+      "label": "only selected interpolation route"
+    },
+    {
+      "source": "A35",
+      "target": "A107",
+      "kind": "scoped",
+      "label": "reuse automated recipe; broader review modes"
+    },
+    {
+      "source": "A108",
+      "target": "A107",
+      "kind": "scoped",
+      "label": "selected subtitle review"
+    },
+    {
+      "source": "A112",
+      "target": "A83",
+      "kind": "scoped",
+      "label": "selected delivery metadata policy"
+    },
+    {
+      "source": "A109",
+      "target": "A82",
+      "kind": "scoped",
+      "label": "selected creator/release identity"
+    },
+    {
+      "source": "A112",
+      "target": "A82",
+      "kind": "scoped",
+      "label": "final-byte evidence after metadata changes"
+    },
+    {
+      "source": "A35",
+      "target": "A113",
+      "kind": "required",
+      "label": "validated final-video evidence"
+    },
+    {
+      "source": "A113",
+      "target": "F75",
+      "kind": "scoped",
+      "label": "optional downstream artifacts"
+    },
+    {
+      "source": "A118",
+      "target": "A117",
+      "kind": "scoped",
+      "label": "completed documentation tranche"
+    },
+    {
+      "source": "A119",
+      "target": "A17",
+      "kind": "scoped",
+      "label": "naming closeout"
+    },
+    {
+      "source": "A120",
+      "target": "A17",
+      "kind": "scoped",
+      "label": "applicable reviewed Identity adoption"
     }
   ],
   "external_gates": [
@@ -3533,7 +4070,7 @@
       "state_reason": null,
       "url": "https://github.com/egohygiene/pace/issues/5",
       "title": "[Capability 1] Roll out and reconcile the ADR baseline and Decisions views across the fleet",
-      "updated_at": "2026-09-28T17:10:23Z"
+      "updated_at": "2026-10-10T19:49:15Z"
     },
     {
       "id": "egolint/29",
@@ -3541,7 +4078,7 @@
       "state_reason": "reopened",
       "url": "https://github.com/egohygiene/egolint/issues/29",
       "title": "feat(releases): validate semantic release, changelog, and version-source conformance",
-      "updated_at": "2026-09-19T22:48:50Z"
+      "updated_at": "2026-10-20T22:40:37Z"
     },
     {
       "id": "relay/71",
@@ -3552,20 +4089,5 @@
       "updated_at": "2026-09-28T21:26:23Z"
     }
   ],
-  "open_prs": [
-    {
-      "repo": "optiflow",
-      "number": 122,
-      "head": "e5090aafcfbdecd8aae7ce216ca53333b9995182",
-      "draft": true,
-      "issue": "O111"
-    },
-    {
-      "repo": "aniflow",
-      "number": 105,
-      "head": "afc444aff8fd108c4ce7d2fd48bf208c02f640a6",
-      "draft": true,
-      "issue": "A104"
-    }
-  ]
+  "open_prs": []
 }

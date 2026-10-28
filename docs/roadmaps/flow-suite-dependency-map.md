@@ -1,243 +1,199 @@
 # Flow suite roadmap to completion
 
-> **Current continuation: October 22, 2026.** Start with the
-> [current handoff](../work/11/HANDOFF.md) and [live #11 ledger](https://github.com/egohygiene/flow/issues/11).
-> The durable kernel, read-only Optiflow adapter and #81 repair are merged.
-> After #82, #15 is next. The source/release matrix and qualification limits
-> are in the handoff. The October 6 atlas and October 15 provider note below
-> retain their original observation boundaries, counts and nodes. Their old
-> Aniflow draft states are historical; PRs #105/#115 have since merged while
-> qualification/release remains open. No graph or census was regenerated.
+**Current snapshot: October 28, 2026.** All 16 pull requests open at the start of
+this refresh have merged, followed by Optiflow #151's corpus-lock binding repair.
+All four repositories have zero open PRs at this observation. Implementation
+merges do not establish native qualification or publish a supported release.
 
-## Preserved roadmap observations — October 6 and October 15, 2026
+Start with the [practical finish plan](flow-suite-finish-plan.md) for the next
+bounded milestones, or the [continuation handoff](../work/11/HANDOFF.md) to resume
+work. [Flow #11](https://github.com/egohygiene/flow/issues/11) owns this maintained
+suite view; linked issues own acceptance, and [root ROADMAP](../../ROADMAP.md)
+retains strategic horizons.
 
-> **Latest provider execution-order refresh: October 15, 2026.** Read the
-> [bounded three-provider execution order](flow-suite-execution-order-2026-10-15.md)
-> for current Renderflow, Aniflow and Optiflow pins, existing drafts, remaining
-> qualification and release gates. The full graph, JSON and counts below retain
-> their **October 6** observation boundary; they were not regenerated or promoted
-> to a fresh complete Flow inventory by that refresh.
+## Diagram and scope
 
-**Snapshot: October 6, 2026.** The suite has substantial merged foundations,
-but a complete installable Flow suite is still ahead. Optiflow has a published
-**read-only v0.1.1**; Flow, Renderflow and Aniflow have no published GitHub
-release in this snapshot. Merged code, platform qualification and shipped
-products are separate milestones.
-
-This maintained roadmap belongs to [Flow #11](https://github.com/egohygiene/flow/issues/11).
-[Root ROADMAP](../../ROADMAP.md) owns strategic horizons; linked issues own
-acceptance. This documentation does not authorize execution, merge, media
-mutation, model spending or publication.
-
-## Open the new diagram
-
-- **[Full zoomable diagram: all 150 nodes](flow-suite-completion.svg)** — every
-  original node, every open issue, newer completed checkpoints, and product horizons.
-- [Editable full Mermaid dependency source](flow-suite-completion.mmd) — all
-  205 relationships, with required dependencies separated from scoped links.
-- [Machine-readable status snapshot](flow-suite-status.json) — exact observed
-  heads, issue state, source links, notes, PRs and relationships.
-- [Original September 27 Mermaid](archive/flow-suite-dependencies-2026-09-27.mmd)
-  — preserved unchanged. Earlier maintained versions remain in Git history.
+- **[Full zoomable atlas: all 175 nodes](flow-suite-completion.svg)** — completed
+  work remains visible as **NUKED**, alongside current and future work.
+- [Full Mermaid dependency source](flow-suite-completion.mmd) — 232
+  relationships, separating required prerequisites from scoped links and order.
+- [Status snapshot](flow-suite-status.json) — exact observed heads, issue
+  states, notes and source links.
+- [Original September 27 diagram](archive/flow-suite-dependencies-2026-09-27.mmd)
+  — unchanged. The October 6 maintained atlas remains in Git history; the
+  [October 15 provider note](flow-suite-execution-order-2026-10-15.md) remains
+  explicitly historical.
 
 ![Full Flow suite roadmap](flow-suite-completion.svg)
 
-The rendered diagram groups work into four repository columns. It is an issue
-atlas, not an implied linear schedule; dependency arrows live in the Mermaid
-source, focused views and complete relationship table below. PNG export is
-available through the generator; SVG is the committed scalable visual.
+All **150 previously tracked nodes and 205 relationships** remain. This refresh
+adds **25 issue nodes and 27 scoped or required relationships**, retaining all
+**80 original nodes**. The inventory now contains **168 issues: 71 NUKED and
+97 open**, plus **seven Optiflow horizons**. All currently open issues in the
+four repositories are included, as are issues newly created since the previous
+snapshot, including completed checkpoints. Selected earlier foundations remain
+for context; this is not a census of every historical closed issue.
 
-## What is included
+| Repository | Open issues | NUKED issue nodes | Open PRs | Published release |
+| --- | ---: | ---: | ---: | --- |
+| Flow | 31 | 10 | 0 | None |
+| Renderflow | 27 | 6 | 0 | None |
+| Optiflow | 13 | 9 | 0 | Read-only v0.1.1 |
+| Aniflow | 26 | 46 | 0 | None |
+| **Total** | **97** | **71** | **0** | |
 
-- **All 80 original nodes retained.** The uploaded image was recovered and
-  viewed; its nine lanes match the archived public Mermaid source from
-  [the original Flow #11 comment](https://github.com/egohygiene/flow/issues/11#issuecomment-5856716651).
-- **All 78 currently open issues** across the four repositories, excluding PRs.
-- **Every issue created on or after September 27** in the inspected live issue
-  collections, including completed checkpoint children, plus earlier completed
-  foundations needed to explain current progress. Each collection reaches back
-  before that cutoff. This is not a claim to include every historical issue.
-- **143 issue nodes: 65 NUKED and 78 open**, plus **seven future Optiflow product
-  horizons** that still need bounded issue decomposition. Parents and children
-  have different sizes; these counts are not a completion percentage.
-- **Two existing draft PRs**: Optiflow #122 and Aniflow #105. This documentation
-  PR is subsequent to the product snapshot and is not in that count.
+Parents and children have different sizes; counts are **not a completion
+percentage**. Most recent source work is already merged, while substantial
+qualification and release work remains. The full backlog is larger than the
+finite route to trying the tools.
 
-**NUKED** means the bounded GitHub issue is closed as completed. It does not
-erase deferred validation or imply that its parent, platform or release is done.
-**DRAFT** means implementation is under review. **QUALIFICATION / RELEASE**
-means checks or shipping gates remain. **BLOCKED** means declared prerequisites
-remain; parts may still be prepared. **PARENT OPEN** retains broader acceptance.
-**OPTIONAL** is a product lane outside the first baseline release, not a silent
-decision to abandon it. **FUTURE HORIZON** is strategic scope without a new
-invented issue number.
+**NUKED** means a bounded GitHub issue is closed as completed. It does not finish
+its parent, platform or release. **IN PROGRESS** means implementation remains
+even though useful source checkpoints have merged. **CHECKS / RELEASE OWED**
+means authored source still owes acceptance, native proof or shipping gates.
+**BLOCKED** retains declared prerequisites. **PARENT OPEN** retains umbrella
+acceptance. **OPTIONAL** is outside the first baseline, not abandoned.
+**EXTERNAL GATE** retains upstream ownership; **FUTURE HORIZON** has no invented
+issue number. The atlas groups work; the relationship table below owns edge
+meaning.
 
-## Where each project stands
+## What is usable, authored and still missing
 
-| Project | What is already NUKED | What closes the current gap |
+| Project | Current boundary | Next practical milestone |
 | --- | --- | --- |
-| Flow | Provider execution boundary, scenarios, durable state, recovery and read-only Optiflow adapter | Released Aniflow/Renderflow adapters, public CLI, installed-provider proofs, local-file UX, distribution and release |
-| Renderflow | Ordered collections, print PDF, fixed-layout EPUB, EPUB validation and initial real-artifact gallery | Publish #419; finish the forest/comic/corpus lanes and selected product profiles; audit and remediate |
-| Optiflow | Read-only v0.1.1, bounded Linux transactions, PNG fixtures and candidate producer | Finish #111, qualify/publish #93, safe PNG replacement #95, low-space workflow #121; broader pre-v1 horizons remain |
-| Aniflow | Audio, temporal execution, validation/reuse, multi-artifact/native audio and most toolchain foundations | Finish #104/#38, repair deferred checks #64, publish #10, compose/qualify the music-video and creator-delivery lanes |
+| Flow | Merged library/kernel, extension contracts, durable state and native read-only Optiflow adapter. No supported product CLI or Flow release. | Released Renderflow/Aniflow adapters, CLI, installed workflows, local-file UX and first integration candidate. |
+| Renderflow | Publication, creative forest, timed-text/speech and localized-composition source is merged. Native execution and first immutable release remain unqualified. | Finish #458/#459 acceptance, qualify the narrow publication profile and publish #419, then Flow #52. |
+| Optiflow | Published v0.1.1 supports read-only inventory/review. PNG candidates and transaction foundations are newer source. Video planning/probing/bounds are partial source. | Finish bounded video candidates in #146 for a small hands-on trial; independently finish native transaction and PNG release gates. |
+| Aniflow | Temporal/audio foundations, source recipe, target selection, upscale/import, master/delivery and synthetic demo source is merged. No published release. | Finish selected entry/delivery gaps, qualify through #64, release #10 and the selected music-video profile #40. |
 
-Optiflow #94/#112 reached main through [PR #113](https://github.com/egohygiene/optiflow/pull/113),
-including its stacked PR #114. Aniflow #75–#77, #85–#87 and #97–#103 are also
-merged, through PRs #78, #88 and #100 respectively. Older issue-body handoffs or
-repository roadmap text may still call those PRs draft; current PR/issue state
-takes precedence. Those merges did not perform the deferred checks.
+The Flow extension seam supports locally supplied or community implementations
+through explicit manifests, capabilities and exact locks; a public CLI,
+installed-provider compatibility and distribution remain separate work.
+Reusable profiles declare selected steps and order; they consume provider
+contracts instead of duplicating provider engines. Flow #78 retains the AMV
+preset and #70 the local-file experience. Optional AI belongs to Flow #80 and
+its provider issues, without making model use a baseline requirement.
 
-## Three finish lines
+Three finish lines stay distinct:
 
-1. **First usable installed suite:** immutable provider releases and adapters,
-   a supported CLI, real static/temporal workflows, local-file UX, verified
-   installation and Flow's first integration candidate (#54). Optiflow mutation
-   and AMV extras are advertised only when their separate release/proof gates pass.
-2. **Stable supported suite:** selected capability matrix, provider audits,
-   Flow audit/remediation and clean-install proof, ending in #72 and then #11.
-   Every remaining issue must be completed or have an explicit owned deferral.
-3. **Full product backlog:** all retained feature lanes and accepted product
-   horizons, including Optiflow v0.4 through v1.0. The current PNG/low-space chain
-   does not by itself finish the entire Optiflow vision. Optional experiments
-   require an explicit keep/defer/decline decision, not forced inclusion in v1.
+1. **First useful trials and installed suite:** bounded provider capabilities,
+   qualified immutable releases, Flow adapters/CLI, static and temporal proofs,
+   local-file UX, install evidence and Flow #54. A developer source trial can
+   precede a supported release if it is labelled honestly.
+2. **Stable supported suite:** chosen capability matrix, provider audits and
+   remediation, Flow #12 audit, clean-install evidence and #72; close #11 last
+   with explicit owned dispositions for deferred scope.
+3. **Full retained product backlog:** optional profiles, creator features,
+   observability expansion and Optiflow's longer-term horizons. These do not
+   automatically become prerequisites for the first useful trial.
 
-## Route to the first usable suite
+## Route to the first installed Flow suite
 
 ```mermaid
 flowchart TB
-  O["Optiflow v0.1.1 + Flow #50 — NUKED"] --> C["Flow #53 CLI / #3 vertical slice"]
-  R["Renderflow #419 release"] --> RA["Flow #52 adapter"]
-  A["Aniflow #64 qualification + #10 release"] --> AA["Flow #51 adapter"]
+  O["Optiflow v0.1.1 / Flow #50 — NUKED"] --> C["Flow #53 CLI / #3 slice"]
+  R["Renderflow #458 + #459 → #419 release"] --> RA["Flow #52 adapter"]
+  A["Aniflow #64 → #10 release"] --> AA["Flow #51 adapter"]
   RA --> C
   AA --> C
   C --> S["Flow #32 static proof"]
   C --> T["Flow #33 temporal proof"]
-  S --> V["Flow #34 compatibility proof"]
+  S --> V["Flow #34 compatibility / #13"]
   T --> V
   S --> U["Flow #70 local-file UX"]
   T --> U
   U --> P["Flow #71 installation"]
-  P --> F["Flow #54 integration candidate"]
+  P --> F["Flow #54 first candidate"]
   V --> F
   D["Flow #14 observability disposition"] -.-> F
 ```
 
 Flow #53 declares all three adapters as dependencies, while its acceptance
-allows Optiflow + Renderflow proof first and the Aniflow route when released.
-That permits staged implementation; final acceptance still needs an explicit
-resolution of the declared #51 dependency. Durable #31/#49 prerequisites are
-already NUKED. Flow #54 also retains its direct #3/#34/#70/#71 gates.
+allows static proof first and the temporal route when Aniflow is released.
+Staged implementation is possible; closing #53 still needs an explicit
+disposition of its declared #51 dependency. The completed durable foundations
+do not remove installed-provider proof. #54 also keeps its direct #3/#34/#70/#71
+gates. Observability #15's proposed contract merged in PR #86; ADR acceptance,
+pilot conformance and the parent #14 disposition remain separate.
 
-## Optiflow route and the low-space goal
+## Optiflow: getting to a folder of smaller videos
 
-```mermaid
-flowchart TB
-  L["Linux transactions #90/#91/#92/#96 — NUKED"] --> M["#111 macOS/APFS — draft PR #122"]
-  M --> Q["#93 native qualification + v0.2"]
-  P["#94 PNG producer / #112 fixtures — NUKED"] --> R["#95 validated PNG replacement + v0.3"]
-  Q --> R
-  Q --> A["Flow #73 transaction adapter"]
-  R --> B["Flow #74 PNG adapter"]
-  A --> B
-  R --> S["#121 recursive low-space PNG workflow"]
-```
+[Optiflow #146](https://github.com/egohygiene/optiflow/issues/146) is the direct
+route to the user's video goal. Its planner, FFmpeg observer and bounded pipe/
+deadline source have merged. The next implementation order is aggregate
+memory/scratch policy, independent decode/preservation/lossy acceptance,
+versioned candidate publication, then a small hands-on trial. Recursive
+one-file-at-a-time processing and video-specific qualified replacement/disposal
+follow. This is not yet an accepted video optimizer or a supported destructive
+folder command.
 
-#111 has four authored, unvalidated checkpoints in draft PR #122. The safe ACL
-proposal is inert and unadopted; Mac cross-volume mutation and finalization
-remain unavailable. #93 still needs native disposable-volume pilots, recovery
-and physical-disconnect evidence, supported-target installation, signing and
-publication. #94's merged producer still owes real OxiPNG, MSRV and native Mac
-qualification. #95 preserves restorable originals. #121 separately allows
-explicit original disposal for its qualified PNG subset, processing one file
-at a time with candidate/scratch space; it does not promise zero extra bytes.
-#65 stays open for broader corpus coverage, with exact required fixture subsets
-used by consumers instead of making the entire corpus a blanket prerequisite.
+Separately, #111's same-volume Mac/APFS source merged in PR #122; descriptor ACL,
+cross-volume, finalization and native evidence remain. #93 owns qualified dedup
+release gates, #95 restorable PNG replacement, and #121 explicitly selected
+serial original disposal for the qualified **PNG** subset. #121 is not the
+video batch implementation. One-file-at-a-time still needs candidate/scratch
+headroom; zero additional storage is not promised.
 
-## Aniflow and the anime music-video preset
+#136's corpus-lock repair, including PR #151 after the dependency sweep, and
+#137's temporary-root fix are merged source with qualification still owed.
+#65 remains the broader corpus owner. Use exact required fixture subsets,
+without turning the entire corpus or seven future horizons into a blanket
+prerequisite for a bounded video trial.
 
-```mermaid
-flowchart TB
-  I["#36 import and selective repair"] -. "chosen work order" .-> U["#37 bounded upscale recovery"]
-  I --> M["#35 music-video workflow"]
-  U --> M
-  T["#38 selected toolchain; #104 draft"] -. "selected profile readiness" .-> M
-  M --> R["#40 qualified music-video release"]
-  A["#10 first release"] --> R
-  R --> F["Flow #75 adapter"]
-  F --> P["Flow #78 reusable AMV preset"]
-```
+## Aniflow and Renderflow follow-through
 
-#36 can start from merged #32/#33. #37 follows as a useful work order, not an
-invented prerequisite on #36. #38's remaining registration and broader tool/
-model/mapping proof stays open despite merged doctor and preflight foundations.
-The preset declares selected steps and consumes released provider contracts;
-it is not a second execution engine. #80 native source inspection is NUKED;
-#83 destination candidates and #82 provenance/OpenTimestamps remain open.
-For delivery, transform/export the chosen artifacts before hashing their final
-bytes. #39 cleanup, #81 creator marks and #106 restoration/interpolation remain
-optional; none is required for clean delivery. #79's manual runbook is merged,
-but the actual pilot and human review are still owed. No posting is implied.
+Aniflow #36 import/repair and #104 audio-registration preparation are now
+**NUKED**. #111 retains prior-upscaled spatial-index entry; #35/#112 retain
+selected audio-tail, loudness and delivery-metadata work; #113 owns the exact
+validated final-video handoff. #37/#38/#24 retain recovery, selected toolchain
+and corpus proof. #64, #10 and #40 own qualification and releases before Flow
+#51/#75/#78 can advertise their corresponding installed workflows.
 
-## Renderflow's remaining product work
+The current Aniflow source route is deliberately narrow: supported zero-origin
+CFR MP4/MOV, progressive 8-bit BT.709, square unrotated pixels and selected AAC
+or no audio. VFR/HDR, unsupported offsets and long tails, and derived RIFE clocks
+remain refused or separately owned. RIFE #110, manual review modes #107,
+subtitles #108, signed identity #109, restoration #106 and AI #116 remain
+selected extensions; their existence does not finish the core release.
 
-```mermaid
-flowchart TB
-  P["#422 exhaustive planner"] --> C["#430 composed forest proof"]
-  S["#423 screenplay contract"] --> D["#424 script / #425 afterwriting / #426 PDF recovery"]
-  S -. "exhaustive integration" .-> C
-  D --> C
-  T["#427 timed text"] --> A["#428 speech transcript"]
-  T --> C
-  A --> C
-  E["#429 optional toolchain evidence"] --> C
-  C --> R["#421 forest parent / #367 product reconciliation"]
-```
+Renderflow #422–#428/#440 source and #430's original-export gaps have merged;
+their issues retain composed/native acceptance. #429 retains exact optional
+tool/model readiness and #406 broader typography/interchange/visual proof.
+#458/#459 and #419 form the narrow provider-release path. The full creative
+forest, larger corpus #412/#413, editorial #379/#378, Sonic DNA #397, slides
+#350, briefings #349, AI #456 and HTTP #420 remain visible without all becoming
+first-publication requirements.
 
-#422 planner, #423 schema design and #427 timed-text work can start independently.
-#429 consolidates evidence; it does not block adapter authoring. #433's gallery
-is NUKED, while #412's larger corpus remains. #413's initial static comic pack
-can use merged PDF/EPUB work now; later #406 layered/localization coverage is a
-separate expansion. #378/#379 coordinate their editorial contract without a
-Copilot runtime prerequisite. Slides #350, audio variants #397, briefings #349
-and HTTP #420 remain visible product lanes, with their actual release and
-provider qualification requirements preserved.
+## Observability, audits and preserved relationships
 
-## Observability, audits and stable closeout
+Flow #15 now has a merged proposed privacy/stream contract. Contract disposition
+precedes #16's local CLI pilots, #17's OTel proof and #18's package decision.
+#19 exists only if a package is selected; #20–#22 retain migration, diagnostics
+and help. No exporter, instrumentation or conformance is inferred from the
+contract merge. #62 remains an independent scenario-documentation lane.
 
-Flow #15 contract/privacy design can proceed independently; #16–#18 develop
-receipts, trace export and the package decision. #19 exists only if #18 selects
-a shared package; #20–#22 complete integration, recovery and proof, then #14
-reconciles acceptance. The first candidate needs an explicit #14 disposition.
-Flow #62 is documentation work whose #28/#30 prerequisites are already done.
+Renderflow #409, Optiflow #61 and Aniflow #17 audits precede Flow #12; then #72
+and finally #11 reconcile supported scope and owned deferrals. Provider audits
+do not wait for Flow #11 to close. ADR/upstream governance issues remain
+tracked without becoming new prerequisites for ordinary product coding.
 
-```mermaid
-flowchart TB
-  R["Renderflow #409 audit + remediation"] --> A["Flow #12 final audit"]
-  O["Optiflow #61 audit + remediation"] --> A
-  N["Aniflow #17 audit + remediation"] --> A
-  A --> S["Flow #72 stable installed suite"]
-  C["Flow #54 integration candidate"] --> S
-  S --> Z["Flow #11 evidence and owned deferrals; close last"]
-```
-
-Provider audits wait for their active implementation/release sequence, not for
-Flow #11 to close. That avoids a circular finish gate. The external ADR issues
-Flow #9, Renderflow #405, Optiflow #60 and Aniflow #14 remain tracked governance
-work; they are not new blockers on ordinary product coding. Flow #10's comic
-artifact tree also retains its newer upscale-candidate/retention addendum:
-preserve original baselines, explicit model branches, external artifact-store
-lineage and exact reviewed bytes.
+All 205 prior relationships are retained verbatim. A solid edge means a declared
+prerequisite or closeout gate; a dotted **scoped** edge applies only to the
+labelled selected capability, fixture subset or evidence tranche. A dotted
+**sequence** edge recommends work order and does not invent a blocker. New
+links use the same semantics. For example, #111 → #146 concerns later native
+replacement, not video candidate authoring; #146 → Flow #70 applies only after
+a released video capability and appropriate adapter exist.
 
 ## Complete issue and horizon inventory
 
-“Original” marks nodes in the September 27 diagram; “Added” includes both newer
-issues and earlier completed foundations added for context. Every node has one
-entry here. Full issue titles and acceptance remain at the linked source.
-
+“Original” marks September 27 nodes. “Added” includes newer issues and earlier
+foundations retained for context. Every node has one entry; linked issues retain
+their full titles and acceptance.
 
 ### Flow
 
-38 nodes; 8 NUKED; 30 open issues.
+41 nodes; 10 NUKED; 31 open issues.
 
 | Issue / horizon | Group | Status | Origin | Remaining scope / evidence |
 | --- | --- | --- | --- | --- |
@@ -249,6 +205,8 @@ entry here. Full issue titles and acceptance remain at the linked source.
 | [flow #49](https://github.com/egohygiene/flow/issues/49) — Durable run state | Foundations | **NUKED** | Added | Completed bounded foundation; evidence remains linked in the issue. |
 | [flow #31](https://github.com/egohygiene/flow/issues/31) — Recovery and authority proof | Foundations | **NUKED** | Added | Completed bounded foundation; evidence remains linked in the issue. |
 | [flow #50](https://github.com/egohygiene/flow/issues/50) — Optiflow read-only | Foundations | **NUKED** | Original | Merged read-only Optiflow adapter; mutation is a separate lane. |
+| [flow #82](https://github.com/egohygiene/flow/issues/82) — Current source navigation | Foundations | **NUKED** | Added | Completed documentation reconciliation in PR #85. |
+| [flow #81](https://github.com/egohygiene/flow/issues/81) — Saved receipt validation | Foundations | **NUKED** | Added | Completed in PR #84 with focused Linux proof; broader qualification remains #34. |
 | [flow #51](https://github.com/egohygiene/flow/issues/51) — Aniflow adapter | First usable install | **BLOCKED** | Original | Needs Aniflow #10 immutable release. |
 | [flow #52](https://github.com/egohygiene/flow/issues/52) — Renderflow adapter | First usable install | **BLOCKED** | Original | Needs Renderflow #419 immutable release. |
 | [flow #53](https://github.com/egohygiene/flow/issues/53) — CLI | First usable install | **BLOCKED** | Original | Released adapters into doctor / plan / run / status / resume. |
@@ -257,7 +215,7 @@ entry here. Full issue titles and acceptance remain at the linked source.
 | [flow #33](https://github.com/egohygiene/flow/issues/33) — Temporal proof | First usable install | **BLOCKED** | Original | Prove temporal workflows using installed release artifacts. |
 | [flow #34](https://github.com/egohygiene/flow/issues/34) — Clean-room gate | First usable install | **BLOCKED** | Original | Clean-room compatibility, bounded tiers and regressions. |
 | [flow #13](https://github.com/egohygiene/flow/issues/13) — Fixture parent | First usable install | **PARENT OPEN** | Original | Earlier fixture children done; released-provider proofs remain. |
-| [flow #70](https://github.com/egohygiene/flow/issues/70) — Local-file UX | First usable install | **BLOCKED** | Original | Simple local-file workflows after CLI and static/temporal proof. |
+| [flow #70](https://github.com/egohygiene/flow/issues/70) — Local-file UX | First usable install | **BLOCKED** | Original | Profiles select step order, including optimization before or after generation; released adapters remain required. |
 | [flow #71](https://github.com/egohygiene/flow/issues/71) — Suite package | First usable install | **BLOCKED** | Original | Installable suite bundle and honest package/channel names. |
 | [flow #54](https://github.com/egohygiene/flow/issues/54) — First release | First usable install | **BLOCKED** | Original | First immutable candidate; observability needs explicit disposition. |
 | [flow #10](https://github.com/egohygiene/flow/issues/10) — Comic everything | Workflow extensions | **BLOCKED** | Original | Comic/localization tree; retained, reviewed upscale candidates. |
@@ -266,7 +224,8 @@ entry here. Full issue titles and acceptance remain at the linked source.
 | [flow #75](https://github.com/egohygiene/flow/issues/75) — Music-video adapter | Workflow extensions | **BLOCKED** | Original | Only after Aniflow music-video release (#40). |
 | [flow #78](https://github.com/egohygiene/flow/issues/78) — Reusable AMV preset | Workflow extensions | **BLOCKED** | Added | Selectable AMV steps; consumes #75, not a second engine. |
 | [flow #62](https://github.com/egohygiene/flow/issues/62) — Scenario docs | Workflow extensions | **PLANNED** | Original | Visual scenario catalog; #28/#30 prerequisites complete. |
-| [flow #15](https://github.com/egohygiene/flow/issues/15) — Signal contract | Observability | **PLANNED** | Original | Contract and privacy design; no instrumentation yet. |
+| [flow #80](https://github.com/egohygiene/flow/issues/80) — Optional AI runtimes | Workflow extensions | **OPTIONAL** | Added | Existing provider routing and local model preparation; deterministic operation remains available. |
+| [flow #15](https://github.com/egohygiene/flow/issues/15) — Signal contract | Observability | **CHECKS / RELEASE OWED** | Original | Proposed profile merged in PR #86; ADR disposition and conformance remain. |
 | [flow #16](https://github.com/egohygiene/flow/issues/16) — Two CLI pilots | Observability | **BLOCKED** | Original | Acceptance remains in the linked issue. |
 | [flow #17](https://github.com/egohygiene/flow/issues/17) — OTel proof | Observability | **BLOCKED** | Original | Acceptance remains in the linked issue. |
 | [flow #18](https://github.com/egohygiene/flow/issues/18) — Crate decision | Observability | **BLOCKED** | Original | Decide whether a shared package is justified. |
@@ -282,7 +241,7 @@ entry here. Full issue titles and acceptance remain at the linked source.
 
 ### Renderflow
 
-29 nodes; 6 NUKED; 23 open issues.
+33 nodes; 6 NUKED; 27 open issues.
 
 | Issue / horizon | Group | Status | Origin | Remaining scope / evidence |
 | --- | --- | --- | --- | --- |
@@ -291,34 +250,38 @@ entry here. Full issue titles and acceptance remain at the linked source.
 | [renderflow #417](https://github.com/egohygiene/renderflow/issues/417) — Fixed EPUB | Publication foundation | **NUKED** | Original | Fixed-layout EPUB route merged. |
 | [renderflow #418](https://github.com/egohygiene/renderflow/issues/418) — EPUB validation | Publication foundation | **NUKED** | Original | EPUB validation merged; not publisher acceptance. |
 | [renderflow #414](https://github.com/egohygiene/renderflow/issues/414) — EPUB parent | Publication foundation | **NUKED** | Original | EPUB parent closed; publication remains in #419. |
-| [renderflow #419](https://github.com/egohygiene/renderflow/issues/419) — Provider release | Publication foundation | **QUALIFICATION / RELEASE** | Original | Release preparation merged; no GitHub release published. |
+| [renderflow #419](https://github.com/egohygiene/renderflow/issues/419) — First provider release | Publication foundation | **CHECKS / RELEASE OWED** | Original | No published release. #458, #459 and exact-source installation proof remain. |
+| [renderflow #459](https://github.com/egohygiene/renderflow/issues/459) — Current documentation | Publication foundation | **CHECKS / RELEASE OWED** | Added | Corrections merged; structural and link acceptance remains deferred. |
+| [renderflow #458](https://github.com/egohygiene/renderflow/issues/458) — Locked qualification baseline | Publication foundation | **IN PROGRESS** | Added | Schema and Snap fixes merged; Cargo-produced lock, lint and platform qualification remain. |
 | [renderflow #433](https://github.com/egohygiene/renderflow/issues/433) — Real-artifact gallery | Corpus and comic composition | **NUKED** | Added | Three-input real-artifact gallery merged. |
 | [renderflow #412](https://github.com/egohygiene/renderflow/issues/412) — Adversarial corpus | Corpus and comic composition | **PARENT OPEN** | Original | Gallery exists; broader adversarial corpus remains. |
 | [renderflow #413](https://github.com/egohygiene/renderflow/issues/413) — Comic fixtures | Corpus and comic composition | **PLANNED** | Original | Small synthetic comic pack; extend existing corpus. |
-| [renderflow #406](https://github.com/egohygiene/renderflow/issues/406) — Localization | Corpus and comic composition | **PLANNED** | Original | Layered composition and locale branches; preserve originals. |
-| [renderflow #422](https://github.com/egohygiene/renderflow/issues/422) — Forest planner | Artifact forest | **PLANNED** | Original | Cycle-safe, deduplicated targets; no new provider required. |
-| [renderflow #423](https://github.com/egohygiene/renderflow/issues/423) — Screenplay model | Artifact forest | **PLANNED** | Original | Schema/design can start independently of #422. |
-| [renderflow #424](https://github.com/egohygiene/renderflow/issues/424) — Scripttool adapter | Artifact forest | **BLOCKED** | Original | Needs #423 screenplay model. |
-| [renderflow #425](https://github.com/egohygiene/renderflow/issues/425) — Fountain PDF | Artifact forest | **BLOCKED** | Original | Needs #423 screenplay model. |
-| [renderflow #426](https://github.com/egohygiene/renderflow/issues/426) — PDF recovery | Artifact forest | **BLOCKED** | Original | Needs #423; recovery must record information loss. |
-| [renderflow #427](https://github.com/egohygiene/renderflow/issues/427) — Timed text | Artifact forest | **PLANNED** | Original | Independent timed-text and embedded subtitle extraction. |
-| [renderflow #428](https://github.com/egohygiene/renderflow/issues/428) — Speech transcript | Artifact forest | **BLOCKED** | Original | Needs #427 transcript contract. |
-| [renderflow #429](https://github.com/egohygiene/renderflow/issues/429) — Creative doctor | Artifact forest | **PLANNED** | Original | Consolidates optional tools; does not block adapter work. |
-| [renderflow #430](https://github.com/egohygiene/renderflow/issues/430) — Forest proof | Artifact forest | **BLOCKED** | Original | Integrate #422–#429 and hand off truthful artifacts to Flow. |
-| [renderflow #421](https://github.com/egohygiene/renderflow/issues/421) — Forest parent | Artifact forest | **PARENT OPEN** | Original | Forest parent closes after child acceptance. |
-| [renderflow #378](https://github.com/egohygiene/renderflow/issues/378) — Article copilot | Additional product lanes | **PLANNED** | Original | Editorial agent; coordinate metadata with #379. |
-| [renderflow #379](https://github.com/egohygiene/renderflow/issues/379) — Editorial profile | Additional product lanes | **PLANNED** | Original | Editorial rendering; no Copilot runtime dependency. |
+| [renderflow #406](https://github.com/egohygiene/renderflow/issues/406) — Localized composition | Corpus and comic composition | **IN PROGRESS** | Original | Six source checkpoints merged; broader typography, interchange and visual/native proof remain. |
+| [renderflow #422](https://github.com/egohygiene/renderflow/issues/422) — Forest planner | Artifact forest | **CHECKS / RELEASE OWED** | Original | Cycle-safe planning source merged; execution qualification remains. |
+| [renderflow #423](https://github.com/egohygiene/renderflow/issues/423) — Screenplay model | Artifact forest | **CHECKS / RELEASE OWED** | Original | Canonical model merged; contract and runtime qualification remain. |
+| [renderflow #424](https://github.com/egohygiene/renderflow/issues/424) — Scripttool adapter | Artifact forest | **CHECKS / RELEASE OWED** | Original | Bounded Scripttool imports merged; reverse routes rejected; native/refusal proof remains. |
+| [renderflow #425](https://github.com/egohygiene/renderflow/issues/425) — Afterwriting adapter | Artifact forest | **CHECKS / RELEASE OWED** | Original | PDF and analysis source merged; native and failure proof remains. |
+| [renderflow #426](https://github.com/egohygiene/renderflow/issues/426) — PDF/text recovery | Artifact forest | **CHECKS / RELEASE OWED** | Original | Lossy recovery source merged; OCR, provider and review proof remains. |
+| [renderflow #427](https://github.com/egohygiene/renderflow/issues/427) — Timed-text model | Artifact forest | **CHECKS / RELEASE OWED** | Original | Timed text and text exports merged; runtime qualification remains. |
+| [renderflow #428](https://github.com/egohygiene/renderflow/issues/428) — Speech transcript | Artifact forest | **CHECKS / RELEASE OWED** | Original | Source merged; native, model and timing proof remains. |
+| [renderflow #429](https://github.com/egohygiene/renderflow/issues/429) — Optional toolchain evidence | Artifact forest | **IN PROGRESS** | Original | Doctor source merged; exact assets, model readiness and qualification remain. |
+| [renderflow #430](https://github.com/egohygiene/renderflow/issues/430) — Creative forest proof | Artifact forest | **CHECKS / RELEASE OWED** | Original | Original-export gaps filled in PR #455; composed CLI/SDK and released Flow proof remain. |
+| [renderflow #421](https://github.com/egohygiene/renderflow/issues/421) — Creative forest parent | Artifact forest | **PARENT OPEN** | Original | Child source is largely merged; composed integration and qualification remain. |
+| [renderflow #440](https://github.com/egohygiene/renderflow/issues/440) — Original-media time maps | Artifact forest | **CHECKS / RELEASE OWED** | Added | Explicit aligned subtitle and time-map source merged; native proof remains. |
+| [renderflow #378](https://github.com/egohygiene/renderflow/issues/378) — Editorial agent | Additional product lanes | **OPTIONAL** | Original | Product extension paired with the #379 contract. |
+| [renderflow #379](https://github.com/egohygiene/renderflow/issues/379) — Editorial profile | Additional product lanes | **OPTIONAL** | Original | Contract before editorial agent; separate from the first release. |
 | [renderflow #350](https://github.com/egohygiene/renderflow/issues/350) — Slides | Additional product lanes | **OPTIONAL** | Original | Optional Slidev profile; provider/asset qualification owed. |
-| [renderflow #397](https://github.com/egohygiene/renderflow/issues/397) — Sonic DNA | Additional product lanes | **PLANNED** | Original | Audio evidence prerequisites implemented; integration remains. |
+| [renderflow #397](https://github.com/egohygiene/renderflow/issues/397) — Sonic DNA profile | Additional product lanes | **OPTIONAL** | Original | Consumes Aniflow audio evidence; separate from the first provider release. |
 | [renderflow #349](https://github.com/egohygiene/renderflow/issues/349) — Podcast | Additional product lanes | **OPTIONAL** | Original | Research-first briefings and optional audio derivatives. |
 | [renderflow #420](https://github.com/egohygiene/renderflow/issues/420) — HTTP API | Additional product lanes | **OPTIONAL** | Original | Optional HTTP/job-service lane, outside first CLI release. |
 | [renderflow #367](https://github.com/egohygiene/renderflow/issues/367) — Product roadmap | Additional product lanes | **PARENT OPEN** | Original | Product umbrella; forest, profiles and Flow proof remain. |
+| [renderflow #456](https://github.com/egohygiene/renderflow/issues/456) — Publication AI summaries | Additional product lanes | **OPTIONAL** | Added | Source-grounded candidates using Flow #80's selected optional profiles. |
 | [renderflow #405](https://github.com/egohygiene/renderflow/issues/405) — ADR | Renderflow closeout | **EXTERNAL GATE** | Original | External ADR platform gates remain. |
 | [renderflow #409](https://github.com/egohygiene/renderflow/issues/409) — audit | Renderflow closeout | **BLOCKED** | Original | After active product/release work; before final Flow audit. |
 
 ### Optiflow
 
-24 nodes; 9 NUKED; 8 open issues.
+29 nodes; 9 NUKED; 13 open issues.
 
 | Issue / horizon | Group | Status | Origin | Remaining scope / evidence |
 | --- | --- | --- | --- | --- |
@@ -329,27 +292,32 @@ entry here. Full issue titles and acceptance remain at the linked source.
 | [optiflow #106](https://github.com/egohygiene/optiflow/issues/106) — CI baseline repair | Inspection and Linux transactions | **NUKED** | Added | Bounded CI baseline repair complete; current checks not rerun. |
 | [optiflow #92](https://github.com/egohygiene/optiflow/issues/92) — Linux recovery | Inspection and Linux transactions | **NUKED** | Added | Linux resume/restore/cleanup implemented. |
 | [optiflow #96](https://github.com/egohygiene/optiflow/issues/96) — Linux finalization | Inspection and Linux transactions | **NUKED** | Added | Linux retained-copy finalization; not general source disposal. |
-| [optiflow #111](https://github.com/egohygiene/optiflow/issues/111) — macOS APFS | Mac and optimization | **DRAFT** | Original | PR #122 draft; checks deferred. Mac cross-volume mutation/finalization unavailable; ACL proposal unadopted. |
-| [optiflow #93](https://github.com/egohygiene/optiflow/issues/93) — v0.2 qualification | Mac and optimization | **BLOCKED** | Original | After #111: native pilots, recovery, signing and v0.2 release. |
+| [optiflow #146](https://github.com/egohygiene/optiflow/issues/146) — Video optimization | Video folder goal | **IN PROGRESS** | Added | Planner, probe and pipe bounds merged; memory/scratch, validation, candidates and folder work remain. |
+| [optiflow #111](https://github.com/egohygiene/optiflow/issues/111) — Mac/APFS transactions | Mac and optimization | **IN PROGRESS** | Original | Same-volume source merged; descriptor ACL, cross-volume, finalization and native proof remain. |
+| [optiflow #93](https://github.com/egohygiene/optiflow/issues/93) — Qualified dedup release | Mac and optimization | **CHECKS / RELEASE OWED** | Original | Native/disposable-volume recovery proof and v0.2 publication remain. |
 | [optiflow #112](https://github.com/egohygiene/optiflow/issues/112) — PNG corpus | Mac and optimization | **NUKED** | Added | PNG/provider fixture tranche merged via PR #113. |
 | [optiflow #94](https://github.com/egohygiene/optiflow/issues/94) — OxiPNG candidate | Mac and optimization | **NUKED** | Original | Producer merged; real OxiPNG/MSRV/native checks owed. |
 | [optiflow #95](https://github.com/egohygiene/optiflow/issues/95) — PNG replacement | Mac and optimization | **BLOCKED** | Original | After #93 + #94; preserve restorable originals; v0.3. |
-| [optiflow #121](https://github.com/egohygiene/optiflow/issues/121) — Recursive low-space workflow | Mac and optimization | **BLOCKED** | Added | After #95; qualified PNG subset, one candidate + scratch, explicit original disposal. |
+| [optiflow #121](https://github.com/egohygiene/optiflow/issues/121) — Serial low-space PNG | Mac and optimization | **IN PROGRESS** | Added | Policy preparation exists; recursive replacement, disposal, recovery and qualification remain. |
 | [optiflow #65](https://github.com/egohygiene/optiflow/issues/65) — Media corpus | Mac and optimization | **PARENT OPEN** | Original | Broader media/compatibility/resource corpus remains. |
+| [optiflow #137](https://github.com/egohygiene/optiflow/issues/137) — Mac fixture roots | Mac and optimization | **CHECKS / RELEASE OWED** | Added | Canonical-root fix merged; macOS/Linux regression proof remains. |
+| [optiflow #136](https://github.com/egohygiene/optiflow/issues/136) — Corpus lock binding | Mac and optimization | **CHECKS / RELEASE OWED** | Added | Binding repair merged after dependency sweep; corpus/index execution remains. |
+| [optiflow #133](https://github.com/egohygiene/optiflow/issues/133) — Evidence explanations | Optional evidence | **OPTIONAL** | Added | Optional AI over immutable evidence; separate from baseline compression. |
 | [optiflow #115](https://github.com/egohygiene/optiflow/issues/115) — Release names | Optiflow closeout | **EXTERNAL GATE** | Added | Wait for a compatible published Relay naming contract. |
 | [optiflow #60](https://github.com/egohygiene/optiflow/issues/60) — ADR | Optiflow closeout | **EXTERNAL GATE** | Original | External ADR platform gates remain. |
 | [optiflow #61](https://github.com/egohygiene/optiflow/issues/61) — audit | Optiflow closeout | **BLOCKED** | Original | Audit after active work; not after Flow #11 closes. |
-| [v0.4 Image profiles](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) — strategic horizon | Future product horizons | **FUTURE HORIZON** | Added | Broader image conversions; needs bounded issue decomposition. |
-| [v0.5 Audio/video optimization](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) — strategic horizon | Future product horizons | **FUTURE HORIZON** | Added | Product horizon; not delivered by the PNG transaction path. |
-| [v0.6 Perceptual relationships](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) — strategic horizon | Future product horizons | **FUTURE HORIZON** | Added | Similarity/containment horizon; exact dedup is narrower. |
-| [v0.7 Collections and portable state](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) — strategic horizon | Future product horizons | **FUTURE HORIZON** | Added | Longer-term product scope; named implementation issues needed. |
-| [v0.8 Policy and review UX](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) — strategic horizon | Future product horizons | **FUTURE HORIZON** | Added | Automation/review horizon; not implicit mutation authority. |
-| [v0.9 Stable-contract beta](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) — strategic horizon | Future product horizons | **FUTURE HORIZON** | Added | Broader product qualification beyond current release gates. |
-| [v1.0 macOS/Linux GA](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) — strategic horizon | Future product horizons | **FUTURE HORIZON** | Added | Reconcile supported scope before claiming full Optiflow completion. |
+| [optiflow #135](https://github.com/egohygiene/optiflow/issues/135) — Optiflow completion ledger | Optiflow closeout | **PARENT OPEN** | Added | Tracks native transactions, PNG, video, qualification and retained follow-ons. |
+| [v0.4 Image profiles](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | Future product horizons | **FUTURE HORIZON** | Added | Broader image conversions; needs bounded issue decomposition. |
+| [v0.5 Audio/video optimization](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | Future product horizons | **FUTURE HORIZON** | Added | Concrete video subset now tracked in #146; broader horizon remains. |
+| [v0.6 Perceptual relationships](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | Future product horizons | **FUTURE HORIZON** | Added | Similarity/containment horizon; exact dedup is narrower. |
+| [v0.7 Collections and portable state](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | Future product horizons | **FUTURE HORIZON** | Added | Longer-term product scope; named implementation issues needed. |
+| [v0.8 Policy and review UX](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | Future product horizons | **FUTURE HORIZON** | Added | Automation/review horizon; not implicit mutation authority. |
+| [v0.9 Stable-contract beta](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | Future product horizons | **FUTURE HORIZON** | Added | Broader product qualification beyond current release gates. |
+| [v1.0 macOS/Linux GA](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | Future product horizons | **FUTURE HORIZON** | Added | Reconcile supported scope before claiming full Optiflow completion. |
 
 ### Aniflow
 
-59 nodes; 42 NUKED; 17 open issues.
+72 nodes; 46 NUKED; 26 open issues.
 
 | Issue / horizon | Group | Status | Origin | Remaining scope / evidence |
 | --- | --- | --- | --- | --- |
@@ -378,7 +346,7 @@ entry here. Full issue titles and acceptance remain at the linked source.
 | [aniflow #75](https://github.com/egohygiene/aniflow/issues/75) — Corpus recipes | Temporal foundations | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #76](https://github.com/egohygiene/aniflow/issues/76) — Corpus consumers | Temporal foundations | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #77](https://github.com/egohygiene/aniflow/issues/77) — Corpus gates | Temporal foundations | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
-| [aniflow #24](https://github.com/egohygiene/aniflow/issues/24) — Media corpus | Temporal foundations | **PARENT OPEN** | Original | #75–#77 merged; broader corpus and qualification remain. |
+| [aniflow #24](https://github.com/egohygiene/aniflow/issues/24) — Media corpus and demos | Temporal foundations | **PARENT OPEN** | Original | Synthetic demonstration source merged; broader corpus and execution remain. |
 | [aniflow #89](https://github.com/egohygiene/aniflow/issues/89) — Artifact-set identities | Temporal foundations | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #90](https://github.com/egohygiene/aniflow/issues/90) — Complete output-set execution | Temporal foundations | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #91](https://github.com/egohygiene/aniflow/issues/91) — Multi-artifact handoff | Temporal foundations | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
@@ -390,34 +358,47 @@ entry here. Full issue titles and acceptance remain at the linked source.
 | [aniflow #85](https://github.com/egohygiene/aniflow/issues/85) — Release candidate identity | First release | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #86](https://github.com/egohygiene/aniflow/issues/86) — Deterministic platform bundles | First release | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #87](https://github.com/egohygiene/aniflow/issues/87) — Release handoff and docs | First release | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
-| [aniflow #64](https://github.com/egohygiene/aniflow/issues/64) — Deferred validation | First release | **QUALIFICATION / RELEASE** | Added | Known cancellation failure plus accumulated deferred checks. |
-| [aniflow #10](https://github.com/egohygiene/aniflow/issues/10) — Provider release | First release | **QUALIFICATION / RELEASE** | Original | Release preparation merged; Egolint #29 and qualification remain. |
+| [aniflow #64](https://github.com/egohygiene/aniflow/issues/64) — Deferred validation | First release | **CHECKS / RELEASE OWED** | Added | Known cancellation failure plus accumulated deferred checks. |
+| [aniflow #10](https://github.com/egohygiene/aniflow/issues/10) — Provider release | First release | **CHECKS / RELEASE OWED** | Original | Release preparation merged; Egolint #29 and qualification remain. |
 | [aniflow #97](https://github.com/egohygiene/aniflow/issues/97) — Provider profile contract | Toolchain and music video | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #98](https://github.com/egohygiene/aniflow/issues/98) — Toolchain diagnostics | Toolchain and music video | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #99](https://github.com/egohygiene/aniflow/issues/99) — Toolchain examples and handoff | Toolchain and music video | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #101](https://github.com/egohygiene/aniflow/issues/101) — Bounded FFmpeg/ffprobe probes | Toolchain and music video | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #102](https://github.com/egohygiene/aniflow/issues/102) — macOS probe adapter | Toolchain and music video | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
 | [aniflow #103](https://github.com/egohygiene/aniflow/issues/103) — Bound native preflight | Toolchain and music video | **NUKED** | Added | Bounded implementation merged; qualification remains under #64. |
-| [aniflow #104](https://github.com/egohygiene/aniflow/issues/104) — Audio registration preparation | Toolchain and music video | **DRAFT** | Added | PR #105 draft; inert audio registration documents; unrun tests. |
-| [aniflow #38](https://github.com/egohygiene/aniflow/issues/38) — Toolchain doctor | Toolchain and music video | **PARENT OPEN** | Original | Doctor/preflight merged; registration and broader tools remain. |
-| [aniflow #36](https://github.com/egohygiene/aniflow/issues/36) — Frame import and repair | Toolchain and music video | **PLANNED** | Original | Immutable workspace import and explicit repair ranges. |
-| [aniflow #37](https://github.com/egohygiene/aniflow/issues/37) — Upscale recovery | Toolchain and music video | **PLANNED** | Original | Bounded chunk/per-frame Upscayl recovery; native proof owed. |
-| [aniflow #35](https://github.com/egohygiene/aniflow/issues/35) — Music-video profile | Toolchain and music video | **PARENT OPEN** | Original | Compose repair, upscale and validated delivery. |
+| [aniflow #104](https://github.com/egohygiene/aniflow/issues/104) — Audio registration preparation | Toolchain and music video | **NUKED** | Added | Bounded checkpoint completed; broader toolchain/native qualification remains #38 and #64. |
+| [aniflow #38](https://github.com/egohygiene/aniflow/issues/38) — Selected toolchain | Toolchain and music video | **IN PROGRESS** | Original | Selected setup merged; mappings, environment/model and native proof remain. |
+| [aniflow #36](https://github.com/egohygiene/aniflow/issues/36) — Frame import and repair | Toolchain and music video | **NUKED** | Original | Closed as completed October 27; native qualification remains separate. |
+| [aniflow #37](https://github.com/egohygiene/aniflow/issues/37) — Upscale recovery | Toolchain and music video | **IN PROGRESS** | Original | Per-frame/chunk source merged; historical-output adoption and native failure proof remain. |
+| [aniflow #35](https://github.com/egohygiene/aniflow/issues/35) — Music-video profile | Toolchain and music video | **IN PROGRESS** | Original | Source entry and master/delivery source merged; tails, loudness, metadata and qualification remain. |
 | [aniflow #40](https://github.com/egohygiene/aniflow/issues/40) — Profile release | Toolchain and music video | **BLOCKED** | Original | After #35 + #10; qualify and release music-video profile. |
+| [aniflow #114](https://github.com/egohygiene/aniflow/issues/114) — Serial RIFE checkpoint | Toolchain and music video | **NUKED** | Added | First checkpoint completed; broader #110 remains open. |
+| [aniflow #111](https://github.com/egohygiene/aniflow/issues/111) — Target-resolution entry | Toolchain and music video | **IN PROGRESS** | Added | Target, bypass and preview source merged; prior-upscaled spatial-index entry remains. |
+| [aniflow #110](https://github.com/egohygiene/aniflow/issues/110) — Optional RIFE finishing | Toolchain and music video | **IN PROGRESS** | Added | Serial indexed-provider source exists; final assembly, audio and derived-clock proof remain. |
 | [aniflow #79](https://github.com/egohygiene/aniflow/issues/79) — Manual release-preparation pilot | Creator delivery and experiments | **PARENT OPEN** | Added | Runbook merged; actual pilot and human review remain. |
 | [aniflow #83](https://github.com/egohygiene/aniflow/issues/83) — Destination exports | Creator delivery and experiments | **PLANNED** | Added | Prepare destination copies; posting stays separate. |
 | [aniflow #82](https://github.com/egohygiene/aniflow/issues/82) — Provenance and timestamp receipts | Creator delivery and experiments | **PLANNED** | Added | Exact final bytes, provenance bundle and recoverable OTS proofs. |
 | [aniflow #39](https://github.com/egohygiene/aniflow/issues/39) — Watermark experiment | Creator delivery and experiments | **OPTIONAL** | Original | Optional experiment; not required for clean delivery. |
 | [aniflow #81](https://github.com/egohygiene/aniflow/issues/81) — Creator watermarks | Creator delivery and experiments | **OPTIONAL** | Added | Optional creator mark; stereo/native quality unqualified. |
 | [aniflow #106](https://github.com/egohygiene/aniflow/issues/106) — Temporal restoration experiment | Creator delivery and experiments | **OPTIONAL** | Added | Optional deflicker/restoration/interpolation; manual trial owed. |
+| [aniflow #116](https://github.com/egohygiene/aniflow/issues/116) — AMV AI review notes | Creator delivery and experiments | **OPTIONAL** | Added | Optional source-bound notes using selected Flow #80 profiles. |
+| [aniflow #113](https://github.com/egohygiene/aniflow/issues/113) — Validated video handoff | Creator delivery and experiments | **PLANNED** | Added | Exact accepted final-video evidence for optional Flow/Renderflow artifacts. |
+| [aniflow #112](https://github.com/egohygiene/aniflow/issues/112) — Delivery metadata policy | Creator delivery and experiments | **PLANNED** | Added | Sanitize descriptive metadata through an allowlist while preserving playback semantics. |
+| [aniflow #109](https://github.com/egohygiene/aniflow/issues/109) — Signed creator identity | Creator delivery and experiments | **OPTIONAL** | Added | Optional creator/release identity records. |
+| [aniflow #108](https://github.com/egohygiene/aniflow/issues/108) — Reviewed subtitles | Creator delivery and experiments | **PLANNED** | Added | Manual SRT first, with explicit review for optional automation. |
+| [aniflow #107](https://github.com/egohygiene/aniflow/issues/107) — Manual and review stages | Creator delivery and experiments | **IN PROGRESS** | Added | Automated recipe merged; manual handoffs and review-mode composition remain. |
 | [aniflow #14](https://github.com/egohygiene/aniflow/issues/14) — ADR | Aniflow closeout | **EXTERNAL GATE** | Original | External ADR platform gates remain. |
 | [aniflow #17](https://github.com/egohygiene/aniflow/issues/17) — audit | Aniflow closeout | **BLOCKED** | Original | Provider audit before final Flow audit/stable release. |
+| [aniflow #120](https://github.com/egohygiene/aniflow/issues/120) — Reviewed Identity assets | Aniflow closeout | **PLANNED** | Added | Adopt applicable pinned Identity assets with human review. |
+| [aniflow #119](https://github.com/egohygiene/aniflow/issues/119) — Selected product naming | Aniflow closeout | **PLANNED** | Added | Restore selected naming while retaining historical evidence. |
+| [aniflow #118](https://github.com/egohygiene/aniflow/issues/118) — Current Aniflow docs | Aniflow closeout | **NUKED** | Added | Completed source documentation checkpoint; later merge receipts retain qualification limits. |
+| [aniflow #117](https://github.com/egohygiene/aniflow/issues/117) — Aniflow completion ledger | Aniflow closeout | **PARENT OPEN** | Added | Tracks bounded core release and separately selected optional lanes. |
 
 ## Complete relationship inventory
 
-Solid Mermaid arrows are declared requirements for the bounded target or parent closeout. Scoped arrows apply only to the named subset, coordination or selected optional branch. Sequence arrows record work order, not a hard prerequisite. A parent does not become a blanket runtime dependency. External gates are listed separately below.
+All 232 edges are recorded below; the first 205 preserve the prior snapshot.
 
-| From | To | Kind | Scope |
+| Source | Target | Kind | Scope / meaning |
 | --- | --- | --- | --- |
 | [flow #50](https://github.com/egohygiene/flow/issues/50) | [flow #53](https://github.com/egohygiene/flow/issues/53) | required | Declared target prerequisite / closeout |
 | [flow #50](https://github.com/egohygiene/flow/issues/50) | [flow #73](https://github.com/egohygiene/flow/issues/73) | required | Declared target prerequisite / closeout |
@@ -624,8 +605,38 @@ Solid Mermaid arrows are declared requirements for the bounded target or parent 
 | [v0.7 Collections and portable state](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | [v0.8 Policy and review UX](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | sequence | product horizon order; scope not yet decomposed |
 | [v0.8 Policy and review UX](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | [v0.9 Stable-contract beta](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | sequence | product horizon order; scope not yet decomposed |
 | [v0.9 Stable-contract beta](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | [v1.0 macOS/Linux GA](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | sequence | product horizon order; scope not yet decomposed |
+| [flow #81](https://github.com/egohygiene/flow/issues/81) | [flow #82](https://github.com/egohygiene/flow/issues/82) | scoped | receipt repair before current documentation |
+| [flow #15](https://github.com/egohygiene/flow/issues/15) | [flow #80](https://github.com/egohygiene/flow/issues/80) | scoped | reuse operational privacy boundary |
+| [flow #80](https://github.com/egohygiene/flow/issues/80) | [renderflow #456](https://github.com/egohygiene/renderflow/issues/456) | scoped | selected optional model profile |
+| [flow #80](https://github.com/egohygiene/flow/issues/80) | [aniflow #116](https://github.com/egohygiene/aniflow/issues/116) | scoped | selected optional model profile |
+| [flow #80](https://github.com/egohygiene/flow/issues/80) | [optiflow #133](https://github.com/egohygiene/optiflow/issues/133) | scoped | selected optional model profile |
+| [renderflow #458](https://github.com/egohygiene/renderflow/issues/458) | [renderflow #419](https://github.com/egohygiene/renderflow/issues/419) | required | locked baseline and qualification |
+| [renderflow #459](https://github.com/egohygiene/renderflow/issues/459) | [renderflow #419](https://github.com/egohygiene/renderflow/issues/419) | scoped | current release documentation acceptance |
+| [renderflow #428](https://github.com/egohygiene/renderflow/issues/428) | [renderflow #440](https://github.com/egohygiene/renderflow/issues/440) | required | explicit timing alignment |
+| [renderflow #440](https://github.com/egohygiene/renderflow/issues/440) | [renderflow #430](https://github.com/egohygiene/renderflow/issues/430) | scoped | selected speech branches |
+| [optiflow #136](https://github.com/egohygiene/optiflow/issues/136) | [optiflow #65](https://github.com/egohygiene/optiflow/issues/65) | scoped | lock-binding corpus tranche |
+| [optiflow #137](https://github.com/egohygiene/optiflow/issues/137) | [optiflow #95](https://github.com/egohygiene/optiflow/issues/95) | scoped | native candidate fixture qualification |
+| [optiflow #146](https://github.com/egohygiene/optiflow/issues/146) | [v0.5 Audio/video optimization](https://github.com/egohygiene/optiflow/blob/c5dbcd1761e810aea228389b8ba017acc97a411e/ROADMAP.md) | scoped | concrete video subset of broader horizon |
+| [optiflow #146](https://github.com/egohygiene/optiflow/issues/146) | [flow #70](https://github.com/egohygiene/flow/issues/70) | scoped | when released video capability and adapter exist |
+| [optiflow #111](https://github.com/egohygiene/optiflow/issues/111) | [optiflow #146](https://github.com/egohygiene/optiflow/issues/146) | scoped | later native replacement only; not candidate authoring |
+| [aniflow #114](https://github.com/egohygiene/aniflow/issues/114) | [aniflow #110](https://github.com/egohygiene/aniflow/issues/110) | scoped | completed first interpolation checkpoint |
+| [aniflow #111](https://github.com/egohygiene/aniflow/issues/111) | [aniflow #35](https://github.com/egohygiene/aniflow/issues/35) | scoped | selected target/prior-upscaled entry |
+| [aniflow #110](https://github.com/egohygiene/aniflow/issues/110) | [aniflow #35](https://github.com/egohygiene/aniflow/issues/35) | scoped | only selected interpolation route |
+| [aniflow #35](https://github.com/egohygiene/aniflow/issues/35) | [aniflow #107](https://github.com/egohygiene/aniflow/issues/107) | scoped | reuse automated recipe; broader review modes |
+| [aniflow #108](https://github.com/egohygiene/aniflow/issues/108) | [aniflow #107](https://github.com/egohygiene/aniflow/issues/107) | scoped | selected subtitle review |
+| [aniflow #112](https://github.com/egohygiene/aniflow/issues/112) | [aniflow #83](https://github.com/egohygiene/aniflow/issues/83) | scoped | selected delivery metadata policy |
+| [aniflow #109](https://github.com/egohygiene/aniflow/issues/109) | [aniflow #82](https://github.com/egohygiene/aniflow/issues/82) | scoped | selected creator/release identity |
+| [aniflow #112](https://github.com/egohygiene/aniflow/issues/112) | [aniflow #82](https://github.com/egohygiene/aniflow/issues/82) | scoped | final-byte evidence after metadata changes |
+| [aniflow #35](https://github.com/egohygiene/aniflow/issues/35) | [aniflow #113](https://github.com/egohygiene/aniflow/issues/113) | required | validated final-video evidence |
+| [aniflow #113](https://github.com/egohygiene/aniflow/issues/113) | [flow #75](https://github.com/egohygiene/flow/issues/75) | scoped | optional downstream artifacts |
+| [aniflow #118](https://github.com/egohygiene/aniflow/issues/118) | [aniflow #117](https://github.com/egohygiene/aniflow/issues/117) | scoped | completed documentation tranche |
+| [aniflow #119](https://github.com/egohygiene/aniflow/issues/119) | [aniflow #17](https://github.com/egohygiene/aniflow/issues/17) | scoped | naming closeout |
+| [aniflow #120](https://github.com/egohygiene/aniflow/issues/120) | [aniflow #17](https://github.com/egohygiene/aniflow/issues/17) | scoped | applicable reviewed Identity adoption |
 
 ## External gates
+
+Fresh issue metadata was read for all eight retained external gates. Their
+states do not substitute for consuming repository acceptance or releases.
 
 | Issue | Observed state | Gate |
 | --- | --- | --- |
@@ -638,55 +649,60 @@ Solid Mermaid arrows are declared requirements for the bounded target or parent 
 | [egolint/29](https://github.com/egohygiene/egolint/issues/29) | open / reopened | feat(releases): validate semantic release, changelog, and version-source conformance |
 | [relay/71](https://github.com/egohygiene/relay/issues/71) | open / unresolved | Separate consumer release names from validation profiles |
 
-Closed Hygiene #15 and Holon #6 do not independently prove every consuming policy pin and ratification. Preserve the exact ADR acceptance in each repo. Egolint #29 remains reopened for Aniflow #10. Optiflow #115 needs the compatible **published** Relay #71 naming contract; upstream main alone is insufficient.
-
+Closed Hygiene #15 and Holon #6 do not ratify every consuming ADR. Egolint #29
+remains reopened for Aniflow #10. Optiflow #115 requires the compatible
+**published** Relay #71 naming contract; upstream main alone is insufficient.
 
 ## Observation receipts
 
-Snapshot assembled: `2026-10-06T16:18:58.475611+00:00`. Live repository/issue/PR/release reads were used; CI was not rerun or polled. Open-issue and open-PR collections fit within their returned pages. The created-since cutoff is September 27 UTC; inspected all-state pages reach before it. Older closed history is intentionally selected, not exhaustively paginated.
+Snapshot assembled: `2026-10-28T19:11:31.534Z`. Repository, issue, PR and release
+metadata was read on October 28. Open-issue collections were retrieved in full.
+All-state issue collections reach before the previous October 6 cutoff; retained
+older nodes were reconciled individually against those collections. Renderflow's
+older closed history is intentionally not an exhaustive historical census.
 
-| Repository | Observed main | Open issues | Existing open PRs | Published release boundary |
+| Repository | Observed main | Open issues | Open PRs | Published release boundary |
 | --- | --- | ---: | ---: | --- |
-| flow | [`4621df7437e0fdb278f025c75e9feb7298eb7bd9`](https://github.com/egohygiene/flow/commit/4621df7437e0fdb278f025c75e9feb7298eb7bd9) | 30 | 0 | No published release |
-| renderflow | [`8e866f91aa8b20255f25a553031f25fa98aa3856`](https://github.com/egohygiene/renderflow/commit/8e866f91aa8b20255f25a553031f25fa98aa3856) | 23 | 0 | Release preparation only |
-| optiflow | [`c5dbcd1761e810aea228389b8ba017acc97a411e`](https://github.com/egohygiene/optiflow/commit/c5dbcd1761e810aea228389b8ba017acc97a411e) | 8 | 1 | v0.1.1 published; read-only |
-| aniflow | [`08cb2a83dbe288f6d893a278cbeb34905cc19a49`](https://github.com/egohygiene/aniflow/commit/08cb2a83dbe288f6d893a278cbeb34905cc19a49) | 17 | 1 | No published release |
+| flow | [`58b06abc3f95da56df3b763e9ddc395656cc173a`](https://github.com/egohygiene/flow/commit/58b06abc3f95da56df3b763e9ddc395656cc173a) | 31 | 0 | No published release |
+| renderflow | [`c1d1bebfd48369d18e7c46295859d76e3f831499`](https://github.com/egohygiene/renderflow/commit/c1d1bebfd48369d18e7c46295859d76e3f831499) | 27 | 0 | No published release |
+| optiflow | [`741da2c96081518d421517df174776427a4f2e08`](https://github.com/egohygiene/optiflow/commit/741da2c96081518d421517df174776427a4f2e08) | 13 | 0 | v0.1.1 published; read-only |
+| aniflow | [`8008e0176f45b34d2a9e74d8a26d9b3fd374b81f`](https://github.com/egohygiene/aniflow/commit/8008e0176f45b34d2a9e74d8a26d9b3fd374b81f) | 26 | 0 | No published release |
 
-| Existing draft PR | Head | Scope |
-| --- | --- | --- |
-| [optiflow #122](https://github.com/egohygiene/optiflow/pull/122) | `e5090aafcfbdecd8aae7ce216ca53333b9995182` | [optiflow #111](https://github.com/egohygiene/optiflow/issues/111); authored, unvalidated |
-| [aniflow #105](https://github.com/egohygiene/aniflow/pull/105) | `afc444aff8fd108c4ce7d2fd48bf208c02f640a6` | [aniflow #104](https://github.com/egohygiene/aniflow/issues/104); authored, unvalidated |
+The PR census is the product snapshot before this documentation publication.
+Merging this roadmap does not alter those source-evidence boundaries. Historical
+PR draft states in older dated notes are superseded by the current merge receipt,
+not silently converted into qualification.
 
-Original archive SHA-256: `e6697b351459e28f6466cd5fe63ed5081a1814a65cbde6f8fb962be7846f0e5d`. Its 80 nodes and 118 historical relationships remain unchanged in the archive. Current source contains 150 nodes and 205 reconciled relationships. Corrections include scoped editorial pairing, selected toolchain readiness, conditional observability packaging, bounded corpus subsets and historical work-order edges.
-
+Original archive SHA-256:
+`e6697b351459e28f6466cd5fe63ed5081a1814a65cbde6f8fb962be7846f0e5d`.
+Its 80 nodes and 118 historical relationships remain unchanged. This maintained
+source contains 175 nodes and 232 relationships.
 
 ## Updating this map
 
-1. Read the current issue, PR, main-head and release evidence for all four repos.
-   Preserve closed original nodes and add new open **and completed** issues since
-   the prior snapshot. Mark completion only from closed/completed evidence.
-2. Edit the documentation snapshot, retaining stable IDs and scoped notes. It is
-   a documentation format, not a public runtime schema. Reconcile edges against
-   actual issue acceptance instead of turning a suggested order into a blocker.
-3. Update this inventory, focused views, Mermaid and root navigation together.
-   The JSON is the renderer input; Mermaid and prose require deliberate review.
-4. Rebuild the visual with Python and Matplotlib already available in the
-   documentation environment:
+1. Read current issue, PR, main-head and release evidence across all four repos.
+   Preserve closed original nodes and add newly created open **and completed**
+   issues. Mark NUKED only from closed/completed evidence.
+2. Edit the documentation snapshot with stable IDs and scoped notes. This is an
+   existing documentation format, not a new public runtime contract. Keep
+   implementation, qualification, publication and optional scope distinct.
+3. Update the inventory, Mermaid, finish plan and navigation together. JSON is
+   the atlas input; prose and dependencies need deliberate source review.
+4. Render with the existing offline documentation generator:
 
    ```sh
    python tools/render_suite_roadmap.py
    ```
 
-   It writes SVG and PNG without network access or product execution. SVG retains
-   real text, issue links and full-note tooltips. The PNG is a disposable export
-   from the same layout and is not committed. Review the rendered visual before
-   publication; source inspection is not a Mermaid render proof.
-5. Update [the handoff](../work/11/HANDOFF.md) and Flow #11 navigation. Keep the
-   original archive unchanged; use Git history for previous maintained versions.
+   It writes SVG and a disposable PNG, with no network or product execution.
+   Commit SVG; retain full notes in the JSON and SVG tooltips. Inspect the image
+   before publication. Source review is not Mermaid render proof.
+5. Update the handoff and Flow #11. Keep the original archive unchanged and use
+   Git history for previous maintained snapshots.
 
-No tests/build/compiler, lint/format, schema/drift, native/model, package/smoke,
-physical-volume or hosted CI execution was performed for this roadmap update.
-Existing evidence remains historical at its exact scope. The documentation
-generator was run to produce the requested visual, which is not product
-qualification. Mermaid rendering is deferred because no renderer is installed.
+No product tests, builds, compilers, dependency resolution, lint/format,
+schema/drift validators, native/model/media execution, package/smoke checks,
+physical-volume tests or hosted Actions checks were performed for this refresh.
+The docs-only generator produced the requested atlas and its image was visually
+inspected; that is not product qualification. Mermaid rendering remains deferred.
 
