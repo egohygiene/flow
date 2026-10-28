@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-roadmap
 title: Flow Roadmap
 kind: architecture-document
-version: 1.3.10
+version: 1.3.11
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-10-26
+updated: 2026-10-28
 governed_by:
   - architecture-roadmap
 depends_on:
@@ -25,17 +25,21 @@ supersedes: []
 
 ## Maintained suite dependency view
 
-The October 26 draft [#15 contract checkpoint](docs/work/15/HANDOFF.md) authors
-the proposed observability/privacy/stream profile from pinned four-repository
-source evidence. It adds no runtime instrumentation or exporter and does not
-establish profile conformance. Review that contract before #16's two local CLI
-pilots; the full live ledger and installed-candidate prerequisites remain intact.
+The October 28 [suite finish plan](docs/roadmaps/flow-suite-finish-plan.md)
+records the remaining work per repository after all 16 previously open suite
+PRs were merged. The complete census has 97 open issues, including epics,
+qualification, optional capabilities and final audits; this is not a count of
+equal-sized unfinished features or a completion percentage.
+
+The proposed [#15 observability contract](docs/work/15/HANDOFF.md) is now merged
+through PR #86. It adds no runtime instrumentation or exporter, and ADR/profile
+acceptance remains open before #16's two local CLI pilots.
 
 The [current continuation handoff](docs/work/11/HANDOFF.md) and
 [live #11 ledger](https://github.com/egohygiene/flow/issues/11) own current
-execution navigation. At the October 22, 2026 observation, the durable kernel,
+execution navigation. At the October 28, 2026 observation, the durable kernel,
 synthetic acceptance/lifecycle foundations, native read-only Optiflow adapter
-and #81 repair are merged. After #82, continue with #15. Released
+and #81/#82 repairs are merged. Released
 Aniflow/Renderflow adapters, product CLI and the first installed Flow candidate
 remain distinct from the stable audited suite and optional product backlog.
 The [capability matrix](docs/integrations/capability-matrix.md) owns current
@@ -44,11 +48,11 @@ source/release evidence and explicit unqualified states.
 The [Flow suite dependency map](docs/roadmaps/flow-suite-dependency-map.md)
 connects the independent provider lanes to an installable suite and the full
 retained product backlog, including the inspectable comic artifact-tree outcome.
-The October 6 refresh preserves all 80 original nodes, includes every open issue
+The October 28 refresh preserves all 80 original nodes, includes every open issue
 and newer completed checkpoints, and marks bounded completed issues NUKED.
 Open the [full completion diagram](docs/roadmaps/flow-suite-completion.svg) or
 [editable Mermaid source](docs/roadmaps/flow-suite-completion.mmd). It preserves
-October 6 evidence states, scoped dependencies and the update protocol. Its time-qualified
+current evidence states, scoped dependencies and the update protocol. Its time-qualified
 snapshot supersedes older execution-status claims below where they conflict;
 live issues and repository evidence remain authoritative.
 

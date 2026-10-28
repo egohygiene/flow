@@ -1,6 +1,24 @@
 # Provider capability matrix
 
-## Current evidence — October 22, 2026
+## Current evidence — October 28, 2026
+
+The [suite finish plan](../roadmaps/flow-suite-finish-plan.md) records current
+implementation and release sequencing after the PR merge sweep. No new native
+compatibility or platform qualification was executed in this refresh.
+
+| Repository / inspected main | Source capability | Released interface available to Flow |
+| --- | --- | --- |
+| Flow `58b06abc3f95da56df3b763e9ddc395656cc173a` | Durable library, read-only Optiflow adapter; proposed observability contract merged | No supported product CLI or release; #51/#52/#53/#34/#54 remain. |
+| Renderflow `c1d1bebfd48369d18e7c46295859d76e3f831499` | Publication and substantial creative/composition source merged | No GitHub release; baseline/qualification #458/#459 and release #419 precede Flow #52. |
+| Optiflow `741da2c96081518d421517df174776427a4f2e08` | PNG candidates, partial native transactions and video foundation source | Existing v0.1.1 read-only scan/report/review-plan adapter only; #93 and Flow #73/#74 remain separate. Video #146 is not yet a released optimizer. |
+| Aniflow `8008e0176f45b34d2a9e74d8a26d9b3fd374b81f` | Temporal pipeline, source-video recipe and synthetic demos merged | No GitHub release; #64/#10/#40 qualification/release and Flow #51/#75 remain. |
+
+Optiflow's exact release identity and prior executed compatibility evidence in
+the table below are unchanged. Its separate durable receipt is not a generic
+graph checkpoint or mutation grant. Newer development source does not broaden
+that pinned adapter's effects or accepted schema versions.
+
+## Preserved evidence — October 22, 2026
 
 Source revisions, package versions, immutable releases and executed compatibility
 are separate evidence. This matrix does not qualify arbitrary current source or

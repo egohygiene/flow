@@ -1,5 +1,36 @@
 # Flow #11 completion-roadmap handoff
 
+## Current continuation — October 28, 2026
+
+The user requested a full suite PR merge sweep and roadmap refresh before more
+implementation. All 16 initially open PRs are merged, plus Optiflow #151's
+single-field corpus lock binding maintenance. All four queues were observed
+empty before this documentation PR. No feature work or releases were started.
+
+Start with the [suite finish plan](../../roadmaps/flow-suite-finish-plan.md),
+[complete dependency map](../../roadmaps/flow-suite-dependency-map.md) and
+[updated visual atlas](../../roadmaps/flow-suite-completion.svg). They preserve
+all existing nodes, mark completed bounded issues NUKED and add the new issues.
+There are 97 open issues: Flow 31, Renderflow 27, Optiflow 13 and Aniflow 26.
+Umbrellas, partial implementation, qualification and optional work are distinct.
+
+The user's immediate source priority remains Optiflow #146's usable video
+candidate → serial video-folder path. Aniflow #111 and selected #35/#112/#113
+finishing can proceed independently. Renderflow primarily needs baseline and
+qualification/release work. Flow still needs released adapters, its supported
+product CLI, real installed proofs and packaging. Return to the user to sync
+before starting the next feature checkpoint.
+
+Flow #15's contract is merged in #86; ADR/profile acceptance remains open.
+No supported product Flow CLI or Flow/Renderflow/Aniflow release exists.
+Optiflow v0.1.1 remains read-only. Current main pins and merge receipts are in
+the finish plan. Source merge does not satisfy native/execution acceptance.
+
+No tests, builds, dependency resolution, lint, product schema/drift checks,
+native/provider/media execution or Actions checks ran. Only the requested
+documentation atlas was rendered. The previous dated handoffs below are
+preserved; their draft/next/count statements are historical where superseded.
+
 ## Current draft checkpoint — October 26, 2026
 
 #82 merged through PR #85 at `69952725fb4eeb1daeb0e5c8bea7d8d82ba40670`.
