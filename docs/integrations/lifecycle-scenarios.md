@@ -1,5 +1,9 @@
 # Durable lifecycle scenarios
 
+The [local scenario showcase](scenario-showcase.md) presents the canonical IDs,
+expected ordered traces, recovery classifications and explicit coverage gaps.
+It launches no test/provider and cannot grant acceptance or retry authority.
+
 Flow #65 and #66 qualify durable recovery through the public APIs introduced by #49
 and #64. The test-owned corpus lives in `tests/lifecycle_matrix/`, with 49 fixed
 recipes and expected outcomes in `tests/fixtures/lifecycle-scenarios.v1.json`.

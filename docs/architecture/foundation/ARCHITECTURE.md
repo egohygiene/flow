@@ -372,6 +372,14 @@ current source layout.
 
 ## Validation
 
+The [scenario showcase](../../integrations/scenario-showcase.md) is a read-only
+documentation projection of existing catalogs and optionally selected normalized
+reports. It cannot issue runtime authority, validate native receipt acceptance
+or promote a report into current qualification. Raw catalog/report and recorded
+source digests keep inspected bytes separate from expected outcomes and claims.
+Catalogs remain the owners of IDs, counts, traces and coverage gaps; no second
+scenario registry, execution engine or sibling dependency is introduced.
+
 Historical default-branch CI run 35558851556 validated Rust 1.85 and stable library builds,
 closed contract models, deterministic resolution, the hermetic in-process and
 process-transcript seams, scenario-manifest identity, and repository

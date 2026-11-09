@@ -1,5 +1,9 @@
 # Acceptance scenario matrix
 
+Browse the canonical IDs, expected outcomes and coverage gaps in the
+[local scenario showcase](scenario-showcase.md). Catalog intent remains separate
+from supplied reports and actual current execution evidence.
+
 ## Design and scope
 
 Flow #30 proves one provider execution boundary using the closed scenario
