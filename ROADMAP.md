@@ -738,3 +738,16 @@ the delivery layer.
 Roadmap horizons advance on named evidence, not elapsed time. New work must align
 with the ownership table, [suite boundaries](docs/integrations/suite-boundaries.md),
 versioned contracts, and accepted decisions.
+
+## November 9, 2026 — optional AI seam inventory [skip ci]
+
+[#80](https://github.com/egohygiene/flow/issues/80) now has a source-pinned
+[client inventory and native-field mapping](docs/ai/README.md). It recommends
+reusing Renderflow's existing optional profile/skill/summary owners for the
+first textual candidate, adding no router, gateway, shared crate or mandatory
+AI dependency. Source declarations and release metadata are separate from
+installed/runtime/model/semantic qualification. The suite profile/preparation,
+immutable released consumer and explicit hardware/model proofs remain open;
+no source, native, provider, model or CI checks ran. #88 stays the final deep
+acceptance owner, scheduled last. This checkpoint does not accept any ADR,
+adopt Identity, enable AI or authorize inference, release or publication.
