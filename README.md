@@ -164,6 +164,7 @@ or a sandbox.
 - [Process authority and isolation](docs/integrations/authority-isolation.md)
 - [Artifact binding contract](docs/integrations/artifact-bindings.md)
 - [Scenario fixture contract](docs/integrations/scenario-fixtures.md)
+- [Browse the scenario showcase](docs/integrations/scenario-showcase.md)
 - [Executable acceptance matrix](docs/integrations/acceptance-scenarios.md)
 - [Durable lifecycle scenarios and recovery evidence](docs/integrations/lifecycle-scenarios.md)
 - [Hermetic provider kit](docs/integrations/hermetic-provider-kit.md)

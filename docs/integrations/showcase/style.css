@@ -1,0 +1,18 @@
+:root { color-scheme: light dark; font-family: system-ui, sans-serif; line-height: 1.55; }
+body { margin: 0; background: Canvas; color: CanvasText; }
+main { max-width: 76rem; margin: auto; padding: clamp(1rem, 4vw, 3rem); }
+a { color: LinkText; overflow-wrap: anywhere; }
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.15; }
+h2 { margin-top: 1.7rem; }
+section { margin-block: 1.5rem; }
+article { border: 1px solid GrayText; border-radius: .5rem; padding: 1rem; margin-block: .8rem; }
+article h3 { margin-top: 0; font-size: 1.05rem; }
+label { display: block; margin-top: .8rem; font-weight: 650; }
+input, select, button { font: inherit; max-width: 100%; padding: .55rem; }
+input[type="search"] { width: 36rem; }
+button { margin: .4rem .6rem .4rem 0; cursor: pointer; }
+summary { cursor: pointer; padding-block: .5rem; font-weight: 600; }
+pre { overflow: auto; max-height: 26rem; padding: .8rem; border: 1px solid GrayText; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .9rem; }
+.identity { font-family: ui-monospace, monospace; font-size: .88rem; overflow-wrap: anywhere; }
+.notice, .evidence { border-inline-start: .3rem solid GrayText; padding: .65rem 1rem; }
+:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; }
