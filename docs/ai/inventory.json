@@ -1,0 +1,375 @@
+{
+  "schema": "flow.ai-client-inventory/v1",
+  "observed_at": "2026-11-09T14:21:16Z",
+  "purpose": "dated documentation evidence; not an executable runtime profile, provider lock or accepted suite specification",
+  "source_authority": "public Git objects and separately observed GitHub release metadata; no product or validator executed",
+  "repositories": [
+    {
+      "repository": "egohygiene/flow",
+      "revision": "2655158b3b55bccbf85767e5000c693710c671b6",
+      "tree": "b3368bb8602db8a4004d4c249c165bd0639420d1",
+      "source_tree_path_count": 18,
+      "files": [
+        {
+          "path": "Cargo.toml",
+          "git_blob": "69953bae38d3ba9f01674a9e40a32e3d46044ec3",
+          "sha256": "761f66920af6c8d59dddbe16dccba91a42b4da2148e7f6058e60729c775d4f68",
+          "bytes": 995,
+          "lines": 42,
+          "source_url": "https://github.com/egohygiene/flow/blob/2655158b3b55bccbf85767e5000c693710c671b6/Cargo.toml"
+        },
+        {
+          "path": "src/lib.rs",
+          "git_blob": "25fe357cbe0f1dc3ad471b3cd80cc87ee09adde0",
+          "sha256": "25d08c702970645d9d8a12b65842681da005d7bc8de3ef745b63c74538e8cdcf",
+          "bytes": 1850,
+          "lines": 47,
+          "source_url": "https://github.com/egohygiene/flow/blob/2655158b3b55bccbf85767e5000c693710c671b6/src/lib.rs"
+        },
+        {
+          "path": "src/authority.rs",
+          "git_blob": "c1aa669d3c7a05a2c46533797c3ebe4d4bd603b4",
+          "sha256": "975dff6d4fe4c53d19f16b438ce51fbe8748f531d8d92baaeaacf2645f5060e2",
+          "bytes": 42746,
+          "lines": 1100,
+          "source_url": "https://github.com/egohygiene/flow/blob/2655158b3b55bccbf85767e5000c693710c671b6/src/authority.rs"
+        },
+        {
+          "path": "src/catalog.rs",
+          "git_blob": "ebdfb5aef8cea6f4008dfbe52634c1073853c108",
+          "sha256": "da35e03c87dba6883b5dc2eeacd3461fc1b05e2cb4fa949b74cc275c85748c67",
+          "bytes": 32609,
+          "lines": 913,
+          "source_url": "https://github.com/egohygiene/flow/blob/2655158b3b55bccbf85767e5000c693710c671b6/src/catalog.rs"
+        },
+        {
+          "path": "src/contracts.rs",
+          "git_blob": "1c58bf8a71d64e38c94f7706a29b8b4f2ee9f608",
+          "sha256": "e9ccbfcd5141b8375e50def08a2ad19e2a3f0271ef4a5afa212f03573b109a9e",
+          "bytes": 61439,
+          "lines": 1792,
+          "source_url": "https://github.com/egohygiene/flow/blob/2655158b3b55bccbf85767e5000c693710c671b6/src/contracts.rs"
+        },
+        {
+          "path": "docs/integrations/extension-contract.md",
+          "git_blob": "23fb1d478b3a8f67a19c4da1a5133e13dae97039",
+          "sha256": "8d23a2e1d2f7aa6763b47ff8edf311689b0e0b36adf06a67feca7cba9c556f14",
+          "bytes": 19951,
+          "lines": 342,
+          "source_url": "https://github.com/egohygiene/flow/blob/2655158b3b55bccbf85767e5000c693710c671b6/docs/integrations/extension-contract.md"
+        },
+        {
+          "path": "docs/observability/README.md",
+          "git_blob": "3aa0ac395022e90f3ebe989ca9d7ee5a78eec1aa",
+          "sha256": "698b5894ff07372b0e40f9d3f7d8bca76913442433e007976897ce94e6132dc5",
+          "bytes": 15175,
+          "lines": 214,
+          "source_url": "https://github.com/egohygiene/flow/blob/2655158b3b55bccbf85767e5000c693710c671b6/docs/observability/README.md"
+        }
+      ]
+    },
+    {
+      "repository": "egohygiene/renderflow",
+      "revision": "9bfb49446f6cf570af01e33412b48cbd4ff03763",
+      "tree": "ae2345abc475156efcc3e71336aed067c7c7bf2d",
+      "source_tree_path_count": 352,
+      "files": [
+        {
+          "path": "Cargo.toml",
+          "git_blob": "62c28d9ba29f9e96881f12ee2b274479b9183718",
+          "sha256": "5b74bde9af11d17b7e4f6d742b055483158874e07d2e1759ca671e0d0b16808a",
+          "bytes": 627,
+          "lines": 29,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/Cargo.toml"
+        },
+        {
+          "path": "Cargo.lock",
+          "git_blob": "679ece3107e5b5981d7cd8b35ca9cd59ee585f61",
+          "sha256": "79f55f87ed17439ae39ebba7a9b6289992e5b91f001141397d169fb8980d9870",
+          "bytes": 83069,
+          "lines": 3275,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/Cargo.lock"
+        },
+        {
+          "path": "crates/renderflow-core/Cargo.toml",
+          "git_blob": "9652699d44dae5d266dbf5c966c7f93f119d817d",
+          "sha256": "646586e1069dd281f2527f7a1bf1726812147acf2dd9b15ce14925e026ee9d2b",
+          "bytes": 1767,
+          "lines": 75,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/Cargo.toml"
+        },
+        {
+          "path": "crates/renderflow-core/src/ai/profile.rs",
+          "git_blob": "45a3f7b8c8440e82f57c73bcccfef8957dab3081",
+          "sha256": "7876f664b0519f1769625c3e42c46fe1e19e5ea75b6d4f03bfe64d9b9aecbad6",
+          "bytes": 14809,
+          "lines": 215,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/ai/profile.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/ai/catalog.rs",
+          "git_blob": "dc6852d79b021c681b5fa6841c49c97d015dece8",
+          "sha256": "aa22a072d0a9e4aeb2d588ef91b665b6d53a8bf0fe1177eeec5d7ce46f6789ec",
+          "bytes": 24777,
+          "lines": 707,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/ai/catalog.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/ai/provider.rs",
+          "git_blob": "416d6b3843d6a6abb6716d65abe037423cc56768",
+          "sha256": "77e9196ea7c4e1007f17ab148fd76d22223acb00c9d65a03c1ed8a4c4f06b858",
+          "bytes": 10672,
+          "lines": 294,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/ai/provider.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/ai/runtime.rs",
+          "git_blob": "b3b62580150abe86774f3827157dd18ce24d8658",
+          "sha256": "9a5653292d566bcfece1bd6936b4925bcef1bf8d27957794a74875bdb46e577f",
+          "bytes": 32365,
+          "lines": 819,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/ai/runtime.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/ai/skill.rs",
+          "git_blob": "52decda250dbac6ee7f210f3a6faaa54195f5f25",
+          "sha256": "ba6118799e4e1b6fee65b844230fa3386a79bf46c123b3fa2abad65b380aa850",
+          "bytes": 25459,
+          "lines": 705,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/ai/skill.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/ai/retry.rs",
+          "git_blob": "e47b586c38c6cc909ca631aeb5d3c921c470517d",
+          "sha256": "f422350bad008ede5da7b50f599ab12ce94493b1ec905cbcb6cdc54218b19d1a",
+          "bytes": 10643,
+          "lines": 312,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/ai/retry.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/ai/providers/ollama.rs",
+          "git_blob": "cdcaddabf69780e9b6d33ed974ec73089da10a96",
+          "sha256": "8499c28bad59b34cdea91c256cefb13f6b8d1987dfa1a5074be9832a58271b5e",
+          "bytes": 8199,
+          "lines": 235,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/ai/providers/ollama.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/ai/providers/openai.rs",
+          "git_blob": "329802d3460adc74c5709b44e13af74e32ccfecd",
+          "sha256": "e9a159db233b29b86bc400df7e1bd1fc03857fd26428205d184e5565c1747650",
+          "bytes": 12511,
+          "lines": 354,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/ai/providers/openai.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/ai/providers/response.rs",
+          "git_blob": "8e87758304958312da719a4b9e0110f3d0e9f280",
+          "sha256": "ae78f23e8a9ea5804c027c450fe10ad7be0a77c11c5e7bde99a3d95bec99f444",
+          "bytes": 2728,
+          "lines": 52,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/ai/providers/response.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/publication/summary/mod.rs",
+          "git_blob": "58e7391a1064323cb9918507cb979b47d331db8e",
+          "sha256": "70e9574d6d573685a55f5229fed95757dccbdecb686a79e5a61c8dca65cf0047",
+          "bytes": 18651,
+          "lines": 202,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/publication/summary/mod.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/publication/summary/model.rs",
+          "git_blob": "96857529e1cad5f8177f27649424cb8bceb9ed50",
+          "sha256": "ea2c49bf1bed90070d51b9c4a56ef0844ceafe6702fa431dad678119e187517c",
+          "bytes": 4262,
+          "lines": 83,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/publication/summary/model.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/publication/summary/review.rs",
+          "git_blob": "9993adb3a63d263ba73fa49fe722b49f204c6984",
+          "sha256": "c851e929e82d468384324c1cb88e78cf1aa6ba6547b77aa7bd37cb4393b55cf0",
+          "bytes": 11291,
+          "lines": 135,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/publication/summary/review.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/commands/ai.rs",
+          "git_blob": "acbd6b8e3daeaec7c3f325eddf241c2cc6da6c8f",
+          "sha256": "e12cd3d0bbe39f5e3bdbf7bb65db7ce97cc5dbcc583f411c4ce992972aa2d353",
+          "bytes": 15586,
+          "lines": 452,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/commands/ai.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/commands/summary.rs",
+          "git_blob": "6b14f94518a93e5ffe01a211820ed618b73e75cd",
+          "sha256": "5bed6c3c4f90a6128a8fee37038c5009c6356677b77e0c2b44d9c7b3a398434b",
+          "bytes": 3423,
+          "lines": 54,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/commands/summary.rs"
+        },
+        {
+          "path": "crates/renderflow-core/src/ai/profile/tests.rs",
+          "git_blob": "1a236f2ba19db9c6c99d3ea07500ba4a7b1fc97c",
+          "sha256": "24f1f179050a6e7214a3009d597af0f80b985464bee0322efcd8084fc54a1e24",
+          "bytes": 7681,
+          "lines": 98,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/crates/renderflow-core/src/ai/profile/tests.rs"
+        },
+        {
+          "path": "schemas/renderflow-ai-runtime-profile-v1.schema.json",
+          "git_blob": "90b9775a7f0a333bd4616cfafa1b28424bc9f80b",
+          "sha256": "103c1dc89b07dbc6c02698859256249e0d53f21ca6f5eae9bd636dfec9974adf",
+          "bytes": 3656,
+          "lines": 156,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/schemas/renderflow-ai-runtime-profile-v1.schema.json"
+        },
+        {
+          "path": "docs/user-guide/publication-summary.md",
+          "git_blob": "20cbd83ecf7c0c5c852347095acbb53a6dd1ce03",
+          "sha256": "64de3f0013fc08dc4af3a0990eb8ccf5ca7eac97a62c3e4cd90b09c5f0ef1f97",
+          "bytes": 8685,
+          "lines": 164,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/docs/user-guide/publication-summary.md"
+        },
+        {
+          "path": "docs/work/456/RUNTIME_PROFILE.md",
+          "git_blob": "41314397259d9f7923571b1cc45a1147b33a6702",
+          "sha256": "f16fd6448283619a6c93182db6d94430fde020b4f765929834996ec083d65094",
+          "bytes": 6067,
+          "lines": 92,
+          "source_url": "https://github.com/egohygiene/renderflow/blob/9bfb49446f6cf570af01e33412b48cbd4ff03763/docs/work/456/RUNTIME_PROFILE.md"
+        }
+      ]
+    },
+    {
+      "repository": "egohygiene/aniflow",
+      "revision": "8edb41e3a81ea0015e725144757f6efcb7d4fb0c",
+      "tree": "871a6c18fdb4a03a96e408d3b255bbfe02a0a421",
+      "source_tree_path_count": 172,
+      "files": [
+        {
+          "path": "Cargo.toml",
+          "git_blob": "59cab97f7786f5a65acc4cb293ad5bec1d6700ba",
+          "sha256": "3cb73d9a165fba1ee973a4dba4c85fa61064a3ab18ee07bc84ede9b220cc180c",
+          "bytes": 1017,
+          "lines": 41,
+          "source_url": "https://github.com/egohygiene/aniflow/blob/8edb41e3a81ea0015e725144757f6efcb7d4fb0c/Cargo.toml"
+        },
+        {
+          "path": "src/lib.rs",
+          "git_blob": "57a4e86e61bc0517bb520e1d30692fe3259829bd",
+          "sha256": "4d4747430c3250068fce917d0d70b18dd1650d330ad8ca0490b210001b146c49",
+          "bytes": 7248,
+          "lines": 154,
+          "source_url": "https://github.com/egohygiene/aniflow/blob/8edb41e3a81ea0015e725144757f6efcb7d4fb0c/src/lib.rs"
+        },
+        {
+          "path": "src/provider.rs",
+          "git_blob": "5c0d840c5913e484758a9c8ccd16c78cce523e67",
+          "sha256": "bcab27293857f3b1c3c46abd147df6d4adb139d6f5b2517b8fa0b84074cb17e4",
+          "bytes": 35647,
+          "lines": 1061,
+          "source_url": "https://github.com/egohygiene/aniflow/blob/8edb41e3a81ea0015e725144757f6efcb7d4fb0c/src/provider.rs"
+        },
+        {
+          "path": "src/provider_runtime.rs",
+          "git_blob": "9a61a39b43b626c5962211ff5e26119ba9f1681d",
+          "sha256": "831449030fd42722ba8d3ae4e413cf831c887c22f1a089af0b705678ad888aa9",
+          "bytes": 140005,
+          "lines": 3819,
+          "source_url": "https://github.com/egohygiene/aniflow/blob/8edb41e3a81ea0015e725144757f6efcb7d4fb0c/src/provider_runtime.rs"
+        },
+        {
+          "path": "src/toolchain/mod.rs",
+          "git_blob": "decc41d7a9bb1d74f32a3f51ff77eeb1f88de912",
+          "sha256": "7cee45f257b29acda9dd85d495b6727ec2d95c48e08a4201c188d5840ef742ab",
+          "bytes": 1621,
+          "lines": 39,
+          "source_url": "https://github.com/egohygiene/aniflow/blob/8edb41e3a81ea0015e725144757f6efcb7d4fb0c/src/toolchain/mod.rs"
+        },
+        {
+          "path": "src/upscayl_recovery/types.rs",
+          "git_blob": "2c521f0a32c259c1c425eb4352c6d0e72674db89",
+          "sha256": "78b9978fd7e71dfdfcd39e92d71fde8fd8bbf3a1686a7ca02c0cf2f0349c5964",
+          "bytes": 12255,
+          "lines": 307,
+          "source_url": "https://github.com/egohygiene/aniflow/blob/8edb41e3a81ea0015e725144757f6efcb7d4fb0c/src/upscayl_recovery/types.rs"
+        }
+      ]
+    },
+    {
+      "repository": "egohygiene/optiflow",
+      "revision": "733e7b08e9a80e0b23f3d30c401e75d1272fa5db",
+      "tree": "8072a1848b0358c77d7e2070d7cc1fbe0821234e",
+      "source_tree_path_count": 66,
+      "files": [
+        {
+          "path": "Cargo.toml",
+          "git_blob": "20087ea4c9faeced2df56fefbbfe3a75f2cdbc2b",
+          "sha256": "52b22919c0c78ea81355a19e29355f7f70b7e27dc0979e0f71339ed4197ba800",
+          "bytes": 1274,
+          "lines": 51,
+          "source_url": "https://github.com/egohygiene/optiflow/blob/733e7b08e9a80e0b23f3d30c401e75d1272fa5db/Cargo.toml"
+        },
+        {
+          "path": "src/lib.rs",
+          "git_blob": "f6a681e725661f5b460715f0e6519f959fcaa5e0",
+          "sha256": "cbcdc100d0641b3eec07637e1f6c6f15d78668a751efa83b2a7f76a344703677",
+          "bytes": 1080,
+          "lines": 50,
+          "source_url": "https://github.com/egohygiene/optiflow/blob/733e7b08e9a80e0b23f3d30c401e75d1272fa5db/src/lib.rs"
+        },
+        {
+          "path": "src/extensions/model.rs",
+          "git_blob": "90864e78a01e7d3ac736837a9be84a6e6b017d2e",
+          "sha256": "0f2e97ce1c73d094426400dba29ad999de93347c73299dd4b733943def5dd2c8",
+          "bytes": 15063,
+          "lines": 515,
+          "source_url": "https://github.com/egohygiene/optiflow/blob/733e7b08e9a80e0b23f3d30c401e75d1272fa5db/src/extensions/model.rs"
+        },
+        {
+          "path": "src/extensions/registry.rs",
+          "git_blob": "759d48b0fd3ce19a8ab9dc4c764017161834dce0",
+          "sha256": "f67b8a01f5a6d0b8ba4403b26f858097288204554ff77fa4e70f66a391da720d",
+          "bytes": 15623,
+          "lines": 475,
+          "source_url": "https://github.com/egohygiene/optiflow/blob/733e7b08e9a80e0b23f3d30c401e75d1272fa5db/src/extensions/registry.rs"
+        },
+        {
+          "path": "src/extensions/process.rs",
+          "git_blob": "410720d612bb2c9516b37e303c30ab4b09acb2d1",
+          "sha256": "6e8901be791264ad7e6092ff1d32f17dd8030c497b7e17fb04dd4a26c0491f23",
+          "bytes": 8869,
+          "lines": 243,
+          "source_url": "https://github.com/egohygiene/optiflow/blob/733e7b08e9a80e0b23f3d30c401e75d1272fa5db/src/extensions/process.rs"
+        },
+        {
+          "path": "src/extensions/catalog.rs",
+          "git_blob": "a69e9875043efe3dd5775b3e8cc5e4bcf3dd133e",
+          "sha256": "332289d1ef95b2d2c41eb56bdf15141477e011477c39f5e7c645911e8c8798d1",
+          "bytes": 60892,
+          "lines": 1599,
+          "source_url": "https://github.com/egohygiene/optiflow/blob/733e7b08e9a80e0b23f3d30c401e75d1272fa5db/src/extensions/catalog.rs"
+        }
+      ]
+    }
+  ],
+  "releases_observed": {
+    "flow": [],
+    "renderflow": [],
+    "aniflow": [],
+    "optiflow": [
+      "v0.1.1",
+      "v0.1.0"
+    ]
+  },
+  "first_seam_recommendation": "reuse existing Renderflow native catalog/profile/skill/summary owners through a future immutable released adapter; no new dependency or runtime router",
+  "runtime_preparation": "not_performed; existing reference/catalog assertions are not attestation",
+  "provider_hardware_qualification": "not_performed",
+  "shared_profile_adoption": "not_accepted",
+  "extra_upstream_dependency_comparison": "not_performed; no new Rust wrapper or gateway selected",
+  "execution": "all tests/builds/checks/native/provider/media/model/CLI/SDK/CI deferred to flow #88, scheduled last"
+}

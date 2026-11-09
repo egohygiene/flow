@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.14.0
+version: 0.14.1
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-10-26
+updated: 2026-11-09
 governed_by:
   - architecture-architecture
 depends_on:
@@ -409,3 +409,13 @@ observed all-target timeout, native unavailable/skip semantics and moving-stable
 Clippy baseline. No current all-target green or release qualification follows
 from merging these implementations. ADR-0011, ADR-0012 and ADR-0013 remain
 proposed in the [decision index](../governance/DECISIONS.md).
+
+## Optional AI integration inventory (#80)
+
+The [dated client inventory](../../ai/README.md) proposes reusing Renderflow's
+existing native catalog/profile/skill/summary boundary for the first bounded
+text consumer. This is documentation mapping, not a Flow runtime implementation,
+ratified suite profile or new shared dependency. Existing extension locks,
+per-invocation authority, prelaunch fallback and domain acceptance remain the
+owners. Preparation declarations, model/hardware proof and immutable provider
+release remain separate. No domain holon imports Flow or sibling source.
