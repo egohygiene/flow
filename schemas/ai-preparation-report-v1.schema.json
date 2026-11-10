@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.ai-preparation-report/v1",
+  "$comment": "Proposed; authored/unvalidated. Runtime-native, hardware and offline qualification remain unknown; matching bytes grants no invocation authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_sha256",
+    "preparation_sha256",
+    "state",
+    "assets",
+    "reasons",
+    "runtime_qualified",
+    "offline_enforcement_verified",
+    "invocation_authority",
+    "memory_bound_enforced",
+    "cost_known"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.ai-preparation-report/v1"
+    },
+    "profile_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "preparation_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "state": {
+      "enum": [
+        "disabled",
+        "refused",
+        "incompatible",
+        "missing",
+        "unavailable",
+        "changed",
+        "prepared_bytes"
+      ]
+    },
+    "assets": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "asset_id",
+          "kind",
+          "state",
+          "observed_sha256",
+          "observed_bytes"
+        ],
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]{1,96}$"
+          },
+          "kind": {
+            "enum": [
+              "runtime_executable",
+              "model_weights",
+              "model_configuration"
+            ]
+          },
+          "state": {
+            "enum": [
+              "matched_bytes",
+              "missing",
+              "changed",
+              "unavailable"
+            ]
+          },
+          "observed_sha256": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "observed_bytes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "reasons": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z_]+$"
+      }
+    },
+    "runtime_qualified": {
+      "const": false
+    },
+    "offline_enforcement_verified": {
+      "const": false
+    },
+    "invocation_authority": {
+      "const": false
+    },
+    "memory_bound_enforced": {
+      "const": false
+    },
+    "cost_known": {
+      "const": false
+    }
+  }
+}

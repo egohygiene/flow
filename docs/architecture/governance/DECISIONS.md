@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.11.0
+version: 0.12.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-10-26
+updated: 2026-11-10
 governed_by:
   - architecture-decisions
 depends_on:
@@ -68,6 +68,7 @@ justifies separate ADRs.
 | [ADR-0012](decisions/ADR-0012-fresh-graph-assessment.md) | Require fresh prerequisite evidence for durable graph execution | Proposed | Pending review | None | Scheduling, cross-plan reuse, or concurrent artifact mutation changes the assessment boundary |
 | [ADR-0013](decisions/ADR-0013-optiflow-native-read-only-adapter.md) | Pin Optiflow v0.1.1 behind a native read-only adapter | Proposed | Pending review | None | A released mutation contract, native protocol revision, or generic graph composition changes this boundary |
 | [ADR-0014](decisions/ADR-0014-operational-observability.md) | Keep operational observability separate from domain evidence | Proposed | Pending review | None | Pilot feasibility, exported data, shared-package selection or external mapping stability changes |
+| [ADR-0015](decisions/ADR-0015-ai-preparation.md) | Separate local AI preparation bytes from invocation readiness | Proposed | Pending review | None | Runtime-native identity, released adoption, credentials or hardware/egress proof changes |
 
 ## Active decisions
 

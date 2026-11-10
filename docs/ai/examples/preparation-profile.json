@@ -1,0 +1,25 @@
+{
+  "schema_version": "flow.ai-preparation-profile/v1",
+  "profile_id": "synthetic-text",
+  "mode": "local_only",
+  "provider_id": "ollama",
+  "model_id": "synthetic-not-installed",
+  "runtime_revision": "declared-unverified",
+  "model_revision": "declared-unverified",
+  "template_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "output_schema_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "modality": "text",
+  "structured_output": true,
+  "budgets": {
+    "input_bytes": 1024,
+    "output_bytes": 4096,
+    "context_tokens": 4096,
+    "output_tokens": 512,
+    "deadline_ms": 1000,
+    "attempts": 1,
+    "concurrency": 1,
+    "memory_mib": 8192,
+    "working_bytes": 16777216,
+    "hard_cost_microunits": null
+  }
+}

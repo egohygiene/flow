@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.ai-preparation-profile/v1",
+  "$comment": "Proposed; authored/unvalidated. Runtime-native, hardware and offline qualification remain unknown; matching bytes grants no invocation authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_id",
+    "provider_id",
+    "model_id",
+    "runtime_revision",
+    "model_revision",
+    "mode",
+    "template_sha256",
+    "output_schema_sha256",
+    "modality",
+    "structured_output",
+    "budgets"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.ai-preparation-profile/v1"
+    },
+    "profile_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,96}$"
+    },
+    "provider_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:+-][A-Za-z0-9._:+/-]*$"
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:+-][A-Za-z0-9._:+/-]*$"
+    },
+    "runtime_revision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:+-][A-Za-z0-9._:+/-]*$"
+    },
+    "model_revision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:+-][A-Za-z0-9._:+/-]*$"
+    },
+    "mode": {
+      "enum": [
+        "disabled",
+        "local_only",
+        "remote"
+      ]
+    },
+    "template_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "output_schema_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "modality": {
+      "enum": [
+        "text",
+        "image",
+        "audio",
+        "video"
+      ]
+    },
+    "structured_output": {
+      "type": "boolean"
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_bytes",
+        "output_bytes",
+        "context_tokens",
+        "output_tokens",
+        "deadline_ms",
+        "attempts",
+        "concurrency",
+        "memory_mib",
+        "working_bytes",
+        "hard_cost_microunits"
+      ],
+      "properties": {
+        "input_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "output_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "context_tokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 131072
+        },
+        "output_tokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 131072
+        },
+        "deadline_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300000
+        },
+        "attempts": {
+          "const": 1
+        },
+        "concurrency": {
+          "const": 1
+        },
+        "memory_mib": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "working_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 137438953472
+        },
+        "hard_cost_microunits": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

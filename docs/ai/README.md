@@ -126,3 +126,5 @@ qualification ran. The known Aniflow alignment cancellation/start-marker failure
 remains unresolved, cause unproven. #80 remains open for its full preparation,
 consumer, operational and qualification criteria; no ADR or Identity adoption,
 actual private content review, release or publication is asserted.
+
+The next proposed source checkpoint is [local preparation evidence](preparation.md): explicit profile, private pinned-file declarations and inert SDK inspection. It does not supersede the dated inventory or adopt the native profile; runtime readiness and released consumers remain separate.
