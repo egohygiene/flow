@@ -84,7 +84,10 @@ fn receipt(root:&Path,plan:&Plan)->Result<Option<(ReadOnlyReceipt,PathBuf,String
     let mut entries=fs::read_dir(&directory).map_err(|_|error(Code::Io,"native receipt namespace unavailable"))?;let Some(entry)=entries.next() else{return Ok(None)};let path=entry.map_err(|_|error(Code::Io,"native receipt member unavailable"))?.path();if entries.next().is_some()||path.extension().is_none_or(|e|e!="json"){return Err(error(Code::RecoveryRequired,"ambiguous native attempts; no latest-attempt adoption"));}
     let native_receipt=ReadOnlyReceipt::load(&path).map_err(native)?;
     if native_receipt.provider!=plan.provider||native_receipt.source!=plan.source_scope||native_receipt.state_directory.path().map_err(native)?!=root{return Err(error(Code::StalePlan,"native receipt does not match this exact selected operation"));}
-    let bytes=read_document(&path,16_777_216)?;Ok(Some((native_receipt,path,hash(&bytes))))
+    let bytes=read_document(&path,16_777_216)?;
+    let rebound:ReadOnlyReceipt=serde_json::from_slice(&bytes).map_err(|_|error(Code::InvalidInput,"closed native receipt required"))?;
+    if canonical(&rebound)?!=canonical(&native_receipt)?{return Err(error(Code::StalePlan,"native receipt changed between acceptance and completion-byte observation"));}
+    Ok(Some((native_receipt,path,hash(&bytes))))
 }
 fn marker(plan:&Plan,approval:&Approval,path:&Path,sha:String)->Result<Marker,Error>{Ok(Marker {schema_version:"flow.command-completion/v1".into(),plan_sha256:plan.plan_sha256.clone(),approval_sha256:digest(approval)?,receipt_sha256:sha,receipt:NativePath::from_path(path)})}
 /// Reopen exact native attempt evidence; no provider launch or automatic replay.
