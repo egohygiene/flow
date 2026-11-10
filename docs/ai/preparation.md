@@ -37,3 +37,27 @@ Disabled and remote/incompatible profiles stop before selection observation.
 Setup never starts/contacts a service, installs/downloads or grants invocation.
 Five synthetic SDK cases and the new closed request/result/doctor schemas are
 authored, uncompiled/unrun. No checks, product/native/model calls or CI ran.
+
+## Provisional setup delivery utility
+
+The source target `flow-ai-setup` is a thin private-configuration utility over
+this SDK. It is not the supported `flow` orchestration CLI, an installed product
+release, or a provider adapter. Its source target has not been compiled/run.
+
+- `flow-ai-setup prepare --request ABS --output-directory ABS` reads an explicit
+  request such as `docs/ai/examples/local-setup-request.json`, derives selected
+  file pins, and saves new private profile/preparation/doctor/request documents
+  plus a last marker in an existing empty private directory.
+- `flow-ai-setup doctor --profile ABS --preparation ABS` reuses the SDK inspector;
+  preparation is optional and disabled mode never opens it.
+- `flow-ai-setup status --directory ABS` checks exact saved document identities
+  and reports current asset observations without rewriting saved pins.
+
+Every result is one JSON document; errors use a bounded provisional envelope.
+No normal orchestration entry point starts setup. Input records must be canonical
+regular files; publication uses exclusive new private files. Partial publication
+is retained, unknown members refuse, and no cleanup/removal command is added.
+Ordinary before/after filesystem observations are not adversarial race immunity
+or descriptor-bound launch. A changed model needs another explicitly selected
+setup rather than automatic adoption. Four delivery/refusal cases are authored,
+uncompiled/unrun. No tests, builds, validators, utility/model execution or CI ran.
