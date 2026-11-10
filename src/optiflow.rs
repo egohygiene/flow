@@ -746,7 +746,7 @@ impl OptiflowReadOnlyAdapter {
             _ => return Err(AdapterError::Incompatible),
         };
         let profile = RELEASE_PROFILES.iter().find(|p| p.target == target).ok_or(AdapterError::Incompatible)?;
-        if !executable.is_absolute() { return Err(AdapterError::Incompatible); }
+        if !executable.is_absolute() || executable.canonicalize().ok().as_deref()!=Some(executable) { return Err(AdapterError::Incompatible); }
         let before=fs::symlink_metadata(executable).map_err(|_| AdapterError::Unavailable)?;
         if !before.is_file() || before.file_type().is_symlink() || before.len()>536_870_912 {
             return Err(AdapterError::Incompatible);
@@ -1518,12 +1518,20 @@ fn sha256(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
 
-fn sha256_file(path: &Path, limit: u64) -> Result<String, AdapterError> {
-    sha256_file_with_cancellation(path,limit,&crate::NeverCancelled)
-}
 fn check_cancelled(cancellation:&dyn crate::CancellationSignal)->Result<(),AdapterError>{if cancellation.is_cancelled(){Err(AdapterError::Cancelled)}else{Ok(())}}
+fn same_regular_file(before:&fs::Metadata,current:&fs::Metadata)->bool {
+    if !current.is_file()||current.file_type().is_symlink()||current.len()!=before.len()||current.modified().ok()!=before.modified().ok(){return false;}
+    #[cfg(unix)] {use std::os::unix::fs::MetadataExt;if current.dev()!=before.dev()||current.ino()!=before.ino()||current.nlink()!=1||current.ctime()!=before.ctime()||current.ctime_nsec()!=before.ctime_nsec(){return false;}}
+    true
+}
 fn sha256_file_with_cancellation(path:&Path,limit:u64,cancellation:&dyn crate::CancellationSignal)->Result<String,AdapterError>{
-    let mut file = File::open(path)?;
+    check_cancelled(cancellation)?;
+    let before=fs::symlink_metadata(path)?;
+    if !same_regular_file(&before,&before)||before.len()>limit{return Err(AdapterError::InvalidEvidence("bounded regular provider file required"));}
+    let mut options=OpenOptions::new();options.read(true);
+    #[cfg(unix)] {use std::os::unix::fs::OpenOptionsExt;options.custom_flags(nix::libc::O_NOFOLLOW|nix::libc::O_CLOEXEC|nix::libc::O_NONBLOCK);}
+    let mut file=options.open(path)?;
+    if !same_regular_file(&before,&file.metadata()?){return Err(AdapterError::InvalidEvidence("provider file changed while opening"));}
     let mut hash = Sha256::new();
     let mut total = 0_u64;
     let mut chunk = [0_u8; 8192];
@@ -1534,11 +1542,13 @@ fn sha256_file_with_cancellation(path:&Path,limit:u64,cancellation:&dyn crate::C
             break;
         }
         total = total.saturating_add(count as u64);
-        if total > limit {
+        if total > limit || total > before.len() {
             return Err(AdapterError::Limit("file"));
         }
         hash.update(&chunk[..count]);
     }
+    check_cancelled(cancellation)?;
+    if total!=before.len()||!same_regular_file(&before,&file.metadata()?)||!same_regular_file(&before,&fs::symlink_metadata(path)?){return Err(AdapterError::InvalidEvidence("provider file changed during observation"));}
     Ok(format!("{:x}", hash.finalize()))
 }
 
@@ -1643,6 +1653,33 @@ mod tests {
     };
     use serde_json::json;
     use std::fs;
+
+    // Source-review regressions: synthetic bytes only; authored/uncompiled/unrun.
+    #[test]
+    fn provider_hash_cancellation_precedes_selected_path_access() {
+        let result=super::sha256_file_with_cancellation(std::path::Path::new("/synthetic/absent/provider"),1024,&||true);
+        assert!(matches!(result,Err(AdapterError::Cancelled)));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn provider_hash_refuses_aliases_and_replacement_during_observation() {
+        use std::{cell::Cell,os::unix::fs::symlink};
+        let suffix=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
+        let root=std::env::temp_dir().join(format!("flow-provider-observation-{}-{suffix}",std::process::id()));
+        fs::create_dir(&root).unwrap();
+        let selected=root.join("provider.bin");let alias=root.join("alias.bin");let replacement=root.join("replacement.bin");
+        fs::write(&selected,b"original synthetic provider").unwrap();
+        symlink(&selected,&alias).unwrap();
+        assert!(super::sha256_file_with_cancellation(&alias,1024,&crate::NeverCancelled).is_err());
+        fs::remove_file(&alias).unwrap();fs::hard_link(&selected,&alias).unwrap();
+        assert!(super::sha256_file_with_cancellation(&selected,1024,&crate::NeverCancelled).is_err());
+        fs::remove_file(&alias).unwrap();fs::write(&replacement,b"different synthetic provider").unwrap();
+        let calls=Cell::new(0usize);let during_read=||{let current=calls.get();calls.set(current+1);if current==1{fs::rename(&replacement,&selected).unwrap();}false};
+        assert!(super::sha256_file_with_cancellation(&selected,1024,&during_read).is_err());
+        assert_eq!(fs::read(&selected).unwrap(),b"different synthetic provider");
+        fs::remove_dir_all(root).unwrap();
+    }
 
     #[test]
     fn invalid_receipts_cannot_create_or_replace_durable_evidence() {

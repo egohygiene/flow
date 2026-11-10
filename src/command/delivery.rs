@@ -8,7 +8,7 @@ pub enum Presentation {Human,Json}
 pub struct Arguments {pub command:String,pub presentation:Presentation,pub options:BTreeMap<String,OsString>,pub acknowledge_trusted_unconfined:bool}
 pub fn parse(values:Vec<OsString>)->Result<Arguments,Error>{
     if values.len()>32||values.iter().map(|v|v.len()).sum::<usize>()>65_536{return Err(error(Code::Usage,"command arguments exceed bounds"));}
-    let mut values=values.into_iter();let command=values.next().and_then(|s|s.into_string().ok()).unwrap_or_else(||"help".into());
+    let mut values=values.into_iter();let command=match values.next(){None=>"help".into(),Some(value)=>value.into_string().map_err(|_|error(Code::Usage,"recognized UTF-8 command name required"))?};
     let command=match command.as_str(){"--help"|"-h"=>"help".into(),"--version"|"-V"=>"version".into(),_=>command};
     if !["doctor","inspect","plan","approve","run","status","resume","help","version"].contains(&command.as_str()){return Err(error(Code::Usage,"supported commands: doctor, inspect, plan, approve, run, status, resume"));}
     let mut options=BTreeMap::new();let mut ack=false;let mut presentation=Presentation::Human;let mut format_seen=false;
@@ -89,6 +89,7 @@ pub fn render(value:&Envelope,presentation:Presentation)->Result<Vec<u8>,Error>{
 
 #[cfg(test)] mod tests {
     use super::*;
+    #[cfg(unix)] #[test] fn invalid_command_bytes_are_usage_errors_without_losing_native_input_paths(){use std::os::unix::ffi::OsStringExt;let bad=OsString::from_vec(vec![0xff]);assert_eq!(parse(vec![bad.clone()]).unwrap_err().code,Code::Usage);let parsed=parse(vec!["inspect".into(),"--input".into(),bad.clone()]).unwrap();assert_eq!(parsed.options["--input"],bad);}
     #[test] fn parser_requires_supplied_plan_approval_and_explicit_acknowledgement_surface(){assert!(parse(["run","--plan","p"].into_iter().map(Into::into).collect()).is_err());assert!(parse(["run","--plan","p","--approval","a","--format","json"].into_iter().map(Into::into).collect()).is_ok());assert!(parse(["run","--plan","p","--approval","a","--acknowledge-trusted-unconfined"].into_iter().map(Into::into).collect()).is_err());}
     #[test] fn planning_refuses_implicit_execution_install_and_duplicate_options(){for flag in ["--execute","--install","--download","--post"]{assert!(parse(["plan","--request","r",flag,"x"].into_iter().map(Into::into).collect()).is_err());}assert!(parse(["plan","--request","r","--request","s"].into_iter().map(Into::into).collect()).is_err());}
     #[test] fn machine_failure_is_one_closed_result_without_private_error_text(){let value=failure("run",error(Code::Unavailable,"selected provider unavailable"));let bytes=render(&value,Presentation::Json).unwrap();let json:serde_json::Value=serde_json::from_slice(&bytes).unwrap();assert_eq!(json["schema_version"],"flow.command-result/v1");assert_eq!(json["outcome"],"unavailable");assert!(!String::from_utf8(bytes).unwrap().contains("/private"));}
