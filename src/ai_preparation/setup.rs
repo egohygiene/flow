@@ -73,3 +73,5 @@ pub fn prepare(request:&Request,cancel:&impl CancellationSignal)->Result<Prepare
     Ok(Prepared {schema_version:"flow.ai-local-setup-result/v1".into(),profile:request.profile.clone(),private_preparation:if accepted{Some(prep)}else{None},doctor:doctor(report,Some(total))})
 }
 #[cfg(test)] mod tests;
+
+pub mod documents;

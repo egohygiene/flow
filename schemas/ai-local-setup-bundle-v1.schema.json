@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.ai-local-setup-bundle/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_sha256",
+    "recorded_state",
+    "members"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.ai-local-setup-bundle/v1"
+    },
+    "profile_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "recorded_state": {
+      "enum": [
+        "disabled",
+        "refused",
+        "incompatible",
+        "missing",
+        "unavailable",
+        "changed",
+        "prepared_bytes"
+      ]
+    },
+    "members": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "byte_count",
+          "sha256"
+        ],
+        "properties": {
+          "name": {
+            "enum": [
+              "profile.json",
+              "preparation.json",
+              "doctor.json",
+              "request.json"
+            ]
+          },
+          "byte_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 131072
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    }
+  }
+}
