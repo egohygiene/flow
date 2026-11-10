@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.command-approval/v1",
+  "$comment": "Authored/unvalidated source contract. Exact pins, current scope, authority and native receipts are checked in Rust; qualification remains deferred.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_sha256",
+    "approved_by",
+    "acknowledge_trusted_unconfined",
+    "scope"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.command-approval/v1"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "approved_by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "acknowledge_trusted_unconfined": {
+      "const": true
+    },
+    "scope": {
+      "const": "selected_read_only_scan_and_local_evidence_only"
+    }
+  }
+}

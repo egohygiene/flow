@@ -1,0 +1,16 @@
+{
+  "schema_version": "flow.command-request/v1",
+  "route": "optiflow_read_only",
+  "provider_executable": {
+    "encoding": "utf8",
+    "value": "/replace/with/verified/optiflow-0.1.1"
+  },
+  "source_root": {
+    "encoding": "utf8",
+    "value": "/replace/with/read-only-source"
+  },
+  "run_directory": {
+    "encoding": "utf8",
+    "value": "/replace/with/new-private-run"
+  }
+}

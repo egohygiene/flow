@@ -133,6 +133,8 @@ pub enum AdapterError {
     Limit(&'static str),
     #[error("provider exceeded its deadline")]
     Timeout,
+    #[error("provider operation cancelled; inspect retained state before retry")]
+    Cancelled,
     #[error("local evidence I/O failed: {0}")]
     Io(#[from] io::Error),
     #[error("local evidence serialization failed: {0}")]
@@ -153,6 +155,7 @@ impl AdapterError {
             Self::InvalidEvidence(_) => "invalid_provider_evidence",
             Self::Limit(_) => "limit_exceeded",
             Self::Timeout => "provider_timeout",
+            Self::Cancelled => "provider_cancelled",
             Self::Io(_) | Self::Json(_) => "local_evidence_failure",
         }
     }
@@ -167,7 +170,7 @@ pub enum NativePath {
 }
 
 impl NativePath {
-    fn path(&self) -> Result<PathBuf, AdapterError> {
+    pub fn path(&self) -> Result<PathBuf, AdapterError> {
         match self {
             Self::Utf8 { value } => Ok(PathBuf::from(value)),
             Self::UnixBytes { base64 } => {
@@ -188,7 +191,7 @@ impl NativePath {
         }
     }
 
-    fn from_path(path: &Path) -> Self {
+    pub fn from_path(path: &Path) -> Self {
         if let Some(value) = path.to_str() {
             return Self::Utf8 {
                 value: value.to_owned(),
@@ -218,7 +221,7 @@ pub struct SourceIdentity {
 }
 
 impl SourceIdentity {
-    fn observe(root: &Path) -> Result<Self, AdapterError> {
+    pub fn observe(root: &Path) -> Result<Self, AdapterError> {
         if fs::symlink_metadata(root)?.file_type().is_symlink() {
             return Err(AdapterError::PathEscape);
         }
@@ -245,7 +248,7 @@ impl SourceIdentity {
         }
     }
 
-    fn require_current(&self) -> Result<(), AdapterError> {
+    pub fn require_current(&self) -> Result<(), AdapterError> {
         let current = Self::observe(&self.root.path()?).map_err(|_| AdapterError::SourceChanged)?;
         if current == *self {
             Ok(())
@@ -729,44 +732,39 @@ impl OptiflowReadOnlyAdapter {
     /// # Errors
     /// Refuses missing, different, or unsupported executables.
     pub fn probe(executable: &Path) -> Result<Self, AdapterError> {
+        Self::probe_with_cancellation(executable, &crate::NeverCancelled)
+    }
+
+    /// Observe only explicit local bytes and the fixed release/host mapping.
+    /// No version command, installation or native operation is performed.
+    pub fn observe_release(executable: &Path, cancellation: &dyn crate::CancellationSignal) -> Result<ProviderIdentity, AdapterError> {
+        check_cancelled(cancellation)?;
         let target = match (std::env::consts::ARCH, std::env::consts::OS) {
             ("x86_64", "linux") => "x86_64-unknown-linux-gnu",
             ("x86_64", "macos") => "x86_64-apple-darwin",
             ("aarch64", "macos") => "aarch64-apple-darwin",
             _ => return Err(AdapterError::Incompatible),
         };
-        let profile = RELEASE_PROFILES
-            .iter()
-            .find(|profile| profile.target == target)
-            .ok_or(AdapterError::Incompatible)?;
-        if !executable.is_absolute() {
+        let profile = RELEASE_PROFILES.iter().find(|p| p.target == target).ok_or(AdapterError::Incompatible)?;
+        if !executable.is_absolute() { return Err(AdapterError::Incompatible); }
+        let before=fs::symlink_metadata(executable).map_err(|_| AdapterError::Unavailable)?;
+        if !before.is_file() || before.file_type().is_symlink() || before.len()>536_870_912 {
             return Err(AdapterError::Incompatible);
         }
-        let meta = fs::symlink_metadata(executable).map_err(|_| AdapterError::Unavailable)?;
-        if !meta.is_file() || meta.file_type().is_symlink() {
+        if sha256_file_with_cancellation(executable,536_870_912,cancellation)? != profile.executable_sha256 {
             return Err(AdapterError::Incompatible);
         }
-        if sha256_file(executable, u64::MAX)? != profile.executable_sha256 {
-            return Err(AdapterError::Incompatible);
-        }
-        let version = capture(executable, &[OsString::from("--version")], SHORT_DEADLINE)?;
-        if version.code != Some(0)
-            || version.stdout != b"optiflow 0.1.1\n"
-            || !version.stderr.is_empty()
-        {
-            return Err(AdapterError::Incompatible);
-        }
-        Ok(Self {
-            executable: executable.to_owned(),
-            identity: ProviderIdentity {
-                version: PROVIDER_VERSION.to_owned(),
-                source_revision: PROVIDER_SOURCE_REVISION.to_owned(),
-                target: target.to_owned(),
-                archive_sha256: profile.archive_sha256.to_owned(),
-                executable_sha256: profile.executable_sha256.to_owned(),
-                interface: COMMAND_RESULT_SCHEMA.to_owned(),
-            },
-        })
+        check_cancelled(cancellation)?;
+        Ok(ProviderIdentity { version:PROVIDER_VERSION.to_owned(),source_revision:PROVIDER_SOURCE_REVISION.to_owned(),target:target.to_owned(),archive_sha256:profile.archive_sha256.to_owned(),executable_sha256:profile.executable_sha256.to_owned(),interface:COMMAND_RESULT_SCHEMA.to_owned() })
+    }
+
+    /// Existing exact native version probe with caller-owned cancellation.
+    pub fn probe_with_cancellation(executable:&Path,cancellation:&dyn crate::CancellationSignal)->Result<Self,AdapterError> {
+        let identity=Self::observe_release(executable,cancellation)?;
+        let version=capture_with_cancellation(executable,&[OsString::from("--version")],SHORT_DEADLINE,cancellation)?;
+        if version.code!=Some(0)||version.stdout!=b"optiflow 0.1.1\n"||!version.stderr.is_empty(){return Err(AdapterError::Incompatible);}
+        if Self::observe_release(executable,cancellation)?!=identity{return Err(AdapterError::Incompatible);}
+        Ok(Self {executable:executable.to_owned(),identity})
     }
 
     #[must_use]
@@ -800,6 +798,12 @@ impl OptiflowReadOnlyAdapter {
         source_root: &Path,
         state_directory: &Path,
     ) -> Result<(ReadOnlyReceipt, PathBuf), AdapterError> {
+        self.inspect_with_cancellation(source_root,state_directory,&crate::NeverCancelled)
+    }
+
+    /// Same native attempt owner, now with explicit caller cancellation.
+    pub fn inspect_with_cancellation(&self,source_root:&Path,state_directory:&Path,cancellation:&dyn crate::CancellationSignal)->Result<(ReadOnlyReceipt,PathBuf),AdapterError> {
+        check_cancelled(cancellation)?;
         let source = SourceIdentity::observe(source_root)?;
         let root = source.root.path()?;
         let prospective_state = prospective_path(state_directory)?;
@@ -853,10 +857,10 @@ impl OptiflowReadOnlyAdapter {
             failure: None,
         };
         persist(&path, &receipt, true)?;
-        let result = self.inspect_steps(&state, &source, &attempt_id, &path, &mut receipt);
+        let result = self.inspect_steps(&state, &source, &attempt_id, &path, &mut receipt, cancellation);
         if let Err(error) = result {
             receipt.status = ReceiptStatus::Refused;
-            receipt.recovery = if matches!(error, AdapterError::Timeout | AdapterError::Io(_)) {
+            receipt.recovery = if matches!(error, AdapterError::Timeout | AdapterError::Cancelled | AdapterError::Io(_)) {
                 "inspect-provider-state-before-retry".to_owned()
             } else {
                 "no-source-mutation".to_owned()
@@ -889,6 +893,7 @@ impl OptiflowReadOnlyAdapter {
         attempt_id: &str,
         receipt_path: &Path,
         receipt: &mut ReadOnlyReceipt,
+        cancellation: &dyn crate::CancellationSignal,
     ) -> Result<(), AdapterError> {
         source.require_current()?;
         let root = source.root.path()?;
@@ -899,7 +904,7 @@ impl OptiflowReadOnlyAdapter {
             OsString::from("--no-probe"),
             root.as_os_str().to_owned(),
         ];
-        let scan = self.invoke(state, "scan", &scan_args, SCAN_DEADLINE)?;
+        let scan = self.invoke(state, "scan", &scan_args, SCAN_DEADLINE, cancellation)?;
         let run = field(&scan.result, "/run/run_id")?
             .as_str()
             .ok_or(AdapterError::InvalidEvidence("run id"))?;
@@ -959,6 +964,7 @@ impl OptiflowReadOnlyAdapter {
             "report",
             &[OsString::from("report"), OsString::from(run)],
             SHORT_DEADLINE,
+            cancellation,
         )?;
         if field(&report.result, "/run/run_id")?.as_str() != Some(run) {
             return Err(AdapterError::InvalidEvidence("report run identity"));
@@ -1001,6 +1007,7 @@ impl OptiflowReadOnlyAdapter {
                 plan_path.as_os_str().to_owned(),
             ],
             SHORT_DEADLINE,
+            cancellation,
         )?;
         if field(&plan.result, "/schema_version")?.as_str() != Some(PLAN_SCHEMA)
             || field(&plan.result, "/source_run_id")?.as_str() != Some(run)
@@ -1089,8 +1096,9 @@ impl OptiflowReadOnlyAdapter {
         name: &str,
         specific: &[OsString],
         deadline: Duration,
+        cancellation: &dyn crate::CancellationSignal,
     ) -> Result<NativeResult, AdapterError> {
-        if sha256_file(&self.executable, u64::MAX)? != self.identity.executable_sha256 {
+        if sha256_file_with_cancellation(&self.executable, 536_870_912, cancellation)? != self.identity.executable_sha256 {
             return Err(AdapterError::Incompatible);
         }
         let mut args = vec![
@@ -1101,7 +1109,7 @@ impl OptiflowReadOnlyAdapter {
             OsString::from("--no-config"),
         ];
         args.extend_from_slice(specific);
-        let output = capture(&self.executable, &args, deadline)?;
+        let output = capture_with_cancellation(&self.executable, &args, deadline, cancellation)?;
         let digest = sha256(&output.stdout);
         let response: NativeEnvelope = serde_json::from_slice(&output.stdout)
             .map_err(|_| AdapterError::InvalidEvidence("command result JSON"))?;
@@ -1511,11 +1519,16 @@ fn sha256(bytes: &[u8]) -> String {
 }
 
 fn sha256_file(path: &Path, limit: u64) -> Result<String, AdapterError> {
+    sha256_file_with_cancellation(path,limit,&crate::NeverCancelled)
+}
+fn check_cancelled(cancellation:&dyn crate::CancellationSignal)->Result<(),AdapterError>{if cancellation.is_cancelled(){Err(AdapterError::Cancelled)}else{Ok(())}}
+fn sha256_file_with_cancellation(path:&Path,limit:u64,cancellation:&dyn crate::CancellationSignal)->Result<String,AdapterError>{
     let mut file = File::open(path)?;
     let mut hash = Sha256::new();
     let mut total = 0_u64;
     let mut chunk = [0_u8; 8192];
     loop {
+        check_cancelled(cancellation)?;
         let count = file.read(&mut chunk)?;
         if count == 0 {
             break;
@@ -1535,11 +1548,8 @@ struct Captured {
     stderr: Vec<u8>,
 }
 
-fn capture(
-    executable: &Path,
-    args: &[OsString],
-    deadline: Duration,
-) -> Result<Captured, AdapterError> {
+fn capture_with_cancellation(executable:&Path,args:&[OsString],deadline:Duration,cancellation:&dyn crate::CancellationSignal)->Result<Captured,AdapterError>{
+    check_cancelled(cancellation)?;
     let mut child = Command::new(executable)
         .args(args)
         .current_dir(executable.parent().ok_or(AdapterError::Incompatible)?)
@@ -1561,6 +1571,7 @@ fn capture(
     let stderr = thread::spawn(move || read_capped(err, MAX_STDERR));
     let start = Instant::now();
     let status = loop {
+        if cancellation.is_cancelled(){let _=child.kill();let _=child.wait();return Err(AdapterError::Cancelled);}
         match child.try_wait() {
             Ok(Some(status)) => break status,
             Ok(None) if start.elapsed() < deadline => thread::sleep(Duration::from_millis(5)),

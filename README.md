@@ -28,8 +28,10 @@ explicitly bound artifacts; and validate a closed scenario manifest for
 synthetic orchestration fixtures. The first released-provider library adapter
 pins [Optiflow v0.1.1 read-only inspection](docs/integrations/optiflow-v0.1.1-read-only.md)
 and retains a separate durable attempt receipt. It does not copy holon source
-or claim a product orchestrator, public Flow CLI, mutation adapter, operating-system sandbox,
-general scenario executor, automatic recovery scheduler, or public resume CLI.
+or claim a qualified complete orchestrator, mutation adapter, operating-system sandbox,
+general scenario executor or automatic recovery scheduler. The initial unqualified
+[Flow command source](docs/cli/README.md) now exposes the pinned read-only route;
+its complete #53/release/provider criteria remain open.
 Prepared process execution now has [durable run state](docs/integrations/durable-state.md)
 with immutable plans, atomic snapshots, verified checkpoints, status inspection,
 explicit recovery decisions, and fresh dependency-graph assessment before
@@ -49,8 +51,10 @@ remain historical. Re-query live state before execution.
 
 ## Executable checkpoint
 
-The executable contract surface remains library-led. The only repository
-binary is a synthetic conformance provider; it is not a public Flow CLI:
+The executable contract surface remains library-led. The initial unqualified
+`flow` command target and provisional `flow-ai-setup` utility are separate from
+the synthetic conformance-provider binary. See [CLI scope and limits](docs/cli/README.md).
+The underlying library checkpoints include:
 
 - closed Rust models and semantic validation cover the six extension-v1
   documents;
