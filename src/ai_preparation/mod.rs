@@ -89,3 +89,5 @@ pub fn inspect(profile:&Profile,preparation:Option<&LocalPreparation>,cancel:&im
     report.reasons=vec!["runtime_native_model_identity_unverified".into(),"hardware_and_memory_estimates_unqualified".into(),"egress_assertion_not_enforcement".into(),"licenses_declared_not_reviewed".into(),"no_inference_or_launch_authority".into()];Ok(report)
 }
 #[cfg(test)] mod tests;
+
+pub mod setup;

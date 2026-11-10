@@ -41,3 +41,10 @@ Actual runtime-native identity, selected hardware/resource enforcement, egress
 isolation, useful inference and credential/configuration handoff remain open.
 Seven source-authored cases and closed schemas are uncompiled/unvalidated;
 qualification stays deferred to #88 last. No prior ADR status changes.
+
+Additive source checkpoint: explicit selected-file setup derives current pins
+and reuses the existing inspector before producing a private preparation. A
+portable doctor projects fixed manual actions. A provisional delivery utility
+may persist only new private documents; no service/model/native check or
+installation is implied. This remains a proposal and does not adopt the suite
+profile in a domain holon or create a second configuration resolver.
