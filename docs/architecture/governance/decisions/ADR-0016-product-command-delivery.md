@@ -39,3 +39,12 @@ One bounded machine result, stable exit categories and content-free diagnostics
 remain separate from private local evidence. Full clean-install, provider,
 cross-platform, release and dependency criteria in #53/#70 are unchanged. All
 new cases are authored/uncompiled/unrun; Flow #88 stays last.
+
+The proposed local-input extension retains explicit file/directory/ordered
+collection identity and bounded observations before profile lookup. The pinned
+adapter accepts only whole recursive directory scope; narrower selections are
+unavailable, never broadened. Inspection hashes/limits are not represented as
+execution-input freezing or provider runtime quotas. Scope-only plans are marked
+partial and retain the existing native operation declaration. Additional immutable
+provider routes and complete #70 input-bound execution remain open. This is a
+source proposal, not qualification or ratification.

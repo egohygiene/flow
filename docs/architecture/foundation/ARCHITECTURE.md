@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.16.0
+version: 0.17.0
 status: draft
 owners:
   - egohygiene
@@ -49,6 +49,17 @@ remain unavailable. Machine presentation is one versioned result; telemetry and
 private provider diagnostics cannot become authority. Source inclusion does not
 establish a qualified CLI/release or waive #53's retained dependencies. See
 proposed ADR-0016.
+
+The local-input boundary observes explicitly selected file, bounded-directory or
+ordered-collection identities before profile planning. It preserves order and
+private native locators, bounds traversal/hash work, refuses links/aliases/mount
+escapes, and derives no media-format acceptance from names/extensions. These
+observations are neither execution input freezing nor provider-native validation.
+The pinned native adapter currently accepts only whole recursive directory
+scope; narrower selections remain unavailable rather than being broadened.
+Inspection limits do not become unimplemented provider runtime quotas. Scope-only
+planning remains explicitly partial; independently released profile/adapter and
+clean-install acceptance in #70 remain open.
 
 ### Orchestration core
 

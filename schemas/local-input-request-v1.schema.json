@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.local-input-request/v1",
+  "$comment": "Authored/unvalidated. Local file observations are not native media acceptance, source freezing or provider runtime budgets.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "input",
+    "profile",
+    "provider_executable",
+    "run_directory",
+    "limits"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.local-input-request/v1"
+    },
+    "input": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "path"
+          ],
+          "properties": {
+            "kind": {
+              "const": "file"
+            },
+            "path": {
+              "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "path",
+            "recursive"
+          ],
+          "properties": {
+            "kind": {
+              "const": "directory"
+            },
+            "path": {
+              "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+            },
+            "recursive": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "members"
+          ],
+          "properties": {
+            "kind": {
+              "const": "ordered_collection"
+            },
+            "members": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 256,
+              "items": {
+                "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "profile": {
+      "enum": [
+        "inspect_only",
+        "optiflow_read_only",
+        "renderflow_publication",
+        "aniflow_temporal"
+      ]
+    },
+    "provider_executable": {
+      "anyOf": [
+        {
+          "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "run_directory": {
+      "anyOf": [
+        {
+          "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maximum_entries",
+        "maximum_files",
+        "maximum_depth",
+        "maximum_file_bytes",
+        "maximum_total_bytes",
+        "deadline_ms"
+      ],
+      "properties": {
+        "maximum_entries": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096
+        },
+        "maximum_files": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "maximum_depth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "maximum_file_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1073741824
+        },
+        "maximum_total_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967296
+        },
+        "deadline_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300000
+        }
+      }
+    }
+  }
+}
