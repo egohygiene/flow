@@ -98,3 +98,10 @@ validator, model, media or hosted CI operation ran during this source task.
 Flow #88 remains last; ADR-0016 remains proposed. The supported product CLI,
 released adapter and clean-install criteria remain visible in #53 rather than
 being inferred from source inclusion or a help/version response.
+
+## Ordinary local input delivery
+
+[Local input/profile preview](local-inputs.md) adds `--input` for ordinary files
+and folders plus a closed request for explicit ordered collections. Its bounded
+observations and scope-only route availability remain distinct from frozen
+execution inputs, native media acceptance and released-provider qualification.
