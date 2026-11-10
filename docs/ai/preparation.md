@@ -61,3 +61,14 @@ Ordinary before/after filesystem observations are not adversarial race immunity
 or descriptor-bound launch. A changed model needs another explicitly selected
 setup rather than automatic adoption. Four delivery/refusal cases are authored,
 uncompiled/unrun. No tests, builds, validators, utility/model execution or CI ran.
+
+The November 10 source-review extension leaves `selected_logical_bytes` unknown
+unless every selected asset has current matching bytes. Partial metadata totals
+for missing/unavailable/changed files do not imply complete storage needs. The
+private bundle reader retains one descriptor through before/after identity checks,
+parses only byte-bound loaded members, matches the preparation to the explicit
+request deployment/asset selections, and reobserves the marker/members after
+current diagnosis. A rewritten checksum marker cannot make inconsistent request
+and preparation documents compatible. No files or pins are rewritten by status.
+Two additional source-review cases are authored/uncompiled/unrun; no test,
+compiler, schema validator, utility, runtime or model was invoked.

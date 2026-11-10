@@ -37,7 +37,7 @@ fn doctor(report:Report,total:Option<u64>)->Doctor {
 }
 /// Reuse the existing inspector; diagnostics contain logical asset IDs and
 /// fixed actions, never private paths, endpoint, license text or raw errors.
-pub fn diagnose(profile:&Profile,preparation:Option<&LocalPreparation>,cancel:&impl CancellationSignal)->Result<Doctor,ValidationError>{let report=inspect(profile,preparation,cancel)?;let total=preparation.filter(|_|profile.mode==Mode::LocalOnly).and_then(|p|p.assets.iter().try_fold(0u64,|sum,a|sum.checked_add(a.byte_count)));Ok(doctor(report,total))}
+pub fn diagnose(profile:&Profile,preparation:Option<&LocalPreparation>,cancel:&impl CancellationSignal)->Result<Doctor,ValidationError>{let report=inspect(profile,preparation,cancel)?;let total=preparation.filter(|_|report.state==State::PreparedBytes).and_then(|p|p.assets.iter().try_fold(0u64,|sum,a|sum.checked_add(a.byte_count)));Ok(doctor(report,total))}
 /// Observe only explicitly selected existing files, derive their byte pins,
 /// then require the existing two-observation inspector to confirm the set.
 pub fn prepare(request:&Request,cancel:&impl CancellationSignal)->Result<Prepared,ValidationError>{
@@ -59,7 +59,7 @@ pub fn prepare(request:&Request,cancel:&impl CancellationSignal)->Result<Prepare
         selections.push(Asset {asset_id:selection.asset_id.clone(),kind:selection.kind,path:selection.path.clone(),sha256:selection.expected_sha256.clone().unwrap_or_else(||"0".repeat(64)),byte_count:bytes});
     }
     if request.assets.iter().filter(|a|a.kind==AssetKind::RuntimeExecutable).count()!=1||!request.assets.iter().any(|a|a.kind==AssetKind::ModelWeights)||!request.assets.iter().any(|a|a.kind==AssetKind::ModelConfiguration){return Err(error("select one runtime plus weights and model configuration"));}
-    if !baseline.assets.is_empty(){baseline.state=if baseline.assets.iter().any(|a|a.state==AssetState::Missing){State::Missing}else{State::Unavailable};baseline.reasons=vec!["selected_assets_unavailable_no_install_or_fallback".into()];return Ok(Prepared {schema_version:"flow.ai-local-setup-result/v1".into(),profile:request.profile.clone(),private_preparation:None,doctor:doctor(baseline,Some(total))});}
+    if !baseline.assets.is_empty(){baseline.state=if baseline.assets.iter().any(|a|a.state==AssetState::Missing){State::Missing}else{State::Unavailable};baseline.reasons=vec!["selected_assets_unavailable_no_install_or_fallback".into()];return Ok(Prepared {schema_version:"flow.ai-local-setup-result/v1".into(),profile:request.profile.clone(),private_preparation:None,doctor:doctor(baseline,None)});}
     let mut assets=Vec::new();for (selection,asset) in request.assets.iter().zip(selections){let mut observed=observe(&asset,&guard)?;
         if observed.state==AssetState::Missing||observed.state==AssetState::Unavailable||selection.expected_sha256.as_ref().is_some_and(|expected|observed.observed_sha256.as_ref()!=Some(expected)){if observed.state==AssetState::MatchedBytes{observed.state=AssetState::Changed;}baseline.assets.push(observed);continue;}
         let actual=observed.observed_sha256.ok_or_else(||error("selected asset did not produce a complete digest"))?;
@@ -67,10 +67,10 @@ pub fn prepare(request:&Request,cancel:&impl CancellationSignal)->Result<Prepare
         if bytes!=asset.byte_count {baseline.assets.push(AssetObservation {asset_id:asset.asset_id,kind:asset.kind,state:AssetState::Changed,observed_sha256:Some(actual),observed_bytes:Some(bytes)});continue;}
         assets.push(Asset {sha256:actual,..asset});
     }
-    if !baseline.assets.is_empty(){baseline.state=State::Changed;baseline.reasons=vec!["selected_asset_changed_during_preparation".into()];return Ok(Prepared {schema_version:"flow.ai-local-setup-result/v1".into(),profile:request.profile.clone(),private_preparation:None,doctor:doctor(baseline,Some(total))});}
+    if !baseline.assets.is_empty(){baseline.state=if baseline.assets.iter().any(|a|a.state==AssetState::Missing){State::Missing}else if baseline.assets.iter().any(|a|a.state==AssetState::Unavailable){State::Unavailable}else{State::Changed};baseline.reasons=vec!["selected_asset_changed_during_preparation".into()];return Ok(Prepared {schema_version:"flow.ai-local-setup-result/v1".into(),profile:request.profile.clone(),private_preparation:None,doctor:doctor(baseline,None)});}
     let prep=LocalPreparation {schema_version:"flow.ai-local-preparation/v1".into(),deployment_id:request.deployment_id.clone(),profile_sha256:request.profile.sha256()?,endpoint:request.endpoint,service_egress_disabled_declared:request.service_egress_disabled_declared,runtime_license:request.runtime_license.clone(),model_license:request.model_license.clone(),quantization:request.quantization.clone(),maximum_observation_bytes:request.maximum_observation_bytes,assets};
     let report=inspect(&request.profile,Some(&prep),&guard)?;let accepted=report.state==State::PreparedBytes;
-    Ok(Prepared {schema_version:"flow.ai-local-setup-result/v1".into(),profile:request.profile.clone(),private_preparation:if accepted{Some(prep)}else{None},doctor:doctor(report,Some(total))})
+    Ok(Prepared {schema_version:"flow.ai-local-setup-result/v1".into(),profile:request.profile.clone(),private_preparation:if accepted{Some(prep)}else{None},doctor:doctor(report,accepted.then_some(total))})
 }
 #[cfg(test)] mod tests;
 
