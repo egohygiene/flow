@@ -54,3 +54,7 @@ path dependency and no holon imports Flow orchestration code.
 Status: proposed documentation mapping; no new live contract, runtime package,
 approved ADR, test result or release. Owner remains #80; final suite acceptance
 is #88, scheduled last.
+
+## Proposed preparation checkpoint
+
+[Local preparation](preparation.md) now authors a separate Flow-owned proposed profile/preparation/report contract and inert byte inspection. This is not an adopted mapping or runtime-native verifier. No released domain adapter consumes it yet; the earlier inventory-only observation remains historical.

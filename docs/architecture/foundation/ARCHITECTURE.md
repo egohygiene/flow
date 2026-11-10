@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.14.1
+version: 0.15.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-11-09
+updated: 2026-11-10
 governed_by:
   - architecture-architecture
 depends_on:
@@ -411,6 +411,16 @@ from merging these implementations. ADR-0011, ADR-0012 and ADR-0013 remain
 proposed in the [decision index](../governance/DECISIONS.md).
 
 ## Optional AI integration inventory (#80)
+
+The proposed [preparation boundary](../../ai/preparation.md) adds an inert
+Flow-owned SDK inspection of explicitly selected nonsecret profiles and local
+file declarations. It separates matched file bytes from runtime-native model
+identity, hardware compatibility, offline enforcement and inference readiness.
+It creates no runtime, installer, router, provider authority or shared package.
+Remote execution is refused by this first local inspection surface; normal
+disabled workflows do not inspect files. Domain adapters remain independent,
+and adoption requires a separately reviewed immutable released contract.
+See [proposed ADR-0015](../governance/decisions/ADR-0015-ai-preparation.md).
 
 The [dated client inventory](../../ai/README.md) proposes reusing Renderflow's
 existing native catalog/profile/skill/summary boundary for the first bounded

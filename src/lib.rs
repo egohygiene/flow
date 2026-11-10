@@ -10,6 +10,7 @@
 //! automatic graph recovery remain separate work. The durable coordinator stores
 //! prepared intent, acceptance, and explicit recovery decisions in a local workspace.
 
+pub mod ai_preparation;
 pub mod artifacts;
 pub mod authority;
 pub mod catalog;
