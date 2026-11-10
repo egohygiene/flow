@@ -24,6 +24,9 @@ opens, byte limits, and before/open/after descriptor/path observations. Unix
 hardlink aliases, changed identities and noncanonical executable locators are
 refused. This is observation hardening, not process-path atomic execution,
 kernel-enforced deadlines, process-tree confinement or platform qualification.
+The completion-byte observation also decodes and compares the exact accepted
+native receipt before pinning its bytes, so a different reread cannot supply
+the completion digest for the previously validated receipt object.
 
 Invalid command-name bytes now produce a usage refusal; native input-path
 bytes remain supported. Three additional synthetic cancellation, alias/swap
