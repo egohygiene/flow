@@ -12,3 +12,17 @@ fn fixture()->Fixture {use std::sync::atomic::{AtomicU64,Ordering};static NEXT:A
 #[cfg(unix)] #[test] fn new_private_bundle_and_status_preserve_no_invocation_authority(){let f=fixture();let out=bundle(&f);let value=documents::write(&f.request,&out,&crate::NeverCancelled).unwrap();assert!(value.documents_match);assert_eq!(value.current.report.state,State::PreparedBytes);assert!(!value.current.report.invocation_authority&&!value.current.runtime_or_service_contacted);}
 #[cfg(unix)] #[test] fn bundle_status_reports_changed_assets_without_rewriting_saved_preparation(){let f=fixture();let out=bundle(&f);documents::write(&f.request,&out,&crate::NeverCancelled).unwrap();let original=std::fs::read(out.join("preparation.json")).unwrap();std::fs::write(&f.request.assets[1].path,b"changed model bytes").unwrap();let status=documents::status(&out,&crate::NeverCancelled).unwrap();assert_eq!(status.current.report.state,State::Changed);assert_eq!(std::fs::read(out.join("preparation.json")).unwrap(),original);}
 #[cfg(unix)] #[test] fn unknown_bundle_member_is_not_adopted_or_removed(){let f=fixture();let out=bundle(&f);documents::write(&f.request,&out,&crate::NeverCancelled).unwrap();std::fs::write(out.join("unknown"),b"preserve").unwrap();assert!(documents::status(&out,&crate::NeverCancelled).is_err());assert_eq!(std::fs::read(out.join("unknown")).unwrap(),b"preserve");}
+
+#[cfg(unix)] #[test] fn self_consistent_marker_cannot_rebind_preparation_to_a_different_deployment(){
+    let f=fixture();let out=bundle(&f);documents::write(&f.request,&out,&crate::NeverCancelled).unwrap();
+    let mut changed=f.request.clone();changed.endpoint="127.0.0.1:11435".parse().unwrap();
+    let mut request_bytes=serde_json::to_vec_pretty(&changed).unwrap();request_bytes.push(b'\n');std::fs::write(out.join("request.json"),&request_bytes).unwrap();
+    let mut marker:documents::Marker=serde_json::from_slice(&std::fs::read(out.join("setup.json")).unwrap()).unwrap();
+    let member=marker.members.iter_mut().find(|m|m.name=="request.json").unwrap();member.byte_count=request_bytes.len() as u64;member.sha256=format!("{:x}",Sha256::digest(&request_bytes));
+    let mut marker_bytes=serde_json::to_vec_pretty(&marker).unwrap();marker_bytes.push(b'\n');std::fs::write(out.join("setup.json"),marker_bytes).unwrap();
+    assert!(documents::status(&out,&crate::NeverCancelled).is_err());
+}
+#[test] fn missing_or_changed_assets_do_not_claim_a_current_total(){
+    let f=fixture();std::fs::remove_file(&f.request.assets[1].path).unwrap();let result=prepare(&f.request,&crate::NeverCancelled).unwrap();assert!(result.doctor.selected_logical_bytes.is_none());
+    let f=fixture();let result=prepare(&f.request,&crate::NeverCancelled).unwrap();let prepared=result.private_preparation.unwrap();std::fs::write(&f.request.assets[1].path,b"changed").unwrap();let doctor=diagnose(&f.request.profile,Some(&prepared),&crate::NeverCancelled).unwrap();assert_eq!(doctor.report.state,State::Changed);assert!(doctor.selected_logical_bytes.is_none());
+}
