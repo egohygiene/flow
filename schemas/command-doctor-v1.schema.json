@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.command-doctor/v1",
+  "$comment": "Authored/unvalidated source contract. Exact pins, current scope, authority and native receipts are checked in Rust; qualification remains deferred.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "selected_provider",
+    "selected_state",
+    "unavailable_routes",
+    "provider_invoked",
+    "installation_performed",
+    "release_qualified"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.command-doctor/v1"
+    },
+    "selected_provider": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "source_revision",
+            "target",
+            "archive_sha256",
+            "executable_sha256",
+            "interface"
+          ],
+          "properties": {
+            "version": {
+              "const": "0.1.1"
+            },
+            "source_revision": {
+              "const": "b82599a2231e997d42fd9f26f4b59587f4ae14cf"
+            },
+            "target": {
+              "enum": [
+                "x86_64-unknown-linux-gnu",
+                "x86_64-apple-darwin",
+                "aarch64-apple-darwin"
+              ]
+            },
+            "archive_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "executable_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "interface": {
+              "const": "optiflow.command-result.v1"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "selected_state": {
+      "enum": [
+        "not_configured",
+        "matched_release_bytes; native_version_unobserved",
+        "missing_or_incompatible_selected_provider"
+      ]
+    },
+    "unavailable_routes": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "renderflow_publication"
+        },
+        {
+          "const": "aniflow_temporal"
+        }
+      ],
+      "minItems": 2,
+      "maxItems": 2,
+      "items": false
+    },
+    "provider_invoked": {
+      "const": false
+    },
+    "installation_performed": {
+      "const": false
+    },
+    "release_qualified": {
+      "const": false
+    }
+  }
+}

@@ -14,6 +14,7 @@ pub mod ai_preparation;
 pub mod artifacts;
 pub mod authority;
 pub mod catalog;
+pub mod command;
 pub mod contracts;
 pub mod execution;
 pub mod execution_subjects;

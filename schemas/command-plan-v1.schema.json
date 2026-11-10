@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.command-plan/v1",
+  "$comment": "Authored/unvalidated source contract. Exact pins, current scope, authority and native receipts are checked in Rust; qualification remains deferred.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_sha256",
+    "request",
+    "source_scope",
+    "provider",
+    "effects",
+    "content_binding"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.command-plan/v1"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "request": {
+      "$ref": "command-request-v1.schema.json"
+    },
+    "source_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "filesystem_id",
+        "file_id"
+      ],
+      "properties": {
+        "root": {
+          "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+        },
+        "filesystem_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "file_id": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "source_revision",
+        "target",
+        "archive_sha256",
+        "executable_sha256",
+        "interface"
+      ],
+      "properties": {
+        "version": {
+          "const": "0.1.1"
+        },
+        "source_revision": {
+          "const": "b82599a2231e997d42fd9f26f4b59587f4ae14cf"
+        },
+        "target": {
+          "enum": [
+            "x86_64-unknown-linux-gnu",
+            "x86_64-apple-darwin",
+            "aarch64-apple-darwin"
+          ]
+        },
+        "archive_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "executable_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "interface": {
+          "const": "optiflow.command-result.v1"
+        }
+      }
+    },
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_read_only",
+        "local_evidence_write",
+        "direct_provider_process",
+        "trusted_unconfined",
+        "network_granted",
+        "source_mutation_granted"
+      ],
+      "properties": {
+        "source_read_only": {
+          "const": true
+        },
+        "local_evidence_write": {
+          "const": true
+        },
+        "direct_provider_process": {
+          "const": true
+        },
+        "trusted_unconfined": {
+          "const": true
+        },
+        "network_granted": {
+          "const": false
+        },
+        "source_mutation_granted": {
+          "const": false
+        }
+      }
+    },
+    "content_binding": {
+      "const": "source_scope_only; native scan binds actual members at execution"
+    }
+  }
+}

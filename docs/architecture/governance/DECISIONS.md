@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.12.0
+version: 0.13.0
 status: draft
 owners:
   - egohygiene
@@ -69,6 +69,7 @@ justifies separate ADRs.
 | [ADR-0013](decisions/ADR-0013-optiflow-native-read-only-adapter.md) | Pin Optiflow v0.1.1 behind a native read-only adapter | Proposed | Pending review | None | A released mutation contract, native protocol revision, or generic graph composition changes this boundary |
 | [ADR-0014](decisions/ADR-0014-operational-observability.md) | Keep operational observability separate from domain evidence | Proposed | Pending review | None | Pilot feasibility, exported data, shared-package selection or external mapping stability changes |
 | [ADR-0015](decisions/ADR-0015-ai-preparation.md) | Separate local AI preparation bytes from invocation readiness | Proposed | Pending review | None | Runtime-native identity, released adoption, credentials or hardware/egress proof changes |
+| [ADR-0016](decisions/ADR-0016-product-command-delivery.md) | Deliver product commands through existing released adapters | Proposed | Pending review | None | Additional released routes, graph execution or native recovery changes the command boundary |
 
 ## Active decisions
 

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.command-request/v1",
+  "$comment": "Authored/unvalidated source contract. Exact pins, current scope, authority and native receipts are checked in Rust; qualification remains deferred.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "route",
+    "provider_executable",
+    "source_root",
+    "run_directory"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.command-request/v1"
+    },
+    "route": {
+      "enum": [
+        "optiflow_read_only",
+        "renderflow_publication",
+        "aniflow_temporal"
+      ]
+    },
+    "provider_executable": {
+      "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+    },
+    "source_root": {
+      "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+    },
+    "run_directory": {
+      "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+    }
+  }
+}

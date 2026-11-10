@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.command-result/v1",
+  "$comment": "Authored/unvalidated source contract. Exact pins, current scope, authority and native receipts are checked in Rust; qualification remains deferred.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "command",
+    "outcome",
+    "exit_code",
+    "result",
+    "diagnostics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.command-result/v1"
+    },
+    "command": {
+      "enum": [
+        "help",
+        "version",
+        "doctor",
+        "inspect",
+        "plan",
+        "approve",
+        "run",
+        "status",
+        "resume",
+        "parse",
+        "presentation"
+      ]
+    },
+    "outcome": {
+      "enum": [
+        "complete",
+        "partial",
+        "unavailable",
+        "recovery_required",
+        "refused"
+      ]
+    },
+    "exit_code": {
+      "enum": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        130
+      ]
+    },
+    "result": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "diagnostics": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message",
+          "recovery_directory"
+        ],
+        "properties": {
+          "code": {
+            "enum": [
+              "usage",
+              "invalid_input",
+              "unavailable",
+              "stale_plan",
+              "approval_required",
+              "recovery_required",
+              "cancelled",
+              "io",
+              "provider_refused"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "recovery_directory": {
+            "anyOf": [
+              {
+                "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.15.0
+version: 0.16.0
 status: draft
 owners:
   - egohygiene
@@ -32,11 +32,23 @@ implementation decisions.
 
 ### Suite applications
 
-The intended `flow` CLI is a thin delivery adapter over the orchestration
+The `flow` CLI source is a thin delivery adapter over the orchestration
 library. Its responsibility is argument parsing, human presentation, stable
 exit mapping and shell completion. The supported product CLI remains
 [#53](https://github.com/egohygiene/flow/issues/53); the existing synthetic
 conformance-provider binary is not that delivery surface.
+
+The first product-command source checkpoint exposes the existing pinned
+Optiflow read-only adapter behind separate inspect/plan, explicit local-operation
+approval, run and receipt/status/recovery surfaces. Planning observes selected
+local identities but launches no provider; execution rechecks the plan and pins
+before using the existing native adapter. Its attempt receipt remains distinct
+from generic durable-graph state. Interrupted native attempts require inspection,
+never automatic replay. Missing independently released Aniflow/Renderflow routes
+remain unavailable. Machine presentation is one versioned result; telemetry and
+private provider diagnostics cannot become authority. Source inclusion does not
+establish a qualified CLI/release or waive #53's retained dependencies. See
+proposed ADR-0016.
 
 ### Orchestration core
 

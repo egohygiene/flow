@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.command-status/v1",
+  "$comment": "Authored/unvalidated source contract. Exact pins, current scope, authority and native receipts are checked in Rust; qualification remains deferred.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_sha256",
+    "state",
+    "receipt",
+    "receipt_path",
+    "operation_record_complete",
+    "source_content_reobserved",
+    "next_action",
+    "source_mutation_authority"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.command-status/v1"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "state": {
+      "enum": [
+        "complete",
+        "partial",
+        "recovery_required",
+        "refused"
+      ]
+    },
+    "receipt": {
+      "anyOf": [
+        {
+          "$ref": "optiflow-read-only-receipt-v1.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "receipt_path": {
+      "anyOf": [
+        {
+          "$ref": "optiflow-read-only-receipt-v1.schema.json#/$defs/native_path"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "operation_record_complete": {
+      "type": "boolean"
+    },
+    "source_content_reobserved": {
+      "const": false
+    },
+    "next_action": {
+      "enum": [
+        "stored native attempt; use a new plan for a fresh scan",
+        "inspect retained native state; no automatic replay"
+      ]
+    },
+    "source_mutation_authority": {
+      "const": false
+    }
+  }
+}
