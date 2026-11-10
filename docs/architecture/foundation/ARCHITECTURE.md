@@ -429,3 +429,13 @@ ratified suite profile or new shared dependency. Existing extension locks,
 per-invocation authority, prelaunch fallback and domain acceptance remain the
 owners. Preparation declarations, model/hardware proof and immutable provider
 release remain separate. No domain holon imports Flow or sibling source.
+
+## Explicit local preparation delivery
+
+The AI preparation owner derives byte-bound private records only from selected
+existing local files and reuses the existing observer for set confirmation.
+Portable doctor actions refer to logical assets and fixed remediation categories;
+private locations and deployment metadata stay in local preparation records.
+A thin provisional setup utility uses this library boundary without becoming
+the supported Flow orchestration CLI. Preparation never owns installation,
+service startup, runtime-native model verification or invocation authority.

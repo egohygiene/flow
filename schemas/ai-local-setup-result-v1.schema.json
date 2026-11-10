@@ -1,0 +1,461 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.ai-local-setup-result/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile",
+    "private_preparation",
+    "doctor"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.ai-local-setup-result/v1"
+    },
+    "profile": {
+      "$comment": "Proposed; authored/unvalidated. Runtime-native, hardware and offline qualification remain unknown; matching bytes grants no invocation authority.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "profile_id",
+        "provider_id",
+        "model_id",
+        "runtime_revision",
+        "model_revision",
+        "mode",
+        "template_sha256",
+        "output_schema_sha256",
+        "modality",
+        "structured_output",
+        "budgets"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "flow.ai-preparation-profile/v1"
+        },
+        "profile_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]{1,96}$"
+        },
+        "provider_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._:+-][A-Za-z0-9._:+/-]*$"
+        },
+        "model_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._:+-][A-Za-z0-9._:+/-]*$"
+        },
+        "runtime_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._:+-][A-Za-z0-9._:+/-]*$"
+        },
+        "model_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._:+-][A-Za-z0-9._:+/-]*$"
+        },
+        "mode": {
+          "enum": [
+            "disabled",
+            "local_only",
+            "remote"
+          ]
+        },
+        "template_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "output_schema_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "modality": {
+          "enum": [
+            "text",
+            "image",
+            "audio",
+            "video"
+          ]
+        },
+        "structured_output": {
+          "type": "boolean"
+        },
+        "budgets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "input_bytes",
+            "output_bytes",
+            "context_tokens",
+            "output_tokens",
+            "deadline_ms",
+            "attempts",
+            "concurrency",
+            "memory_mib",
+            "working_bytes",
+            "hard_cost_microunits"
+          ],
+          "properties": {
+            "input_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1048576
+            },
+            "output_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1048576
+            },
+            "context_tokens": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 131072
+            },
+            "output_tokens": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 131072
+            },
+            "deadline_ms": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 300000
+            },
+            "attempts": {
+              "const": 1
+            },
+            "concurrency": {
+              "const": 1
+            },
+            "memory_mib": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1048576
+            },
+            "working_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 137438953472
+            },
+            "hard_cost_microunits": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "private_preparation": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$comment": "Proposed; authored/unvalidated. Runtime-native, hardware and offline qualification remain unknown; matching bytes grants no invocation authority.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "deployment_id",
+            "profile_sha256",
+            "endpoint",
+            "service_egress_disabled_declared",
+            "runtime_license",
+            "model_license",
+            "quantization",
+            "maximum_observation_bytes",
+            "assets"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "flow.ai-local-preparation/v1"
+            },
+            "deployment_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9._-]{1,96}$"
+            },
+            "profile_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "endpoint": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "service_egress_disabled_declared": {
+              "type": "boolean"
+            },
+            "runtime_license": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "model_license": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "quantization": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "maximum_observation_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 137438953472
+            },
+            "assets": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "asset_id",
+                  "kind",
+                  "path",
+                  "sha256",
+                  "byte_count"
+                ],
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9._-]{1,96}$"
+                  },
+                  "kind": {
+                    "enum": [
+                      "runtime_executable",
+                      "model_weights",
+                      "model_configuration"
+                    ]
+                  },
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "byte_count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 8589934592
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "doctor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "report",
+        "actions",
+        "selected_logical_bytes",
+        "physical_storage_verified",
+        "runtime_or_service_contacted"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "flow.ai-local-doctor/v1"
+        },
+        "report": {
+          "$comment": "Proposed; authored/unvalidated. Runtime-native, hardware and offline qualification remain unknown; matching bytes grants no invocation authority.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "profile_sha256",
+            "preparation_sha256",
+            "state",
+            "assets",
+            "reasons",
+            "runtime_qualified",
+            "offline_enforcement_verified",
+            "invocation_authority",
+            "memory_bound_enforced",
+            "cost_known"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "flow.ai-preparation-report/v1"
+            },
+            "profile_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "preparation_sha256": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "state": {
+              "enum": [
+                "disabled",
+                "refused",
+                "incompatible",
+                "missing",
+                "unavailable",
+                "changed",
+                "prepared_bytes"
+              ]
+            },
+            "assets": {
+              "type": "array",
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "asset_id",
+                  "kind",
+                  "state",
+                  "observed_sha256",
+                  "observed_bytes"
+                ],
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9._-]{1,96}$"
+                  },
+                  "kind": {
+                    "enum": [
+                      "runtime_executable",
+                      "model_weights",
+                      "model_configuration"
+                    ]
+                  },
+                  "state": {
+                    "enum": [
+                      "matched_bytes",
+                      "missing",
+                      "changed",
+                      "unavailable"
+                    ]
+                  },
+                  "observed_sha256": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "observed_bytes": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0
+                  }
+                }
+              }
+            },
+            "reasons": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z_]+$"
+              }
+            },
+            "runtime_qualified": {
+              "const": false
+            },
+            "offline_enforcement_verified": {
+              "const": false
+            },
+            "invocation_authority": {
+              "const": false
+            },
+            "memory_bound_enforced": {
+              "const": false
+            },
+            "cost_known": {
+              "const": false
+            }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "maxItems": 36,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "asset_id",
+              "automatic"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "prepare_selected_asset_separately",
+                  "correct_asset_pin",
+                  "select_readable_regular_asset",
+                  "observe_native_runtime_identity",
+                  "review_separate_code_model_licenses",
+                  "qualify_offline_service",
+                  "review_memory_context_budget"
+                ]
+              },
+              "asset_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 96
+              },
+              "automatic": {
+                "const": false
+              }
+            }
+          }
+        },
+        "selected_logical_bytes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 137438953472
+        },
+        "physical_storage_verified": {
+          "const": false
+        },
+        "runtime_or_service_contacted": {
+          "const": false
+        }
+      }
+    }
+  }
+}

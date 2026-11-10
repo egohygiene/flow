@@ -15,3 +15,25 @@ Preparation is operator-managed: obtain the exact selected runtime/model using i
 The [synthetic profile](examples/preparation-profile.json) is reviewable and not a download/install recipe. Match a private preparation's `profile_sha256` to `Profile::sha256` using Flow's existing JSON-value/SHA-256 convention; asset digests must describe actual selected bytes. It grants no launch. Extension manifests/locks, explicit invocation authority, secret handles, prelaunch fallback and isolation remain their existing owners. Operational reporting uses the existing #14–#21 proposal, with telemetry excluded from profile identity. No new client, exporter, gateway or shared crate is added.
 
 Next gates remain runtime-native/hardware/egress proof, an immutable released Renderflow adapter, safe configuration/credential handoff and an authorized synthetic consumer. AMV/Optiflow domain evidence packets can progress independently without adopting this proposal. Seven authored SDK cases are uncompiled/unrun. All execution/checks remain deferred to flow #88 last; no ADR ratification, Identity adoption or model/hardware readiness is asserted.
+
+## Selected local setup and doctor source
+
+`ai_preparation::setup::prepare` accepts an explicit private request selecting
+existing runtime/weight/configuration files. It derives complete SHA-256/size
+pins, respects independent expected pins when supplied, and reuses the existing
+inspector to confirm the set before returning a private preparation. One shared
+cooperative setup deadline checks cancellation between 64 KiB reads. Hashing may
+read each selected asset three times (derivation plus existing two-observation
+confirmation); no runtime-native identity, file format, shard relation, loaded
+model, hardware or offline enforcement is inferred.
+
+`setup::diagnose` projects existing observations into fixed manual actions for
+missing, unreadable or changed assets and unqualified runtime/license/egress/
+resource checks. Portable doctor output contains no paths, endpoint, license
+text, raw errors, shell commands, prompts or secrets. Selected logical bytes
+are not physical storage measurements. All automatic-action flags are false.
+
+Disabled and remote/incompatible profiles stop before selection observation.
+Setup never starts/contacts a service, installs/downloads or grants invocation.
+Five synthetic SDK cases and the new closed request/result/doctor schemas are
+authored, uncompiled/unrun. No checks, product/native/model calls or CI ran.
