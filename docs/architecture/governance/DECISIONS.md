@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.14.0
+version: 0.15.0
 status: draft
 owners:
   - egohygiene
@@ -71,6 +71,7 @@ justifies separate ADRs.
 | [ADR-0015](decisions/ADR-0015-ai-preparation.md) | Separate local AI preparation bytes from invocation readiness | Proposed | Pending review | None | Runtime-native identity, released adoption, credentials or hardware/egress proof changes |
 | [ADR-0016](decisions/ADR-0016-product-command-delivery.md) | Deliver product commands through existing released adapters | Proposed | Pending review | None | Additional released routes, graph execution or native recovery changes the command boundary |
 | [ADR-0017](decisions/ADR-0017-native-release-cohorts.md) | Observe native release cohorts without promoting declarations | Proposed | Pending review | None | Published provider contracts, qualification evidence or stronger host trust changes the boundary |
+| [ADR-0018](decisions/ADR-0018-authenticated-release-admission.md) | Admit independently authenticated released native rows | Proposed | Pending review | None | Native report producer, verifier trust, release metadata or host/runtime policy changes |
 
 ## Active decisions
 

@@ -1,5 +1,9 @@
 # Flow #11 completion-roadmap handoff
 
+Current source continuation: [distribution sprint 2026-11-11](DISTRIBUTION-SPRINT-20261111.md).
+Re-query live issues and draft branches before selecting or merging later work.
+
+
 ## Current continuation — November 11, 2026
 
 The approved source integration sprint merged Aniflow #209 → #210 → #211, then

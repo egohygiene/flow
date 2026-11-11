@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/schemas/released-native-approval-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_sha256",
+    "approved_by",
+    "trusted_unconfined",
+    "admission"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.released-native-approval/v1"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "approved_by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "trusted_unconfined": {
+      "const": true
+    },
+    "admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "binding_sha256",
+        "row_subject_sha256",
+        "policy_sha256"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "flow.verified-release-admission/v1"
+        },
+        "binding_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "row_subject_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "policy_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

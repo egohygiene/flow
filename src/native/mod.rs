@@ -4,6 +4,8 @@
 mod aniflow;
 mod renderflow;
 mod preparation;
+mod released;
+pub use released::{ReleasedApproval, ReleasedReceipt, ReleasedStatus, approve_released, run_released, status_released, resume_released};
 use std::{collections::BTreeSet, ffi::OsString, fs::{self, File}, io::Write, path::{Path, PathBuf}, time::Instant};
 use fs2::FileExt;
 use serde::{Deserialize, Serialize};
@@ -263,10 +265,15 @@ fn write_bytes(path: &Path, bytes: &[u8]) -> Result<(), Error> {
 }
 fn write<T: Serialize>(path: &Path, value: &T) -> Result<(), Error> { let mut bytes = serde_json::to_vec_pretty(value).map_err(|_| error(Code::InvalidInput, "native evidence encoding"))?; bytes.push(b'\n'); write_bytes(path, &bytes) }
 fn read<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T, Error> { serde_json::from_slice(&command::read_document(path, MAX_DOCUMENT)?).map_err(|_| error(Code::RecoveryRequired, "retained native evidence malformed")) }
-struct Context<'a> { plan: &'a Plan, root: PathBuf, evidence: PathBuf, started: Instant, token: &'a dyn CancellationSignal }
+struct Context<'a> { plan: &'a Plan, root: PathBuf, evidence: PathBuf, started: Instant, token: &'a dyn CancellationSignal, release_evidence: Option<&'a crate::release_evidence::VerifiedEvidence> }
 impl Context<'_> {
-    fn invoke(&self, label: &str, args: &[OsString]) -> Result<crate::runner::NativeCapture, Error> {
+    fn require_current(&self) -> Result<(),Error> {
         self.plan.require_current(self.token)?;
+        if let Some(evidence)=self.release_evidence { evidence.admit(self.plan,self.token)?; }
+        Ok(())
+    }
+    fn invoke(&self, label: &str, args: &[OsString]) -> Result<crate::runner::NativeCapture, Error> {
+        self.require_current()?;
         let elapsed: u64 = self.started.elapsed().as_millis().try_into().unwrap_or(u64::MAX);
         let remaining = self.plan.request.limits.timeout_ms.checked_sub(elapsed).filter(|v| *v > 0).ok_or_else(|| error(Code::RecoveryRequired, "native operation deadline exceeded; preserve attempt"))?;
         let mut environment = vec![];
@@ -279,7 +286,7 @@ impl Context<'_> {
         write_bytes(&self.evidence.join(format!("{label}.stdout.json")), &captured.stdout)?;
         write_bytes(&self.evidence.join(format!("{label}.stderr")), &captured.stderr)?;
         write(&self.evidence.join(format!("{label}.exit.json")), &serde_json::json!({"code":captured.code}))?;
-        self.plan.require_current(self.token)?;
+        self.require_current()?;
         Ok(captured)
     }
     fn native_root(&self) -> PathBuf { self.root.join("native") }
@@ -299,7 +306,7 @@ impl Context<'_> {
         Ok(outputs)
     }
     fn finish(&self, native_run: &Path, native_intent: &str, evidence: &Value, artifacts: Vec<FilePin>) -> Result<Receipt, Error> {
-        self.plan.require_current(self.token)?; self.require_native_run(native_run)?;
+        self.require_current()?; self.require_native_run(native_run)?;
         if artifacts.iter().any(|artifact| !path(&artifact.path).is_ok_and(|p| p.starts_with(native_run))) { return Err(error(Code::ProviderRefused, "accepted artifact belongs to another native run")); }
         if self.started.elapsed().as_millis() >= u128::from(self.plan.request.limits.timeout_ms) { return Err(error(Code::RecoveryRequired, "native acceptance deadline exceeded")); }
         if !release_cohort::is_digest(native_intent) { return Err(error(Code::ProviderRefused, "native intent digest")); }
@@ -314,6 +321,10 @@ fn context_error(mut value: Error, root: &Path) -> Error { value.recovery_direct
 /// operator declaration, not a signature or host isolation guarantee.
 pub fn run(plan: &Plan, approval: &Approval, token: &dyn CancellationSignal) -> Result<Receipt, Error> {
     plan.require_current(token)?; approval.validate(plan)?;
+    run_authorized(plan,approval,None,token)
+}
+fn run_authorized<T: Serialize>(plan:&Plan,approval:&T,release_evidence:Option<&crate::release_evidence::VerifiedEvidence>,token:&dyn CancellationSignal)->Result<Receipt,Error>{
+    plan.require_current(token)?;if let Some(e)=release_evidence{e.admit(plan,token)?;}
     let root = path(&plan.request.run_directory)?; create_directory(&root)?; let _lock = lock(&root, true)?;
     let action = (|| {
         write(&root.join("operation-plan.json"), plan)?; write(&root.join("operation-approval.json"), approval)?;
@@ -321,7 +332,7 @@ pub fn run(plan: &Plan, approval: &Approval, token: &dyn CancellationSignal) -> 
             write_bytes(&root.join(name), &command::read_document(&path(selected)?, MAX_DOCUMENT)?)?;
         }
         create_directory(&root.join("native"))?; create_directory(&root.join("attempt-0000"))?;
-        let context = Context { plan, root: root.clone(), evidence: root.join("attempt-0000"), started: Instant::now(), token };
+        let context = Context { plan, root: root.clone(), evidence: root.join("attempt-0000"), started: Instant::now(), token, release_evidence };
         match plan.row.tool { Tool::Aniflow => aniflow::execute(&context, None), Tool::Renderflow => renderflow::execute(&context, None), _ => Err(error(Code::Unavailable, "native route unavailable")) }
     })(); action.map_err(|e| context_error(e, &root))
 }
@@ -360,14 +371,18 @@ pub fn status(root: &Path, token: &dyn CancellationSignal) -> Result<Status, Err
 /// own intent and accepted prefix. No directory scan, substitute run or replay.
 pub fn resume(root: &Path, native_run: &Path, token: &dyn CancellationSignal) -> Result<Receipt, Error> {
     let _lock = lock(root, false)?; let (plan, approval) = basis(root)?; plan.require_current(token)?; approval.validate(&plan)?;
-    if let Some(receipt) = current_status(root, &plan, token)?.receipt {
+    resume_authorized(root,native_run,&plan,None,token)
+}
+fn resume_authorized(root:&Path,native_run:&Path,plan:&Plan,release_evidence:Option<&crate::release_evidence::VerifiedEvidence>,token:&dyn CancellationSignal)->Result<Receipt,Error>{
+    plan.require_current(token)?;if let Some(e)=release_evidence{e.admit(plan,token)?;}
+    if let Some(receipt) = current_status(root, plan, token)?.receipt {
         if path(&receipt.native_run)? != native_run { return Err(error(Code::RecoveryRequired, "resume native run differs from accepted operation")); }
         return Ok(receipt);
     }
     let mut attempt = None;
     for index in 1..=128 { let candidate = root.join(format!("attempt-{index:04}")); if !candidate.try_exists().map_err(|_| error(Code::Io, "resume attempt inventory"))? { create_directory(&candidate)?; attempt = Some(candidate); break; } }
     let evidence = attempt.ok_or_else(|| error(Code::RecoveryRequired, "retained resume attempt bound reached"))?;
-    let context = Context { plan: &plan, root: root.to_owned(), evidence, started: Instant::now(), token };
+    let context = Context { plan, root: root.to_owned(), evidence, started: Instant::now(), token, release_evidence };
     context.require_native_run(native_run)?;
     match plan.row.tool { Tool::Aniflow => aniflow::execute(&context, Some(native_run)), Tool::Renderflow => renderflow::execute(&context, Some(native_run)), _ => Err(error(Code::Unavailable, "native route unavailable")) }.map_err(|e| context_error(e, root))
 }

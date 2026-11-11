@@ -1,0 +1,440 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/schemas/authenticated-release-report-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "cohort_sha256",
+    "row_subject_sha256",
+    "publication",
+    "clean_install",
+    "qualification",
+    "witness",
+    "requirements"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.authenticated-release-report/v1"
+    },
+    "cohort_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "row_subject_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "publication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "release_url",
+        "release_id",
+        "asset_id",
+        "published_archive",
+        "executable_member_sha256",
+        "executable_member_bytes"
+      ],
+      "properties": {
+        "release_url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "release_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "asset_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "published_archive": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256",
+            "byte_count"
+          ],
+          "properties": {
+            "path": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "encoding",
+                    "value"
+                  ],
+                  "properties": {
+                    "encoding": {
+                      "const": "utf8"
+                    },
+                    "value": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "encoding",
+                    "base64"
+                  ],
+                  "properties": {
+                    "encoding": {
+                      "const": "unix_bytes"
+                    },
+                    "base64": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "byte_count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 536870912
+            }
+          }
+        },
+        "executable_member_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "executable_member_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 536870912
+        }
+      }
+    },
+    "clean_install": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "byte_count"
+      ],
+      "properties": {
+        "path": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "encoding",
+                "value"
+              ],
+              "properties": {
+                "encoding": {
+                  "const": "utf8"
+                },
+                "value": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "encoding",
+                "base64"
+              ],
+              "properties": {
+                "encoding": {
+                  "const": "unix_bytes"
+                },
+                "base64": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          ]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        }
+      }
+    },
+    "qualification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "byte_count"
+      ],
+      "properties": {
+        "path": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "encoding",
+                "value"
+              ],
+              "properties": {
+                "encoding": {
+                  "const": "utf8"
+                },
+                "value": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "encoding",
+                "base64"
+              ],
+              "properties": {
+                "encoding": {
+                  "const": "unix_bytes"
+                },
+                "base64": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          ]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        }
+      }
+    },
+    "witness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_directory",
+        "plan_sha256",
+        "acceptance_sha256",
+        "accepted_receipt"
+      ],
+      "properties": {
+        "run_directory": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "encoding",
+                    "value"
+                  ],
+                  "properties": {
+                    "encoding": {
+                      "const": "utf8"
+                    },
+                    "value": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "encoding",
+                    "base64"
+                  ],
+                  "properties": {
+                    "encoding": {
+                      "const": "unix_bytes"
+                    },
+                    "base64": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plan_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "acceptance_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "accepted_receipt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256",
+            "byte_count"
+          ],
+          "properties": {
+            "path": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "encoding",
+                    "value"
+                  ],
+                  "properties": {
+                    "encoding": {
+                      "const": "utf8"
+                    },
+                    "value": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "encoding",
+                    "base64"
+                  ],
+                  "properties": {
+                    "encoding": {
+                      "const": "unix_bytes"
+                    },
+                    "base64": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "byte_count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16777216
+            }
+          }
+        }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requirement_id",
+          "file"
+        ],
+        "properties": {
+          "requirement_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "file": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256",
+              "byte_count"
+            ],
+            "properties": {
+              "path": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "encoding",
+                      "value"
+                    ],
+                    "properties": {
+                      "encoding": {
+                        "const": "utf8"
+                      },
+                      "value": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "encoding",
+                      "base64"
+                    ],
+                    "properties": {
+                      "encoding": {
+                        "const": "unix_bytes"
+                      },
+                      "base64": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "byte_count": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 536870912
+              }
+            }
+          }
+        }
+      },
+      "minItems": 0,
+      "maxItems": 256
+    }
+  }
+}

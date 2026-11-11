@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/schemas/positive-native-qualification-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "row_subject_sha256",
+    "evidence_kind",
+    "target",
+    "host_identity_sha256",
+    "completed_at_unix",
+    "native_plan_sha256",
+    "acceptance_sha256",
+    "missing_checks",
+    "failed_checks"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.positive-native-qualification/v1"
+    },
+    "row_subject_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "evidence_kind": {
+      "const": "real_native_positive_acceptance"
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "host_identity_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "completed_at_unix": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "native_plan_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "acceptance_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "missing_checks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 0,
+      "maxItems": 0
+    },
+    "failed_checks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 0,
+      "maxItems": 0
+    }
+  }
+}

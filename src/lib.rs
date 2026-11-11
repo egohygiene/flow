@@ -26,6 +26,7 @@ pub mod pilot;
 pub mod optiflow;
 pub mod process;
 pub mod release_cohort;
+pub mod release_evidence;
 pub mod release;
 pub mod runner;
 pub mod scenario;
