@@ -11,7 +11,9 @@
     "provider_invoked",
     "installation_performed",
     "release_qualified",
-    "next_action"
+    "next_action",
+    "preparation",
+    "installation"
   ],
   "properties": {
     "schema_version": {
@@ -83,6 +85,18 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 4096
+    },
+    "preparation": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "installation": {
+      "type": [
+        "object",
+        "null"
+      ]
     }
   }
 }

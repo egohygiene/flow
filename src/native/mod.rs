@@ -3,6 +3,7 @@
 //! does not establish publication, qualification, creative review or provenance.
 mod aniflow;
 mod renderflow;
+mod preparation;
 use std::{collections::BTreeSet, ffi::OsString, fs::{self, File}, io::Write, path::{Path, PathBuf}, time::Instant};
 use fs2::FileExt;
 use serde::{Deserialize, Serialize};
@@ -84,6 +85,9 @@ pub struct Request {
     /// Explicit tool search directories only; no inherited PATH, HOME or secrets.
     pub tool_directories: Vec<NativePath>,
     pub limits: Limits,
+    /// Optional exact SDK setup marker; omission preserves existing plan encoding.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub preparation: Option<FilePin>,
 }
 impl Request {
     pub fn from_json_slice(bytes: &[u8]) -> Result<Self, Error> {
@@ -95,6 +99,7 @@ impl Request {
         self.limits.validate()?;
         if self.schema_version != REQUEST_SCHEMA || !release_cohort::is_digest(&self.cohort_sha256) || self.row_id.is_empty() || self.row_id.len() > 4096 || self.inputs.is_empty() || self.inputs.len() > 8192 || self.tool_directories.len() > 32 { return Err(error(Code::InvalidInput, "native request identity or bounds")); }
         for value in [&self.cohort, &self.provider_executable, &self.release_descriptor, &self.configuration, &self.run_directory].into_iter().chain(self.inputs.iter()).chain(self.tool_directories.iter()) { path(value)?; }
+        if let Some(pin) = &self.preparation { path(&pin.path)?; if !release_cohort::is_digest(&pin.sha256) || pin.byte_count==0 || pin.byte_count>16_384 { return Err(error(Code::InvalidInput, "preparation marker pin bounds")); } }
         let unique: BTreeSet<_> = self.inputs.iter().map(path).collect::<Result<_, _>>()?;
         if unique.len() != self.inputs.len() { return Err(error(Code::InvalidInput, "duplicate selected source")); }
         Ok(())
@@ -157,6 +162,7 @@ impl Plan {
         if release_cohort::sha256(&cohort_bytes) != self.request.cohort_sha256 { return Err(error(Code::StalePlan, "selected cohort bytes changed")); }
         let cohort = Cohort::from_json_slice(&cohort_bytes).map_err(cohort_error)?;
         if cohort.flow_version != env!("CARGO_PKG_VERSION") || !cohort.rows.iter().any(|row| row == &self.row) { return Err(error(Code::StalePlan, "selected cohort row or Flow version changed")); }
+        if let Some(pin) = &self.request.preparation { preparation::current(pin, &path(&self.request.run_directory)?, token)?; }
         self.provider.current(536_870_912, token)?; self.descriptor.current(MAX_DOCUMENT, token)?; self.configuration.current(configuration_limit(self.row.tool), token)?;
         for source in &self.sources { source.current(self.request.limits.max_input_bytes, token)?; }
         for value in &self.request.tool_directories { directory(&path(value)?)?; }
@@ -216,6 +222,7 @@ pub fn save_document<T: Serialize>(plan: &Plan, output: &Path, value: &T) -> Res
         let selected = path(selected)?;
         if output.starts_with(&selected) || selected.starts_with(&output) { return Err(error(Code::InvalidInput, "native plan/approval document must be separate from all selected inputs and reserved run output")); }
     }
+    if let Some(pin) = &plan.request.preparation { let root=path(&pin.path)?.parent().ok_or_else(||error(Code::InvalidInput,"preparation parent required"))?.to_path_buf(); if output.starts_with(root) { return Err(error(Code::InvalidInput,"saved document overlaps preparation bundle")); } }
     write(&output, value)
 }
 impl Approval {

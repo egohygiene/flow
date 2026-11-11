@@ -55,10 +55,12 @@ pub(super) fn execute(args: &Arguments, token: &dyn CancellationSignal) -> Resul
             let executable = args.options.get("--provider-executable").map(|_| path(args, "--provider-executable")).transpose()?;
             let released = doctor(executable.as_deref(), token)?;
             let projection = if args.options.contains_key("--cohort") { Some(matrix(args, token)?) } else { None };
+            let preparation = preparation_delivery::diagnose(args, token)?;
+            let installation = preparation_delivery::installation(args, token)?;
             let outcome = if projection.as_ref().is_some_and(|m| m.green == m.rows.len()) { Outcome::Complete }
-                else if released.selected_provider.is_some() || projection.is_some() { Outcome::Partial } else { Outcome::Unavailable };
+                else if released.selected_provider.is_some() || projection.is_some() || preparation.is_some() || installation.is_some() { Outcome::Partial } else { Outcome::Unavailable };
             let value = serde_json::json!({"schema_version":"flow.command-doctor/v2","released_optiflow":released,
-                "source_candidate_routes":provider::SOURCE_ROUTES,"release_matrix":projection,
+                "source_candidate_routes":provider::SOURCE_ROUTES,"release_matrix":projection,"preparation":preparation,"installation":installation,
                 "provider_invoked":false,"installation_performed":false,"release_qualified":false,
                 "next_action":"select exact independently built artifacts/contracts and explicit native request for candidate work; publication, preparation and qualification require their own evidence"});
             Ok(Some(success("doctor", value, outcome)?))

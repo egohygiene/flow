@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.23.0
+version: 0.24.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,17 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Main CLI preparation and diagnostics
+
+The main command delivery delegates explicit local preparation and status to
+`ai_preparation::setup::documents`; it does not duplicate observation, install
+models or contact a runtime. Doctor can select that private bundle and a pinned
+suite installation receipt. Optional native-request preparation pins the existing
+`setup.json` marker, rechecks every bound document and selected asset before
+execution, and rejects output overlap. Disabled and matched-byte states remain
+separate from runtime, offline enforcement, memory and release qualification.
+The provisional `flow-ai-setup` source utility remains compatible.
 
 ## Independent suite installation
 

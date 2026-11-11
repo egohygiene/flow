@@ -36,7 +36,9 @@
         "suite-status",
         "suite-activate",
         "suite-rollback",
-        "suite-uninstall"
+        "suite-uninstall",
+        "prepare-assets",
+        "preparation-status"
       ]
     },
     "outcome": {
