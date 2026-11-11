@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.17.0
+version: 0.18.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,20 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Release cohort projection
+
+`release_cohort` owns the versioned suite inventory and release matrix, separately
+from the existing `flow.compatibility/v1` extension decision. Each row binds a
+tool/interface/profile, input and output direction, target, effects, requirements,
+independently versioned immutable artifact and contract bytes. Retained rows must
+remain present even when artifacts or implementations are missing. Declarations
+cannot deserialize into host evidence. An explicit trusted evidence port verifies
+each of five facts against the complete row subject; the built-in local observer
+only establishes installed executable and contract bytes. Publication, native
+availability and qualification require their own evidence. No downloads, provider
+launch, source checkout discovery or release promotion occurs during projection.
+See [ADR-0017](../governance/decisions/ADR-0017-native-release-cohorts.md), proposed.
 
 ## Purpose and scope
 

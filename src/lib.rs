@@ -22,6 +22,7 @@ pub mod hermetic;
 pub mod local_input;
 pub mod optiflow;
 pub mod process;
+pub mod release_cohort;
 pub mod runner;
 pub mod scenario;
 pub mod state;

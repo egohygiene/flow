@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/schemas/flow-release-cohort-v1.schema.json",
+  "description": "Operator-selected declarations. No qualification booleans or observation input. Semantic validation also enforces exact retained row membership and unique pins.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "flow_version",
+    "targets",
+    "retained_rows",
+    "rows"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.release-cohort/v1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "flow_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 64
+    },
+    "retained_rows": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 4096
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/row"
+      },
+      "minItems": 1,
+      "maxItems": 4096
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "source_revision",
+        "name",
+        "sha256",
+        "byte_count",
+        "release_url"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "source_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "release_url": {
+          "type": "string",
+          "pattern": "^https://github.com/egohygiene/"
+        }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier",
+        "sha256"
+      ],
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "constraint",
+        "preparation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "constraint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "preparation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      }
+    },
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "tool",
+        "interface",
+        "target",
+        "profile",
+        "input",
+        "output",
+        "effects",
+        "implementation",
+        "artifact",
+        "contracts",
+        "requirements",
+        "owner_issue",
+        "next_action"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "tool": {
+          "enum": [
+            "flow",
+            "aniflow",
+            "renderflow",
+            "optiflow"
+          ]
+        },
+        "interface": {
+          "enum": [
+            "standalone_cli",
+            "rust_library",
+            "flow_route"
+          ]
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "input": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "output": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "implementation": {
+          "enum": [
+            "implemented",
+            "planned",
+            "unsupported"
+          ]
+        },
+        "artifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/artifact"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contracts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/contract"
+          },
+          "minItems": 0,
+          "maxItems": 64
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/requirement"
+          },
+          "minItems": 0,
+          "maxItems": 256
+        },
+        "owner_issue": {
+          "type": "string",
+          "pattern": "^https://github.com/egohygiene/"
+        },
+        "next_action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      }
+    }
+  }
+}
