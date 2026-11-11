@@ -70,8 +70,12 @@ justifies separate ADRs.
 | [ADR-0014](decisions/ADR-0014-operational-observability.md) | Keep operational observability separate from domain evidence | Proposed | Pending review | None | Pilot feasibility, exported data, shared-package selection or external mapping stability changes |
 | [ADR-0015](decisions/ADR-0015-ai-preparation.md) | Separate local AI preparation bytes from invocation readiness | Proposed | Pending review | None | Runtime-native identity, released adoption, credentials or hardware/egress proof changes |
 | [ADR-0016](decisions/ADR-0016-product-command-delivery.md) | Deliver product commands through existing released adapters | Proposed | Pending review | None | Additional released routes, graph execution or native recovery changes the command boundary |
+| [ADR-0017](decisions/ADR-0017-native-release-cohorts.md) | Observe native release cohorts without promoting declarations | Proposed | Pending review | None | Published provider contracts, qualification evidence or stronger host trust changes the boundary |
 
 ## Active decisions
+
+[ADR-0017](decisions/ADR-0017-native-release-cohorts.md) is proposed with #72 for
+release cohort evidence and native CLI translation. It has not been ratified.
 
 [ADR-0014](decisions/ADR-0014-operational-observability.md) is proposed with #15.
 It records the suite operational observability boundary and remains pending

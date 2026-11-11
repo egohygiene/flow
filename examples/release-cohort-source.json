@@ -1,0 +1,2575 @@
+{
+  "schema_version": "flow.release-cohort/v1",
+  "id": "source-inventory-2026-11-11",
+  "flow_version": "0.1.0",
+  "targets": [
+    "aarch64-apple-darwin",
+    "x86_64-unknown-linux-gnu",
+    "x86_64-apple-darwin",
+    "x86_64-pc-windows-msvc"
+  ],
+  "retained_rows": [
+    "flow.local-inspection.standalone_cli.aarch64-apple-darwin",
+    "flow.local-inspection.rust_library.aarch64-apple-darwin",
+    "flow.local-inspection.standalone_cli.x86_64-unknown-linux-gnu",
+    "flow.local-inspection.rust_library.x86_64-unknown-linux-gnu",
+    "flow.local-inspection.standalone_cli.x86_64-apple-darwin",
+    "flow.local-inspection.rust_library.x86_64-apple-darwin",
+    "flow.local-inspection.standalone_cli.x86_64-pc-windows-msvc",
+    "flow.local-inspection.rust_library.x86_64-pc-windows-msvc",
+    "aniflow.music-video-source.standalone_cli.aarch64-apple-darwin",
+    "aniflow.music-video-source.rust_library.aarch64-apple-darwin",
+    "aniflow.music-video-source.flow_route.aarch64-apple-darwin",
+    "aniflow.music-video-source.standalone_cli.x86_64-unknown-linux-gnu",
+    "aniflow.music-video-source.rust_library.x86_64-unknown-linux-gnu",
+    "aniflow.music-video-source.flow_route.x86_64-unknown-linux-gnu",
+    "aniflow.music-video-source.standalone_cli.x86_64-apple-darwin",
+    "aniflow.music-video-source.rust_library.x86_64-apple-darwin",
+    "aniflow.music-video-source.flow_route.x86_64-apple-darwin",
+    "aniflow.music-video-source.standalone_cli.x86_64-pc-windows-msvc",
+    "aniflow.music-video-source.rust_library.x86_64-pc-windows-msvc",
+    "aniflow.music-video-source.flow_route.x86_64-pc-windows-msvc",
+    "aniflow.manual-srt.standalone_cli.aarch64-apple-darwin",
+    "aniflow.manual-srt.rust_library.aarch64-apple-darwin",
+    "aniflow.manual-srt.flow_route.aarch64-apple-darwin",
+    "aniflow.manual-srt.standalone_cli.x86_64-unknown-linux-gnu",
+    "aniflow.manual-srt.rust_library.x86_64-unknown-linux-gnu",
+    "aniflow.manual-srt.flow_route.x86_64-unknown-linux-gnu",
+    "aniflow.manual-srt.standalone_cli.x86_64-apple-darwin",
+    "aniflow.manual-srt.rust_library.x86_64-apple-darwin",
+    "aniflow.manual-srt.flow_route.x86_64-apple-darwin",
+    "aniflow.manual-srt.standalone_cli.x86_64-pc-windows-msvc",
+    "aniflow.manual-srt.rust_library.x86_64-pc-windows-msvc",
+    "aniflow.manual-srt.flow_route.x86_64-pc-windows-msvc",
+    "aniflow.finishing.standalone_cli.aarch64-apple-darwin",
+    "aniflow.finishing.rust_library.aarch64-apple-darwin",
+    "aniflow.finishing.flow_route.aarch64-apple-darwin",
+    "aniflow.finishing.standalone_cli.x86_64-unknown-linux-gnu",
+    "aniflow.finishing.rust_library.x86_64-unknown-linux-gnu",
+    "aniflow.finishing.flow_route.x86_64-unknown-linux-gnu",
+    "aniflow.finishing.standalone_cli.x86_64-apple-darwin",
+    "aniflow.finishing.rust_library.x86_64-apple-darwin",
+    "aniflow.finishing.flow_route.x86_64-apple-darwin",
+    "aniflow.finishing.standalone_cli.x86_64-pc-windows-msvc",
+    "aniflow.finishing.rust_library.x86_64-pc-windows-msvc",
+    "aniflow.finishing.flow_route.x86_64-pc-windows-msvc",
+    "renderflow.static-publication.standalone_cli.aarch64-apple-darwin",
+    "renderflow.static-publication.rust_library.aarch64-apple-darwin",
+    "renderflow.static-publication.flow_route.aarch64-apple-darwin",
+    "renderflow.static-publication.standalone_cli.x86_64-unknown-linux-gnu",
+    "renderflow.static-publication.rust_library.x86_64-unknown-linux-gnu",
+    "renderflow.static-publication.flow_route.x86_64-unknown-linux-gnu",
+    "renderflow.static-publication.standalone_cli.x86_64-apple-darwin",
+    "renderflow.static-publication.rust_library.x86_64-apple-darwin",
+    "renderflow.static-publication.flow_route.x86_64-apple-darwin",
+    "renderflow.static-publication.standalone_cli.x86_64-pc-windows-msvc",
+    "renderflow.static-publication.rust_library.x86_64-pc-windows-msvc",
+    "renderflow.static-publication.flow_route.x86_64-pc-windows-msvc",
+    "renderflow.timed-text.standalone_cli.aarch64-apple-darwin",
+    "renderflow.timed-text.rust_library.aarch64-apple-darwin",
+    "renderflow.timed-text.flow_route.aarch64-apple-darwin",
+    "renderflow.timed-text.standalone_cli.x86_64-unknown-linux-gnu",
+    "renderflow.timed-text.rust_library.x86_64-unknown-linux-gnu",
+    "renderflow.timed-text.flow_route.x86_64-unknown-linux-gnu",
+    "renderflow.timed-text.standalone_cli.x86_64-apple-darwin",
+    "renderflow.timed-text.rust_library.x86_64-apple-darwin",
+    "renderflow.timed-text.flow_route.x86_64-apple-darwin",
+    "renderflow.timed-text.standalone_cli.x86_64-pc-windows-msvc",
+    "renderflow.timed-text.rust_library.x86_64-pc-windows-msvc",
+    "renderflow.timed-text.flow_route.x86_64-pc-windows-msvc",
+    "renderflow.creative-optional.standalone_cli.aarch64-apple-darwin",
+    "renderflow.creative-optional.rust_library.aarch64-apple-darwin",
+    "renderflow.creative-optional.flow_route.aarch64-apple-darwin",
+    "renderflow.creative-optional.standalone_cli.x86_64-unknown-linux-gnu",
+    "renderflow.creative-optional.rust_library.x86_64-unknown-linux-gnu",
+    "renderflow.creative-optional.flow_route.x86_64-unknown-linux-gnu",
+    "renderflow.creative-optional.standalone_cli.x86_64-apple-darwin",
+    "renderflow.creative-optional.rust_library.x86_64-apple-darwin",
+    "renderflow.creative-optional.flow_route.x86_64-apple-darwin",
+    "renderflow.creative-optional.standalone_cli.x86_64-pc-windows-msvc",
+    "renderflow.creative-optional.rust_library.x86_64-pc-windows-msvc",
+    "renderflow.creative-optional.flow_route.x86_64-pc-windows-msvc",
+    "optiflow.read-only.standalone_cli.aarch64-apple-darwin",
+    "optiflow.read-only.rust_library.aarch64-apple-darwin",
+    "optiflow.read-only.flow_route.aarch64-apple-darwin",
+    "optiflow.read-only.standalone_cli.x86_64-unknown-linux-gnu",
+    "optiflow.read-only.rust_library.x86_64-unknown-linux-gnu",
+    "optiflow.read-only.flow_route.x86_64-unknown-linux-gnu",
+    "optiflow.read-only.standalone_cli.x86_64-apple-darwin",
+    "optiflow.read-only.rust_library.x86_64-apple-darwin",
+    "optiflow.read-only.flow_route.x86_64-apple-darwin",
+    "optiflow.read-only.standalone_cli.x86_64-pc-windows-msvc",
+    "optiflow.read-only.rust_library.x86_64-pc-windows-msvc",
+    "optiflow.read-only.flow_route.x86_64-pc-windows-msvc",
+    "optiflow.qualified-transaction.standalone_cli.aarch64-apple-darwin",
+    "optiflow.qualified-transaction.rust_library.aarch64-apple-darwin",
+    "optiflow.qualified-transaction.flow_route.aarch64-apple-darwin",
+    "optiflow.qualified-transaction.standalone_cli.x86_64-unknown-linux-gnu",
+    "optiflow.qualified-transaction.rust_library.x86_64-unknown-linux-gnu",
+    "optiflow.qualified-transaction.flow_route.x86_64-unknown-linux-gnu",
+    "optiflow.qualified-transaction.standalone_cli.x86_64-apple-darwin",
+    "optiflow.qualified-transaction.rust_library.x86_64-apple-darwin",
+    "optiflow.qualified-transaction.flow_route.x86_64-apple-darwin",
+    "optiflow.qualified-transaction.standalone_cli.x86_64-pc-windows-msvc",
+    "optiflow.qualified-transaction.rust_library.x86_64-pc-windows-msvc",
+    "optiflow.qualified-transaction.flow_route.x86_64-pc-windows-msvc",
+    "optiflow.validated-png.standalone_cli.aarch64-apple-darwin",
+    "optiflow.validated-png.rust_library.aarch64-apple-darwin",
+    "optiflow.validated-png.flow_route.aarch64-apple-darwin",
+    "optiflow.validated-png.standalone_cli.x86_64-unknown-linux-gnu",
+    "optiflow.validated-png.rust_library.x86_64-unknown-linux-gnu",
+    "optiflow.validated-png.flow_route.x86_64-unknown-linux-gnu",
+    "optiflow.validated-png.standalone_cli.x86_64-apple-darwin",
+    "optiflow.validated-png.rust_library.x86_64-apple-darwin",
+    "optiflow.validated-png.flow_route.x86_64-apple-darwin",
+    "optiflow.validated-png.standalone_cli.x86_64-pc-windows-msvc",
+    "optiflow.validated-png.rust_library.x86_64-pc-windows-msvc",
+    "optiflow.validated-png.flow_route.x86_64-pc-windows-msvc",
+    "optiflow.video.standalone_cli.aarch64-apple-darwin",
+    "optiflow.video.rust_library.aarch64-apple-darwin",
+    "optiflow.video.flow_route.aarch64-apple-darwin",
+    "optiflow.video.standalone_cli.x86_64-unknown-linux-gnu",
+    "optiflow.video.rust_library.x86_64-unknown-linux-gnu",
+    "optiflow.video.flow_route.x86_64-unknown-linux-gnu",
+    "optiflow.video.standalone_cli.x86_64-apple-darwin",
+    "optiflow.video.rust_library.x86_64-apple-darwin",
+    "optiflow.video.flow_route.x86_64-apple-darwin",
+    "optiflow.video.standalone_cli.x86_64-pc-windows-msvc",
+    "optiflow.video.rust_library.x86_64-pc-windows-msvc",
+    "optiflow.video.flow_route.x86_64-pc-windows-msvc"
+  ],
+  "rows": [
+    {
+      "id": "flow.local-inspection.standalone_cli.aarch64-apple-darwin",
+      "tool": "flow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "local-inspection",
+      "input": "local file/directory/ordered collection",
+      "output": "inventory",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/flow/issues/70",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "flow.local-inspection.rust_library.aarch64-apple-darwin",
+      "tool": "flow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "local-inspection",
+      "input": "local file/directory/ordered collection",
+      "output": "inventory",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/flow/issues/70",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "flow.local-inspection.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "flow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "local-inspection",
+      "input": "local file/directory/ordered collection",
+      "output": "inventory",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/flow/issues/70",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "flow.local-inspection.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "flow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "local-inspection",
+      "input": "local file/directory/ordered collection",
+      "output": "inventory",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/flow/issues/70",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "flow.local-inspection.standalone_cli.x86_64-apple-darwin",
+      "tool": "flow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "local-inspection",
+      "input": "local file/directory/ordered collection",
+      "output": "inventory",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/flow/issues/70",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "flow.local-inspection.rust_library.x86_64-apple-darwin",
+      "tool": "flow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "local-inspection",
+      "input": "local file/directory/ordered collection",
+      "output": "inventory",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/flow/issues/70",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "flow.local-inspection.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "flow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "local-inspection",
+      "input": "local file/directory/ordered collection",
+      "output": "inventory",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/flow/issues/70",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "flow.local-inspection.rust_library.x86_64-pc-windows-msvc",
+      "tool": "flow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "local-inspection",
+      "input": "local file/directory/ordered collection",
+      "output": "inventory",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/flow/issues/70",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.standalone_cli.aarch64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.rust_library.aarch64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.flow_route.aarch64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "aarch64-apple-darwin",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.flow_route.x86_64-unknown-linux-gnu",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.standalone_cli.x86_64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.rust_library.x86_64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.flow_route.x86_64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "x86_64-apple-darwin",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.rust_library.x86_64-pc-windows-msvc",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.music-video-source.flow_route.x86_64-pc-windows-msvc",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "music-video-source",
+      "input": "source video + exact recipe",
+      "output": "accepted lossless master + delivery",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.standalone_cli.aarch64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.rust_library.aarch64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.flow_route.aarch64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "aarch64-apple-darwin",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.flow_route.x86_64-unknown-linux-gnu",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.standalone_cli.x86_64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.rust_library.x86_64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.flow_route.x86_64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "x86_64-apple-darwin",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.rust_library.x86_64-pc-windows-msvc",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.manual-srt.flow_route.x86_64-pc-windows-msvc",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "manual-srt",
+      "input": "manually timed SRT + accepted video",
+      "output": "timed text formats and delivery candidates",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.standalone_cli.aarch64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.rust_library.aarch64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.flow_route.aarch64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "aarch64-apple-darwin",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.flow_route.x86_64-unknown-linux-gnu",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.standalone_cli.x86_64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.rust_library.x86_64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.flow_route.x86_64-apple-darwin",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "x86_64-apple-darwin",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "aniflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.rust_library.x86_64-pc-windows-msvc",
+      "tool": "aniflow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "aniflow.finishing.flow_route.x86_64-pc-windows-msvc",
+      "tool": "aniflow",
+      "interface": "flow_route",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "finishing",
+      "input": "accepted video + explicit finishing recipe",
+      "output": "accepted finishing candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.standalone_cli.aarch64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.rust_library.aarch64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.flow_route.aarch64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "aarch64-apple-darwin",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.flow_route.x86_64-unknown-linux-gnu",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.standalone_cli.x86_64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.rust_library.x86_64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.flow_route.x86_64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "x86_64-apple-darwin",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.rust_library.x86_64-pc-windows-msvc",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.static-publication.flow_route.x86_64-pc-windows-msvc",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "static-publication",
+      "input": "ordered collection or document",
+      "output": "PDF/EPUB/declared static formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.standalone_cli.aarch64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.rust_library.aarch64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.flow_route.aarch64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "aarch64-apple-darwin",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.flow_route.x86_64-unknown-linux-gnu",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.standalone_cli.x86_64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.rust_library.x86_64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.flow_route.x86_64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "x86_64-apple-darwin",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.rust_library.x86_64-pc-windows-msvc",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.timed-text.flow_route.x86_64-pc-windows-msvc",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "timed-text",
+      "input": "manual timed text",
+      "output": "declared timed-text formats",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.standalone_cli.aarch64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.rust_library.aarch64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.flow_route.aarch64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "aarch64-apple-darwin",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.flow_route.x86_64-unknown-linux-gnu",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.standalone_cli.x86_64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.rust_library.x86_64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.flow_route.x86_64-apple-darwin",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "x86_64-apple-darwin",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "renderflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.rust_library.x86_64-pc-windows-msvc",
+      "tool": "renderflow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "renderflow.creative-optional.flow_route.x86_64-pc-windows-msvc",
+      "tool": "renderflow",
+      "interface": "flow_route",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "creative-optional",
+      "input": "explicit prepared creative inputs",
+      "output": "candidate creative artifacts",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.standalone_cli.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.rust_library.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.flow_route.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "aarch64-apple-darwin",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.flow_route.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.standalone_cli.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.rust_library.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.flow_route.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-apple-darwin",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.rust_library.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.read-only.flow_route.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "read-only",
+      "input": "recursive local directory",
+      "output": "scan/report/review plan",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/135",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.standalone_cli.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.rust_library.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.flow_route.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "aarch64-apple-darwin",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.flow_route.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.standalone_cli.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.rust_library.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.flow_route.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-apple-darwin",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.rust_library.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.qualified-transaction.flow_route.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "qualified-transaction",
+      "input": "explicit qualified review plan",
+      "output": "retained originals + accepted transaction",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/93",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.standalone_cli.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.rust_library.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.flow_route.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "aarch64-apple-darwin",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.flow_route.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.standalone_cli.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.rust_library.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.flow_route.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-apple-darwin",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.rust_library.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.validated-png.flow_route.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "validated-png",
+      "input": "PNG + explicit settings",
+      "output": "validated candidate PNG",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/95",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.standalone_cli.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "aarch64-apple-darwin",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.rust_library.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "aarch64-apple-darwin",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.flow_route.aarch64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "aarch64-apple-darwin",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.standalone_cli.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.rust_library.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.flow_route.x86_64-unknown-linux-gnu",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-unknown-linux-gnu",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.standalone_cli.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-apple-darwin",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.rust_library.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-apple-darwin",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.flow_route.x86_64-apple-darwin",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-apple-darwin",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.standalone_cli.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "standalone_cli",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.rust_library.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "rust_library",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "implemented",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    },
+    {
+      "id": "optiflow.video.flow_route.x86_64-pc-windows-msvc",
+      "tool": "optiflow",
+      "interface": "flow_route",
+      "target": "x86_64-pc-windows-msvc",
+      "profile": "video",
+      "input": "video + explicit settings",
+      "output": "validated video candidate",
+      "effects": [
+        "read_originals",
+        "write_new_outputs"
+      ],
+      "implementation": "planned",
+      "artifact": null,
+      "contracts": [],
+      "requirements": [],
+      "owner_issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+    }
+  ]
+}
