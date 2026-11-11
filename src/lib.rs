@@ -22,6 +22,7 @@ pub mod execution_subjects;
 pub mod hermetic;
 pub mod local_input;
 pub mod native;
+pub mod pilot;
 pub mod optiflow;
 pub mod process;
 pub mod release_cohort;

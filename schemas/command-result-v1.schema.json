@@ -38,7 +38,12 @@
         "suite-rollback",
         "suite-uninstall",
         "prepare-assets",
-        "preparation-status"
+        "preparation-status",
+        "pilot-plan",
+        "pilot-approve",
+        "pilot-run",
+        "pilot-status",
+        "pilot-continue"
       ]
     },
     "outcome": {
