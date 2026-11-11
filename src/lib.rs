@@ -16,6 +16,7 @@ pub mod authority;
 pub mod catalog;
 pub mod command;
 pub mod contracts;
+pub mod distribution;
 pub mod execution;
 pub mod execution_subjects;
 pub mod hermetic;

@@ -104,12 +104,12 @@ impl Request {
 #[serde(deny_unknown_fields)]
 pub struct FilePin { pub path: NativePath, pub sha256: String, pub byte_count: u64 }
 impl FilePin {
-    fn observe(value: &NativePath, maximum: u64, token: &dyn CancellationSignal) -> Result<Self, Error> {
+    pub(crate) fn observe(value: &NativePath, maximum: u64, token: &dyn CancellationSignal) -> Result<Self, Error> {
         let (byte_count, sha256) = release_cohort::observe_file(&path(value)?, maximum, token).map_err(cohort_error)?;
         if byte_count == 0 { return Err(error(Code::InvalidInput, "empty native input or artifact")); }
         Ok(Self { path: value.clone(), sha256, byte_count })
     }
-    fn current(&self, maximum: u64, token: &dyn CancellationSignal) -> Result<(), Error> {
+    pub(crate) fn current(&self, maximum: u64, token: &dyn CancellationSignal) -> Result<(), Error> {
         if *self == Self::observe(&self.path, maximum, token)? { Ok(()) } else { Err(error(Code::StalePlan, "native pinned bytes changed; create a new reviewed plan")) }
     }
 }
@@ -163,7 +163,7 @@ impl Plan {
         Ok(())
     }
 }
-fn host_target() -> Option<&'static str> {
+pub(crate) fn host_target() -> Option<&'static str> {
     if cfg!(all(target_os = "linux", target_arch = "x86_64", target_env = "gnu")) { Some("x86_64-unknown-linux-gnu") }
     else if cfg!(all(target_os = "macos", target_arch = "aarch64")) { Some("aarch64-apple-darwin") }
     else if cfg!(all(target_os = "macos", target_arch = "x86_64")) { Some("x86_64-apple-darwin") }
