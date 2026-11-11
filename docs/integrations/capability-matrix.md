@@ -1,5 +1,17 @@
 # Provider capability matrix
 
+## November 11 source integration checkpoint
+
+Use the [versioned release cohort projection](release-cohorts.md), source inventory
+and `flow release-matrix --cohort COHORT.json` for current fact separation. The
+source now includes [pinned native candidate routes](native-adapters.md) and
+[command delivery](../cli/native-candidates.md) for Aniflow fixed source music-video
+and Renderflow canonical file/ordered-collection publications. These consume
+independently built descriptors/artifacts; they do not import sibling source.
+Source support, matching installed bytes, real tool/model availability, publication
+and native qualification are distinct. No new executed evidence or qualified
+release is asserted. Dated matrices below remain historical evidence.
+
 ## Current evidence — October 28, 2026
 
 The [suite finish plan](../roadmaps/flow-suite-finish-plan.md) records current

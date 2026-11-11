@@ -1,5 +1,36 @@
 # Flow #11 completion-roadmap handoff
 
+## Current continuation — November 11, 2026
+
+The approved source integration sprint merged Aniflow #209 → #210 → #211, then
+prepared six independently reviewable draft checkpoints: Flow #98 (cohort/matrix),
+Aniflow #213 (compiled contract retained in existing archives), Renderflow #503
+(broader target/route inventory and native publication readback), Flow #99 (native
+Aniflow source recipe), Flow #100 (native canonical Renderflow publications), and
+the native command/local-input delivery checkpoint containing this handoff.
+Flow's draft dependency chain is #98 → #99 → #100 → this checkpoint. Provider
+contract drafts must be reconciled before their adapters are built or qualified.
+New drafts are not authorized for automatic merge by this implementation sprint.
+
+The public command delivery SDK now includes read-only doctor v2/release matrix,
+explicit native request/plan/approval dispatch, exact file/ordered local composition,
+current local status and explicit retained native-run resume. Candidate artifacts
+and declarations do not establish a published/qualified release. Missing targets,
+platform proofs, tools/models, install channels and broader optional routes remain
+visible under existing #51/#52/#53/#70/#71/#72 and provider owners. Templates do
+not contain real artifact pins. No issue is closed by a closing keyword.
+
+No tests, compiler/build, dependency/lint/format/schema/docs/corpus/drift validation,
+native/provider/media/model/CLI/SDK/installer or hosted CI execution occurred. No
+release, signing, timestamps, private publishing, source replacement/disposal,
+Identity adoption or ADR ratification occurred. All new ADR decisions remain
+proposed. Aniflow #212 remains the only open Aniflow issue; consolidated historical
+tickets stay closed as transferred scope. Aniflow #35 stays closed, Optiflow #95
+stays open. Flow #88 remains last, with its original 45-ticket ledger/history and
+criteria untouched. The known alignment cancellation/start-marker failure is
+unresolved and its cause unproven. Dated continuation/count claims below remain
+history; re-query the linked live issues and exact draft heads before continuing.
+
 ## Current continuation — October 28, 2026
 
 The user requested a full suite PR merge sweep and roadmap refresh before more

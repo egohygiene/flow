@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/schemas/command-doctor-v2.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "released_optiflow",
+    "source_candidate_routes",
+    "release_matrix",
+    "provider_invoked",
+    "installation_performed",
+    "release_qualified",
+    "next_action"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.command-doctor/v2"
+    },
+    "released_optiflow": {
+      "$ref": "command-doctor-v1.schema.json"
+    },
+    "source_candidate_routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tool",
+          "profile",
+          "contract",
+          "maximum_inputs",
+          "state"
+        ],
+        "properties": {
+          "tool": {
+            "enum": [
+              "aniflow",
+              "renderflow"
+            ]
+          },
+          "profile": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "contract": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "maximum_inputs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8192
+          },
+          "state": {
+            "const": "implemented_source_candidate_requires_exact_pins_and_explicit_approval"
+          }
+        }
+      }
+    },
+    "release_matrix": {
+      "anyOf": [
+        {
+          "$ref": "flow-release-matrix-v1.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "provider_invoked": {
+      "const": false
+    },
+    "installation_performed": {
+      "const": false
+    },
+    "release_qualified": {
+      "const": false
+    },
+    "next_action": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    }
+  }
+}

@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-decisions
 title: Flow Decisions
 kind: architecture-document
-version: 0.13.0
+version: 0.14.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-11-10
+updated: 2026-11-11
 governed_by:
   - architecture-decisions
 depends_on:

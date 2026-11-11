@@ -41,7 +41,16 @@ memory quota. Logical sizes do not prove physical free-space requirements.
 | Any supported input, `inspect-only` | Filesystem identity inventory, no domain acceptance |
 | Whole recursive directory, exact released Optiflow | Partial scope plan using the existing read-only adapter |
 | File, collection or nonrecursive directory for Optiflow | Unavailable: cannot broaden into parent/recursive scope |
-| Renderflow publication / Aniflow temporal | Unavailable until exact immutable adapters exist |
+| Renderflow publication / Aniflow temporal without native selection | Unavailable: select exact cohort/artifact/descriptor/configuration pins |
+| Native file / explicit ordered collection with matching selection | Source-candidate plan via `plan_native` or `--native-selection`; explicit candidate approval required |
+
+See [native candidate commands](native-candidates.md). The additive
+`flow.local-input-native-request/v1` wraps `request` (this local-input v1 contract)
+and `selection` (`flow.native-request/v1`). `plan_native` requires identical file
+paths/order and hashes before returning the native command plan. It never expands
+a directory into a native collection. Native selected-input limits and local
+inspection limits remain separately visible; large files/collections can use a
+direct native request instead of this smaller preview profile.
 
 The scope-plan result uses `scope_plan_only` and partial exit9. Inspection hashes
 and budgets are **not** passed off as execution-input freezing or provider

@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.20.0
+version: 0.21.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,19 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Native command and release selection delivery
+
+The public command delivery SDK routes versioned native request/plan documents
+through `native` rather than the older released-only Optiflow v1 scope plan.
+`local_input::plan_native` composes exact file/ordered-collection inspection with
+an explicit cohort/provider/configuration selection and checks identical ordered
+bytes; directory widening is refused. Candidate approvals carry two explicit
+acknowledgements. Status stays local/read-only, and native resume requires an
+explicit retained native-run locator. `release-matrix` and command doctor v2 use
+the cohort projection and installed file observer without launching or installing
+providers. Source routes, released support and unobserved qualification stay
+distinct; old command/local-input wire contracts retain their original meaning.
 
 ## Native publication route
 

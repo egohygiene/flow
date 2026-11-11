@@ -1,3 +1,17 @@
+---
+schema: aether.architecture-decision/v1
+id: flow-adr-0017
+title: Observe native release cohorts without promoting declarations
+kind: architecture-decision
+status: proposed
+owners: [egohygiene]
+scope: [flow]
+governed_by: [architecture-decisions]
+supersedes: []
+superseded_by: []
+related: [flow-architecture, flow-adr-0010, flow-adr-0013, flow-adr-0016]
+---
+
 # ADR-0017: Observe native release cohorts without promoting declarations
 
 Status: **Proposed**. Date: 2026-11-11. Relates to #51, #52, #70, #71, #72.
@@ -27,3 +41,9 @@ claims. Trusted host port implementations become part of the evidence boundary;
 an arbitrary implementation that copies an untrusted assertion is unsuitable.
 Checksums bind bytes, not publisher identity. Platform, dependency and native
 proof gaps remain visible. No ADR is ratified by this checkpoint.
+
+The public command delivery SDK exposes read-only matrix/doctor observations,
+explicit candidate selection and exact local-input composition. Native candidate
+approval acknowledges both unqualified artifacts and trusted-unconfined execution.
+It does not create a release qualification fact. Native operation state and CLI
+translation remain separate from older v1 Optiflow scope plans and graph state.
