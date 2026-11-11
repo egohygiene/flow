@@ -296,7 +296,7 @@
       "tool": "aniflow",
       "interface": "standalone_cli",
       "target": "aarch64-apple-darwin",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
@@ -315,7 +315,7 @@
       "tool": "aniflow",
       "interface": "rust_library",
       "target": "aarch64-apple-darwin",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
@@ -334,26 +334,26 @@
       "tool": "aniflow",
       "interface": "flow_route",
       "target": "aarch64-apple-darwin",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
         "read_originals",
         "write_new_outputs"
       ],
-      "implementation": "planned",
+      "implementation": "implemented",
       "artifact": null,
       "contracts": [],
       "requirements": [],
       "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
-      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+      "next_action": "Publish independently built native contracts/artifacts and execute installed source-recipe qualification; candidate source route is implemented."
     },
     {
       "id": "aniflow.music-video-source.standalone_cli.x86_64-unknown-linux-gnu",
       "tool": "aniflow",
       "interface": "standalone_cli",
       "target": "x86_64-unknown-linux-gnu",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
@@ -372,7 +372,7 @@
       "tool": "aniflow",
       "interface": "rust_library",
       "target": "x86_64-unknown-linux-gnu",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
@@ -391,26 +391,26 @@
       "tool": "aniflow",
       "interface": "flow_route",
       "target": "x86_64-unknown-linux-gnu",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
         "read_originals",
         "write_new_outputs"
       ],
-      "implementation": "planned",
+      "implementation": "implemented",
       "artifact": null,
       "contracts": [],
       "requirements": [],
       "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
-      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+      "next_action": "Publish independently built native contracts/artifacts and execute installed source-recipe qualification; candidate source route is implemented."
     },
     {
       "id": "aniflow.music-video-source.standalone_cli.x86_64-apple-darwin",
       "tool": "aniflow",
       "interface": "standalone_cli",
       "target": "x86_64-apple-darwin",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
@@ -429,7 +429,7 @@
       "tool": "aniflow",
       "interface": "rust_library",
       "target": "x86_64-apple-darwin",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
@@ -448,26 +448,26 @@
       "tool": "aniflow",
       "interface": "flow_route",
       "target": "x86_64-apple-darwin",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
         "read_originals",
         "write_new_outputs"
       ],
-      "implementation": "planned",
+      "implementation": "implemented",
       "artifact": null,
       "contracts": [],
       "requirements": [],
       "owner_issue": "https://github.com/egohygiene/aniflow/issues/212",
-      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+      "next_action": "Publish independently built native contracts/artifacts and execute installed source-recipe qualification; candidate source route is implemented."
     },
     {
       "id": "aniflow.music-video-source.standalone_cli.x86_64-pc-windows-msvc",
       "tool": "aniflow",
       "interface": "standalone_cli",
       "target": "x86_64-pc-windows-msvc",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
@@ -486,7 +486,7 @@
       "tool": "aniflow",
       "interface": "rust_library",
       "target": "x86_64-pc-windows-msvc",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [
@@ -505,7 +505,7 @@
       "tool": "aniflow",
       "interface": "flow_route",
       "target": "x86_64-pc-windows-msvc",
-      "profile": "music-video-source",
+      "profile": "music-video-source-v1",
       "input": "source video + exact recipe",
       "output": "accepted lossless master + delivery",
       "effects": [

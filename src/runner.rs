@@ -112,6 +112,8 @@ impl SecretResolver for NoSecrets {
 /// Failure while preparing, launching, capturing, or validating one child.
 #[derive(Debug, Error)]
 pub enum ProcessRunnerError {
+    #[error("native capture bounds are invalid or output exceeded its cap")]
+    NativeCaptureLimit,
     #[error("fresh execution-subject observation failed: {source}")]
     SubjectObservation {
         #[source]
@@ -371,6 +373,43 @@ impl LocalProcessRunner {
         )
         .map_err(|source| ProcessRunnerError::Validation { source })
     }
+}
+
+/// Native CLI protocols share the direct-child supervisor, but do not pretend
+/// to speak the extension JSONL framing. Callers own identity/authority preflight
+/// and domain result validation. Never exposes inherited environment or stdin.
+pub(crate) struct NativeCapture { pub code: Option<i32>, pub stdout: Vec<u8>, pub stderr: Vec<u8> }
+pub(crate) fn capture_native(executable: &Path, args: &[OsString], environment: &[(OsString, OsString)],
+    timeout_ms: u64, stdout_limit: u64, stderr_limit: u64, cancellation: &dyn CancellationSignal)
+    -> Result<NativeCapture, ProcessRunnerError> {
+    if timeout_ms == 0 || timeout_ms > 86_400_000 || stdout_limit == 0 || stdout_limit > 16_777_216 || stderr_limit > 1_048_576 {
+        return Err(ProcessRunnerError::NativeCaptureLimit);
+    }
+    if cancellation.is_cancelled() { return Err(ProcessRunnerError::Cancelled { forced: false }); }
+    let started = Instant::now();
+    let mut command = Command::new(executable);
+    command.args(args).current_dir(executable.parent().ok_or(ProcessRunnerError::NativeCaptureLimit)?)
+        .env_clear().stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::piped());
+    for (name, value) in environment { command.env(name, value); }
+    let mut child = command.spawn().map_err(|source| ProcessRunnerError::Launch { source })?;
+    let Some(stdout) = child.stdout.take() else { terminate_and_reap(&mut child); return Err(ProcessRunnerError::MissingPipe { stream: ProcessPipe::Stdout }); };
+    let Some(stderr) = child.stderr.take() else { terminate_and_reap(&mut child); return Err(ProcessRunnerError::MissingPipe { stream: ProcessPipe::Stderr }); };
+    let stdout_worker = thread::spawn(move || read_bounded(stdout, stdout_limit));
+    let stderr_worker = thread::spawn(move || read_bounded(stderr, stderr_limit));
+    let completion = supervise_child(&mut child, &mut None, cancellation, timeout_ms, 100)?;
+    let status = completed_status(completion, timeout_ms)?;
+    // Descendants may retain pipes after the direct child exits. Do not block
+    // joining them beyond the caller deadline; dropping a handle detaches that
+    // bounded-memory reader. This is not descendant/process-tree containment.
+    while !stdout_worker.is_finished() || !stderr_worker.is_finished() {
+        if cancellation.is_cancelled() { return Err(ProcessRunnerError::Cancelled { forced: false }); }
+        if started.elapsed() >= Duration::from_millis(timeout_ms) { return Err(ProcessRunnerError::TimedOut { timeout_ms, forced: false }); }
+        thread::sleep(Duration::from_millis(1));
+    }
+    let stdout = join_capture(stdout_worker, ProcessStream::Stdout, ProcessWorker::Stdout)?;
+    let stderr = join_capture(stderr_worker, ProcessStream::Stderr, ProcessWorker::Stderr)?;
+    if stdout.len() as u64 > stdout_limit || stderr.len() as u64 > stderr_limit { return Err(ProcessRunnerError::NativeCaptureLimit); }
+    Ok(NativeCapture { code: status.code(), stdout, stderr })
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
