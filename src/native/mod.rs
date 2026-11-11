@@ -2,6 +2,7 @@
 //! Source-candidate execution requires explicit trusted-unconfined approval and
 //! does not establish publication, qualification, creative review or provenance.
 mod aniflow;
+mod renderflow;
 use std::{collections::BTreeSet, ffi::OsString, fs::{self, File}, io::Write, path::{Path, PathBuf}, time::Instant};
 use fs2::FileExt;
 use serde::{Deserialize, Serialize};
@@ -27,9 +28,11 @@ fn directory(value: &Path) -> Result<(), Error> { if value.canonicalize().ok().a
 fn profile_schema(row: &Row, inputs: usize) -> Result<&'static str, Error> {
     match (row.tool, row.profile.as_str(), inputs) {
         (Tool::Aniflow, "music-video-source-v1", 1) => Ok("aniflow.release-contract/v1"),
+        (Tool::Renderflow, "canonical-build-v1", 1..=8192) => Ok("renderflow.release-contract/v2"),
         _ => Err(error(Code::Unavailable, "native profile or exact input cardinality is unavailable")),
     }
 }
+fn configuration_limit(tool: Tool) -> u64 { if tool == Tool::Renderflow { 1_048_576 } else { 131_072 } }
 fn create_directory(value: &Path) -> Result<(), Error> {
     directory(value.parent().ok_or_else(|| error(Code::InvalidInput, "existing parent required"))?)?;
     let mut builder = fs::DirBuilder::new();
@@ -138,7 +141,7 @@ impl Plan {
         if release_cohort::sha256(&cohort_bytes) != self.request.cohort_sha256 { return Err(error(Code::StalePlan, "selected cohort bytes changed")); }
         let cohort = Cohort::from_json_slice(&cohort_bytes).map_err(cohort_error)?;
         if cohort.flow_version != env!("CARGO_PKG_VERSION") || !cohort.rows.iter().any(|row| row == &self.row) { return Err(error(Code::StalePlan, "selected cohort row or Flow version changed")); }
-        self.provider.current(536_870_912, token)?; self.descriptor.current(MAX_DOCUMENT, token)?; self.configuration.current(131_072, token)?;
+        self.provider.current(536_870_912, token)?; self.descriptor.current(MAX_DOCUMENT, token)?; self.configuration.current(configuration_limit(self.row.tool), token)?;
         for source in &self.sources { source.current(self.request.limits.max_input_bytes, token)?; }
         for value in &self.request.tool_directories { directory(&path(value)?)?; }
         Ok(())
@@ -163,11 +166,12 @@ pub fn prepare(request: &Request, token: &dyn CancellationSignal) -> Result<Plan
     let descriptor = FilePin::observe(&request.release_descriptor, MAX_DOCUMENT, token)?;
     let description: Value = serde_json::from_slice(&command::read_document(&path(&request.release_descriptor)?, MAX_DOCUMENT)?).map_err(|_| error(Code::InvalidInput, "native descriptor JSON required"))?;
     let schema = profile_schema(&row, request.inputs.len())?;
-    if description["schema_version"] != schema || description["tool"] != "aniflow" || row.profile != "music-video-source-v1" || request.inputs.len() != 1
+    let tool = match row.tool { Tool::Aniflow => "aniflow", Tool::Renderflow => "renderflow", _ => return Err(error(Code::Unavailable, "native tool unavailable")) };
+    if description["schema_version"] != schema || description["tool"] != tool
         || !description["profiles"].as_array().is_some_and(|profiles| profiles.iter().any(|p| p["id"] == row.profile && p["source_mutation"] == false))
         || !row.contracts.iter().any(|c| c.identifier == schema && c.sha256 == descriptor.sha256)
         || row.artifact.as_ref().is_none_or(|a| description["version"] != a.version) { return Err(error(Code::Unavailable, "pinned native profile/descriptor/release contract differs")); }
-    aniflow::validate_configuration(request)?;
+    match row.tool { Tool::Aniflow => aniflow::validate_configuration(request)?, Tool::Renderflow => renderflow::validate_configuration(request)?, _ => return Err(error(Code::Unavailable, "native configuration route unavailable")) }
     let root = path(&request.run_directory)?;
     directory(root.parent().ok_or_else(|| error(Code::InvalidInput, "existing native output parent required"))?)?;
     if fs::symlink_metadata(&root).is_ok() { return Err(error(Code::RecoveryRequired, "fresh run directory required; use status/resume for retained attempts")); }
@@ -175,9 +179,10 @@ pub fn prepare(request: &Request, token: &dyn CancellationSignal) -> Result<Plan
         let input = path(input)?;
         if root.starts_with(&input) || input.starts_with(&root) { return Err(error(Code::InvalidInput, "native output must be disjoint from selected source, executable, contracts and tools")); }
     }
+    let configuration_maximum = configuration_limit(row.tool);
     let mut plan = Plan { schema_version: PLAN_SCHEMA.into(), plan_sha256: String::new(), row_subject_sha256: release_cohort::subject(&row).map_err(cohort_error)?, row,
         provider: FilePin::observe(&request.provider_executable, 536_870_912, token)?, descriptor,
-        configuration: FilePin::observe(&request.configuration, 131_072, token)?, sources: request.inputs.iter().map(|v| FilePin::observe(v, request.limits.max_input_bytes, token)).collect::<Result<_, _>>()?,
+        configuration: FilePin::observe(&request.configuration, configuration_maximum, token)?, sources: request.inputs.iter().map(|v| FilePin::observe(v, request.limits.max_input_bytes, token)).collect::<Result<_, _>>()?,
         request: request.clone(), release_evidence: "operator_pinned_source_candidate; publication_and_qualification_not_established".into() };
     plan.plan_sha256 = digest(&plan)?; plan.require_current(token)?; Ok(plan)
 }
@@ -286,7 +291,7 @@ pub fn run(plan: &Plan, approval: &Approval, token: &dyn CancellationSignal) -> 
         }
         create_directory(&root.join("native"))?; create_directory(&root.join("attempt-0000"))?;
         let context = Context { plan, root: root.clone(), evidence: root.join("attempt-0000"), started: Instant::now(), token };
-        match plan.row.tool { Tool::Aniflow => aniflow::execute(&context, None), _ => Err(error(Code::Unavailable, "native route unavailable")) }
+        match plan.row.tool { Tool::Aniflow => aniflow::execute(&context, None), Tool::Renderflow => renderflow::execute(&context, None), _ => Err(error(Code::Unavailable, "native route unavailable")) }
     })(); action.map_err(|e| context_error(e, &root))
 }
 fn basis(root: &Path) -> Result<(Plan, Approval), Error> {
@@ -307,7 +312,7 @@ fn current_status(root: &Path, plan: &Plan, token: &dyn CancellationSignal) -> R
         || !release_cohort::is_digest(&receipt.native_intent_sha256) || !native_run.starts_with(root.join("native")) || native_run == root.join("native") || !acceptance.starts_with(root) || receipt.artifacts.is_empty() || receipt.artifacts.len() > plan.request.limits.max_artifacts
         || release_cohort::sha256(&command::read_document(&acceptance, MAX_DOCUMENT)?) != receipt.acceptance_sha256 { return Err(error(Code::RecoveryRequired, "retained native acceptance identity changed")); }
     let domain: Value = read(&acceptance)?;
-    match plan.row.tool { Tool::Aniflow => aniflow::validate_retained(plan, &receipt, &domain)?, _ => return Err(error(Code::Unavailable, "native retained route unsupported")) }
+    match plan.row.tool { Tool::Aniflow => aniflow::validate_retained(plan, &receipt, &domain)?, Tool::Renderflow => renderflow::validate_retained(plan, &receipt, &domain)?, _ => return Err(error(Code::Unavailable, "native retained route unsupported")) }
     let mut seen = BTreeSet::new(); let mut total = 0_u64;
     for artifact in &receipt.artifacts {
         let file = path(&artifact.path)?;
@@ -333,5 +338,5 @@ pub fn resume(root: &Path, native_run: &Path, token: &dyn CancellationSignal) ->
     let evidence = attempt.ok_or_else(|| error(Code::RecoveryRequired, "retained resume attempt bound reached"))?;
     let context = Context { plan: &plan, root: root.to_owned(), evidence, started: Instant::now(), token };
     context.require_native_run(native_run)?;
-    match plan.row.tool { Tool::Aniflow => aniflow::execute(&context, Some(native_run)), _ => Err(error(Code::Unavailable, "native route unavailable")) }.map_err(|e| context_error(e, root))
+    match plan.row.tool { Tool::Aniflow => aniflow::execute(&context, Some(native_run)), Tool::Renderflow => renderflow::execute(&context, Some(native_run)), _ => Err(error(Code::Unavailable, "native route unavailable")) }.map_err(|e| context_error(e, root))
 }

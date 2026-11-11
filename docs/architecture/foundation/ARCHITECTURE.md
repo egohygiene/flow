@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.19.0
+version: 0.20.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,19 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Native publication route
+
+`native::renderflow` adds canonical single-file and ordered-collection translation
+against `renderflow.release-contract/v2`. Flow checks exact selected scope/order,
+offline/local-only configuration and reserved output root before native launch.
+The existing Renderflow planner/executor, forest identity, source inventory and
+native publication verifier remain the domain owners. Complete Flow acceptance
+requires a complete matching native forest, every selected target's accepted
+publication and current confined payload hashes. Partial targets retain recovery
+state. Explicit graph resume requires the original forest and output root.
+Native composition/presentation/briefing/AI/extension lanes retain separate
+coverage and are not silently enabled by this canonical file/collection route.
 
 ## Native temporal route
 
