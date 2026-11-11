@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: aniflow-architecture
 title: Aniflow Architecture
 kind: architecture-document
-version: 0.1.0
+version: 0.1.1
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-11-11
 governed_by:
   - architecture-architecture
 depends_on:
@@ -20,6 +20,16 @@ supersedes: []
 ---
 
 # Aniflow Architecture
+
+## Flow native translation
+
+Flow's `native` adapter invokes the independently built/pinned Aniflow CLI and
+its `aniflow.release-contract/v1` descriptor. Initial orchestration is the fixed
+source-entry music-video profile, with native recipe status/resume and final-video
+completion. Aniflow retains temporal algorithms, tool/model admission and domain
+acceptance. Flow retains its own selected source/configuration pins, approval,
+immutable attempts and output-byte reobservation. No crate dependency is added.
+This is candidate source support, not proof of a published or qualified release.
 
 ## Purpose and scope
 

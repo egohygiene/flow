@@ -7,9 +7,7 @@ use std::ffi::OsString;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::{Component, Path, PathBuf};
-use std::process::{Command, Stdio};
-use std::thread;
-use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use base64::Engine;
 use serde::{Deserialize, Serialize};
@@ -1552,71 +1550,17 @@ fn sha256_file_with_cancellation(path:&Path,limit:u64,cancellation:&dyn crate::C
     Ok(format!("{:x}", hash.finalize()))
 }
 
-struct Captured {
-    code: Option<i32>,
-    stdout: Vec<u8>,
-    stderr: Vec<u8>,
-}
+type Captured = crate::runner::NativeCapture;
 
 fn capture_with_cancellation(executable:&Path,args:&[OsString],deadline:Duration,cancellation:&dyn crate::CancellationSignal)->Result<Captured,AdapterError>{
-    check_cancelled(cancellation)?;
-    let mut child = Command::new(executable)
-        .args(args)
-        .current_dir(executable.parent().ok_or(AdapterError::Incompatible)?)
-        .env_clear()
-        .stdin(Stdio::null())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .map_err(|_| AdapterError::Unavailable)?;
-    let out = child
-        .stdout
-        .take()
-        .ok_or(AdapterError::InvalidEvidence("stdout pipe"))?;
-    let err = child
-        .stderr
-        .take()
-        .ok_or(AdapterError::InvalidEvidence("stderr pipe"))?;
-    let stdout = thread::spawn(move || read_capped(out, MAX_STDOUT));
-    let stderr = thread::spawn(move || read_capped(err, MAX_STDERR));
-    let start = Instant::now();
-    let status = loop {
-        if cancellation.is_cancelled(){let _=child.kill();let _=child.wait();return Err(AdapterError::Cancelled);}
-        match child.try_wait() {
-            Ok(Some(status)) => break status,
-            Ok(None) if start.elapsed() < deadline => thread::sleep(Duration::from_millis(5)),
-            Ok(None) => {
-                let _ = child.kill();
-                let _ = child.wait();
-                return Err(AdapterError::Timeout);
-            }
-            Err(error) => {
-                let _ = child.kill();
-                let _ = child.wait();
-                return Err(AdapterError::Io(error));
-            }
-        }
-    };
-    let stdout = stdout
-        .join()
-        .map_err(|_| AdapterError::InvalidEvidence("stdout worker"))??;
-    let stderr = stderr
-        .join()
-        .map_err(|_| AdapterError::InvalidEvidence("stderr worker"))??;
-    if stdout.len() > MAX_STDOUT || stderr.len() > MAX_STDERR {
-        return Err(AdapterError::Limit("output"));
-    }
-    Ok(Captured {
-        code: status.code(),
-        stdout,
-        stderr,
-    })
-}
-
-fn read_capped(stream: impl Read, limit: usize) -> io::Result<Vec<u8>> {
-    let mut bytes = Vec::new();
-    stream.take((limit + 1) as u64).read_to_end(&mut bytes)?;
-    Ok(bytes)
+    crate::runner::capture_native(executable,args,&[],deadline.as_millis().try_into().map_err(|_|AdapterError::Limit("deadline"))?,MAX_STDOUT as u64,MAX_STDERR as u64,cancellation)
+        .map_err(|error|match error {
+            crate::runner::ProcessRunnerError::Cancelled {..}=>AdapterError::Cancelled,
+            crate::runner::ProcessRunnerError::TimedOut {..}=>AdapterError::Timeout,
+            crate::runner::ProcessRunnerError::Launch {..}=>AdapterError::Unavailable,
+            crate::runner::ProcessRunnerError::NativeCaptureLimit=>AdapterError::Limit("output"),
+            _=>AdapterError::InvalidEvidence("native process supervision failed; preserve state"),
+        })
 }
 
 fn persist(path: &Path, receipt: &ReadOnlyReceipt, first: bool) -> Result<(), AdapterError> {

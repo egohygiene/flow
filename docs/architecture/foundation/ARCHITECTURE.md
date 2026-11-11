@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.18.0
+version: 0.19.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-11-10
+updated: 2026-11-11
 governed_by:
   - architecture-architecture
 depends_on:
@@ -20,6 +20,22 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Native temporal route
+
+`native` translates an operator-pinned Aniflow source-entry music-video candidate
+through its independent CLI. Read-only preparation binds the exact cohort row,
+descriptor, executable, source, configuration, target and limits without launch.
+Explicit plan-bound operator approval acknowledges unqualified candidate and
+trusted-unconfined execution. The existing runner's direct-child supervisor is
+shared with the native adapters, including the older Optiflow protocol; no second
+process engine or sibling dependency is added. Attempts are immutable and locked.
+Aniflow owns recipe planning, accepted temporal prefixes, status and completion.
+Flow correlates their identities, reobserves current confined accepted payloads,
+and retains native evidence separately from graph state and release qualification.
+Status performs local readback only. Explicit resume names one existing native run
+and requires its original intent; interruption never causes guessed replacement.
+See [native adapters](../../integrations/native-adapters.md) and proposed ADR-0017.
 
 ## Release cohort projection
 
