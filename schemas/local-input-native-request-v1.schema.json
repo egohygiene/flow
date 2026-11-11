@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/schemas/local-input-native-request-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request",
+    "selection"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.local-input-native-request/v1"
+    },
+    "request": {
+      "$ref": "local-input-request-v1.schema.json"
+    },
+    "selection": {
+      "$ref": "flow-native-request-v1.schema.json"
+    }
+  }
+}

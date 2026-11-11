@@ -1,0 +1,44 @@
+{
+  "schema_version": "flow.native-request/v1",
+  "cohort": {
+    "encoding": "utf8",
+    "value": "/private/cohort-with-observed-candidate-pins.json"
+  },
+  "cohort_sha256": "REPLACE_WITH_OBSERVED_COHORT_SHA256",
+  "row_id": "aniflow.music-video-source.flow_route.x86_64-unknown-linux-gnu",
+  "provider_executable": {
+    "encoding": "utf8",
+    "value": "/selected/independently-built/aniflow"
+  },
+  "release_descriptor": {
+    "encoding": "utf8",
+    "value": "/selected/aniflow-release-contract-v1.json"
+  },
+  "inputs": [
+    {
+      "encoding": "utf8",
+      "value": "/selected/source-video.mkv"
+    }
+  ],
+  "configuration": {
+    "encoding": "utf8",
+    "value": "/private/native-source-recipe.json"
+  },
+  "run_directory": {
+    "encoding": "utf8",
+    "value": "/private/new-run"
+  },
+  "tool_directories": [
+    {
+      "encoding": "utf8",
+      "value": "/selected/prepared-tools"
+    }
+  ],
+  "limits": {
+    "timeout_ms": 3600000,
+    "max_input_bytes": 8589934592,
+    "max_output_bytes": 8589934592,
+    "max_total_output_bytes": 17179869184,
+    "max_artifacts": 256
+  }
+}

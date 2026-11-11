@@ -16,6 +16,13 @@ related: [flow-architecture, flow-adr-0011, flow-adr-0013, flow-adr-0014]
 
 Proposed for #53/#70; source inclusion is not ratification or release acceptance.
 
+**November 11 source extension:** proposed [ADR-0017](ADR-0017-native-release-cohorts.md)
+adds explicitly pinned/approved Aniflow and Renderflow source-candidate routes,
+native state readback and explicit recovery, plus read-only cohort projection.
+Command doctor v2 reports that source support separately from published/released
+support. The older released-only v1 SDK/operation contracts below retain their
+meaning. This extension does not ratify either ADR or qualify a release.
+
 Expose public library command behavior through one thin `flow` source binary.
 Start with the independently released Optiflow v0.1.1 read-only adapter. Keep its
 native command-result/attempt receipt separate from generic extension JSONL and

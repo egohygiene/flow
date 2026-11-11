@@ -1,12 +1,19 @@
-# Initial Flow command source (#53)
+# Flow command source (#53/#70)
+
+The current source additionally supports explicitly pinned Aniflow and Renderflow
+candidate routes through [native commands](native-candidates.md), and a read-only
+`release-matrix` / doctor v2 view. These require independently built exact artifacts
+and explicit candidate approval; publication and native qualification are separate.
+The released-only Optiflow v1 path below retains its original scope and behavior.
 
 The `flow` source target delivers the public `command` SDK. It is an unqualified
 implementation checkpoint, separate from the synthetic provider and provisional
 AI setup utility. The first concrete route is the existing independently released
 Optiflow v0.1.1 read-only scan/report/exact-duplicate-review-plan adapter. Current
 Optiflow development builds are not that release. No binary is installed or
-published by these commands or by authoring this checkpoint. Missing immutable
-Aniflow/Renderflow routes remain unavailable, without source-worktree imports.
+published by these commands or by authoring this checkpoint. Aniflow/Renderflow
+published-release evidence remains unavailable; their candidate source routes use
+explicit artifacts without source-worktree imports.
 All original #53 dependencies and release/clean-install acceptance remain open.
 
 ## Selected operation

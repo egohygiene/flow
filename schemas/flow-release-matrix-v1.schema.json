@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/schemas/flow-release-matrix-v1.schema.json",
+  "description": "Output projection only. This document is not accepted as host evidence or execution/qualification authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "cohort_id",
+    "rows",
+    "green",
+    "blocked",
+    "unverified"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.release-matrix/v1"
+    },
+    "cohort_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4096,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "declaration",
+          "subject_sha256",
+          "green",
+          "cells"
+        ],
+        "properties": {
+          "declaration": {
+            "$ref": "flow-release-cohort-v1.schema.json#/$defs/row"
+          },
+          "subject_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "green": {
+            "type": "boolean"
+          },
+          "cells": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "dimension",
+                "observation"
+              ],
+              "properties": {
+                "dimension": {
+                  "enum": [
+                    "contracts",
+                    "publication",
+                    "installation",
+                    "runtime",
+                    "qualification"
+                  ]
+                },
+                "observation": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject_sha256",
+                    "state",
+                    "evidence_sha256",
+                    "reason"
+                  ],
+                  "properties": {
+                    "subject_sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "state": {
+                      "enum": [
+                        "unobserved",
+                        "failed",
+                        "passed"
+                      ]
+                    },
+                    "evidence_sha256": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{64}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "green": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "blocked": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unverified": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

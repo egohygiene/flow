@@ -102,9 +102,9 @@ impl Cohort {
         if self.schema_version != COHORT_SCHEMA || !text(&self.id) || semver::Version::parse(&self.flow_version).is_err()
             || self.rows.is_empty() || self.rows.len() > 4096 || self.targets.is_empty() || self.targets.len() > 64
             || self.targets.iter().any(|v| !text(v)) { return Err(Error::Invalid("cohort identity or bounds")); }
-        let targets: BTreeSet<_> = self.targets.iter().collect();
-        let retained: BTreeSet<_> = self.retained_rows.iter().collect();
-        let ids: BTreeSet<_> = self.rows.iter().map(|r| &r.id).collect();
+        let targets: BTreeSet<_> = self.targets.iter().cloned().collect();
+        let retained: BTreeSet<_> = self.retained_rows.iter().cloned().collect();
+        let ids: BTreeSet<_> = self.rows.iter().map(|r| r.id.clone()).collect();
         if targets.len() != self.targets.len() || retained.len() != self.retained_rows.len() || ids.len() != self.rows.len() || ids != retained {
             return Err(Error::Invalid("duplicate or omitted retained coverage"));
         }
@@ -231,14 +231,22 @@ impl EvidencePort for LocalFiles {
         let artifact = match &row.artifact { Some(v) => v, None => return Ok(Observation::unobserved(row, "no immutable artifact pin in cohort")) };
         let (passed, evidence) = match dimension {
             Dimension::Installation => {
-                let observed = observe_file(&files.executable, 536_870_912, token)?;
+                let observed = match observe_file(&files.executable, 536_870_912, token) {
+                    Ok(observed) => observed,
+                    Err(Error::Cancelled) => return Err(Error::Cancelled),
+                    Err(_) => return Ok(Observation { subject_sha256: subject(row)?, state: State::Failed, evidence_sha256: None, reason: "explicit installed artifact is missing, unreadable or outside file bounds".into() }),
+                };
                 (observed.0 == artifact.byte_count && observed.1 == artifact.sha256, observed.1)
             }
             Dimension::Contracts if !row.contracts.is_empty() => {
                 let mut identities = vec![];
                 for pin in &row.contracts {
                     let Some((_, path)) = files.contract_files.iter().find(|(id, _)| id == &pin.identifier) else { return Ok(Observation::unobserved(row, "a pinned contract file is missing")); };
-                    let observed = observe_file(path, MAX_DOCUMENT as u64, token)?;
+                    let observed = match observe_file(path, MAX_DOCUMENT as u64, token) {
+                        Ok(observed) => observed,
+                        Err(Error::Cancelled) => return Err(Error::Cancelled),
+                        Err(_) => return Ok(Observation { subject_sha256: subject(row)?, state: State::Failed, evidence_sha256: None, reason: "explicit installed contract file is missing, unreadable or outside file bounds".into() }),
+                    };
                     if observed.1 != pin.sha256 { return Ok(Observation { subject_sha256: subject(row)?, state: State::Failed, evidence_sha256: Some(observed.1), reason: "installed contract bytes differ".into() }); }
                     identities.push((pin.identifier.clone(), observed.1));
                 }

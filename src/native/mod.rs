@@ -25,14 +25,29 @@ pub(crate) fn path(value: &NativePath) -> Result<PathBuf, Error> {
     Ok(path)
 }
 fn directory(value: &Path) -> Result<(), Error> { if value.canonicalize().ok().as_deref() == Some(value) && fs::metadata(value).is_ok_and(|m| m.is_dir()) { Ok(()) } else { Err(error(Code::InvalidInput, "canonical directory required")) } }
+#[derive(Debug, Clone, Copy, Serialize)]
+pub struct SourceRoute { pub tool: Tool, pub profile: &'static str, pub contract: &'static str, pub maximum_inputs: usize, pub state: &'static str }
+pub const SOURCE_ROUTES: &[SourceRoute] = &[
+    SourceRoute { tool: Tool::Aniflow, profile: "music-video-source-v1", contract: "aniflow.release-contract/v1", maximum_inputs: 1, state: "implemented_source_candidate_requires_exact_pins_and_explicit_approval" },
+    SourceRoute { tool: Tool::Renderflow, profile: "canonical-build-v1", contract: "renderflow.release-contract/v2", maximum_inputs: 8192, state: "implemented_source_candidate_requires_exact_pins_and_explicit_approval" },
+];
 fn profile_schema(row: &Row, inputs: usize) -> Result<&'static str, Error> {
-    match (row.tool, row.profile.as_str(), inputs) {
-        (Tool::Aniflow, "music-video-source-v1", 1) => Ok("aniflow.release-contract/v1"),
-        (Tool::Renderflow, "canonical-build-v1", 1..=8192) => Ok("renderflow.release-contract/v2"),
-        _ => Err(error(Code::Unavailable, "native profile or exact input cardinality is unavailable")),
-    }
+    SOURCE_ROUTES.iter().find(|route| route.tool == row.tool && route.profile == row.profile && inputs > 0 && inputs <= route.maximum_inputs)
+        .map(|route| route.contract).ok_or_else(|| error(Code::Unavailable, "native profile or exact input cardinality is unavailable"))
 }
 fn configuration_limit(tool: Tool) -> u64 { if tool == Tool::Renderflow { 1_048_576 } else { 131_072 } }
+fn validate_effects(row: &Row) -> bool {
+    ["read_originals", "write_new_outputs"].iter().all(|required| row.effects.iter().any(|effect| effect.as_str() == *required))
+        && row.effects.iter().all(|effect| ["read_originals", "write_new_outputs", "direct_provider", "trusted_unconfined"].contains(&effect.as_str()))
+}
+fn validate_output_scope(request: &Request) -> Result<(), Error> {
+    let root = path(&request.run_directory)?;
+    for selected in [&request.cohort, &request.provider_executable, &request.release_descriptor, &request.configuration].into_iter().chain(request.inputs.iter()).chain(request.tool_directories.iter()) {
+        let selected = path(selected)?;
+        if root.starts_with(&selected) || selected.starts_with(&root) { return Err(error(Code::InvalidInput, "native output must be disjoint from selected source, executable, contracts and tools")); }
+    }
+    Ok(())
+}
 fn create_directory(value: &Path) -> Result<(), Error> {
     directory(value.parent().ok_or_else(|| error(Code::InvalidInput, "existing parent required"))?)?;
     let mut builder = fs::DirBuilder::new();
@@ -120,6 +135,7 @@ impl Plan {
     }
     pub fn validate(&self) -> Result<(), Error> {
         self.request.validate()?;
+        validate_output_scope(&self.request)?;
         let schema = profile_schema(&self.row, self.sources.len())?;
         let mut unsigned = self.clone(); unsigned.plan_sha256.clear();
         if self.schema_version != PLAN_SCHEMA || digest(&unsigned)? != self.plan_sha256 || release_cohort::subject(&self.row).map_err(cohort_error)? != self.row_subject_sha256
@@ -128,7 +144,7 @@ impl Plan {
             || self.sources.iter().zip(&self.request.inputs).any(|(pin, input)| pin.path != *input)
             || !self.row.contracts.iter().any(|c| c.identifier == schema && c.sha256 == self.descriptor.sha256)
             || self.row.implementation != release_cohort::Implementation::Implemented || Some(self.row.target.as_str()) != host_target()
-            || self.row.effects.iter().any(|v| !["read_originals", "write_new_outputs", "direct_provider", "trusted_unconfined"].contains(&v.as_str()))
+            || !validate_effects(&self.row)
             || self.release_evidence != "operator_pinned_source_candidate; publication_and_qualification_not_established" { return Err(error(Code::InvalidInput, "native plan identity or effects changed")); }
         for pin in [&self.provider, &self.descriptor, &self.configuration].into_iter().chain(self.sources.iter()) { if !release_cohort::is_digest(&pin.sha256) || pin.byte_count == 0 { return Err(error(Code::InvalidInput, "native file pin")); } }
         let Some(artifact) = &self.row.artifact else { return Err(error(Code::Unavailable, "cohort has no immutable provider artifact pin")); };
@@ -162,7 +178,7 @@ pub fn prepare(request: &Request, token: &dyn CancellationSignal) -> Result<Plan
     if cohort.flow_version != env!("CARGO_PKG_VERSION") { return Err(error(Code::Unavailable, "cohort Flow version differs")); }
     let row = cohort.rows.iter().find(|r| r.id == request.row_id).ok_or_else(|| error(Code::Unavailable, "selected release row is absent"))?.clone();
     if row.interface != Interface::FlowRoute || row.implementation != release_cohort::Implementation::Implemented || Some(row.target.as_str()) != host_target() { return Err(error(Code::Unavailable, "selected native target/interface is unsupported on this host")); }
-    if row.effects.iter().any(|v| !["read_originals", "write_new_outputs", "direct_provider", "trusted_unconfined"].contains(&v.as_str())) { return Err(error(Code::InvalidInput, "native route grants only source reads and separate new output/evidence writes")); }
+    if !validate_effects(&row) { return Err(error(Code::InvalidInput, "native row must declare source reads and new output writes without additional effects")); }
     let descriptor = FilePin::observe(&request.release_descriptor, MAX_DOCUMENT, token)?;
     let description: Value = serde_json::from_slice(&command::read_document(&path(&request.release_descriptor)?, MAX_DOCUMENT)?).map_err(|_| error(Code::InvalidInput, "native descriptor JSON required"))?;
     let schema = profile_schema(&row, request.inputs.len())?;
@@ -175,10 +191,7 @@ pub fn prepare(request: &Request, token: &dyn CancellationSignal) -> Result<Plan
     let root = path(&request.run_directory)?;
     directory(root.parent().ok_or_else(|| error(Code::InvalidInput, "existing native output parent required"))?)?;
     if fs::symlink_metadata(&root).is_ok() { return Err(error(Code::RecoveryRequired, "fresh run directory required; use status/resume for retained attempts")); }
-    for input in [&request.cohort, &request.provider_executable, &request.release_descriptor, &request.configuration].into_iter().chain(request.inputs.iter()).chain(request.tool_directories.iter()) {
-        let input = path(input)?;
-        if root.starts_with(&input) || input.starts_with(&root) { return Err(error(Code::InvalidInput, "native output must be disjoint from selected source, executable, contracts and tools")); }
-    }
+    validate_output_scope(request)?;
     let configuration_maximum = configuration_limit(row.tool);
     let mut plan = Plan { schema_version: PLAN_SCHEMA.into(), plan_sha256: String::new(), row_subject_sha256: release_cohort::subject(&row).map_err(cohort_error)?, row,
         provider: FilePin::observe(&request.provider_executable, 536_870_912, token)?, descriptor,
@@ -194,10 +207,21 @@ pub fn approve(plan: &Plan, approved_by: String, trusted_unconfined: bool, unqua
     let value = Approval { schema_version: "flow.native-approval/v1".into(), plan_sha256: plan.plan_sha256.clone(), approved_by, trusted_unconfined, unqualified_candidate };
     value.validate(plan)?; Ok(value)
 }
+/// Create a reviewable plan/approval document outside every selected input and
+/// reserved run tree. This does not launch the provider or create run state.
+pub fn save_document<T: Serialize>(plan: &Plan, output: &Path, value: &T) -> Result<(), Error> {
+    plan.validate()?;
+    let output = command::absolute(output)?;
+    for selected in [&plan.request.cohort, &plan.request.provider_executable, &plan.request.release_descriptor, &plan.request.configuration, &plan.request.run_directory].into_iter().chain(plan.request.inputs.iter()).chain(plan.request.tool_directories.iter()) {
+        let selected = path(selected)?;
+        if output.starts_with(&selected) || selected.starts_with(&output) { return Err(error(Code::InvalidInput, "native plan/approval document must be separate from all selected inputs and reserved run output")); }
+    }
+    write(&output, value)
+}
 impl Approval {
     fn validate(&self, plan: &Plan) -> Result<(), Error> { if self.schema_version != "flow.native-approval/v1" || self.plan_sha256 != plan.plan_sha256 || self.approved_by.is_empty() || self.approved_by.len() > 256 || self.approved_by.chars().any(char::is_control) || !self.trusted_unconfined || !self.unqualified_candidate { Err(error(Code::ApprovalRequired, "exact plan approval must acknowledge trusted-unconfined, unqualified native candidate execution")) } else { Ok(()) } }
 }
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum State { Complete, RecoveryRequired }
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

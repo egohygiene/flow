@@ -1,31 +1,36 @@
 //! Closed argv and presentation delivery over the public command SDK.
 use super::*;
 use std::{collections::BTreeMap,ffi::OsString};
+#[path = "native_delivery.rs"]
+mod native_delivery;
 
 #[derive(Debug,Clone,Copy,PartialEq,Eq)]
 pub enum Presentation {Human,Json}
 #[derive(Debug,Clone,PartialEq,Eq)]
-pub struct Arguments {pub command:String,pub presentation:Presentation,pub options:BTreeMap<String,OsString>,pub acknowledge_trusted_unconfined:bool}
+pub struct Arguments {pub command:String,pub presentation:Presentation,pub options:BTreeMap<String,OsString>,pub acknowledge_trusted_unconfined:bool,pub acknowledge_unqualified_candidate:bool}
 pub fn parse(values:Vec<OsString>)->Result<Arguments,Error>{
     if values.len()>32||values.iter().map(|v|v.len()).sum::<usize>()>65_536{return Err(error(Code::Usage,"command arguments exceed bounds"));}
     let mut values=values.into_iter();let command=match values.next(){None=>"help".into(),Some(value)=>value.into_string().map_err(|_|error(Code::Usage,"recognized UTF-8 command name required"))?};
     let command=match command.as_str(){"--help"|"-h"=>"help".into(),"--version"|"-V"=>"version".into(),_=>command};
-    if !["doctor","inspect","plan","approve","run","status","resume","help","version"].contains(&command.as_str()){return Err(error(Code::Usage,"supported commands: doctor, inspect, plan, approve, run, status, resume"));}
-    let mut options=BTreeMap::new();let mut ack=false;let mut presentation=Presentation::Human;let mut format_seen=false;
+    if !["doctor","release-matrix","inspect","plan","approve","run","status","resume","help","version"].contains(&command.as_str()){return Err(error(Code::Usage,"supported commands: doctor, release-matrix, inspect, plan, approve, run, status, resume"));}
+    let mut options=BTreeMap::new();let mut ack=false;let mut candidate_ack=false;let mut presentation=Presentation::Human;let mut format_seen=false;
     while let Some(key)=values.next(){let key=key.into_string().map_err(|_|error(Code::Usage,"recognized UTF-8 option name required"))?;
         if key=="--acknowledge-trusted-unconfined"{if ack||command!="approve"{return Err(error(Code::Usage,"process acknowledgement belongs once to approve"));}ack=true;continue;}
+        if key=="--acknowledge-unqualified-candidate"{if candidate_ack||command!="approve"{return Err(error(Code::Usage,"candidate acknowledgement belongs once to approve"));}candidate_ack=true;continue;}
         let value=values.next().ok_or_else(||error(Code::Usage,"option value required"))?;
         if key=="--format"{if format_seen{return Err(error(Code::Usage,"duplicate presentation option"));}format_seen=true;presentation=match value.to_str(){Some("json")=>Presentation::Json,Some("human")=>Presentation::Human,_=>return Err(error(Code::Usage,"format must be human or json"))};continue;}
-        let allowed:&[&str]=match command.as_str(){"doctor"=>&["--provider-executable"],"inspect"=>&["--request","--input","--profile"],"plan"=>&["--request","--input","--profile","--provider-executable","--run-directory","--output"],"approve"=>&["--plan","--approved-by","--output"],"run"=>&["--plan","--approval"],"status"|"resume"=>&["--run-directory"],_=>&[]};
+        let allowed:&[&str]=match command.as_str(){"doctor"=>&["--provider-executable","--cohort","--installations"],"release-matrix"=>&["--cohort","--installations"],"inspect"=>&["--request","--input","--profile"],"plan"=>&["--request","--input","--profile","--provider-executable","--run-directory","--output","--native-selection"],"approve"=>&["--plan","--approved-by","--output"],"run"=>&["--plan","--approval"],"status"=>&["--run-directory"],"resume"=>&["--run-directory","--native-run-directory"],_=>&[]};
         if !allowed.contains(&key.as_str())||options.insert(key,value).is_some(){return Err(error(Code::Usage,"unknown or duplicate command option"));}
     }
-    let required:&[&str]=match command.as_str(){"inspect"|"plan"=>&[],"approve"=>&["--plan","--approved-by","--output"],"run"=>&["--plan","--approval"],"status"|"resume"=>&["--run-directory"],_=>&[]};
+    let required:&[&str]=match command.as_str(){"release-matrix"=>&["--cohort"],"inspect"|"plan"=>&[],"approve"=>&["--plan","--approved-by","--output"],"run"=>&["--plan","--approval"],"status"|"resume"=>&["--run-directory"],_=>&[]};
     if required.iter().any(|k|!options.contains_key(*k)){return Err(error(Code::Usage,"required long-form command option missing"));}
     if ["inspect","plan"].contains(&command.as_str()) {
         if options.contains_key("--request")==options.contains_key("--input"){return Err(error(Code::Usage,"select exactly one --request document or --input path"));}
-        if options.contains_key("--request")&&["--profile","--provider-executable","--run-directory"].iter().any(|k|options.contains_key(*k)){return Err(error(Code::Usage,"request document cannot be mixed with local-input overrides"));}
+        if options.contains_key("--request")&&["--profile","--provider-executable","--run-directory","--native-selection"].iter().any(|k|options.contains_key(*k)){return Err(error(Code::Usage,"request document cannot be mixed with local-input overrides"));}
+        if options.contains_key("--native-selection")&&["--provider-executable","--run-directory"].iter().any(|k|options.contains_key(*k)){return Err(error(Code::Usage,"native selection already binds provider and output; overrides refused"));}
     }
-    Ok(Arguments {command,presentation,options,acknowledge_trusted_unconfined:ack})
+    if options.contains_key("--installations")&&!options.contains_key("--cohort"){return Err(error(Code::Usage,"installation observations require an explicit cohort"));}
+    Ok(Arguments {command,presentation,options,acknowledge_trusted_unconfined:ack,acknowledge_unqualified_candidate:candidate_ack})
 }
 #[derive(Debug,Clone,Copy,PartialEq,Eq,Serialize,Deserialize)]
 #[serde(rename_all="snake_case")]
@@ -65,8 +70,8 @@ fn local(args:&Arguments,request:crate::local_input::Request,token:&dyn Cancella
 /// Ordinary invocation only. Planning and diagnostics never invoke a provider;
 /// explicit run/resume retain the SDK's authority and recovery boundaries.
 pub fn execute(args:&Arguments,token:&dyn CancellationSignal)->Envelope {
-    let run=(||->Result<Envelope,Error>{cancelled(token)?;match args.command.as_str(){
-        "help"=>success("help",serde_json::json!({"usage":"flow COMMAND [long-form options] [--format human|json]","commands":["doctor","inspect","plan","approve","run","status","resume"],"initial_route":"Optiflow v0.1.1 read-only scan/report/review-plan","qualification":"source checkpoint; complete product/release acceptance remains open"}),Outcome::Complete),
+    let run=(||->Result<Envelope,Error>{cancelled(token)?;if let Some(value)=native_delivery::execute(args,token)?{return Ok(value);}if args.acknowledge_unqualified_candidate{return Err(error(Code::Usage,"candidate acknowledgement belongs to a native candidate plan"));}match args.command.as_str(){
+        "help"=>success("help",serde_json::json!({"usage":"flow COMMAND [long-form options] [--format human|json]","commands":["doctor","release-matrix","inspect","plan","approve","run","status","resume"],"released_route":"Optiflow v0.1.1 read-only scan/report/review-plan","candidate_routes":crate::native::SOURCE_ROUTES,"qualification":"source checkpoint; installed/published/native evidence remains separate"}),Outcome::Complete),
         "version"=>success("version",serde_json::json!({"package":env!("CARGO_PKG_VERSION"),"command_contract":"flow.command-result/v1","release_qualified":false}),Outcome::Complete),
         "doctor"=>{let executable=args.options.get("--provider-executable").map(|_|path(args,"--provider-executable")).transpose()?;let value=doctor(executable.as_deref(),token)?;let outcome=if value.selected_provider.is_some(){Outcome::Complete}else{Outcome::Unavailable};success("doctor",value,outcome)},
         "inspect"|"plan"=>{
@@ -78,13 +83,13 @@ pub fn execute(args:&Arguments,token:&dyn CancellationSignal)->Envelope {
         },
         "approve"=>{let plan=saved_plan(&path(args,"--plan")?)?;let by=args.options.get("--approved-by").and_then(|v|v.to_str()).ok_or_else(||error(Code::Usage,"bounded UTF-8 operator declaration required"))?.to_owned();let value=approve(&plan,by,args.acknowledge_trusted_unconfined)?;save(&plan,&path(args,"--output")?,&value)?;success("approve",value,Outcome::Complete)},
         "run"=>{let plan=saved_plan(&path(args,"--plan")?)?;let approval:Approval=serde_json::from_slice(&read_document(&path(args,"--approval")?,16_384)?).map_err(|_|error(Code::InvalidInput,"closed supplied operation approval required"))?;let value=super::run(&plan,&approval,token)?;let outcome=state(&value);success("run",value,outcome)},
-        "status"|"resume"=>{let root=path(args,"--run-directory")?;let value=(if args.command=="status"{status(&root,token)}else{resume(&root,token)}).map_err(|mut e|{e.recovery_directory=Some(NativePath::from_path(&root));e})?;let outcome=state(&value);success(&args.command,value,outcome)},
+        "status"|"resume"=>{if args.options.contains_key("--native-run-directory"){return Err(error(Code::Usage,"native run selection belongs to a native candidate operation"));}let root=path(args,"--run-directory")?;let value=(if args.command=="status"{status(&root,token)}else{resume(&root,token)}).map_err(|mut e|{e.recovery_directory=Some(NativePath::from_path(&root));e})?;let outcome=state(&value);success(&args.command,value,outcome)},
         _=>Err(error(Code::Usage,"unknown command")),
     }})();match run{Ok(value)=>value,Err(value)=>failure(&args.command,value)}
 }
 pub fn render(value:&Envelope,presentation:Presentation)->Result<Vec<u8>,Error>{let mut bytes=match presentation {
     Presentation::Json=>serde_json::to_vec(value).map_err(|_|error(Code::Io,"machine result unavailable"))?,
-    Presentation::Human=>{let mut text=format!("{}: {:?}\n",value.command,value.outcome);if value.command=="help"{text.push_str("flow doctor | inspect | plan | approve | run | status | resume\nUse --format json for one versioned result. Source checkpoint; release acceptance remains open.\n");}for diagnostic in &value.diagnostics{text.push_str(&format!("{:?}: {}\n",diagnostic.code,diagnostic.message));}if let Some(result)=&value.result{text.push_str(&serde_json::to_string_pretty(result).map_err(|_|error(Code::Io,"human result unavailable"))?);}text.into_bytes()},
+    Presentation::Human=>{let mut text=format!("{}: {:?}\n",value.command,value.outcome);if value.command=="help"{text.push_str("flow doctor | release-matrix | inspect | plan | approve | run | status | resume\nUse --format json for one versioned result. Source checkpoint; release acceptance remains open.\n");}for diagnostic in &value.diagnostics{text.push_str(&format!("{:?}: {}\n",diagnostic.code,diagnostic.message));}if let Some(result)=&value.result{if result["schema_version"]=="flow.release-matrix/v1"{text.push_str(&native_delivery::human_matrix(result));}else{text.push_str(&serde_json::to_string_pretty(result).map_err(|_|error(Code::Io,"human result unavailable"))?);}}text.into_bytes()},
     };if bytes.len()>33_554_432{return Err(error(Code::Io,"command result exceeds32MiB"));}bytes.push(b'\n');Ok(bytes)}
 
 #[cfg(test)] mod tests {

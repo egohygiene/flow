@@ -84,12 +84,31 @@ pub fn plan(request:&Request,token:&dyn CancellationSignal)->Result<Planning,Err
 }
 fn plan_guarded(request:&Request,token:&dyn CancellationSignal)->Result<Planning,Error>{let inventory=inspect(request,token)?;let mut result=Planning {schema_version:"flow.local-input-plan/v1".into(),inventory,availability:Availability::Unavailable,reason:"selected immutable provider route unavailable; no fallback".into(),command_plan:None,inspection_limits_apply_to_native_execution:false};
     if request.profile==Profile::InspectOnly{result.availability=Availability::InspectionOnly;result.reason="filesystem identities only; no media/provider acceptance".into();return Ok(result)}
-    if request.profile!=Profile::OptiflowReadOnly{return Ok(result)}
+    if request.profile!=Profile::OptiflowReadOnly{result.reason="native source route requires explicit cohort/artifact/descriptor/configuration selection; use plan_native or --native-selection".into();return Ok(result)}
     let Input::Directory {path:source_root,recursive:true}=&request.input else{result.reason="pinned Optiflow adapter requires whole recursive directory scope; file/ordered/nonrecursive requests cannot be broadened".into();return Ok(result)};
     let (Some(provider_executable),Some(run_directory))=(&request.provider_executable,&request.run_directory)else{result.reason="select an exact released provider executable and separate new run directory".into();return Ok(result)};
     let command=command::Request {schema_version:"flow.command-request/v1".into(),route:command::Route::OptiflowReadOnly,provider_executable:provider_executable.clone(),source_root:source_root.clone(),run_directory:run_directory.clone()};
     let planned=command::plan(&command,token)?;if inspect(request,token)?!=result.inventory{return Err(error(Code::StalePlan,"input preview changed while planning provider scope"));}
     result.availability=Availability::ScopePlanOnly;result.reason="explicit whole-directory read-only scope; preview hashes/limits are not execution input freezing or provider budget enforcement".into();result.command_plan=Some(planned);Ok(result)
+}
+
+/// Additive native selection wrapper; the old v1 scope-plan wire contract stays
+/// unchanged. A directory cannot be widened into an implicit native collection.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NativeRequest { pub schema_version: String, pub request: Request, pub selection: crate::native::Request }
+#[derive(Debug, Clone, Serialize)]
+pub struct NativePlanning { pub schema_version: String, pub inventory: Inventory, pub command_plan: crate::native::Plan, pub release_qualified: bool }
+pub fn plan_native(request: &Request, selection: &crate::native::Request, token: &dyn CancellationSignal) -> Result<NativePlanning, Error> {
+    request.validate()?;
+    if !matches!(request.profile, Profile::AniflowTemporal | Profile::RenderflowPublication) { return Err(error(Code::InvalidInput, "explicit Aniflow or Renderflow local profile required for native selection")); }
+    let selected = match &request.input { Input::File { path } => vec![path.clone()], Input::OrderedCollection { members } => members.clone(), Input::Directory { .. } => return Err(error(Code::InvalidInput, "native local route requires a selected file or explicit ordered collection; no directory expansion")) };
+    if selected != selection.inputs || request.provider_executable.as_ref().is_some_and(|p| p != &selection.provider_executable) || request.run_directory.as_ref().is_some_and(|p| p != &selection.run_directory) { return Err(error(Code::InvalidInput, "local input and native selection scopes/overrides differ")); }
+    let inventory = inspect(request, token)?;
+    let plan = crate::native::prepare(selection, token)?;
+    let expected = match request.profile { Profile::AniflowTemporal => crate::release_cohort::Tool::Aniflow, _ => crate::release_cohort::Tool::Renderflow };
+    if plan.row.tool != expected || inventory.files.len() != plan.sources.len() || inventory.files.iter().zip(&plan.sources).any(|(file, pin)| file.path != pin.path || file.sha256 != pin.sha256 || file.byte_count != pin.byte_count) || inspect(request, token)? != inventory { return Err(error(Code::StalePlan, "native profile or selected input bytes/order differ from local inspection")); }
+    Ok(NativePlanning { schema_version: "flow.local-input-native-plan/v1".into(), inventory, command_plan: plan, release_qualified: false })
 }
 
 #[cfg(test)] mod tests;
