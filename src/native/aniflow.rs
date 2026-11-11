@@ -62,6 +62,7 @@ fn status(context: &Context<'_>, label: &str, native_run: &Path, intent: &str) -
     Ok(result)
 }
 pub(super) fn execute(context: &Context<'_>, resume: Option<&Path>) -> Result<Receipt, Error> {
+    validate_configuration(&context.plan.request)?;
     let descriptor = invoke(context, "contract", "release_contract", &["--output".into(), "json".into(), "release-contract".into()])?;
     let pinned: Value = serde_json::from_slice(&command::read_document(&path(&context.plan.descriptor.path)?, MAX_DOCUMENT)?).map_err(|_| error(Code::InvalidInput, "pinned native descriptor JSON"))?;
     if descriptor != pinned { return Err(error(Code::Unavailable, "running Aniflow contract differs from exact pinned descriptor")); }

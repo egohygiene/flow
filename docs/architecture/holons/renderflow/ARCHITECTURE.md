@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: renderflow-architecture
 title: Renderflow Architecture
 kind: architecture-document
-version: 0.2.0
+version: 0.2.1
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-08-21
+updated: 2026-11-11
 governed_by:
   - architecture-architecture
 depends_on:
@@ -20,6 +20,17 @@ supersedes: []
 ---
 
 # Renderflow Architecture
+
+## Flow native publication translation
+
+Flow consumes the independently built/pinned CLI and
+`renderflow.release-contract/v2`, invokes canonical build/dry-run and explicit
+graph resume, then observes the native receipt and existing publication verifier.
+It retains exact source selection/order, forest/target/receipt bindings, native
+validation/fidelity and current payload hashes. Renderflow retains all conversion,
+domain validation and native checkpoint logic. No sibling crate dependency,
+duplicate planner or release qualification is introduced. Scoped native packages,
+AI and custom extension execution remain separately owned routes.
 
 ## Purpose and scope
 

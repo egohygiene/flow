@@ -980,7 +980,7 @@
       "tool": "renderflow",
       "interface": "standalone_cli",
       "target": "aarch64-apple-darwin",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
@@ -999,7 +999,7 @@
       "tool": "renderflow",
       "interface": "rust_library",
       "target": "aarch64-apple-darwin",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
@@ -1018,26 +1018,26 @@
       "tool": "renderflow",
       "interface": "flow_route",
       "target": "aarch64-apple-darwin",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
         "read_originals",
         "write_new_outputs"
       ],
-      "implementation": "planned",
+      "implementation": "implemented",
       "artifact": null,
       "contracts": [],
       "requirements": [],
       "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
-      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+      "next_action": "Publish independently built native v2 descriptors/artifacts and qualify exact canonical file/collection publications on the native target."
     },
     {
       "id": "renderflow.static-publication.standalone_cli.x86_64-unknown-linux-gnu",
       "tool": "renderflow",
       "interface": "standalone_cli",
       "target": "x86_64-unknown-linux-gnu",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
@@ -1056,7 +1056,7 @@
       "tool": "renderflow",
       "interface": "rust_library",
       "target": "x86_64-unknown-linux-gnu",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
@@ -1075,26 +1075,26 @@
       "tool": "renderflow",
       "interface": "flow_route",
       "target": "x86_64-unknown-linux-gnu",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
         "read_originals",
         "write_new_outputs"
       ],
-      "implementation": "planned",
+      "implementation": "implemented",
       "artifact": null,
       "contracts": [],
       "requirements": [],
       "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
-      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+      "next_action": "Publish independently built native v2 descriptors/artifacts and qualify exact canonical file/collection publications on the native target."
     },
     {
       "id": "renderflow.static-publication.standalone_cli.x86_64-apple-darwin",
       "tool": "renderflow",
       "interface": "standalone_cli",
       "target": "x86_64-apple-darwin",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
@@ -1113,7 +1113,7 @@
       "tool": "renderflow",
       "interface": "rust_library",
       "target": "x86_64-apple-darwin",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
@@ -1132,26 +1132,26 @@
       "tool": "renderflow",
       "interface": "flow_route",
       "target": "x86_64-apple-darwin",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
         "read_originals",
         "write_new_outputs"
       ],
-      "implementation": "planned",
+      "implementation": "implemented",
       "artifact": null,
       "contracts": [],
       "requirements": [],
       "owner_issue": "https://github.com/egohygiene/renderflow/issues/419",
-      "next_action": "Inventory the exact profile options, contracts, platform requirements and immutable artifacts; execute positive native qualification when the deferral lifts."
+      "next_action": "Publish independently built native v2 descriptors/artifacts and qualify exact canonical file/collection publications on the native target."
     },
     {
       "id": "renderflow.static-publication.standalone_cli.x86_64-pc-windows-msvc",
       "tool": "renderflow",
       "interface": "standalone_cli",
       "target": "x86_64-pc-windows-msvc",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
@@ -1170,7 +1170,7 @@
       "tool": "renderflow",
       "interface": "rust_library",
       "target": "x86_64-pc-windows-msvc",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [
@@ -1189,7 +1189,7 @@
       "tool": "renderflow",
       "interface": "flow_route",
       "target": "x86_64-pc-windows-msvc",
-      "profile": "static-publication",
+      "profile": "canonical-build-v1",
       "input": "ordered collection or document",
       "output": "PDF/EPUB/declared static formats",
       "effects": [

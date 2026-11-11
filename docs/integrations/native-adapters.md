@@ -1,5 +1,39 @@
 # Pinned native adapters
 
+## Renderflow canonical file and collection profile
+
+`canonical-build-v1` consumes `renderflow.release-contract/v2` from the independent
+Renderflow contract/readback checkpoint. Its configuration is bounded JSON with
+`schema: renderflow/v2`, exactly one artifact or one ordered collection of declared
+artifact IDs, and paths matching `Request.inputs` in that order. No unused sources
+or remote URIs are admitted. The configuration must explicitly set
+`execution.requirements.offline` and `local_only` to true. Network and AI remain
+denied; custom transform YAML and scoped composition/presentation/briefing packages
+require their own future routes. These retained inventory rows remain visible.
+
+Set `output.bundle_root` to the exact absolute `RUN/native/output` path and keep
+collision policy `error`. This separates every native publication from selected
+source files and preserves existing output for recovery. Flow reuses native
+`build --dry-run`, `build`, graph `build --resume`, and `publication-status`.
+Native planning may perform the provider's bounded local tool probes only after
+Flow's explicit run/resume approval; Flow preparation/doctor do not launch it.
+
+Acceptance binds native source bytes/order, the admitted forest identity, engine
+version, complete native receipt and exact output root. The existing native
+publication verifier must report all selected targets with accepted validation.
+Flow hashes their actual confined bytes and rechecks the receipt. It preserves
+lossy/partial/path-dependent/unknown fidelity and warnings; accepted publication
+bytes alone do not establish quality, native application opening, creative review,
+publisher authenticity, release qualification or external publication authority.
+An unavailable/unsupported/pruned requested branch cannot be hidden by a successful
+subset. Explicit resume must name `RUN/native/output` and retain the original
+forest. Frozen native package resume is not substituted for graph recovery.
+
+The candidate APIs can operate once exact independently built artifacts/descriptors
+are supplied and explicitly approved. They do not install or build those artifacts
+or relabel the still-unpublished provider releases. Renderflow #419 and Flow
+#52/#70/#71/#72 retain packaging, installation and native qualification work.
+
 The `native` library API prepares and executes a source-candidate route from
 explicit operator pins. Initial support is Aniflow `music-video-source-v1`, using
 `aniflow.release-contract/v1` from the provider's separate draft checkpoint. It
