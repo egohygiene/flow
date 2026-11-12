@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.35.0
+version: 0.36.0
 status: draft
 owners:
   - egohygiene
@@ -47,6 +47,12 @@ core members or make retained QC current. Binding consumes complete separately
 supplied approvals at the reserved paths and produces the existing readiness
 request. Released authority still requires fresh opaque evidence at execution;
 binding a retained approval cannot grant it or manufacture a review declaration.
+
+The public command SDK exposes preview, explicit preparation, readback and
+supplied-approval binding through closed long-form argv and versioned envelopes.
+Task aliases delegate to those same commands. Setup commands accept no provider
+execution, automatic approval or verification-network acknowledgement. Their
+complete outcome describes the local operation, not audio or release readiness.
 
 ## Exact-file audio delivery readiness
 

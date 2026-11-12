@@ -1,6 +1,46 @@
 version: '3'
 
 tasks:
+  audio:setup:preview:
+    desc: Preview installed audio-check selection without running providers
+    requires:
+      vars: [REQUEST]
+    env:
+      FLOW_AUDIO_SETUP_REQUEST: '{{.REQUEST}}'
+    cmds:
+      - flow audio-setup-preview --request "$FLOW_AUDIO_SETUP_REQUEST" --format json
+
+  audio:setup:prepare:
+    desc: Prepare fresh audio-check configuration and plans without approvals
+    requires:
+      vars: [REQUEST]
+    env:
+      FLOW_AUDIO_SETUP_REQUEST: '{{.REQUEST}}'
+    cmds:
+      - flow audio-setup-prepare --request "$FLOW_AUDIO_SETUP_REQUEST" --format json
+
+  audio:setup:status:
+    desc: Read retained audio-check preparation identity
+    requires:
+      vars: [WORKSPACE, RECORD_SHA256]
+    env:
+      FLOW_AUDIO_SETUP_WORKSPACE: '{{.WORKSPACE}}'
+      FLOW_AUDIO_SETUP_RECORD_SHA256: '{{.RECORD_SHA256}}'
+    cmds:
+      - flow audio-setup-status --workspace "$FLOW_AUDIO_SETUP_WORKSPACE" --record-sha256 "$FLOW_AUDIO_SETUP_RECORD_SHA256" --format json
+
+  audio:setup:bind:
+    desc: Bind separately supplied exact approvals into an audio-readiness request
+    requires:
+      vars: [WORKSPACE, RECORD_SHA256, APPROVALS, OUTPUT]
+    env:
+      FLOW_AUDIO_SETUP_WORKSPACE: '{{.WORKSPACE}}'
+      FLOW_AUDIO_SETUP_RECORD_SHA256: '{{.RECORD_SHA256}}'
+      FLOW_AUDIO_SETUP_APPROVALS: '{{.APPROVALS}}'
+      FLOW_AUDIO_SETUP_OUTPUT: '{{.OUTPUT}}'
+    cmds:
+      - flow audio-setup-bind --workspace "$FLOW_AUDIO_SETUP_WORKSPACE" --record-sha256 "$FLOW_AUDIO_SETUP_RECORD_SHA256" --approvals "$FLOW_AUDIO_SETUP_APPROVALS" --output "$FLOW_AUDIO_SETUP_OUTPUT" --format json
+
   audio:readiness:preview:
     desc: Preview selected publishing audio checks without invoking providers
     requires:
