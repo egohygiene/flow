@@ -1,4 +1,5 @@
 //! Fixed manual-lyrics publishing pilot. Domain work uses existing native SDKs.
+pub mod released;
 use std::{fs::{self, File}, path::Path};
 use fs2::FileExt;
 use serde::{Deserialize, Serialize};

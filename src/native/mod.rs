@@ -367,6 +367,18 @@ fn current_status(root: &Path, plan: &Plan, token: &dyn CancellationSignal) -> R
 }
 /// Read-only local observation; never invokes a provider or repairs state.
 pub fn status(root: &Path, token: &dyn CancellationSignal) -> Result<Status, Error> { let _lock = lock(root, false)?; let (plan, _) = basis(root)?; current_status(root, &plan, token).map_err(|e| context_error(e, root)) }
+/// Read-only domain/payload evidence for an exact retained plan, independently
+/// of the serialized authority mode. This cannot authorize run or resume and
+/// does not reverify publisher/native admission. Consumers must establish those
+/// facts through their separate opaque trust boundary when claiming them.
+pub fn observe_receipt(root:&Path,expected_plan_sha256:&str,token:&dyn CancellationSignal)->Result<Status,Error>{
+    let _lock=lock(root,false)?;
+    let plan=Plan::from_json_slice(&command::read_document(&root.join("operation-plan.json"),MAX_DOCUMENT)?)?;
+    if plan.plan_sha256!=expected_plan_sha256||path(&plan.request.run_directory)?!=root{return Err(error(Code::StalePlan,"exact retained native plan identity required"));}
+    let mut value=current_status(root,&plan,token)?;
+    value.domain_evidence="retained native domain acceptance and current payload bytes only; serialized approval and release admission were not reverified".into();
+    value.next_action="use separate opaque release admission for qualification or released execution; this readback grants no authority".into();Ok(value)
+}
 /// Resume is explicit and names an existing native run. The provider rechecks its
 /// own intent and accepted prefix. No directory scan, substitute run or replay.
 pub fn resume(root: &Path, native_run: &Path, token: &dyn CancellationSignal) -> Result<Receipt, Error> {

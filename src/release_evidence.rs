@@ -102,7 +102,7 @@ fn current(entry:&Entry,row:&Row,policy:&Policy,token:&dyn CancellationSignal)->
     if row.interface==cohort::Interface::FlowRoute&&matches!(row.tool,Tool::Aniflow|Tool::Renderflow){
         let root=native::path(witness.run_directory.as_ref().ok_or_else(||error(Code::InvalidInput,"Flow route requires exact native witness directory"))?)?;
         if native::path(&witness.accepted_receipt.path)?!=root.join("accepted.json"){return Err(error(Code::InvalidInput,"native witness must pin the exact retained accepted receipt"));}
-        let status=native::status(&root,token)?;let receipt=status.receipt.ok_or_else(||error(Code::Unavailable,"positive native acceptance is absent"))?;
+        let status=native::observe_receipt(&root,&witness.plan_sha256,token)?;let receipt=status.receipt.ok_or_else(||error(Code::Unavailable,"positive native acceptance is absent"))?;
         if status.plan_sha256!=witness.plan_sha256||receipt.row_subject_sha256!=entry.report.row_subject_sha256||receipt.acceptance_sha256!=witness.acceptance_sha256||receipt.state!=native::State::Complete||receipt.creative_approval_inferred||receipt.publication_authority{return Err(error(Code::Unavailable,"native witness differs from authenticated positive qualification"));}
         let saved:native::Receipt=read(&witness.accepted_receipt,MAX,token)?;if saved!=receipt{return Err(error(Code::StalePlan,"authenticated native receipt differs from current status"));}
     }else{
@@ -153,8 +153,16 @@ pub fn verify(request:&Request,trust:&TrustedConfiguration,output:&Path,allow_ve
             let tag=format!("v{}",artifact.version);let archive_digest=format!("sha256:{}",publication.published_archive.sha256);
             if metadata["tag_name"]!=tag||!metadata["assets"].as_array().is_some_and(|assets|assets.iter().any(|a|a["id"].as_u64()==Some(publication.asset_id)&&a["state"]=="uploaded"&&a["browser_download_url"]==publication.release_url&&a["digest"]==archive_digest&&a["size"].as_u64()==Some(publication.published_archive.byte_count))){return Err(error(Code::Unavailable,"exact published release asset or GitHub content digest is absent"));}
         }
-        let binding_sha256=hash(&(request,trust,&policy))?;
-        let audit_path=output.join("verification.json");command::write_document(&audit_path,&serde_json::json!({"schema_version":"flow.authenticated-evidence-audit/v1","binding_sha256":binding_sha256,"cohort_sha256":request.cohort.sha256,"transcripts":transcripts,"verification_network_permitted":true,"media_or_provider_invoked":false}))?;
+        // Effect authority binds the installed/runtime scope, not a positive
+        // proof's timestamp or capture directory. A freshly authenticated proof
+        // for identical scope may renew readiness without changing plan authority.
+        let mut scope=entries.iter().map(|e|{
+            let mut contracts=e.selection.contracts.clone();contracts.sort_by(|a,b|a.identifier.cmp(&b.identifier));
+            let mut requirements=e.report.requirements.clone();requirements.sort_by(|a,b|a.requirement_id.cmp(&b.requirement_id));
+            (e.selection.row_id.clone(),e.report.row_subject_sha256.clone(),e.selection.executable.clone(),contracts,requirements)
+        }).collect::<Vec<_>>();scope.sort_by(|a,b|a.0.cmp(&b.0));
+        let binding_sha256=hash(&(trust,&policy,&request.cohort.sha256,scope))?;
+        let audit_path=output.join("verification.json");command::write_document(&audit_path,&serde_json::json!({"schema_version":"flow.authenticated-evidence-audit/v1","binding_sha256":binding_sha256,"request_sha256":hash(request)?,"cohort_sha256":request.cohort.sha256,"transcripts":transcripts,"verification_network_permitted":true,"media_or_provider_invoked":false}))?;
         let audit=FilePin::observe(&NativePath::from_path(&audit_path),MAX,&guard)?;
         let verified=VerifiedEvidence{request:request.clone(),trust:trust.clone(),policy,cohort:selected,entries,binding_sha256,audit};verified.current(&guard)?;Ok(verified)
     })();action.map_err(|mut e:Error|{e.recovery_directory=Some(NativePath::from_path(&output));e})

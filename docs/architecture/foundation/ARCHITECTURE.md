@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.29.0
+version: 0.30.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,18 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Released pilot authority
+
+The fixed pilot has a separate released authority contract. Every selected stage
+requires current opaque native release admission and delegates run/status/resume
+to the existing native SDK. Retained start markers and explicit stage recovery
+prevent uncertain replay. Aggregate completion reobserves every domain receipt,
+release record and exact provider admission before committing a handoff; provider
+qualification remains distinct from Flow/suite qualification and human approval.
+A separate exact-plan domain readback accepts retained candidate or released
+receipts without granting execution authority, avoiding recursive qualification
+while keeping signed owner evidence and live release admission separate.
 
 ## Publishing project preparation
 
