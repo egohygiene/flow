@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.40.0
+version: 0.41.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,19 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Selected audio-processing native translation
+
+The native adapter can delegate explicit fixed gain through Aniflow's versioned
+audio-processing plan/handoff facade. Flow binds exact selected inputs, native
+configuration, provider/descriptor, source and output namespaces and supplied
+authority. Aniflow retains gain/headroom decisions, PCM/tool validation and
+native v3 acceptance. The existing native supervisor owns attempts and explicit
+resume; no second runner or media engine is introduced. Current owner completion
+is observed during execution, while retained status checks snapshots and bytes
+without refreshing QC. Gain results remain derivatives requiring fresh exact-file
+QC, selected-goal comparison and human review. Source support does not establish
+an immutable qualified release or any publication authority.
 
 ## Publishing workflow guide projection
 

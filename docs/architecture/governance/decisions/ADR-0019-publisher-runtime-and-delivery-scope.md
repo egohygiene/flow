@@ -65,6 +65,18 @@ musical approval or upload authority. Failures retain ordinary native attempts;
 there is no new runtime, automatic replay/approval or acceptance database. This
 extension remains proposed and source-only, with execution deferred to #88.
 
+## Proposed audio-processing translation — November 12, 2026
+
+Selected fixed gain uses Aniflow's structured native plan and current accepted
+handoff through the existing native supervisor. Exact source membership/order,
+request and descriptor identity, native intent and artifact roles remain bound.
+Nested source/QC/tool namespaces are outside Flow's writable run. Explicit
+recovery names the existing run and original admitted native plan. Retained
+status reobserves bytes and saved framing without launching the owner or making
+historical measurements current. A gained WAV remains an unreviewed derivative
+requiring fresh exact-file QC; no limiter, automatic mastering or upload is
+introduced. This extension remains proposed and unqualified.
+
 ## Proposed installed-check preparation extension — November 12, 2026
 
 An operator can resolve supplied Aniflow QC/policy requests against exact delivery
