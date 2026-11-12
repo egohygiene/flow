@@ -1,0 +1,9 @@
+{
+  "schema_version": "flow.delivery-review/v1",
+  "package_subject_sha256": "REPLACE_WITH_EXACT_PREVIEW_SUBJECT_SHA256",
+  "scope": "SELECT_words_timing_visual_audio_OR_final_package",
+  "decision": "SUPPLY_REAL_accept_reject_OR_needs_changes_DECISION",
+  "reviewed_by": "REPLACE_WITH_REAL_SUPPLIED_REVIEWER",
+  "reviewed_at": "REPLACE_WITH_REAL_REVIEW_TIME",
+  "notes": "Record actual review of these exact bytes and metadata; this template supplies no approval."
+}

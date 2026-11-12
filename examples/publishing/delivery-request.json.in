@@ -1,0 +1,22 @@
+{
+  "schema_version": "flow.delivery-request/v1",
+  "project_record": {
+    "path": {"encoding": "utf8", "value": "/absolute/private/song-work/prepared-project.json"},
+    "sha256": "REPLACE_WITH_EXACT_RECORD_SHA256", "byte_count": 0
+  },
+  "handoff": {
+    "path": {"encoding": "utf8", "value": "/absolute/private/song-work/pilot/handoff.json"},
+    "sha256": "REPLACE_WITH_EXACT_HANDOFF_SHA256", "byte_count": 0
+  },
+  "payloads": [
+    {"id": "master", "role": "clean_master", "source": {"kind": "native", "stage": "video", "artifact_id": "SELECT_REAL_CLEAN_MASTER_ID_FROM_CATALOG"}, "file_name": "clean-master.mkv", "destinations": ["archive"]},
+    {"id": "video", "role": "video_delivery", "source": {"kind": "native", "stage": "video", "artifact_id": "SELECT_REAL_DESTINATION_COPY_ID_FROM_CATALOG"}, "file_name": "video.mp4", "destinations": ["tiktok"]},
+    {"id": "song", "role": "original_audio", "source": {"kind": "original_audio"}, "file_name": "original-mix.wav", "destinations": ["soundcloud", "distrokid"]},
+    {"id": "manual-lyrics", "role": "lyrics", "source": {"kind": "manual_srt"}, "file_name": "manual-lyrics.srt", "destinations": ["archive"]}
+  ],
+  "metadata": {"creators": [], "description": null, "tags": [], "destination_fields": []},
+  "reviews": [],
+  "evidence_attachments": [],
+  "output_directory": {"encoding": "utf8", "value": "/absolute/private/fresh-song-delivery"},
+  "limits": {"timeout_ms": 3600000, "maximum_payload_bytes": 68719476736, "maximum_total_bytes": 137438953472}
+}

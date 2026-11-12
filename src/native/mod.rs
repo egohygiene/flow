@@ -379,6 +379,40 @@ pub fn observe_receipt(root:&Path,expected_plan_sha256:&str,token:&dyn Cancellat
     value.domain_evidence="retained native domain acceptance and current payload bytes only; serialized approval and release admission were not reverified".into();
     value.next_action="use separate opaque release admission for qualification or released execution; this readback grants no authority".into();Ok(value)
 }
+#[derive(Debug,Clone,PartialEq,Eq,Serialize)]
+pub struct ArtifactDescription{pub artifact_id:String,pub purpose:String,pub file:FilePin}
+/// Translate accepted owner artifact identities and roles without inferring a
+/// master from a filename or invoking a provider.
+pub fn artifact_inventory(root:&Path,expected_plan_sha256:&str,token:&dyn CancellationSignal)->Result<Vec<ArtifactDescription>,Error>{
+    let observed=observe_receipt(root,expected_plan_sha256,token)?;
+    let receipt=observed.receipt.ok_or_else(||error(Code::RecoveryRequired,"complete native acceptance required for artifact inventory"))?;
+    let bytes=command::read_document(&path(&receipt.acceptance_file)?,MAX_DOCUMENT)?;
+    if release_cohort::sha256(&bytes)!=receipt.acceptance_sha256{return Err(error(Code::StalePlan,"domain acceptance changed during artifact inventory"));}
+    let domain:Value=serde_json::from_slice(&bytes).map_err(|_|error(Code::RecoveryRequired,"domain acceptance malformed"))?;
+    let mut result=vec![];let mut ids=BTreeSet::new();
+    if domain["schema_version"]=="flow.aniflow-domain-acceptance/v1"{
+        for a in domain["native_completion"]["artifacts"].as_array().ok_or_else(||error(Code::RecoveryRequired,"native video artifact inventory missing"))?{
+            let id=a["artifact_id"].as_str().ok_or_else(||error(Code::RecoveryRequired,"native video artifact identity missing"))?;
+            let purpose=a["variant"].as_str().ok_or_else(||error(Code::RecoveryRequired,"native video artifact role missing"))?;
+            if !["clean_archival_master","destination_copy"].contains(&purpose)||!ids.insert(id.to_owned()){return Err(error(Code::RecoveryRequired,"native video artifact identity/role differs"));}
+            let locator=PathBuf::from(a["locator"].as_str().ok_or_else(||error(Code::RecoveryRequired,"native video locator missing"))?);
+            let file=receipt.artifacts.iter().find(|p|path(&p.path).ok().as_deref()==Some(locator.as_path())&&a["sha256"]==p.sha256&&a["byte_count"].as_u64()==Some(p.byte_count)).ok_or_else(||error(Code::RecoveryRequired,"native video artifact differs from committed receipt"))?;
+            result.push(ArtifactDescription{artifact_id:id.into(),purpose:purpose.into(),file:file.clone()});
+        }
+    }else if domain["schema_version"]=="flow.renderflow-domain-acceptance/v1"{
+        for a in domain["native_publications"]["verified_publications"].as_array().ok_or_else(||error(Code::RecoveryRequired,"native publication inventory missing"))?{
+            let id=a["target_id"].as_str().ok_or_else(||error(Code::RecoveryRequired,"native target identity missing"))?;
+            let relative=a["locator"].as_str().and_then(|p|p.strip_prefix("bundle:")).ok_or_else(||error(Code::RecoveryRequired,"native publication locator missing"))?;
+            if !crate::publisher_report::safe_member(relative)||!ids.insert(id.to_owned()){return Err(error(Code::RecoveryRequired,"native publication identity/path differs"));}
+            let file=path(&receipt.native_run)?.join(relative);
+            let pin=receipt.artifacts.iter().find(|p|path(&p.path).ok().as_deref()==Some(file.as_path())&&a["sha256"]==p.sha256&&a["byte_count"].as_u64()==Some(p.byte_count)).ok_or_else(||error(Code::RecoveryRequired,"native publication differs from committed receipt"))?;
+            result.push(ArtifactDescription{artifact_id:id.into(),purpose:"domain_publication".into(),file:pin.clone()});
+        }
+    }else{return Err(error(Code::Unavailable,"native artifact inventory schema unsupported"));}
+    if result.len()!=receipt.artifacts.len(){return Err(error(Code::RecoveryRequired,"native accepted artifact inventory differs"));}
+    FilePin{path:receipt.acceptance_file,sha256:receipt.acceptance_sha256,byte_count:bytes.len() as u64}.current(MAX_DOCUMENT,token)?;
+    Ok(result)
+}
 /// Resume is explicit and names an existing native run. The provider rechecks its
 /// own intent and accepted prefix. No directory scan, substitute run or replay.
 pub fn resume(root: &Path, native_run: &Path, token: &dyn CancellationSignal) -> Result<Receipt, Error> {

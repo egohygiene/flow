@@ -1,6 +1,7 @@
 # Flow #11 completion-roadmap handoff
 
-Current source continuation: [distribution sprint 2026-11-11](DISTRIBUTION-SPRINT-20261111.md).
+Current source continuation: [publishing sprint 2026-11-11](PUBLISHING-SPRINT-20261111.md).
+Previous source continuation: [distribution sprint 2026-11-11](DISTRIBUTION-SPRINT-20261111.md).
 Re-query live issues and draft branches before selecting or merging later work.
 
 
