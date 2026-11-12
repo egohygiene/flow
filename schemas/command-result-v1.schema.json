@@ -43,7 +43,12 @@
         "pilot-approve",
         "pilot-run",
         "pilot-status",
-        "pilot-continue"
+        "pilot-continue",
+        "release-evidence",
+        "approve-released",
+        "run-released",
+        "status-released",
+        "resume-released"
       ]
     },
     "outcome": {

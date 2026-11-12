@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.25.0
+version: 0.26.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,27 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Authenticated release admission
+
+`release_evidence` consumes explicitly pinned host policy, cohort, installed
+files, owner reports and retained positive native evidence. Only an explicit
+verification operation may invoke a pinned `gh attestation verify` process and
+permit its separate trust-root networking. Ordinary doctor, planning and file
+matrix observation remain read-only and never invoke a verifier. Signer workflow,
+signer revision and exact source revision/ref are policy, not report authority.
+Opaque in-memory evidence is created only after cryptographic verification and
+current target, host identity, dependency, clean-install and native/domain
+acceptance readback. Source copies, unsigned booleans, synthetic/refusal tests,
+missing/failed gates and stale proofs cannot grant release admission.
+
+Released native approval/run/status/resume use a distinct approval contract and
+require that opaque evidence again. The existing native execution supervisor and
+domain acceptance remain the only media engine. Inner native receipts describe
+native completion; an outer release receipt separately binds authenticated
+admission. Neither grants creative review, upload or provenance signing authority.
+All retained coverage rows, including unavailable targets, remain in the matrix.
+The evidence policy/adapter decision is proposed; no ADR is ratified by source.
 
 ## Fixed manual-SRT pilot preset
 
