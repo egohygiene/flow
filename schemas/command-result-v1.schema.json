@@ -50,7 +50,10 @@
         "status-released",
         "resume-released",
         "publisher-verify",
-        "suite-install-released"
+        "suite-install-released",
+        "project-preview",
+        "project-prepare",
+        "project-status"
       ]
     },
     "outcome": {

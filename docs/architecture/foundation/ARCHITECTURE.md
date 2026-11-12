@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.28.0
+version: 0.29.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,17 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Publishing project preparation
+
+`project` resolves a selected installed receipt into exact provider/descriptor
+files and unambiguous existing native rows. Read-only preview observes explicit
+sources and requested destinations. Explicit prepare creates a fresh private
+configuration bundle, snapshots the owner recipe, binds manual SRT and optional
+native audio target options, and delegates plan construction to the existing
+pilot/native SDK. It never invokes a provider, selects ambient tools, approves
+content or grants native readiness. Generated configuration, source and installed
+identities remain pinned; status checks them independently of execution state.
 
 ## Publisher-authenticated clean installation
 

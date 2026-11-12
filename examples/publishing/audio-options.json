@@ -1,0 +1,10 @@
+{
+  "schema_version": "flow.renderflow-options/v1",
+  "targets": {
+    "exact": [
+      {"id": "audio.archive", "role": "audio/archive", "format": "flac"},
+      {"id": "audio.listening", "role": "audio/listening", "format": "mp3"}
+    ]
+  },
+  "execution": {"network": "deny", "ai": "deny", "max_parallel": 1}
+}

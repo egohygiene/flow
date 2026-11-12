@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/schemas/publishing-project-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "metadata",
+    "installation",
+    "video",
+    "manual_srt",
+    "audio",
+    "video_configuration",
+    "workspace",
+    "destinations",
+    "tool_directories",
+    "limits"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.publishing-project/v1"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work_id",
+        "title",
+        "language"
+      ],
+      "properties": {
+        "work_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      }
+    },
+    "installation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "receipt_sha256"
+      ],
+      "properties": {
+        "root": {
+          "$ref": "flow-native-request-v1.schema.json#/properties/cohort"
+        },
+        "receipt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "video": {
+      "$ref": "flow-native-request-v1.schema.json#/properties/cohort"
+    },
+    "manual_srt": {
+      "$ref": "flow-native-request-v1.schema.json#/properties/cohort"
+    },
+    "audio": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "format",
+            "options"
+          ],
+          "properties": {
+            "path": {
+              "$ref": "flow-native-request-v1.schema.json#/properties/cohort"
+            },
+            "format": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]{1,32}$"
+            },
+            "options": {
+              "$ref": "flow-native-request-v1.schema.json#/properties/cohort"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "video_configuration": {
+      "$ref": "flow-native-request-v1.schema.json#/properties/cohort"
+    },
+    "workspace": {
+      "$ref": "flow-native-request-v1.schema.json#/properties/cohort"
+    },
+    "destinations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "archive",
+          "soundcloud",
+          "distrokid",
+          "tiktok"
+        ]
+      }
+    },
+    "tool_directories": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "$ref": "flow-native-request-v1.schema.json#/properties/cohort"
+      }
+    },
+    "limits": {
+      "$ref": "flow-native-request-v1.schema.json#/properties/limits"
+    },
+    "rows": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "video",
+        "timed_text",
+        "audio"
+      ],
+      "properties": {
+        "video": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timed_text": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "audio": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "preparation": {
+      "anyOf": [
+        {
+          "$ref": "flow-native-request-v1.schema.json#/properties/preparation"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}
