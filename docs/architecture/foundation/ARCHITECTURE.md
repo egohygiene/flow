@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.33.0
+version: 0.34.0
 status: draft
 owners:
   - egohygiene
@@ -34,6 +34,12 @@ refreshing Aniflow QC or granting execution/release authority. Package, source,
 tool, installation and QC evidence namespaces remain outside the writable bundle.
 The existing native supervisor and Aniflow domain owners retain execution and
 audio acceptance. This is a proposed ADR-0019 extension, uncompiled/unrun.
+
+Preparation retains exact request/configuration bytes and native plans, with the
+prepared record written last. Reserved approval and native-run directories have
+separate later owners. A failed preparation preserves its partial root and never
+adopts, overwrites or deletes a retained bundle; repeat preparation needs a fresh
+root. Preparation is local configuration writing, not an executable check.
 
 ## Exact-file audio delivery readiness
 

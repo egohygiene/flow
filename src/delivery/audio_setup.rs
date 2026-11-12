@@ -131,6 +131,64 @@ pub fn preview(request:&Request,token:&dyn CancellationSignal)->Result<Preview,E
     Ok(draft(request,&guard)?.preview)
 }
 
+#[derive(Debug,Clone,Serialize,Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PreparedPlan {
+    pub payload_id:String,pub destination:Destination,pub plan_file:FilePin,
+    pub plan:native::Plan,pub approval_file:NativePath,
+}
+#[derive(Debug,Clone,Serialize,Deserialize)]
+#[serde(deny_unknown_fields)]
+struct Record {
+    schema_version:String,request:Request,preview:Preview,inputs:Vec<FilePin>,
+    intent_file:FilePin,configuration_files:Vec<FilePin>,plans:Vec<PreparedPlan>,
+}
+#[derive(Debug,Serialize)]
+pub struct Prepared {
+    pub schema_version:String,pub root:NativePath,pub setup_sha256:String,
+    pub package_subject_sha256:String,pub record:FilePin,pub plans:Vec<PreparedPlan>,
+    pub provider_invoked:bool,pub approvals_generated:bool,pub native_qualified:bool,
+    pub evidence_scope:String,
+}
+fn prepared(record:&Record,file:FilePin)->Prepared {
+    Prepared {schema_version:"flow.audio-check-preparation/v1".into(),root:record.request.workspace.clone(),setup_sha256:record.preview.setup_sha256.clone(),package_subject_sha256:record.preview.package_subject_sha256.clone(),record:file,plans:record.plans.clone(),provider_invoked:false,approvals_generated:false,native_qualified:false,evidence_scope:"local configuration/plan identity only; no provider process, current owner QC, release qualification or approval".into()}
+}
+/// Explicit local configuration writing; does not execute Aniflow or approve it.
+/// The last record is a completion marker. Errors retain the partial root.
+pub fn prepare(request:&Request,token:&dyn CancellationSignal)->Result<Prepared,Error>{
+    let started=Instant::now();let guard=||token.is_cancelled()||started.elapsed()>=Duration::from_millis(request.timeout_ms);
+    let selected=draft(request,&guard)?;let root=native::path(&request.workspace)?;
+    create(&root)?;
+    let action=(||{
+        for name in ["configuration","plans","approvals","native"]{create(&root.join(name))?;}
+        let intent=root.join("intent.json");write(&intent,&bytes(request)?)?;
+        let intent_file=FilePin::observe(&NativePath::from_path(&intent),MAX_DOC,&guard)?;
+        let mut configuration_files=vec![];
+        for (path,data) in &selected.configurations {
+            if guard(){return Err(error(Code::Cancelled,"audio setup preparation cancelled; preserve partial root"));}
+            write(path,data)?;configuration_files.push(FilePin::observe(&NativePath::from_path(path),131_072,&guard)?);
+        }
+        let mut plans=vec![];
+        for s in &selected.preview.selections {
+            if let ResolvedChoice::Check {request,plan_file,approval_file,..}=&s.choice {
+                let plan=native::prepare(request,&guard)?;
+                write(&native::path(plan_file)?,&bytes(&plan)?)?;
+                plans.push(PreparedPlan {payload_id:s.payload_id.clone(),destination:s.destination,plan_file:FilePin::observe(plan_file,MAX_DOC,&guard)?,plan,approval_file:approval_file.clone()});
+            }
+        }
+        for pin in selected.inputs.iter().chain(configuration_files.iter()).chain(std::iter::once(&intent_file)){pin.current(request.limits.max_input_bytes.max(MAX_DOC),&guard)?;}
+        for p in &plans {p.plan.require_current(&guard)?;p.plan_file.current(MAX_DOC,&guard)?;}
+        if let Some(i)=&request.installation{distribution::selected_installation(&native::path(&i.root)?,&i.receipt_sha256,&guard)?;}
+        let current=super::status(&native::path(&selected.package.current_root)?,&request.package_manifest.sha256,&guard)?;
+        if current.preview!=selected.package.preview{return Err(error(Code::StalePlan,"delivery package changed during check preparation"));}
+        let record=Record {schema_version:"flow.prepared-audio-check-setup/v1".into(),request:request.clone(),preview:selected.preview,inputs:selected.inputs,intent_file,configuration_files,plans};
+        let path=root.join("prepared-audio-checks.json");write(&path,&bytes(&record)?)?;
+        fs::File::open(&root).and_then(|f|f.sync_all()).map_err(|_|error(Code::Io,"audio preparation directory synchronization"))?;
+        let file=FilePin::observe(&NativePath::from_path(&path),MAX_DOC,&guard)?;Ok(prepared(&record,file))
+    })();
+    action.map_err(|mut e:Error|{e.recovery_directory=Some(NativePath::from_path(&root));e})
+}
+
 #[cfg(test)]mod tests {
     use super::*;
     fn payload()->Payload {Payload {id:"video".into(),role:Role::VideoDelivery,relative:"payload/video.mp4".into(),sha256:"a".repeat(64),byte_count:100,destinations:vec![Destination::Tiktok],source_state:"accepted_native_artifact".into()}}

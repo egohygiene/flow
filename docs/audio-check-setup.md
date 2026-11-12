@@ -33,8 +33,22 @@ supporting documents are outside audio check coverage; manual SRT stays manual.
 
 Preview lists each policy, source/configuration pin, installed provider/descriptor
 and reserved configuration/plan/approval/native paths. It never infers approval
-from a chosen path. Preparation, integrity readback, approval binding and command
-delivery are separate checkpoints on top of this read-only resolver.
+from a chosen path.
+
+`delivery::audio_setup::prepare` explicitly creates a fresh private bundle. It
+copies the exact supplied owner-request bytes, writes the setup intent and
+delegates each plan to the existing `native::prepare`. It reobserves sources,
+configuration, installation and package identity before writing the final
+`prepared-audio-checks.json` record. The result contains that record's FilePin and
+each exact native plan and proposed approval path. No approval file is generated.
+
+Configuration and plans are immutable bundle members. The empty `approvals/`
+directory is reserved for separately supplied operator authority; `native/`
+reserves later existing native attempts. Setup does not create check workspaces
+or invoke a provider. A failed operation preserves its partial root and reports
+that recovery directory. It never adopts or repairs that root; use a fresh
+workspace for another preparation. Retained integrity readback, explicit binding
+and command delivery follow as separate checkpoints.
 
 This source checkpoint and its focused coverage/scope cases are authored,
 uncompiled/unrun. No tests, product validators, provider/native/media execution
