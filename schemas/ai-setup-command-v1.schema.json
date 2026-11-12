@@ -1,0 +1,11 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"flow.ai-setup-command/v1",
+ "type":"object","additionalProperties":false,
+ "required":["schema_version","marker","setup","runtime_or_service_contacted","invocation_authority"],
+ "properties":{
+  "schema_version":{"const":"flow.ai-setup-command/v1"},
+  "marker":{"$ref":"delivery-request-v1.schema.json#/properties/project_record"},
+  "setup":{"$ref":"ai-local-setup-status-v1.schema.json"},
+  "runtime_or_service_contacted":{"const":false},"invocation_authority":{"const":false}
+ }
+}
