@@ -6,6 +6,11 @@ candidate routes through [native commands](native-candidates.md), and a read-onl
 and explicit candidate approval; publication and native qualification are separate.
 The released-only Optiflow v1 path below retains its original scope and behavior.
 
+For publishing audio, [installed check setup](../audio-check-setup.md) exposes
+`audio-setup-preview`, explicit preparation, local status and separately supplied
+approval binding. Those commands author/read configuration and plans; only a
+later explicit audio-readiness run invokes the Aniflow check owner.
+
 The `flow` source target delivers the public `command` SDK. It is an unqualified
 implementation checkpoint, separate from the synthetic provider and provisional
 AI setup utility. The first concrete route is the existing independently released

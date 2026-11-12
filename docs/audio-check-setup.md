@@ -73,6 +73,41 @@ and its ordinary explicit verification acknowledgement before any invocation.
 The resulting request uses the existing read-only owner-check runner; there is
 no new process supervisor or acceptance database.
 
+## Commands
+
+These examples describe a later explicitly selected local workflow. Paths and
+digests come from the operator's real files and command results; no sample pin
+or review is evidence. None of these commands was executed for this source work.
+
+```bash
+flow audio-setup-preview --request "$AUDIO_SETUP_REQUEST" --format json
+flow audio-setup-prepare --request "$AUDIO_SETUP_REQUEST" --format json
+flow audio-setup-status --workspace "$AUDIO_SETUP_WORKSPACE" --record-sha256 "$AUDIO_SETUP_RECORD_SHA256" --format json
+```
+
+After inspecting the returned native plans, supply their approvals through the
+existing [candidate](cli/native-candidates.md) or separately authenticated
+released path. Collect the actual approval FilePins into the approval-set
+document. Setup commands have no `--approved-by`, execution or network switch.
+
+```bash
+flow audio-setup-bind --workspace "$AUDIO_SETUP_WORKSPACE" --record-sha256 "$AUDIO_SETUP_RECORD_SHA256" --approvals "$AUDIO_SETUP_APPROVALS" --output "$AUDIO_READINESS_REQUEST" --format json
+flow audio-readiness-preview --request "$AUDIO_READINESS_REQUEST" --format json
+```
+
+Only a later explicit `audio-readiness-run` performs owner checks. Released
+choices require that command's full existing verification request, host policy,
+verifier pins and explicit network acknowledgement when selected; setup does not
+supply them. Every byte-changing gain, encode, caption mux or metadata edit needs
+fresh final-file QC and another policy check. An old setup/check cannot qualify
+new media bytes. A successful setup/bind command means that local operation
+completed, not that audio, human review, platform compliance or publishing is ready.
+
+Equivalent task aliases are `audio:setup:preview` / `audio:setup:prepare` with
+`REQUEST`, `audio:setup:status` with `WORKSPACE` and `RECORD_SHA256`, and
+`audio:setup:bind` with those two plus `APPROVALS` and `OUTPUT`. Each delegates
+to the same Flow command, without installing anything or running extra checks.
+
 These source checkpoints and their focused coverage/scope, archive-only roundtrip
 and stale-pin-before-write cases are authored,
 uncompiled/unrun. No tests, product validators, provider/native/media execution
