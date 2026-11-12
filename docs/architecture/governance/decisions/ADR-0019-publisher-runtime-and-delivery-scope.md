@@ -64,3 +64,15 @@ the domain owner. Goal matching does not establish meter/platform qualification,
 musical approval or upload authority. Failures retain ordinary native attempts;
 there is no new runtime, automatic replay/approval or acceptance database. This
 extension remains proposed and source-only, with execution deferred to #88.
+
+## Proposed installed-check preparation extension — November 12, 2026
+
+An operator can resolve supplied Aniflow QC/policy requests against exact delivery
+payloads and a selected installed policy-check row. Read-only preview exposes
+these bindings. Explicit preparation may copy only configuration bytes and ask
+the existing native SDK to construct plans in a fresh private bundle. Supplied
+approvals remain a later input; setup cannot create them or execute a provider.
+Package copies, original final files, installation/tools and native/QC evidence
+must remain outside the writable setup namespace. Retained setup status records
+local identity rather than current domain QC. This extension is proposed;
+source authoring, installation receipts and preview do not qualify a release.

@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.32.0
+version: 0.33.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,20 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Installed audio-check preparation
+
+Delivery audio-check setup resolves an explicitly selected installed Aniflow
+policy-check row against exact package bytes and supplied current-QC requests.
+Read-only preview exposes source/configuration pins, destinations, goals and
+reserved paths. Explicit preparation delegates plans to the existing native SDK
+and writes an immutable configuration/plan bundle; it invokes no provider and
+creates no approval. Later binding consumes separately supplied exact approvals.
+Local preparation readback verifies retained scope and byte identity, without
+refreshing Aniflow QC or granting execution/release authority. Package, source,
+tool, installation and QC evidence namespaces remain outside the writable bundle.
+The existing native supervisor and Aniflow domain owners retain execution and
+audio acceptance. This is a proposed ADR-0019 extension, uncompiled/unrun.
 
 ## Exact-file audio delivery readiness
 

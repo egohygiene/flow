@@ -2,6 +2,7 @@
 //! copies bytes and records supplied review declarations; it never transforms
 //! media, validates current platform requirements, signs or publishes anything.
 pub mod audio_readiness;
+pub mod audio_setup;
 use std::{collections::{BTreeMap,BTreeSet},fs,path::Path,time::{Duration,Instant}};
 use serde::{Serialize,Deserialize};
 use serde_json::{json,Value};

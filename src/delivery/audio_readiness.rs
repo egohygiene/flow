@@ -23,9 +23,9 @@ impl Request {
     fn validate(&self)->Result<(),Error>{if self.schema_version!="flow.audio-readiness-request/v1"||self.selections.len()>128||self.timeout_ms==0||self.timeout_ms>86_400_000||!release_cohort::is_digest(&self.package_manifest.sha256){return Err(error(Code::InvalidInput,"bounded explicit package/check selection required"));}Ok(())}
     pub fn needs_released_evidence(&self)->bool{self.selections.iter().any(|s|matches!(&s.choice,Choice::Check {authority:Authority::Released {..},..}))}
 }
-fn audio_role(role:Role)->bool{matches!(role,Role::CleanMaster|Role::VideoDelivery|Role::OriginalAudio|Role::AudioDerivative)}
-fn key(id:&str,destination:Destination)->String{format!("{id}:{destination:?}")}
-fn archive_skip(role:Role,destination:Destination,reason:&str)->bool {
+pub(super) fn audio_role(role:Role)->bool{matches!(role,Role::CleanMaster|Role::VideoDelivery|Role::OriginalAudio|Role::AudioDerivative)}
+pub(super) fn key(id:&str,destination:Destination)->String{format!("{id}:{destination:?}")}
+pub(super) fn archive_skip(role:Role,destination:Destination,reason:&str)->bool {
     destination==Destination::Archive&&matches!(role,Role::CleanMaster|Role::OriginalAudio)&&!reason.trim().is_empty()&&reason.len()<=512&&!reason.chars().any(char::is_control)
 }
 

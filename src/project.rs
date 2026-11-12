@@ -47,13 +47,13 @@ impl Project{
         if self.rows.audio.is_some()&&self.audio.is_none(){return Err(error(Code::InvalidInput,"audio row selected without an audio source"));}Ok(())
     }
 }
-#[derive(Debug,Clone,Serialize)]
+#[derive(Debug,Clone,Serialize,Deserialize)]
 pub struct SelectedRow{pub role:String,pub row_id:String,pub tool:Tool,pub provider:FilePin,pub descriptor:FilePin}
 #[derive(Debug,Clone,Serialize)]
 pub struct Preview{pub schema_version:String,pub project_sha256:String,pub metadata:pilot::Metadata,pub sources:Vec<FilePin>,pub cohort_sha256:String,pub selected_rows:Vec<SelectedRow>,pub destinations:Vec<Destination>,pub publisher_authenticated_at_install:bool,pub provider_invoked:bool,pub native_qualified:bool,pub review_pending:Vec<String>}
 struct Draft{preview:Preview,cohort:FilePin,configurations:Vec<(String,Vec<u8>)>,sources:Vec<FilePin>,requests:Vec<native::Request>}
 
-fn select_row(installation:&distribution::InstalledSelection,cohort:&Cohort,tool:Tool,profile:&str,id:Option<&str>,role:&str)->Result<SelectedRow,Error>{
+pub(crate) fn select_row(installation:&distribution::InstalledSelection,cohort:&Cohort,tool:Tool,profile:&str,id:Option<&str>,role:&str)->Result<SelectedRow,Error>{
     let installed=installation.tools.iter().find(|t|t.tool==tool).ok_or_else(||error(Code::Unavailable,"project provider is absent from selected installation"))?;
     let contract=match tool{Tool::Aniflow=>"aniflow.release-contract/v1",Tool::Renderflow=>"renderflow.release-contract/v2",_=>return Err(error(Code::Unavailable,"project provider profile unavailable"))};
     let descriptor=installed.contracts.iter().find(|c|c.identifier==contract).ok_or_else(||error(Code::Unavailable,"selected installation lacks compiled native release descriptor"))?;

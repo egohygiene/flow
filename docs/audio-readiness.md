@@ -1,5 +1,8 @@
 # Publishing audio readiness
 
+[Installed check setup](audio-check-setup.md) resolves the selected package and
+owner requests before separate preparation, approval and execution.
+
 The audio-readiness summary pairs every assigned delivery media file and
 destination with a chosen audio policy, the owner's level check and the package's
 current review declarations. It does not master audio or choose one loudness
