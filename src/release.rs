@@ -14,6 +14,7 @@ pub fn describe() -> Value {
             pin("flow.release-cohort/v1",include_bytes!("../schemas/flow-release-cohort-v1.schema.json")),
             pin("flow.release-matrix/v1",include_bytes!("../schemas/flow-release-matrix-v1.schema.json")),
             pin("flow.native-request/v1",include_bytes!("../schemas/flow-native-request-v1.schema.json")),
+            pin("flow.publisher-artifact-report/v1",include_bytes!("../schemas/publisher-artifact-report-v1.schema.json")),
             pin("flow.release-evidence-request/v1",include_bytes!("../schemas/release-evidence-request-v1.schema.json")),
             pin("flow.released-native-approval/v1",include_bytes!("../schemas/released-native-approval-v1.schema.json"))],
         "target_objectives":["x86_64-unknown-linux-gnu","aarch64-apple-darwin","x86_64-apple-darwin","x86_64-pc-windows-msvc"],
