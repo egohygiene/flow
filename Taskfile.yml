@@ -1,6 +1,35 @@
 version: '3'
 
 tasks:
+  ai:doctor:
+    desc: Inspect selected local AI profile without contacting a runtime
+    requires:
+      vars: [PROFILE]
+    env:
+      FLOW_LOCAL_AI_PROFILE: '{{.PROFILE}}'
+    cmds:
+      - flow ai-doctor --profile "$FLOW_LOCAL_AI_PROFILE" --format json
+
+  ai:prepare:
+    desc: Prepare private documents for explicitly selected existing AI assets
+    requires:
+      vars: [REQUEST, OUTPUT]
+    env:
+      FLOW_LOCAL_AI_REQUEST: '{{.REQUEST}}'
+      FLOW_LOCAL_AI_OUTPUT: '{{.OUTPUT}}'
+    cmds:
+      - flow ai-prepare --request "$FLOW_LOCAL_AI_REQUEST" --output-directory "$FLOW_LOCAL_AI_OUTPUT" --format json
+
+  ai:status:
+    desc: Reobserve an exact private local AI setup bundle
+    requires:
+      vars: [DIRECTORY, MARKER_SHA256]
+    env:
+      FLOW_LOCAL_AI_DIRECTORY: '{{.DIRECTORY}}'
+      FLOW_LOCAL_AI_MARKER_SHA256: '{{.MARKER_SHA256}}'
+    cmds:
+      - flow ai-setup-status --directory "$FLOW_LOCAL_AI_DIRECTORY" --marker-sha256 "$FLOW_LOCAL_AI_MARKER_SHA256" --format json
+
   publication:project:preview:
     desc: Preview explicit static publication locale/source branches
     requires:

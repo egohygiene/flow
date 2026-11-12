@@ -1,5 +1,10 @@
 # Optional AI integration inventory
 
+Source continuation: [main command setup delivery](cli.md) exposes the existing
+selected-file preparation/doctor/readback owner without invoking a runtime.
+The dated inventory below remains historical; source delivery is not release,
+native model/hardware qualification or adoption of the proposed profile.
+
 Source observation: November 9, 2026. Owner: [Flow #80](https://github.com/egohygiene/flow/issues/80).
 This checkpoint inventories existing clients and recommends the smallest first
 seam: reuse Renderflow's native catalog/profile/skill/summary owners. Add no

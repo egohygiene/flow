@@ -18,6 +18,11 @@ supersedes: []
 
 Proposed for #80, acceptance pending. Source inclusion or merge does not adopt it.
 
+November 12 source delivery extension: main command AI preparation/doctor and
+marker-pinned status reuse the existing setup owner and private bundle contract.
+Matched bytes remain partial; no socket/runtime/model acquisition or invocation
+authority is added. The separate provisional utility remains compatible.
+
 The current native Renderflow profile declares preparation but does not observe
 weight bytes or prove local execution. Define a Flow-owned proposed nonsecret
 profile and a separate private deployment/preparation declaration. Read-only

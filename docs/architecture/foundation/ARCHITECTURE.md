@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.38.0
+version: 0.39.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,16 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Local AI setup command delivery
+
+The main command SDK delegates selected-file AI preparation, redacted doctor and
+marker-pinned setup readback to the existing `ai_preparation` owner. Existing
+profile/asset schemas and the provisional utility remain compatible. Commands
+do not invoke a runtime, contact even loopback services, acquire assets or grant
+inference authority. Prepared bytes retain a partial/unqualified result; output
+bundles stay private and outside selected asset/request scope. Proposed ADR-0015
+continues to separate file identity from native/offline/model qualification.
 
 ## Locale-scoped static publication projects
 
