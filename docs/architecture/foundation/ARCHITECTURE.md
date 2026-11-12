@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.30.0
+version: 0.31.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,20 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Private delivery collection and review
+
+`delivery` selects exact accepted native artifact IDs, explicit original audio/SRT
+or bounded external assets. Native-owned variants identify the archival master;
+filenames never imply that role. Read-only catalog/preview and explicit private
+copying reuse existing native domain readback and the bounded streaming copy
+boundary. A last manifest pins the complete owned collection, metadata and
+supplied review declarations. Byte-changing transformations remain in providers.
+Operator reviews bind the exact payload/metadata subject and never become machine
+claims of authenticated identity, current platform compliance or upload authority.
+Relative owned members support portable package readback independently of original
+host paths; retained domain records do not reproduce the full native/signature
+chain. Original sources, native workspaces and unknown files remain preserved.
 
 ## Released pilot authority
 

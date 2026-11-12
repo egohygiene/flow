@@ -57,7 +57,11 @@
         "pilot-approve-released",
         "pilot-run-released",
         "pilot-status-released",
-        "pilot-continue-released"
+        "pilot-continue-released",
+        "delivery-catalog",
+        "delivery-preview",
+        "delivery-prepare",
+        "delivery-status"
       ]
     },
     "outcome": {

@@ -76,7 +76,12 @@ fn parents(root: &Path, relative: &str) -> Result<(), Error> {
     Ok(())
 }
 fn copy(source: &FilePin, output: &Path, executable: bool, token: &dyn CancellationSignal) -> Result<FilePin, Error> {
-    source.current(MAX_FILE,token)?;
+    copy_bounded(source,output,executable,MAX_FILE,token)
+}
+/// Shared constant-memory copy boundary for installation and selected media.
+pub(crate) fn copy_bounded(source:&FilePin,output:&Path,executable:bool,maximum:u64,token:&dyn CancellationSignal)->Result<FilePin,Error>{
+    if maximum==0||maximum>68_719_476_736{return Err(error(Code::InvalidInput,"bounded copy limit required"));}
+    source.current(maximum,token)?;
     let input=path(&source.path)?;
     let mut options=OpenOptions::new();options.read(true);
     #[cfg(unix)] {use std::os::unix::fs::OpenOptionsExt;options.custom_flags(nix::libc::O_NOFOLLOW|nix::libc::O_CLOEXEC|nix::libc::O_NONBLOCK);}
@@ -88,8 +93,8 @@ fn copy(source: &FilePin, output: &Path, executable: bool, token: &dyn Cancellat
     let mut hash=Sha256::new();let mut count=0_u64;let mut buffer=[0_u8;8192];
     loop {if token.is_cancelled(){return Err(error(Code::Cancelled,"asset copy cancelled; preserve incomplete installation"));}let size=reader.read(&mut buffer).map_err(|_|error(Code::Io,"asset copy read"))?;if size==0{break;}count=count.saturating_add(size as u64);if count>source.byte_count{return Err(error(Code::StalePlan,"asset size changed during copy"));}writer.write_all(&buffer[..size]).map_err(|_|error(Code::Io,"asset copy write"))?;hash.update(&buffer[..size]);}
     if count!=source.byte_count||format!("{:x}",hash.finalize())!=source.sha256{return Err(error(Code::StalePlan,"copied asset bytes differ from pin"));}
-    writer.sync_all().map_err(|_|error(Code::Io,"installed asset synchronization"))?;source.current(MAX_FILE,token)?;
-    FilePin::observe(&NativePath::from_path(output),MAX_FILE,token)
+    writer.sync_all().map_err(|_|error(Code::Io,"installed asset synchronization"))?;source.current(maximum,token)?;
+    FilePin::observe(&NativePath::from_path(output),maximum,token)
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

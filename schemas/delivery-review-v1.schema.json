@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/schemas/delivery-review-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_subject_sha256",
+    "scope",
+    "decision",
+    "reviewed_by",
+    "reviewed_at",
+    "notes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.delivery-review/v1"
+    },
+    "package_subject_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "scope": {
+      "enum": [
+        "words",
+        "timing",
+        "visual",
+        "audio",
+        "final_package"
+      ]
+    },
+    "decision": {
+      "enum": [
+        "accept",
+        "reject",
+        "needs_changes"
+      ]
+    },
+    "reviewed_by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "reviewed_at": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 8192
+    }
+  }
+}
