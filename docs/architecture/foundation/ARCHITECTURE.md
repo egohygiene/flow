@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.31.0
+version: 0.32.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-11-11
+updated: 2026-11-12
 governed_by:
   - architecture-architecture
 depends_on:
@@ -20,6 +20,22 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Exact-file audio delivery readiness
+
+`delivery::audio_readiness` projects each assigned media payload/destination
+through an explicitly selected policy and existing native approval. The concrete
+read-only Aniflow adapter uses the existing pinned native transport, framing,
+limits and candidate/released authority paths. Aniflow owns loudness math and
+current final-file QC; Flow checks subject/configuration/schema/record identity
+and correlates results with exact copied delivery bytes and review declarations.
+An explicitly unchanged archival master is a separate choice, with no universal
+normalization. Native check snapshots are supporting documents and cannot serve
+as pilot video/audio outputs. Retained status does not refresh a QC owner; a
+fresh explicitly approved check is required for current delivery readiness.
+Numeric matching, provider release evidence, meter qualification, human review
+and upload authority remain separate. There is no second runner, audio algorithm,
+automatic approval or publisher. Proposed ADR-0019 records this extension.
 
 ## Private delivery collection and review
 

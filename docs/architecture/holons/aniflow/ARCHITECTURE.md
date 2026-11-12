@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: aniflow-architecture
 title: Aniflow Architecture
 kind: architecture-document
-version: 0.1.1
+version: 0.1.2
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-11-11
+updated: 2026-11-12
 governed_by:
   - architecture-architecture
 depends_on:
@@ -30,6 +30,17 @@ completion. Aniflow retains temporal algorithms, tool/model admission and domain
 acceptance. Flow retains its own selected source/configuration pins, approval,
 immutable attempts and output-byte reobservation. No crate dependency is added.
 This is candidate source support, not proof of a published or qualified release.
+
+## Explicit audio policy readback
+
+The separately selected `audio-policy-check-v1` route invokes the independently
+pinned Aniflow current-final-QC comparison with direct argv. Aniflow owns goals,
+measurements and current QC binding. Flow owns exact selected file/configuration
+pins, explicit candidate/released approvals, bounded capture and delivery/review
+correlation. Captured assessments are supporting records, never media masters.
+Local retained status does not recheck the QC owner or qualify the meter; current
+readiness requires a new explicit check. Native gain/video processing remains
+Aniflow-owned and is not silently selected by the read-only route.
 
 ## Purpose and scope
 

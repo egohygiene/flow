@@ -64,6 +64,8 @@ impl Plan {
         for (stage,(role,selected)) in self.stages.iter().zip(self.request.stages()) {
             stage.plan.validate()?;
             let expected=if role=="video"{Tool::Aniflow}else{Tool::Renderflow};
+            let expected_profile=if role=="video"{"music-video-source-v1"}else{"canonical-build-v1"};
+            if stage.plan.row.profile!=expected_profile{return Err(error(Code::InvalidInput,"pilot media stages require their concrete media profile; a policy assessment is supporting evidence"));}
             if stage.role!=role||stage.plan.request!=*selected||stage.plan.row.tool!=expected||stage.plan.request.cohort_sha256!=self.request.video.cohort_sha256||stage.plan.row.target!=self.stages[0].plan.row.target{return Err(error(Code::InvalidInput,"pilot stage/cohort/target binding"));}
             if role=="timed_text"&&stage.plan.sources!=vec![self.request.manual_srt.clone()]{return Err(error(Code::InvalidInput,"pilot timed-text bytes differ from supplied manual SRT"));}
             if role=="audio"&&Some(stage.plan.sources[0].clone())!=self.request.audio_source{return Err(error(Code::InvalidInput,"pilot audio bytes differ from selected original"));}

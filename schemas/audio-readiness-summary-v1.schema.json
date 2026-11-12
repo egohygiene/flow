@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.audio-readiness-summary/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_subject_sha256",
+    "package_manifest_sha256",
+    "rows",
+    "reviews",
+    "missing_metadata",
+    "missing_destination_payloads",
+    "all_selected_audio_goals_match",
+    "owner_checks_performed",
+    "qualification_pending",
+    "evidence_scope",
+    "upload_authority",
+    "current_platform_compliance_verified"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.audio-readiness-summary/v1"
+    },
+    "package_subject_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "package_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "rows": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "payload_id",
+          "destination",
+          "relative",
+          "sha256",
+          "byte_count",
+          "state",
+          "policy",
+          "integrated_loudness",
+          "true_peak",
+          "matches_selected_policy",
+          "meter_qualified",
+          "provider_release_qualified",
+          "native_record",
+          "note"
+        ],
+        "properties": {
+          "payload_id": {
+            "type": "string"
+          },
+          "destination": {
+            "enum": [
+              "archive",
+              "soundcloud",
+              "distrokid",
+              "tiktok"
+            ]
+          },
+          "relative": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "byte_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "state": {
+            "enum": [
+              "fresh_owner_check_required",
+              "archive_master_unchanged",
+              "matches_selected_policy",
+              "missing_evidence",
+              "outside_target"
+            ]
+          },
+          "policy": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "integrated_loudness": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "true_peak": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "matches_selected_policy": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "meter_qualified": {
+            "type": "boolean"
+          },
+          "provider_release_qualified": {
+            "type": "boolean"
+          },
+          "native_record": {
+            "anyOf": [
+              {
+                "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "reviews": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "pending",
+        "changes_requested",
+        "identity_authenticated"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "review_pending",
+            "changes_requested",
+            "operator_declarations_supplied"
+          ]
+        },
+        "pending": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "enum": [
+              "words",
+              "timing",
+              "visual",
+              "audio",
+              "final_package"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "changes_requested": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "enum": [
+              "words",
+              "timing",
+              "visual",
+              "audio",
+              "final_package"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "identity_authenticated": {
+          "const": false
+        }
+      }
+    },
+    "missing_metadata": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "missing_destination_payloads": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "enum": [
+          "archive",
+          "soundcloud",
+          "distrokid",
+          "tiktok"
+        ]
+      }
+    },
+    "all_selected_audio_goals_match": {
+      "type": "boolean"
+    },
+    "owner_checks_performed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 128
+    },
+    "qualification_pending": {
+      "type": "boolean"
+    },
+    "evidence_scope": {
+      "type": "string"
+    },
+    "upload_authority": {
+      "const": false
+    },
+    "current_platform_compliance_verified": {
+      "const": false
+    }
+  },
+  "$comment": "Authored/unvalidated source contract. Native owner binding, current final-byte QC, approval, complete destination coverage and output scope remain runtime checks. No universal loudness, qualification or upload authority is asserted."
+}
