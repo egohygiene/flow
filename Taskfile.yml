@@ -1,0 +1,40 @@
+version: '3'
+
+tasks:
+  release:plan:
+    desc: Describe source release preparation; no build or publication
+    cmds:
+      - python3 scripts/release/package.py plan
+
+  release:prepare:
+    desc: Explicit native offline build/package into fresh external directories
+    requires:
+      vars: [SOURCE_REVISION, TARGET, COHORT, WORK, OUTPUT]
+    env:
+      FLOW_RELEASE_REVISION: '{{.SOURCE_REVISION}}'
+      FLOW_RELEASE_TARGET: '{{.TARGET}}'
+      FLOW_RELEASE_COHORT: '{{.COHORT}}'
+      FLOW_RELEASE_WORK: '{{.WORK}}'
+      FLOW_RELEASE_OUTPUT: '{{.OUTPUT}}'
+    cmds:
+      - python3 scripts/release/package.py prepare --source-revision "$FLOW_RELEASE_REVISION" --target "$FLOW_RELEASE_TARGET" --cohort "$FLOW_RELEASE_COHORT" --work-directory "$FLOW_RELEASE_WORK" --output "$FLOW_RELEASE_OUTPUT"
+
+  release:verify:
+    desc: Observe exact supplied candidate package bytes without executing them
+    requires:
+      vars: [PACKAGE, MANIFEST_SHA256]
+    env:
+      FLOW_RELEASE_PACKAGE: '{{.PACKAGE}}'
+      FLOW_RELEASE_MANIFEST_SHA256: '{{.MANIFEST_SHA256}}'
+    cmds:
+      - python3 scripts/release/package.py verify --package-directory "$FLOW_RELEASE_PACKAGE" --manifest-sha256 "$FLOW_RELEASE_MANIFEST_SHA256"
+
+  release:publish:
+    desc: Print a manual publication handoff; never create tags or releases
+    requires:
+      vars: [PACKAGE, MANIFEST_SHA256]
+    env:
+      FLOW_RELEASE_PACKAGE: '{{.PACKAGE}}'
+      FLOW_RELEASE_MANIFEST_SHA256: '{{.MANIFEST_SHA256}}'
+    cmds:
+      - python3 scripts/release/package.py handoff --package-directory "$FLOW_RELEASE_PACKAGE" --manifest-sha256 "$FLOW_RELEASE_MANIFEST_SHA256"

@@ -7,6 +7,7 @@ description = "Deterministic orchestration contracts and extension seams for the
 license = "MIT"
 repository = "https://github.com/egohygiene/flow"
 publish = false
+default-run = "flow"
 
 [[bin]]
 name = "flow-hermetic-provider"

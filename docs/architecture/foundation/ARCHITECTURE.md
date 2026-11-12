@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.21.0
+version: 0.22.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,19 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Flow artifact preparation
+
+`release` exposes the compiled Flow CLI/library/contract inventory without I/O.
+The repository-owned packaging adapter prepares only the real `flow` executable,
+its exact compiled descriptor, a tracked portable source archive, supplied provider
+cohort lock, dependency inventory, notices and checksum manifest. Native builds
+require the matching installed toolchain/host and explicit fresh external work
+roots. Registry publication remains unavailable. Fixture binaries are not shipped.
+Preparation and its printed manual publication handoff establish byte/source
+relationships, not supply-chain authentication, native compatibility, installation
+or qualification. Release signing/publication stays with the existing release
+authority; this source adds no signer, auto-dispatch or sibling dependency.
 
 ## Native command and release selection delivery
 

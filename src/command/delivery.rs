@@ -12,7 +12,7 @@ pub fn parse(values:Vec<OsString>)->Result<Arguments,Error>{
     if values.len()>32||values.iter().map(|v|v.len()).sum::<usize>()>65_536{return Err(error(Code::Usage,"command arguments exceed bounds"));}
     let mut values=values.into_iter();let command=match values.next(){None=>"help".into(),Some(value)=>value.into_string().map_err(|_|error(Code::Usage,"recognized UTF-8 command name required"))?};
     let command=match command.as_str(){"--help"|"-h"=>"help".into(),"--version"|"-V"=>"version".into(),_=>command};
-    if !["doctor","release-matrix","inspect","plan","approve","run","status","resume","help","version"].contains(&command.as_str()){return Err(error(Code::Usage,"supported commands: doctor, release-matrix, inspect, plan, approve, run, status, resume"));}
+    if !["doctor","release-contract","release-matrix","inspect","plan","approve","run","status","resume","help","version"].contains(&command.as_str()){return Err(error(Code::Usage,"supported commands: doctor, release-contract, release-matrix, inspect, plan, approve, run, status, resume"));}
     let mut options=BTreeMap::new();let mut ack=false;let mut candidate_ack=false;let mut presentation=Presentation::Human;let mut format_seen=false;
     while let Some(key)=values.next(){let key=key.into_string().map_err(|_|error(Code::Usage,"recognized UTF-8 option name required"))?;
         if key=="--acknowledge-trusted-unconfined"{if ack||command!="approve"{return Err(error(Code::Usage,"process acknowledgement belongs once to approve"));}ack=true;continue;}
@@ -73,6 +73,7 @@ pub fn execute(args:&Arguments,token:&dyn CancellationSignal)->Envelope {
     let run=(||->Result<Envelope,Error>{cancelled(token)?;if let Some(value)=native_delivery::execute(args,token)?{return Ok(value);}if args.acknowledge_unqualified_candidate{return Err(error(Code::Usage,"candidate acknowledgement belongs to a native candidate plan"));}match args.command.as_str(){
         "help"=>success("help",serde_json::json!({"usage":"flow COMMAND [long-form options] [--format human|json]","commands":["doctor","release-matrix","inspect","plan","approve","run","status","resume"],"released_route":"Optiflow v0.1.1 read-only scan/report/review-plan","candidate_routes":crate::native::SOURCE_ROUTES,"qualification":"source checkpoint; installed/published/native evidence remains separate"}),Outcome::Complete),
         "version"=>success("version",serde_json::json!({"package":env!("CARGO_PKG_VERSION"),"command_contract":"flow.command-result/v1","release_qualified":false}),Outcome::Complete),
+        "release-contract"=>success("release-contract",crate::release::describe(),Outcome::Complete),
         "doctor"=>{let executable=args.options.get("--provider-executable").map(|_|path(args,"--provider-executable")).transpose()?;let value=doctor(executable.as_deref(),token)?;let outcome=if value.selected_provider.is_some(){Outcome::Complete}else{Outcome::Unavailable};success("doctor",value,outcome)},
         "inspect"|"plan"=>{
             if args.options.contains_key("--input"){return local(args,local_request(args)?,token);}

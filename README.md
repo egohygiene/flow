@@ -1,5 +1,9 @@
 # Flow
 
+Source commands and setup are documented in [the CLI guide](docs/cli/README.md).
+[Artifact preparation](docs/releases.md) uses explicit Task commands; released
+artifacts and native qualification remain separate from these source checkpoints.
+
 > One coherent way to inspect, plan, transform, validate, and explain content.
 
 Flow is the developing orchestration library and suite architecture for Ego

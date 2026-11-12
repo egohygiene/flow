@@ -24,6 +24,7 @@ pub mod native;
 pub mod optiflow;
 pub mod process;
 pub mod release_cohort;
+pub mod release;
 pub mod runner;
 pub mod scenario;
 pub mod state;
