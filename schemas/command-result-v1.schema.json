@@ -48,7 +48,9 @@
         "approve-released",
         "run-released",
         "status-released",
-        "resume-released"
+        "resume-released",
+        "publisher-verify",
+        "suite-install-released"
       ]
     },
     "outcome": {

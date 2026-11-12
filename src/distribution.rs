@@ -96,20 +96,28 @@ fn copy(source: &FilePin, output: &Path, executable: bool, token: &dyn Cancellat
 pub struct InstalledFile { pub relative: String, pub sha256: String, pub byte_count: u64 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct Receipt { pub schema_version: String, pub root: NativePath, pub target: String, pub intent_sha256: String, pub files: Vec<InstalledFile>, pub candidate_acknowledged: bool, pub provider_invoked: bool, pub publisher_authenticated: bool, pub native_qualified: bool }
+pub struct Receipt { pub schema_version: String, pub root: NativePath, pub target: String, pub intent_sha256: String, pub files: Vec<InstalledFile>, pub candidate_acknowledged: bool, pub provider_invoked: bool, pub publisher_authenticated: bool, pub native_qualified: bool, #[serde(default,skip_serializing_if="Option::is_none")] pub publisher_admission: Option<crate::release_evidence::publisher::InstallAdmission> }
 #[derive(Debug, Clone, Serialize)]
 pub struct Observation { pub schema_version: String, pub receipt: Receipt, pub receipt_sha256: String, pub current_copied_bytes: bool, pub required_runtime_evidence: String }
 pub fn install(request: &Request, candidate_acknowledged: bool, token: &dyn CancellationSignal) -> Result<Observation, Error> {
-    request.validate()?;
     if !candidate_acknowledged{return Err(error(Code::ApprovalRequired,"explicit unqualified candidate installation acknowledgement required"));}
+    install_owned(request,None,token)
+}
+/// Copies only exact publisher-authenticated selected files. Native readiness
+/// remains independent and no installed executable is invoked.
+pub fn install_authenticated(request:&Request,publisher:&crate::release_evidence::publisher::VerifiedPublisher,token:&dyn CancellationSignal)->Result<Observation,Error>{install_owned(request,Some(publisher),token)}
+fn install_owned(request:&Request,publisher:Option<&crate::release_evidence::publisher::VerifiedPublisher>,token:&dyn CancellationSignal)->Result<Observation,Error>{
+    request.validate()?;
     if Some(request.target.as_str())!=native::host_target(){return Err(error(Code::Unavailable,"native install target does not match this host"));}
     let started=Instant::now();let budget=||token.is_cancelled()||started.elapsed().as_millis()>=u128::from(request.timeout_ms);
     validate_cohort(request,&budget)?;for source in request.sources(){source.current(MAX_FILE,&budget)?;}
+    let publisher_admission=publisher.map(|p|p.admit_install(request,&budget)).transpose()?;
     let root=path(&request.install_directory)?;create(&root)?;
     let action=(|| {
         let intent=json(request)?;write(&root.join("installation-intent.json"),&intent,false)?;
         let mut files=vec![];for (relative,source) in request.entries(){parents(&root,&relative)?;let observed=copy(source,&root.join(&relative),relative.starts_with("bin/"),&budget)?;files.push(InstalledFile {relative,sha256:observed.sha256,byte_count:observed.byte_count});}
-        let receipt=Receipt {schema_version:"flow.suite-installation/v1".into(),root:NativePath::from_path(&root),target:request.target.clone(),intent_sha256:hash(&intent),files,candidate_acknowledged:true,provider_invoked:false,publisher_authenticated:false,native_qualified:false};
+        let receipt=Receipt {schema_version:"flow.suite-installation/v1".into(),root:NativePath::from_path(&root),target:request.target.clone(),intent_sha256:hash(&intent),files,candidate_acknowledged:publisher.is_none(),provider_invoked:false,publisher_authenticated:publisher.is_some(),native_qualified:false,publisher_admission};
+        if let Some(p)=publisher{p.admit_install(request,&budget)?;}
         let data=json(&receipt)?;write(&root.join(RECEIPT),&data,false)?;
         status(&root,&hash(&data),&budget)
     })();action.map_err(|mut e: Error|{e.recovery_directory=Some(NativePath::from_path(&root));if !token.is_cancelled()&&started.elapsed().as_millis()>=u128::from(request.timeout_ms){e.code=Code::RecoveryRequired;e.message="installation observation/copy deadline exceeded; preserve partial root".into();}e})
@@ -127,13 +135,17 @@ pub fn status(root: &Path, expected_receipt_sha256: &str, token: &dyn Cancellati
     if hash(&data)!=expected_receipt_sha256{return Err(error(Code::StalePlan,"installation receipt pin differs"));}
     let receipt: Receipt=serde_json::from_slice(&data).map_err(|_|error(Code::RecoveryRequired,"installation receipt malformed"))?;
     let intent=command::read_document(&root.join("installation-intent.json"),1_048_576)?;let request=Request::from_json_slice(&intent)?;
-    if receipt.schema_version!="flow.suite-installation/v1"||path(&receipt.root)?!=root||request.install_directory!=receipt.root||receipt.target!=request.target||hash(&intent)!=receipt.intent_sha256||!receipt.candidate_acknowledged||receipt.provider_invoked||receipt.publisher_authenticated||receipt.native_qualified{return Err(error(Code::RecoveryRequired,"installation identity or evidence scope changed"));}
+    if receipt.schema_version!="flow.suite-installation/v1"||path(&receipt.root)?!=root||request.install_directory!=receipt.root||receipt.target!=request.target||hash(&intent)!=receipt.intent_sha256||receipt.candidate_acknowledged==receipt.publisher_authenticated||receipt.provider_invoked||receipt.native_qualified{return Err(error(Code::RecoveryRequired,"installation identity or evidence scope changed"));}
+    match (&receipt.publisher_admission,receipt.publisher_authenticated){
+        (Some(admission),true)=>{let cohort=crate::release_cohort::Cohort::from_json_slice(&command::read_document(&root.join("cohort.json"),1_048_576)?).map_err(|_|error(Code::RecoveryRequired,"retained publisher cohort malformed"))?;crate::release_evidence::publisher::validate_retained(&request,admission,&cohort)?;},
+        (None,false)=>{},_=>return Err(error(Code::RecoveryRequired,"publisher install scope and retained admission differ")),
+    }
     let entries=request.entries();if entries.len()!=receipt.files.len(){return Err(error(Code::RecoveryRequired,"installation copied membership differs"));}
     let mut expected=BTreeSet::from([RECEIPT.to_owned(),"installation-intent.json".into()]);
     for ((relative,pin),file) in entries.iter().zip(&receipt.files){if relative!=&file.relative||pin.sha256!=file.sha256||pin.byte_count!=file.byte_count||!expected.insert(relative.clone()){return Err(error(Code::RecoveryRequired,"installation copied identity differs from intent"));}FilePin {path:NativePath::from_path(&root.join(relative)),sha256:file.sha256.clone(),byte_count:file.byte_count}.current(MAX_FILE,token)?;}
     for (relative,_) in &entries {let mut parent=Path::new(relative).parent();while let Some(dir)=parent{if dir.as_os_str().is_empty(){break;}expected.insert(dir.to_string_lossy().replace(std::path::MAIN_SEPARATOR,"/")+"/");parent=dir.parent();}}
     if membership(root)?!=expected{return Err(error(Code::RecoveryRequired,"installation has missing or unknown files/directories; preserve them"));}
-    Ok(Observation {schema_version:"flow.suite-installation-status/v1".into(),receipt,receipt_sha256:expected_receipt_sha256.into(),current_copied_bytes:true,required_runtime_evidence:"publisher/release, dependency preparation and native profile qualification remain independent; no provider was invoked".into()})
+    Ok(Observation {schema_version:"flow.suite-installation-status/v1".into(),receipt,receipt_sha256:expected_receipt_sha256.into(),current_copied_bytes:true,required_runtime_evidence:"publisher authentication, when recorded, is an installation-time observation; current dependency/backend/profile qualification remains independent; no provider was invoked".into()})
 }
 pub fn bundle(request: &Request, output: &Path, token: &dyn CancellationSignal) -> Result<FilePin,Error> {
     request.validate()?;validate_cohort(request,token)?;
