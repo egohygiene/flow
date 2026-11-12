@@ -68,7 +68,7 @@ impl Plan {
             if role=="audio"&&Some(stage.plan.sources[0].clone())!=self.request.audio_source{return Err(error(Code::InvalidInput,"pilot audio bytes differ from selected original"));}
         }Ok(())
     }
-    fn current(&self,token:&dyn CancellationSignal)->Result<(),Error>{self.validate()?;cancelled(token)?;for stage in &self.stages{stage.plan.require_current(token)?;}Ok(())}
+    pub(crate) fn require_current(&self,token:&dyn CancellationSignal)->Result<(),Error>{self.validate()?;cancelled(token)?;for stage in &self.stages{stage.plan.require_current(token)?;}Ok(())}
 }
 /// Read-only composition. No domain program, automatic transcription or workspace creation.
 pub fn prepare(request:&Request,token:&dyn CancellationSignal)->Result<Plan,Error>{
@@ -81,7 +81,7 @@ pub fn prepare(request:&Request,token:&dyn CancellationSignal)->Result<Plan,Erro
     let config:serde_json::Value=read(&native::path(&request.timed_text.configuration)?)?;
     if config["sources"].as_array().is_none_or(|s|s.len()!=1||s[0]["format"]!="srt") {return Err(error(Code::InvalidInput,"pilot timed-text configuration must explicitly select supplied SRT"));}
     if config["execution"]["lyrics"].is_object() && config["execution"]["lyrics"]["source_sha256"]!=request.manual_srt.sha256{return Err(error(Code::InvalidInput,"native lyric profile must pin this supplied SRT"));}
-    let mut plan=Plan {schema_version:"flow.manual-srt-pilot-plan/v1".into(),plan_sha256:String::new(),request:request.clone(),stages};plan.plan_sha256=sha(&plan)?;plan.current(token)?;Ok(plan)
+    let mut plan=Plan {schema_version:"flow.manual-srt-pilot-plan/v1".into(),plan_sha256:String::new(),request:request.clone(),stages};plan.plan_sha256=sha(&plan)?;plan.require_current(token)?;Ok(plan)
 }
 #[derive(Debug,Clone,PartialEq,Eq,Serialize,Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -111,14 +111,14 @@ fn retained(plan:&Plan,token:&dyn CancellationSignal)->Result<Vec<(String,Option
 }
 /// Read-only native receipt and current artifact readback, no provider contact.
 pub fn status(root:&Path,token:&dyn CancellationSignal)->Result<Status,Error>{
-    let _held=lock(root,false)?;let (plan,_)=basis(root)?;plan.current(token)?;let stages=retained(&plan,token)?;let expected=if stages.iter().all(|(_,r)|r.is_some()){Some(handoff(&plan,stages.iter().map(|(role,r)|CompletedStage{role:role.clone(),receipt:r.clone().expect("checked")}).collect()))}else{None};
+    let _held=lock(root,false)?;let (plan,_)=basis(root)?;plan.require_current(token)?;let stages=retained(&plan,token)?;let expected=if stages.iter().all(|(_,r)|r.is_some()){Some(handoff(&plan,stages.iter().map(|(role,r)|CompletedStage{role:role.clone(),receipt:r.clone().expect("checked")}).collect()))}else{None};
     let saved=match fs::symlink_metadata(root.join("handoff.json")){Ok(_)=>{let h:Handoff=read(&root.join("handoff.json"))?;if Some(&h)!=expected.as_ref(){return Err(error(Code::RecoveryRequired,"pilot handoff differs from current accepted stage artifacts"));}Some(h)},Err(e) if e.kind()==std::io::ErrorKind::NotFound=>None,Err(_)=>return Err(error(Code::Io,"pilot handoff state unavailable"))};
     Ok(Status{schema_version:"flow.manual-srt-pilot-status/v1".into(),plan_sha256:plan.plan_sha256,stages,handoff:saved,next_action:"review retained native evidence; resume an explicitly identified partial native run, then pilot-continue; never infer creative or publishing approval".into()})
 }
 /// Sequential orchestration uses the existing native supervisor and recovery.
 /// Continue only reuses accepted stages; an uncertain started stage is never replayed.
 pub fn run(plan:&Plan,approval:&Approval,continue_existing:bool,token:&dyn CancellationSignal)->Result<Handoff,Error>{
-    plan.current(token)?;approval.validate(plan)?;let root=native::path(&plan.request.run_directory)?;
+    plan.require_current(token)?;approval.validate(plan)?;let root=native::path(&plan.request.run_directory)?;
     if !continue_existing{create(&root)?;}let _held=lock(&root,!continue_existing)?;
     let action=(||{
         if continue_existing{let (p,a)=basis(&root)?;if p!=*plan||a!=*approval{return Err(error(Code::RecoveryRequired,"retained pilot differs from approved plan"));}}
@@ -133,7 +133,7 @@ pub fn run(plan:&Plan,approval:&Approval,continue_existing:bool,token:&dyn Cance
             };completed.push(CompletedStage{role:stage.role.clone(),receipt});
         }
         // Later stages cannot turn an earlier changed artifact into a complete handoff.
-        plan.current(token)?;
+        plan.require_current(token)?;
         let now=retained(plan,token)?;
         if now.iter().zip(&completed).any(|((role,r),old)|role!=&old.role||r.as_ref()!=Some(&old.receipt)){return Err(error(Code::RecoveryRequired,"accepted pilot stage changed before handoff"));}
         let value=handoff(plan,completed);let output=root.join("handoff.json");

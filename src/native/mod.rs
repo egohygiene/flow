@@ -69,7 +69,7 @@ pub struct Limits {
 }
 impl Default for Limits { fn default() -> Self { Self { timeout_ms: 3_600_000, max_input_bytes: 8_589_934_592, max_output_bytes: 8_589_934_592, max_total_output_bytes: 17_179_869_184, max_artifacts: 256 } } }
 impl Limits {
-    fn validate(&self) -> Result<(), Error> { if self.timeout_ms == 0 || self.timeout_ms > 86_400_000 || self.max_input_bytes == 0 || self.max_input_bytes > 68_719_476_736 || self.max_output_bytes == 0 || self.max_output_bytes > 68_719_476_736 || self.max_total_output_bytes < self.max_output_bytes || self.max_total_output_bytes > 1_099_511_627_776 || self.max_artifacts == 0 || self.max_artifacts > 8192 { Err(error(Code::InvalidInput, "bounded native limits required")) } else { Ok(()) } }
+    pub(crate) fn validate(&self) -> Result<(), Error> { if self.timeout_ms == 0 || self.timeout_ms > 86_400_000 || self.max_input_bytes == 0 || self.max_input_bytes > 68_719_476_736 || self.max_output_bytes == 0 || self.max_output_bytes > 68_719_476_736 || self.max_total_output_bytes < self.max_output_bytes || self.max_total_output_bytes > 1_099_511_627_776 || self.max_artifacts == 0 || self.max_artifacts > 8192 { Err(error(Code::InvalidInput, "bounded native limits required")) } else { Ok(()) } }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

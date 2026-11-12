@@ -23,6 +23,7 @@ pub mod hermetic;
 pub mod local_input;
 pub mod native;
 pub mod pilot;
+pub mod project;
 pub mod publisher_report;
 pub mod optiflow;
 pub mod process;

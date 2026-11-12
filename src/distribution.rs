@@ -99,6 +99,21 @@ pub struct InstalledFile { pub relative: String, pub sha256: String, pub byte_co
 pub struct Receipt { pub schema_version: String, pub root: NativePath, pub target: String, pub intent_sha256: String, pub files: Vec<InstalledFile>, pub candidate_acknowledged: bool, pub provider_invoked: bool, pub publisher_authenticated: bool, pub native_qualified: bool, #[serde(default,skip_serializing_if="Option::is_none")] pub publisher_admission: Option<crate::release_evidence::publisher::InstallAdmission> }
 #[derive(Debug, Clone, Serialize)]
 pub struct Observation { pub schema_version: String, pub receipt: Receipt, pub receipt_sha256: String, pub current_copied_bytes: bool, pub required_runtime_evidence: String }
+/// Current installed file selections, never a native execution authority.
+#[derive(Debug,Clone,Serialize)]
+pub struct InstalledSelection {pub schema_version:String,pub root:NativePath,pub target:String,pub receipt_sha256:String,pub cohort:FilePin,pub tools:Vec<SelectedTool>,pub publisher_authenticated_at_install:bool,pub native_qualified:bool}
+pub fn selected_installation(root:&Path,receipt_sha256:&str,token:&dyn CancellationSignal)->Result<InstalledSelection,Error>{
+    let observed=status(root,receipt_sha256,token)?;
+    let bytes=command::read_document(&root.join("installation-intent.json"),1_048_576)?;
+    if hash(&bytes)!=observed.receipt.intent_sha256{return Err(error(Code::StalePlan,"installation intent changed during selection"));}
+    let mut request=Request::from_json_slice(&bytes)?;request.cohort.path=NativePath::from_path(&root.join("cohort.json"));
+    for tool in &mut request.tools{
+        let tool_name=name(tool.tool);tool.executable.path=NativePath::from_path(&root.join("bin").join(tool_name));
+        for (index,contract) in tool.contracts.iter_mut().enumerate(){contract.file.path=NativePath::from_path(&root.join("contracts").join(tool_name).join(format!("{index:02}.json")));}
+        for extra in &mut tool.extras{extra.file.path=NativePath::from_path(&root.join("assets").join(tool_name).join(&extra.name));}
+    }
+    Ok(InstalledSelection{schema_version:"flow.installed-selection/v1".into(),root:NativePath::from_path(root),target:request.target,receipt_sha256:receipt_sha256.into(),cohort:request.cohort,tools:request.tools,publisher_authenticated_at_install:observed.receipt.publisher_authenticated,native_qualified:false})
+}
 pub fn install(request: &Request, candidate_acknowledged: bool, token: &dyn CancellationSignal) -> Result<Observation, Error> {
     if !candidate_acknowledged{return Err(error(Code::ApprovalRequired,"explicit unqualified candidate installation acknowledgement required"));}
     install_owned(request,None,token)
