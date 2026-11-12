@@ -53,7 +53,11 @@
         "suite-install-released",
         "project-preview",
         "project-prepare",
-        "project-status"
+        "project-status",
+        "pilot-approve-released",
+        "pilot-run-released",
+        "pilot-status-released",
+        "pilot-continue-released"
       ]
     },
     "outcome": {
