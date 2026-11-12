@@ -28,7 +28,15 @@
         "status",
         "resume",
         "parse",
-        "presentation"
+        "presentation",
+        "release-contract",
+        "release-matrix",
+        "suite-install",
+        "suite-bundle",
+        "suite-status",
+        "suite-activate",
+        "suite-rollback",
+        "suite-uninstall"
       ]
     },
     "outcome": {

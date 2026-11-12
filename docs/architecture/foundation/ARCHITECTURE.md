@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.22.0
+version: 0.23.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,19 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Independent suite installation
+
+`distribution` owns explicit pinned file acquisition inputs, immutable private
+suite installations, offline directory bundles, selected activation/rollback and
+bounded removal of unchanged owned copies. Its public SDK validates the selected
+cohort/tool/target/contracts and reuses the existing file observation boundary.
+Copying never invokes installed providers or downloads dependencies. Installation
+receipts bind exact intent, membership and current bytes, separately from publisher
+authentication and native qualification. Activation uses a caller-selected pointer
+and expected previous digest; rollback reselects a retained installation. Removal
+requires an exact receipt pin, complete unchanged membership and an external
+create-new removal record; originals and unknown files are never removed.
 
 ## Flow artifact preparation
 
