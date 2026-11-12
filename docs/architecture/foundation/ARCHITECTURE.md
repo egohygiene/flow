@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.24.0
+version: 0.25.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,17 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Fixed manual-SRT pilot preset
+
+`pilot` composes existing native Aniflow video and Renderflow timed-text/optional
+audio plans under one exact cohort and target. A manual SRT remains a pinned
+original. Planning is read-only; approval binds each existing native plan and its
+authority. Sequential run/continue delegates to the native supervisor, retains a
+start marker before each launch, and never replays uncertain stages. Native
+status and acceptance validators own actual output acceptance. The local handoff
+indexes current accepted payloads and remains pending creative/publishing review;
+it grants no upload, provenance signing or release authority.
 
 ## Main CLI preparation and diagnostics
 

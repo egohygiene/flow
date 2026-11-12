@@ -156,7 +156,7 @@ impl Plan {
         if artifact.sha256 != self.provider.sha256 || artifact.byte_count != self.provider.byte_count { return Err(error(Code::InvalidInput, "cohort artifact and executable differ")); }
         Ok(())
     }
-    fn require_current(&self, token: &dyn CancellationSignal) -> Result<(), Error> {
+    pub(crate) fn require_current(&self, token: &dyn CancellationSignal) -> Result<(), Error> {
         self.validate()?; cancelled(token)?;
         let cohort_bytes = command::read_document(&path(&self.request.cohort)?, 1_048_576)?;
         if release_cohort::sha256(&cohort_bytes) != self.request.cohort_sha256 { return Err(error(Code::StalePlan, "selected cohort bytes changed")); }
