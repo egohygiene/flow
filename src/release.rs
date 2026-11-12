@@ -25,6 +25,7 @@ pub fn describe() -> Value {
             pin("flow.publishing-readiness/v1",include_bytes!("../schemas/publishing-readiness-v1.schema.json")),
             pin("flow.released-pilot-approval/v1",include_bytes!("../schemas/released-pilot-approval-v1.schema.json")),
             pin("flow.publishing-project/v1",include_bytes!("../schemas/publishing-project-v1.schema.json")),
+            pin("flow.static-publication-project/v1",include_bytes!("../schemas/static-publication-project-v1.schema.json")),
             pin("flow.publisher-artifact-report/v1",include_bytes!("../schemas/publisher-artifact-report-v1.schema.json")),
             pin("flow.release-evidence-request/v1",include_bytes!("../schemas/release-evidence-request-v1.schema.json")),
             pin("flow.released-native-approval/v1",include_bytes!("../schemas/released-native-approval-v1.schema.json"))],

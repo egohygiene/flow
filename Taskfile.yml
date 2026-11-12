@@ -1,6 +1,34 @@
 version: '3'
 
 tasks:
+  publication:project:preview:
+    desc: Preview explicit static publication locale/source branches
+    requires:
+      vars: [PROJECT]
+    env:
+      FLOW_STATIC_PROJECT: '{{.PROJECT}}'
+    cmds:
+      - flow publication-project-preview --project "$FLOW_STATIC_PROJECT" --format json
+
+  publication:project:prepare:
+    desc: Prepare static publication plans without provider execution or approval
+    requires:
+      vars: [PROJECT]
+    env:
+      FLOW_STATIC_PROJECT: '{{.PROJECT}}'
+    cmds:
+      - flow publication-project-prepare --project "$FLOW_STATIC_PROJECT" --format json
+
+  publication:project:status:
+    desc: Read static project identity and accepted required-artifact coverage
+    requires:
+      vars: [WORKSPACE, RECORD_SHA256]
+    env:
+      FLOW_STATIC_WORKSPACE: '{{.WORKSPACE}}'
+      FLOW_STATIC_RECORD_SHA256: '{{.RECORD_SHA256}}'
+    cmds:
+      - flow publication-project-status --workspace "$FLOW_STATIC_WORKSPACE" --record-sha256 "$FLOW_STATIC_RECORD_SHA256" --format json
+
   publishing:readiness:
     desc: Report exact package files, recorded audio checks and remaining operator actions
     requires:

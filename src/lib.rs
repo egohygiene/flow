@@ -25,6 +25,7 @@ pub mod local_input;
 pub mod native;
 pub mod pilot;
 pub mod project;
+pub mod static_project;
 pub mod publisher_report;
 pub mod optiflow;
 pub mod process;

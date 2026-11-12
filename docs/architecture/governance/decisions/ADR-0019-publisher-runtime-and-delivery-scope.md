@@ -88,3 +88,13 @@ report grants neither human review nor execution/upload authority. Package/sourc
 identity and snapshot scope are checked; Aniflow retains all audio math and the
 existing native engine retains runtime acceptance. This remains proposed source,
 with actual execution/qualification deferred and Flow #88 preserved last.
+
+## Proposed static preset extension — November 12, 2026
+
+Explicit supplied locale/source branches can delegate to installed canonical
+Renderflow plans without a second execution engine. Required target IDs are
+operator requirements, checked against actual retained native acceptance rather
+than guessed from profile names. A locale label is not translation evidence.
+Preview and preparation grant no approval or runtime authority; existing native
+approval/run/resume owners remain unchanged. Creative/accessibility/rights and
+release/publication acceptance remain separate. This extension is proposed.

@@ -1,0 +1,33 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"flow.static-publication-project/v1",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","metadata","installation","workspace","branches","tool_directories","limits","timeout_ms"],
+  "properties":{
+    "schema_version":{"const":"flow.static-publication-project/v1"},
+    "metadata":{"$ref":"publishing-project-v1.schema.json#/properties/metadata"},
+    "installation":{"$ref":"publishing-project-v1.schema.json#/properties/installation"},
+    "workspace":{"$ref":"flow-native-request-v1.schema.json#/properties/cohort"},
+    "row_id":{"type":["string","null"]},
+    "tool_directories":{"type":"array","maxItems":32,"items":{"$ref":"flow-native-request-v1.schema.json#/properties/cohort"}},
+    "limits":{"$ref":"flow-native-request-v1.schema.json#/properties/limits"},
+    "timeout_ms":{"type":"integer","minimum":1,"maximum":86400000},
+    "branches":{"type":"array","minItems":1,"maxItems":16,"items":{
+      "type":"object","additionalProperties":false,"required":["id","locale","sources","options","required_artifacts"],
+      "properties":{
+        "id":{"type":"string","minLength":1,"maxLength":96,"pattern":"^[A-Za-z0-9_-]+$"},
+        "locale":{"type":"string","minLength":1,"maxLength":35,"pattern":"^[A-Za-z0-9-]+$"},
+        "options":{"$ref":"delivery-request-v1.schema.json#/properties/project_record"},
+        "required_artifacts":{"type":"array","minItems":1,"maxItems":128,"uniqueItems":true,"items":{"type":"string","minLength":1,"maxLength":256}},
+        "sources":{"type":"array","minItems":1,"maxItems":512,"items":{
+          "type":"object","additionalProperties":false,"required":["id","file","format"],
+          "properties":{
+            "id":{"type":"string","minLength":1,"maxLength":96,"pattern":"^[A-Za-z0-9_-]+$"},
+            "file":{"$ref":"delivery-request-v1.schema.json#/properties/project_record"},
+            "format":{"type":"string","minLength":1,"maxLength":48,"pattern":"^[a-z0-9_-]+$"}
+          }
+        }}
+      }
+    }}
+  }
+}
