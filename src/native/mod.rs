@@ -33,6 +33,8 @@ fn directory(value: &Path) -> Result<(), Error> { if value.canonicalize().ok().a
 #[derive(Debug, Clone, Copy, Serialize)]
 pub struct SourceRoute { pub tool: Tool, pub profile: &'static str, pub contract: &'static str, pub maximum_inputs: usize, pub state: &'static str }
 pub const SOURCE_ROUTES: &[SourceRoute] = &[
+    SourceRoute {tool:Tool::Aniflow,profile:"final-lossless-audio-qc-v1",contract:"aniflow.release-contract/v1",maximum_inputs:1,state:"implemented_fresh_owner_QC_requires_exact_pins_and_explicit_approval"},
+    SourceRoute {tool:Tool::Aniflow,profile:"final-video-audio-qc-v1",contract:"aniflow.release-contract/v1",maximum_inputs:1,state:"implemented_fresh_encoded_owner_QC_requires_exact_pins_and_explicit_approval"},
     SourceRoute {tool:Tool::Aniflow,profile:"fixed-audio-gain-v1",contract:"aniflow.release-contract/v1",maximum_inputs:1,state:"implemented_selected_gain_requires_exact_pins_and_explicit_approval"},
     SourceRoute { tool: Tool::Aniflow, profile: "music-video-source-v1", contract: "aniflow.release-contract/v1", maximum_inputs: 1, state: "implemented_source_candidate_requires_exact_pins_and_explicit_approval" },
     SourceRoute { tool: Tool::Renderflow, profile: "canonical-build-v1", contract: "renderflow.release-contract/v2", maximum_inputs: 8192, state: "implemented_source_candidate_requires_exact_pins_and_explicit_approval" },
@@ -202,7 +204,7 @@ pub fn prepare(request: &Request, token: &dyn CancellationSignal) -> Result<Plan
         || !description["profiles"].as_array().is_some_and(|profiles| profiles.iter().any(|p| p["id"] == row.profile && p["source_mutation"] == false))
         || !row.contracts.iter().any(|c| c.identifier == schema && c.sha256 == descriptor.sha256)
         || row.artifact.as_ref().is_none_or(|a| description["version"] != a.version) { return Err(error(Code::Unavailable, "pinned native profile/descriptor/release contract differs")); }
-    match row.tool { Tool::Aniflow if row.profile==audio_policy::PROFILE => audio_policy::validate_configuration(request)?, Tool::Aniflow if audio_processing::supports(&row.profile) => audio_processing::validate_configuration(request)?, Tool::Aniflow => aniflow::validate_configuration(request)?, Tool::Renderflow => renderflow::validate_configuration(request)?, _ => return Err(error(Code::Unavailable, "native configuration route unavailable")) }
+    match row.tool { Tool::Aniflow if row.profile==audio_policy::PROFILE => audio_policy::validate_configuration(request)?, Tool::Aniflow if audio_processing::supports(&row.profile) => audio_processing::validate_configuration(request,&row.profile)?, Tool::Aniflow => aniflow::validate_configuration(request)?, Tool::Renderflow => renderflow::validate_configuration(request)?, _ => return Err(error(Code::Unavailable, "native configuration route unavailable")) }
     let root = path(&request.run_directory)?;
     directory(root.parent().ok_or_else(|| error(Code::InvalidInput, "existing native output parent required"))?)?;
     if fs::symlink_metadata(&root).is_ok() { return Err(error(Code::RecoveryRequired, "fresh run directory required; use status/resume for retained attempts")); }

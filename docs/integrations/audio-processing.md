@@ -27,7 +27,17 @@ met. Gain outputs require fresh exact-file QC, a selected-policy comparison and
 separate musical review. Status validates retained evidence/current artifact
 bytes; it does not refresh Aniflow QC, qualify meters or grant publication.
 
-Two focused source-pinning/path-scope cases are authored, uncompiled/unrun. All
+The separately selected `final-lossless-audio-qc-v1` and
+`final-video-audio-qc-v1` routes take one exact final file and the respective
+existing resumable QC request. Source, full native intent and exact `qc.json`
+content must agree with the returned owner report. The receipt's native run
+names the QC directory and its accepted report pin supplies the separately
+retained digest for a later `audio-policy-check-v1` request. These routes do not
+choose a policy, transform audio or grant a numeric pass. An encoded-video check
+cannot consume a WAV report as its final-byte measurement. Re-encoding after QC
+requires another explicitly selected final-file check.
+
+Four focused source/pinning/QC-boundary cases are authored, uncompiled/unrun. All
 tests/compiler/build/dependencies/lint/format/schema/docs/drift/native/provider/
 media/model/CLI/SDK/browser/container/installer and CI execution stays deferred.
 No actual media/review, release, upload, source replacement/disposal, signature,
