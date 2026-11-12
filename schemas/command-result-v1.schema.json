@@ -61,7 +61,9 @@
         "delivery-catalog",
         "delivery-preview",
         "delivery-prepare",
-        "delivery-status"
+        "delivery-status",
+        "audio-readiness-preview",
+        "audio-readiness-run"
       ]
     },
     "outcome": {

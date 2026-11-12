@@ -2,6 +2,7 @@
 //! Source-candidate execution requires explicit trusted-unconfined approval and
 //! does not establish publication, qualification, creative review or provenance.
 mod aniflow;
+mod audio_policy;
 mod renderflow;
 mod preparation;
 mod released;
@@ -33,6 +34,7 @@ pub struct SourceRoute { pub tool: Tool, pub profile: &'static str, pub contract
 pub const SOURCE_ROUTES: &[SourceRoute] = &[
     SourceRoute { tool: Tool::Aniflow, profile: "music-video-source-v1", contract: "aniflow.release-contract/v1", maximum_inputs: 1, state: "implemented_source_candidate_requires_exact_pins_and_explicit_approval" },
     SourceRoute { tool: Tool::Renderflow, profile: "canonical-build-v1", contract: "renderflow.release-contract/v2", maximum_inputs: 8192, state: "implemented_source_candidate_requires_exact_pins_and_explicit_approval" },
+    SourceRoute {tool:Tool::Aniflow,profile:"audio-policy-check-v1",contract:"aniflow.release-contract/v1",maximum_inputs:1,state:"implemented_read_only_owner_check_requires_exact_pins_and_explicit_approval"},
 ];
 fn profile_schema(row: &Row, inputs: usize) -> Result<&'static str, Error> {
     SOURCE_ROUTES.iter().find(|route| route.tool == row.tool && route.profile == row.profile && inputs > 0 && inputs <= route.maximum_inputs)
@@ -40,6 +42,9 @@ fn profile_schema(row: &Row, inputs: usize) -> Result<&'static str, Error> {
 }
 fn configuration_limit(tool: Tool) -> u64 { if tool == Tool::Renderflow { 1_048_576 } else { 131_072 } }
 fn validate_effects(row: &Row) -> bool {
+    if row.tool==Tool::Aniflow&&row.profile==audio_policy::PROFILE {
+        return row.effects.iter().any(|e|e.as_str()=="read_originals")&&row.effects.iter().all(|e|["read_originals","write_new_outputs","direct_provider","trusted_unconfined"].contains(&e.as_str()));
+    }
     ["read_originals", "write_new_outputs"].iter().all(|required| row.effects.iter().any(|effect| effect.as_str() == *required))
         && row.effects.iter().all(|effect| ["read_originals", "write_new_outputs", "direct_provider", "trusted_unconfined"].contains(&effect.as_str()))
 }
@@ -195,7 +200,7 @@ pub fn prepare(request: &Request, token: &dyn CancellationSignal) -> Result<Plan
         || !description["profiles"].as_array().is_some_and(|profiles| profiles.iter().any(|p| p["id"] == row.profile && p["source_mutation"] == false))
         || !row.contracts.iter().any(|c| c.identifier == schema && c.sha256 == descriptor.sha256)
         || row.artifact.as_ref().is_none_or(|a| description["version"] != a.version) { return Err(error(Code::Unavailable, "pinned native profile/descriptor/release contract differs")); }
-    match row.tool { Tool::Aniflow => aniflow::validate_configuration(request)?, Tool::Renderflow => renderflow::validate_configuration(request)?, _ => return Err(error(Code::Unavailable, "native configuration route unavailable")) }
+    match row.tool { Tool::Aniflow if row.profile==audio_policy::PROFILE => audio_policy::validate_configuration(request)?, Tool::Aniflow => aniflow::validate_configuration(request)?, Tool::Renderflow => renderflow::validate_configuration(request)?, _ => return Err(error(Code::Unavailable, "native configuration route unavailable")) }
     let root = path(&request.run_directory)?;
     directory(root.parent().ok_or_else(|| error(Code::InvalidInput, "existing native output parent required"))?)?;
     if fs::symlink_metadata(&root).is_ok() { return Err(error(Code::RecoveryRequired, "fresh run directory required; use status/resume for retained attempts")); }
@@ -333,7 +338,7 @@ fn run_authorized<T: Serialize>(plan:&Plan,approval:&T,release_evidence:Option<&
         }
         create_directory(&root.join("native"))?; create_directory(&root.join("attempt-0000"))?;
         let context = Context { plan, root: root.clone(), evidence: root.join("attempt-0000"), started: Instant::now(), token, release_evidence };
-        match plan.row.tool { Tool::Aniflow => aniflow::execute(&context, None), Tool::Renderflow => renderflow::execute(&context, None), _ => Err(error(Code::Unavailable, "native route unavailable")) }
+        match plan.row.tool { Tool::Aniflow if plan.row.profile==audio_policy::PROFILE => audio_policy::execute(&context,None), Tool::Aniflow => aniflow::execute(&context, None), Tool::Renderflow => renderflow::execute(&context, None), _ => Err(error(Code::Unavailable, "native route unavailable")) }
     })(); action.map_err(|e| context_error(e, &root))
 }
 fn basis(root: &Path) -> Result<(Plan, Approval), Error> {
@@ -354,7 +359,7 @@ fn current_status(root: &Path, plan: &Plan, token: &dyn CancellationSignal) -> R
         || !release_cohort::is_digest(&receipt.native_intent_sha256) || !native_run.starts_with(root.join("native")) || native_run == root.join("native") || !acceptance.starts_with(root) || receipt.artifacts.is_empty() || receipt.artifacts.len() > plan.request.limits.max_artifacts
         || release_cohort::sha256(&command::read_document(&acceptance, MAX_DOCUMENT)?) != receipt.acceptance_sha256 { return Err(error(Code::RecoveryRequired, "retained native acceptance identity changed")); }
     let domain: Value = read(&acceptance)?;
-    match plan.row.tool { Tool::Aniflow => aniflow::validate_retained(plan, &receipt, &domain)?, Tool::Renderflow => renderflow::validate_retained(plan, &receipt, &domain)?, _ => return Err(error(Code::Unavailable, "native retained route unsupported")) }
+    match plan.row.tool { Tool::Aniflow if plan.row.profile==audio_policy::PROFILE => audio_policy::validate_retained(plan,&receipt,&domain)?, Tool::Aniflow => aniflow::validate_retained(plan, &receipt, &domain)?, Tool::Renderflow => renderflow::validate_retained(plan, &receipt, &domain)?, _ => return Err(error(Code::Unavailable, "native retained route unsupported")) }
     let mut seen = BTreeSet::new(); let mut total = 0_u64;
     for artifact in &receipt.artifacts {
         let file = path(&artifact.path)?;
@@ -377,10 +382,22 @@ pub fn observe_receipt(root:&Path,expected_plan_sha256:&str,token:&dyn Cancellat
     if plan.plan_sha256!=expected_plan_sha256||path(&plan.request.run_directory)?!=root{return Err(error(Code::StalePlan,"exact retained native plan identity required"));}
     let mut value=current_status(root,&plan,token)?;
     value.domain_evidence="retained native domain acceptance and current payload bytes only; serialized approval and release admission were not reverified".into();
-    value.next_action="use separate opaque release admission for qualification or released execution; this readback grants no authority".into();Ok(value)
+    value.next_action="use separate opaque release admission for qualification or released execution; this readback grants no authority".into();
+    if plan.row.profile==audio_policy::PROFILE {value.domain_evidence="retained audio-policy snapshot and current selected media bytes; current QC owner was not rechecked".into();value.next_action="start a fresh explicitly approved owner check for current audio delivery readiness".into();}
+    Ok(value)
 }
 #[derive(Debug,Clone,PartialEq,Eq,Serialize)]
 pub struct ArtifactDescription{pub artifact_id:String,pub purpose:String,pub file:FilePin}
+
+/// Retained owner snapshot with current selected file pins. This does not rerun
+/// the QC owner; use a fresh approved native check for current delivery readiness.
+pub fn audio_policy_snapshot(root:&Path,expected_plan_sha256:&str,token:&dyn CancellationSignal)->Result<Value,Error>{
+    let status=observe_receipt(root,expected_plan_sha256,token)?;
+    let receipt=status.receipt.ok_or_else(||error(Code::RecoveryRequired,"complete audio owner check required"))?;
+    let value:Value=read(&path(&receipt.acceptance_file)?)?;
+    if value["schema_version"]!="flow.aniflow-audio-policy-acceptance/v1"{return Err(error(Code::InvalidInput,"selected receipt is not an audio policy owner check"));}
+    Ok(value["assessment"].clone())
+}
 /// Translate accepted owner artifact identities and roles without inferring a
 /// master from a filename or invoking a provider.
 pub fn artifact_inventory(root:&Path,expected_plan_sha256:&str,token:&dyn CancellationSignal)->Result<Vec<ArtifactDescription>,Error>{
@@ -390,7 +407,10 @@ pub fn artifact_inventory(root:&Path,expected_plan_sha256:&str,token:&dyn Cancel
     if release_cohort::sha256(&bytes)!=receipt.acceptance_sha256{return Err(error(Code::StalePlan,"domain acceptance changed during artifact inventory"));}
     let domain:Value=serde_json::from_slice(&bytes).map_err(|_|error(Code::RecoveryRequired,"domain acceptance malformed"))?;
     let mut result=vec![];let mut ids=BTreeSet::new();
-    if domain["schema_version"]=="flow.aniflow-domain-acceptance/v1"{
+    if domain["schema_version"]=="flow.aniflow-audio-policy-acceptance/v1"{
+        if receipt.artifacts.len()!=1{return Err(error(Code::RecoveryRequired,"one retained policy assessment required"));}
+        result.push(ArtifactDescription {artifact_id:"audio_policy_assessment".into(),purpose:"supporting_document".into(),file:receipt.artifacts[0].clone()});
+    }else if domain["schema_version"]=="flow.aniflow-domain-acceptance/v1"{
         for a in domain["native_completion"]["artifacts"].as_array().ok_or_else(||error(Code::RecoveryRequired,"native video artifact inventory missing"))?{
             let id=a["artifact_id"].as_str().ok_or_else(||error(Code::RecoveryRequired,"native video artifact identity missing"))?;
             let purpose=a["variant"].as_str().ok_or_else(||error(Code::RecoveryRequired,"native video artifact role missing"))?;
@@ -430,5 +450,5 @@ fn resume_authorized(root:&Path,native_run:&Path,plan:&Plan,release_evidence:Opt
     let evidence = attempt.ok_or_else(|| error(Code::RecoveryRequired, "retained resume attempt bound reached"))?;
     let context = Context { plan, root: root.to_owned(), evidence, started: Instant::now(), token, release_evidence };
     context.require_native_run(native_run)?;
-    match plan.row.tool { Tool::Aniflow => aniflow::execute(&context, Some(native_run)), Tool::Renderflow => renderflow::execute(&context, Some(native_run)), _ => Err(error(Code::Unavailable, "native route unavailable")) }.map_err(|e| context_error(e, root))
+    match plan.row.tool { Tool::Aniflow if plan.row.profile==audio_policy::PROFILE => audio_policy::execute(&context,Some(native_run)), Tool::Aniflow => aniflow::execute(&context, Some(native_run)), Tool::Renderflow => renderflow::execute(&context, Some(native_run)), _ => Err(error(Code::Unavailable, "native route unavailable")) }.map_err(|e| context_error(e, root))
 }

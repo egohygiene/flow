@@ -1,6 +1,24 @@
 version: '3'
 
 tasks:
+  audio:readiness:preview:
+    desc: Preview selected publishing audio checks without invoking providers
+    requires:
+      vars: [REQUEST]
+    env:
+      FLOW_AUDIO_REQUEST: '{{.REQUEST}}'
+    cmds:
+      - flow audio-readiness-preview --request "$FLOW_AUDIO_REQUEST" --format json
+
+  audio:readiness:run:
+    desc: Run selected source-candidate audio checks using supplied exact approvals
+    requires:
+      vars: [REQUEST]
+    env:
+      FLOW_AUDIO_REQUEST: '{{.REQUEST}}'
+    cmds:
+      - flow audio-readiness-run --request "$FLOW_AUDIO_REQUEST" --format json
+
   release:plan:
     desc: Describe source release preparation; no build or publication
     cmds:

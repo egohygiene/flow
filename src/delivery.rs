@@ -1,6 +1,7 @@
 //! Private local delivery packages over exact accepted artifacts. This module
 //! copies bytes and records supplied review declarations; it never transforms
 //! media, validates current platform requirements, signs or publishes anything.
+pub mod audio_readiness;
 use std::{collections::{BTreeMap,BTreeSet},fs,path::Path,time::{Duration,Instant}};
 use serde::{Serialize,Deserialize};
 use serde_json::{json,Value};

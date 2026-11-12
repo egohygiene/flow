@@ -21,7 +21,7 @@ pub(super) fn validate_configuration(request: &Request) -> Result<(), Error> {
     }
     Ok(())
 }
-fn invoke(context: &Context<'_>, label: &str, command: &str, args: &[OsString]) -> Result<Value, Error> {
+pub(super) fn invoke(context: &Context<'_>, label: &str, command: &str, args: &[OsString]) -> Result<Value, Error> {
     #[derive(Deserialize)]
     #[serde(deny_unknown_fields)]
     struct Envelope { schema_version: u32, command: String, status: String, result: Option<Value>, error: Option<Value> }

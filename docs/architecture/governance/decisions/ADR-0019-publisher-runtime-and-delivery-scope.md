@@ -47,3 +47,20 @@ not protection against a compromised host. Current platform/native/interoperabil
 execution, human reviews and all actual signatures/releases remain unexecuted.
 Existing release/qualification owners and final #88 remain open. Source or merge
 does not ratify this proposed decision.
+
+## Proposed audio-readiness extension — November 12, 2026
+
+Flow can select an exact package payload/destination and a separately approved
+read-only Aniflow policy-check plan. The existing native transport and source /
+opaque released authority paths remain in charge of process execution. Aniflow
+owns level math and current final-QC truth. Flow correlates the exact returned
+subject/configuration/policy digest with copied delivery bytes and existing
+review declarations. An explicit archival-master preservation choice does not
+assert a target check. Every other assigned media/destination pair is covered.
+
+A captured check is supporting evidence; it cannot replace a pilot media stage
+or become current QC through retained status. A new explicit check refreshes
+the domain owner. Goal matching does not establish meter/platform qualification,
+musical approval or upload authority. Failures retain ordinary native attempts;
+there is no new runtime, automatic replay/approval or acceptance database. This
+extension remains proposed and source-only, with execution deferred to #88.

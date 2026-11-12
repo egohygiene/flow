@@ -1,5 +1,9 @@
 # Build a private local delivery package
 
+Use [publishing audio readiness](audio-readiness.md) to pair exact package
+payloads/destinations with selected Aniflow goal checks and existing review state.
+It adds no automatic mastering, approval or upload.
+
 The delivery SDK collects selected accepted outputs, operator metadata, retained
 evidence and a review checklist. It copies exact bytes into a fresh private
 directory. It does not transform media, trim/reframe a video, normalize a mix,
