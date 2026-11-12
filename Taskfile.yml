@@ -1,6 +1,15 @@
 version: '3'
 
 tasks:
+  publishing:readiness:
+    desc: Report exact package files, recorded audio checks and remaining operator actions
+    requires:
+      vars: [REQUEST]
+    env:
+      FLOW_PUBLISHING_READINESS_REQUEST: '{{.REQUEST}}'
+    cmds:
+      - flow publishing-readiness --request "$FLOW_PUBLISHING_READINESS_REQUEST" --format json
+
   audio:setup:preview:
     desc: Preview installed audio-check selection without running providers
     requires:

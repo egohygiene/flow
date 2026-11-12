@@ -158,7 +158,7 @@ fn prepared(record:&Record,file:FilePin)->Prepared {
 pub fn prepare(request:&Request,token:&dyn CancellationSignal)->Result<Prepared,Error>{
     let started=Instant::now();let guard=||token.is_cancelled()||started.elapsed()>=Duration::from_millis(request.timeout_ms);
     let selected=draft(request,&guard)?;let root=native::path(&request.workspace)?;
-    create(&root)?;
+    create(&root).map_err(|mut e:Error|{e.recovery_directory=Some(NativePath::from_path(&root));e})?;
     let action=(||{
         for name in ["configuration","plans","approvals","native"]{create(&root.join(name))?;}
         let intent=root.join("intent.json");write(&intent,&bytes(request)?)?;
@@ -284,18 +284,21 @@ fn bind_record(record:&Record,approvals:&ApprovalSet,token:&dyn CancellationSign
 }
 /// Produces an existing readiness request using supplied approvals only.
 pub fn bind(root:&Path,expected_record_sha256:&str,approvals:&ApprovalSet,token:&dyn CancellationSignal)->Result<audio_readiness::Request,Error>{
-    let (record,_,_)=load_current(root,expected_record_sha256,token)?;bind_record(&record,approvals,token)
+    let started=Instant::now();let (record,_,_)=load_current(root,expected_record_sha256,token)?;
+    let guard=||token.is_cancelled()||started.elapsed()>=Duration::from_millis(record.request.timeout_ms);
+    bind_record(&record,approvals,&guard)
 }
 /// Saves a binding outside the immutable bundle and all selected evidence.
 pub fn save_binding(root:&Path,expected_record_sha256:&str,approvals:&ApprovalSet,output:&Path,token:&dyn CancellationSignal)->Result<audio_readiness::Request,Error>{
-    let (record,file,selected)=load_current(root,expected_record_sha256,token)?;
+    let started=Instant::now();let (record,file,selected)=load_current(root,expected_record_sha256,token)?;
+    let guard=||token.is_cancelled()||started.elapsed()>=Duration::from_millis(record.request.timeout_ms);
     let output=command::absolute(output)?;ensure_separate(&output,root)?;
     for p in &selected.protected{ensure_separate(&output,p)?;}
-    let value=bind_record(&record,approvals,token)?;file.current(MAX_DOC,token)?;
+    let value=bind_record(&record,approvals,&guard)?;file.current(MAX_DOC,&guard)?;
     command::write_document(&output,&value)?;Ok(value)
 }
 
-#[cfg(test)]mod tests {
+#[cfg(test)]pub(super) mod tests {
     use super::*;
     fn payload()->Payload {Payload {id:"video".into(),role:Role::VideoDelivery,relative:"payload/video.mp4".into(),sha256:"a".repeat(64),byte_count:100,destinations:vec![Destination::Tiktok],source_state:"accepted_native_artifact".into()}}
     #[test]fn coverage_cannot_omit_duplicate_or_exempt_a_platform_copy(){
@@ -310,7 +313,7 @@ pub fn save_binding(root:&Path,expected_record_sha256:&str,approvals:&ApprovalSe
         let root=Path::new("/synthetic/QC 音");assert!(ensure_separate(&root.join("setup"),root).is_err());assert!(ensure_separate(root,&root.join("checks")).is_err());assert!(ensure_separate(Path::new("/synthetic/setup"),root).is_ok());
     }
 
-    fn archive_fixture()->(tempfile::TempDir,Request) {
+    pub(in crate::delivery) fn archive_fixture()->(tempfile::TempDir,Request) {
         use crate::delivery as d;
         let temp=tempfile::tempdir().unwrap();let root=temp.path().canonicalize().unwrap();
         let original=root.join("synthetic 音.wav");fs::write(&original,b"synthetic bytes, not real audio").unwrap();

@@ -21,6 +21,8 @@ pub fn describe() -> Value {
             pin("flow.audio-readiness-summary/v1",include_bytes!("../schemas/audio-readiness-summary-v1.schema.json")),
             pin("flow.audio-check-setup/v1",include_bytes!("../schemas/audio-check-setup-v1.schema.json")),
             pin("flow.audio-check-approvals/v1",include_bytes!("../schemas/audio-check-approvals-v1.schema.json")),
+            pin("flow.publishing-readiness-request/v1",include_bytes!("../schemas/publishing-readiness-request-v1.schema.json")),
+            pin("flow.publishing-readiness/v1",include_bytes!("../schemas/publishing-readiness-v1.schema.json")),
             pin("flow.released-pilot-approval/v1",include_bytes!("../schemas/released-pilot-approval-v1.schema.json")),
             pin("flow.publishing-project/v1",include_bytes!("../schemas/publishing-project-v1.schema.json")),
             pin("flow.publisher-artifact-report/v1",include_bytes!("../schemas/publisher-artifact-report-v1.schema.json")),

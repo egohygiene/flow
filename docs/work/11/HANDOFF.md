@@ -1,6 +1,7 @@
 # Flow #11 completion-roadmap handoff
 
-Current source continuation: [audio-readiness sprint 2026-11-12](AUDIO-READINESS-20261112.md).
+Current source continuation: [publishing checks 2026-11-12](PUBLISHING-CHECKS-20261112.md).
+Previous source continuation: [audio-readiness sprint 2026-11-12](AUDIO-READINESS-20261112.md).
 The authorized 25-PR merge sweep is complete; new audio source drafts remain
 separate from qualification and release. Re-query live heads before continuing.
 Previous source continuation: [publishing sprint 2026-11-11](PUBLISHING-SPRINT-20261111.md).

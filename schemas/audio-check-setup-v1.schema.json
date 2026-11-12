@@ -3,7 +3,7 @@
   "$id": "flow.audio-check-setup/v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "package_manifest", "installation", "workspace", "selections", "tool_directories", "limits", "timeout_ms"],
+  "required": ["schema_version", "package_manifest", "workspace", "selections", "tool_directories", "limits", "timeout_ms"],
   "properties": {
     "schema_version": {"const": "flow.audio-check-setup/v1"},
     "package_manifest": {"$ref": "delivery-request-v1.schema.json#/properties/project_record"},
