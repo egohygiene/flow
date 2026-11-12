@@ -13,7 +13,9 @@ fn configuration(request:&Request)->Result<Value,Error>{
     Ok(value)
 }
 pub(super) fn validate_configuration(request:&Request)->Result<(),Error>{configuration(request).map(|_|())}
-fn declared_paths(value:&Value)->Result<Vec<PathBuf>,Error>{
+fn declared_paths(value:&Value)->Result<Vec<PathBuf>,Error>{selected_paths(value,true)}
+pub(super) fn retained_paths(assessment:&Value)->Result<Vec<PathBuf>,Error>{selected_paths(&assessment["request"],false)}
+fn selected_paths(value:&Value,require_current_paths:bool)->Result<Vec<PathBuf>,Error>{
     let input=&value["input"];let mut selected=vec![&input["qc_directory"]];
     if input["kind"]=="accepted_video_with_qc" {selected.push(&input["run_directory"]);}else{
         let subject=&input["subject"];
@@ -25,11 +27,22 @@ fn declared_paths(value:&Value)->Result<Vec<PathBuf>,Error>{
     }
     let mut paths=vec![];for selected in selected {
         let p=PathBuf::from(selected.as_str().ok_or_else(||error(Code::InvalidInput,"explicit QC/native source path required"))?);
-        if !p.is_absolute()||p.components().any(|c|matches!(c,std::path::Component::CurDir|std::path::Component::ParentDir))||p.canonicalize().ok().as_deref()!=Some(p.as_path()){return Err(error(Code::Unavailable,"canonical current native/QC source path required"));}
+        if !p.is_absolute()||p.components().any(|c|matches!(c,std::path::Component::CurDir|std::path::Component::ParentDir))||(require_current_paths&&p.canonicalize().ok().as_deref()!=Some(p.as_path())){return Err(error(Code::Unavailable,"normalized native/QC path required; current checks also require canonical existing paths"));}
         paths.push(p);
     }Ok(paths)
 }
 pub(super) fn protected_paths(request:&Request)->Result<Vec<PathBuf>,Error>{declared_paths(&configuration(request)?)}
+
+/// Portable historical-record framing only, without observing current owner QC.
+pub(super) fn retained_record(value:&Value,sha256:&str,byte_count:u64)->Result<Value,Error>{
+    #[derive(Deserialize)]#[serde(deny_unknown_fields)]struct Record {schema_version:String,assessment:Value,source_pins:Vec<FilePin>,scope:String}
+    let record:Record=serde_json::from_value(value.clone()).map_err(|_|error(Code::InvalidInput,"closed retained audio owner snapshot required"))?;
+    if record.schema_version!="flow.aniflow-audio-policy-acceptance/v1"||record.scope!="owner_rechecked_during_this_attempt; retained_status_requires_a_fresh_owner_check_for_current_QC"||record.source_pins.len()!=1||record.source_pins[0].sha256!=sha256||record.source_pins[0].byte_count!=byte_count{return Err(error(Code::StalePlan,"retained audio record belongs to different final bytes or evidence scope"));}
+    let request=&record.assessment["request"];
+    if request["schema"]!="aniflow.audio-policy-check-request/v1"||request["policy"]["schema"]!="aniflow.audio-delivery-policy/v1"||request.as_object().is_none_or(|v|v.len()!=3||!["schema","input","policy"].iter().all(|k|v.contains_key(*k))){return Err(error(Code::InvalidInput,"closed retained Aniflow policy-check request required"));}
+    validate_subject(&record.assessment["request"],&record.source_pins[0],&record.assessment)?;
+    Ok(record.assessment)
+}
 
 fn validate_assessment(plan:&Plan,value:&Value)->Result<(),Error>{
     let config=configuration(&plan.request)?;let source=&plan.sources[0];

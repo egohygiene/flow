@@ -399,6 +399,8 @@ pub fn audio_policy_snapshot(root:&Path,expected_plan_sha256:&str,token:&dyn Can
     Ok(value["assessment"].clone())
 }
 pub(crate) fn audio_policy_protected_paths(request:&Request)->Result<Vec<PathBuf>,Error>{audio_policy::protected_paths(request)}
+pub(crate) fn retained_audio_policy_record(value:&Value,sha256:&str,byte_count:u64)->Result<Value,Error>{audio_policy::retained_record(value,sha256,byte_count)}
+pub(crate) fn retained_audio_policy_paths(assessment:&Value)->Result<Vec<PathBuf>,Error>{audio_policy::retained_paths(assessment)}
 /// Translate accepted owner artifact identities and roles without inferring a
 /// master from a filename or invoking a provider.
 pub fn artifact_inventory(root:&Path,expected_plan_sha256:&str,token:&dyn CancellationSignal)->Result<Vec<ArtifactDescription>,Error>{

@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.36.0
+version: 0.37.0
 status: draft
 owners:
   - egohygiene
@@ -53,6 +53,18 @@ supplied-approval binding through closed long-form argv and versioned envelopes.
 Task aliases delegate to those same commands. Setup commands accept no provider
 execution, automatic approval or verification-network acknowledgement. Their
 complete outcome describes the local operation, not audio or release readiness.
+
+## Read-only publishing handoff report
+
+Publishing readiness joins exact retained package bytes, supplied review state,
+metadata/destination gaps and an optional pinned audio-check summary. Recorded
+checks are correlated with their retained owner snapshots and exact payloads;
+neither a historical record nor this report reruns current QC or release admission.
+The report lists remaining operator actions and keeps numeric goals, recorded
+qualification, human review, platform preflight and actual publication distinct.
+It never generates approval, transforms media or grants upload authority. Output
+is confined outside the package and every selected evidence namespace. Execution
+and native/reference/platform qualification remain unobserved in this source work.
 
 ## Exact-file audio delivery readiness
 

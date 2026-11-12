@@ -3,6 +3,7 @@
 //! media, validates current platform requirements, signs or publishes anything.
 pub mod audio_readiness;
 pub mod audio_setup;
+pub mod publishing_readiness;
 use std::{collections::{BTreeMap,BTreeSet},fs,path::Path,time::{Duration,Instant}};
 use serde::{Serialize,Deserialize};
 use serde_json::{json,Value};
@@ -114,6 +115,16 @@ pub struct SelectedSource{pub payload_id:String,pub file:FilePin,pub source_stat
 #[derive(Debug,Clone,PartialEq,Eq,Serialize,Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Preview{pub schema_version:String,pub package_subject_sha256:String,pub plan_sha256:String,pub metadata_sha256:String,pub requested_destinations:Vec<Destination>,pub payloads:Vec<Payload>,pub selected_sources:Vec<SelectedSource>,pub reviews:ReviewSummary,pub missing_destination_payloads:Vec<Destination>,pub missing_metadata:Vec<String>,pub provider_history:String,pub publishing_authority:bool,pub current_platform_compliance_verified:bool}
+fn validate_payload_ledger(preview:&Preview)->Result<(),Error>{
+    if preview.payloads.len()>128||preview.selected_sources.len()!=preview.payloads.len()||preview.requested_destinations.len()>4||preview.requested_destinations.iter().map(|d|format!("{d:?}")).collect::<BTreeSet<_>>().len()!=preview.requested_destinations.len()||preview.missing_destination_payloads.len()>4||preview.missing_destination_payloads.iter().any(|d|!preview.requested_destinations.contains(d))||preview.missing_metadata.len()>64||preview.missing_metadata.iter().any(|s|s.is_empty()||s.len()>512||s.chars().any(char::is_control))||!release_cohort::is_digest(&preview.package_subject_sha256){return Err(error(Code::RecoveryRequired,"bounded exact delivery payload ledger required"));}
+    let mut ids=BTreeSet::new();let mut paths=BTreeSet::new();let mut sources=BTreeSet::new();
+    for source in &preview.selected_sources{native::path(&source.file.path)?;if !sources.insert(&source.payload_id){return Err(error(Code::RecoveryRequired,"duplicate delivery source identity"));}}
+    for p in &preview.payloads{
+        if !token(&p.id)||!ids.insert(&p.id)||!crate::publisher_report::safe_member(&p.relative)||!paths.insert(&p.relative)||!release_cohort::is_digest(&p.sha256)||p.byte_count==0||p.destinations.len()>4||p.destinations.iter().any(|d|!preview.requested_destinations.contains(d))||p.destinations.iter().map(|d|format!("{d:?}")).collect::<BTreeSet<_>>().len()!=p.destinations.len(){return Err(error(Code::RecoveryRequired,"ambiguous or malformed delivery payload/destination ledger"));}
+        let source=preview.selected_sources.iter().find(|s|s.payload_id==p.id).ok_or_else(||error(Code::RecoveryRequired,"delivery source mapping absent"))?;
+        if source.file.sha256!=p.sha256||source.file.byte_count!=p.byte_count||source.source_state!=p.source_state{return Err(error(Code::RecoveryRequired,"delivery source and copied payload bytes differ"));}
+    }Ok(())
+}
 #[derive(Debug,Clone,Serialize,Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct OwnedFile{pub relative:String,pub sha256:String,pub byte_count:u64}
@@ -189,6 +200,7 @@ pub fn status(root:&Path,expected_manifest_sha256:&str,token:&dyn CancellationSi
     let manifest_pin=FilePin::observe(&NativePath::from_path(&root.join("manifest.json")),MAX_DOC,token)?;if manifest_pin.sha256!=expected_manifest_sha256{return Err(error(Code::StalePlan,"delivery manifest pin changed"));}
     let manifest:Manifest=object(&manifest_pin,token)?;
     if manifest.schema_version!="flow.delivery-package/v1"||manifest.visibility!="private_review_package"||manifest.proof_state!="not_asserted"||manifest.preview.publishing_authority||manifest.preview.current_platform_compliance_verified||manifest.files.len()>512||manifest.review_files.len()>5{return Err(error(Code::RecoveryRequired,"delivery evidence/authority scope changed"));}
+    validate_payload_ledger(&manifest.preview)?;
     let intent_file=manifest.files.iter().find(|f|f.relative=="intent.json"&&f.sha256==manifest.request_sha256).ok_or_else(||error(Code::RecoveryRequired,"delivery intent pin absent"))?;
     let raw=command::read_document(&root.join("intent.json"),MAX_DOC)?;if release_cohort::sha256(&raw)!=intent_file.sha256{return Err(error(Code::StalePlan,"delivery intent changed"));}
     let request:Request=serde_json::from_slice(&raw).map_err(|_|error(Code::RecoveryRequired,"retained delivery intent malformed"))?;request.limits.validate()?;

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.publishing-readiness/v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "package_subject_sha256", "package_manifest", "payloads", "requested_destinations", "reviews", "missing_metadata", "missing_destination_payloads", "audio_summary", "recorded_audio", "actions", "current_copied_bytes", "current_owner_checks_performed", "release_admission_reverified", "current_platform_compliance_verified", "upload_authority", "evidence_scope"],
+  "properties": {
+    "schema_version": {"const": "flow.publishing-readiness/v1"},
+    "package_subject_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "package_manifest": {"$ref": "#/$defs/filePin"},
+    "payloads": {"type": "array", "maxItems": 128, "items": {"$ref": "#/$defs/payload"}},
+    "requested_destinations": {"type": "array", "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/destination"}},
+    "reviews": {"$ref": "audio-readiness-summary-v1.schema.json#/properties/reviews"},
+    "missing_metadata": {"type": "array", "maxItems": 64, "items": {"type": "string", "minLength": 1, "maxLength": 512}},
+    "missing_destination_payloads": {"type": "array", "maxItems": 4, "items": {"$ref": "#/$defs/destination"}},
+    "audio_summary": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/filePin"}]},
+    "recorded_audio": {"type": "array", "maxItems": 128, "items": {"$ref": "#/$defs/recordedAudio"}},
+    "actions": {"type": "array", "maxItems": 1024, "items": {"$ref": "#/$defs/action"}},
+    "current_copied_bytes": {"const": true},
+    "current_owner_checks_performed": {"const": false},
+    "release_admission_reverified": {"const": false},
+    "current_platform_compliance_verified": {"const": false},
+    "upload_authority": {"const": false},
+    "evidence_scope": {"const": "current local copied bytes and correlated historical declarations/snapshots only; not current QC, authenticated human review, runtime/release qualification or publication authority"}
+  },
+  "$defs": {
+    "filePin": {"$ref": "delivery-request-v1.schema.json#/properties/project_record"},
+    "destination": {"enum": ["archive", "soundcloud", "distrokid", "tiktok"]},
+    "scope": {"enum": ["words", "timing", "visual", "audio", "final_package"]},
+    "payload": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "role", "relative", "sha256", "byte_count", "destinations", "source_state"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 96},
+        "role": {"enum": ["clean_master", "video_delivery", "original_audio", "audio_derivative", "lyrics", "artwork", "supporting_document"]},
+        "relative": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "byte_count": {"type": "integer", "minimum": 1},
+        "destinations": {"type": "array", "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/destination"}},
+        "source_state": {"type": "string"}
+      }
+    },
+    "recordedAudio": {
+      "type": "object", "additionalProperties": false,
+      "required": ["payload_id", "destination", "recorded_state", "policy", "integrated_loudness", "true_peak", "matches_selected_policy_in_record", "meter_qualified_in_record", "provider_release_qualified_in_summary", "native_record"],
+      "properties": {
+        "payload_id": {"type": "string", "minLength": 1, "maxLength": 96},
+        "destination": {"$ref": "#/$defs/destination"},
+        "recorded_state": {"enum": ["archive_master_unchanged", "fresh_owner_check_required", "matches_selected_policy", "outside_target", "missing_evidence"]},
+        "policy": {"type": ["object", "null"]},
+        "integrated_loudness": {"type": ["object", "null"]},
+        "true_peak": {"type": ["object", "null"]},
+        "matches_selected_policy_in_record": {"type": ["boolean", "null"]},
+        "meter_qualified_in_record": {"const": false},
+        "provider_release_qualified_in_summary": {"type": "boolean"},
+        "native_record": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/filePin"}]}
+      }
+    },
+    "action": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "payload_id", "destination", "review_scope", "reason"],
+      "properties": {
+        "kind": {"enum": ["supply_metadata", "select_destination_payload", "review", "address_review_changes", "select_audio_policy", "refresh_owner_check", "review_audio_goal", "resolve_missing_qc", "verify_qualification", "check_platform_requirements", "authorize_publication"]},
+        "payload_id": {"type": ["string", "null"]},
+        "destination": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/destination"}]},
+        "review_scope": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/scope"}]},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

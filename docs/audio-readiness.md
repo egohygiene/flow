@@ -3,6 +3,10 @@
 [Installed check setup](audio-check-setup.md) resolves the selected package and
 owner requests before separate preparation, approval and execution.
 
+The [publishing handoff report](publishing-readiness.md) correlates a pinned
+summary with exact package files and the remaining operator actions. It reads
+historical snapshots without refreshing current QC or release admission.
+
 The audio-readiness summary pairs every assigned delivery media file and
 destination with a chosen audio policy, the owner's level check and the package's
 current review declarations. It does not master audio or choose one loudness

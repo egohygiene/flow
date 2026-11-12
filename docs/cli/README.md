@@ -11,6 +11,10 @@ For publishing audio, [installed check setup](../audio-check-setup.md) exposes
 approval binding. Those commands author/read configuration and plans; only a
 later explicit audio-readiness run invokes the Aniflow check owner.
 
+[Publishing readiness](../publishing-readiness.md) joins the exact package,
+recorded audio checks and pending operator actions without provider invocation
+or publication authority.
+
 The `flow` source target delivers the public `command` SDK. It is an unqualified
 implementation checkpoint, separate from the synthetic provider and provisional
 AI setup utility. The first concrete route is the existing independently released

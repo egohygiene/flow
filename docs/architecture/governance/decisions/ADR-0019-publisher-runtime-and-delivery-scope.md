@@ -76,3 +76,15 @@ Package copies, original final files, installation/tools and native/QC evidence
 must remain outside the writable setup namespace. Retained setup status records
 local identity rather than current domain QC. This extension is proposed;
 source authoring, installation receipts and preview do not qualify a release.
+
+## Proposed publishing report extension — November 12, 2026
+
+A read-only handoff report can correlate a current exact package with a pinned
+audio summary and its retained owner records. It must expose remaining review,
+metadata, destination, current-QC, qualification, route and publication actions.
+Retained numeric results are historical, and a summary's provider qualification
+flag is a declaration in that summary, not fresh authenticated admission. The
+report grants neither human review nor execution/upload authority. Package/source
+identity and snapshot scope are checked; Aniflow retains all audio math and the
+existing native engine retains runtime acceptance. This remains proposed source,
+with actual execution/qualification deferred and Flow #88 preserved last.
