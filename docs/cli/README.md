@@ -1,5 +1,10 @@
 # Flow command source (#53/#70)
 
+[Static publication projects](../static-publication-project.md) prepare explicit
+default/locale source branches and native Renderflow plans. Each branch uses the
+existing separately approved native run/resume path; status lists missing required
+target IDs without granting creative approval or publishing authority.
+
 The current source additionally supports explicitly pinned Aniflow and Renderflow
 candidate routes through [native commands](native-candidates.md), and a read-only
 `release-matrix` / doctor v2 view. These require independently built exact artifacts

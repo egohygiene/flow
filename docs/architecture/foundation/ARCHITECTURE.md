@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.37.0
+version: 0.38.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,18 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Locale-scoped static publication projects
+
+Static projects bind explicitly supplied locale/source branches, required target
+IDs and Renderflow-owned target/execution options to an installed canonical
+publication row. Preview reads pins only; preparation writes a fresh private
+bundle and delegates plans to the existing native SDK. Later branch execution,
+approval and resume use that SDK unchanged. Status correlates accepted native
+target IDs with the declared requirements without treating locale labels as
+translation evidence or granting human/release/upload authority. Renderflow owns
+conversion, locale content and artifact validation. No new runner or sibling
+dependency is introduced; full #10 orchestration remains broader than this preset.
 
 ## Installed audio-check preparation
 
