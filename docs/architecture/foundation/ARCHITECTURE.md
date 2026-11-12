@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.39.0
+version: 0.40.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,17 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Publishing workflow guide projection
+
+The local scenario showcase also loads a bounded source-guide catalog through
+explicit local selection. Each guide names a pinned public source revision,
+owning issue, input/output intent, stage owners, prerequisites and remaining
+gates. Guide counts remain separate from canonical acceptance/lifecycle recipes
+and observed reports. Strict local parsing and text-node rendering cannot promote
+guide declarations into execution, release or review evidence; public source
+links are allowlisted and never fetched automatically. This adds documentation
+navigation, with no runtime planner, provider, uploaded data or new authority.
 
 ## Local AI setup command delivery
 

@@ -1,5 +1,30 @@
 # Browse Flow's scenario evidence
 
+## Publishing workflow source guides
+
+The same local page now has a separate **Load publishing workflow guides**
+control and search. Its [versioned source catalog](showcase/workflows.json)
+covers the static publication preset, local AI preparation, tool-free video
+folder preview, Sonic descriptions, manual-SRT pilot and publishing audio report.
+Each guide links a pinned public source revision and owning issue/PR, with explicit
+input/output intent, stage owners, prerequisites and remaining gates. The catalog
+is a dated source snapshot; it does not query current PR, release or host status.
+
+Guide counts are derived from that loaded catalog and remain separate from
+canonical scenario counts and selected execution reports. Guides cannot claim
+runtime qualification or observed executions, even if supplied through the local
+file picker. They do not become provider capability, installation or acceptance
+evidence. Human review, native/resource/model/platform qualification and actual
+publishing remain separate work. The new parser rejects unknown records,
+duplicate IDs, traversing source references and nonallowlisted links. Values are
+rendered as text nodes; source links are not fetched automatically. The existing
+same-origin/no-upload CSP, bounded reads and local report states remain intact.
+
+Three source-guide model cases are authored, uncompiled/unrun. No browser,
+Node/test/build/dependency/schema/docs/drift/product/native/provider/SDK/CLI or CI
+execution occurred. Rendering/accessibility qualification stays deferred to #88;
+there is no new paid CI, runtime engine, telemetry or publication authority.
+
 The [scenario showcase](showcase/index.html) is a local, read-only documentation
 browser for the current synthetic catalogs and indexed contract examples. Search
 by stable scenario ID, expected outcome, recipe or recovery classification, filter
