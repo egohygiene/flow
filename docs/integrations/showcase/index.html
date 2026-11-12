@@ -20,6 +20,11 @@
 <label for="family">Scenario family</label><select id="family"><option value="">All families</option></select>
 <p id="shown" role="status" aria-live="polite"></p><div id="cases"></div>
 </section>
+<section aria-labelledby="workflow-title"><h2 id="workflow-title">Publishing workflow guides</h2>
+<p>Explore input → output journeys, stage owners and remaining work. These pinned source guides are separate from test scenarios and actual execution evidence.</p>
+<button id="workflow-load" type="button">Load publishing workflow guides</button>
+<label for="workflow-search">Search workflow, owner or prerequisite</label><input id="workflow-search" type="search" autocomplete="off">
+<p id="workflow-count" role="status" aria-live="polite">No workflow guides loaded. Execution evidence remains unavailable.</p><div id="workflows"></div></section>
 <section aria-labelledby="manifest-title"><h2 id="manifest-title">Contract examples</h2><p>Manifest examples describe topology and declarations. Their presence does not establish runtime support or observed execution.</p><div id="manifests"></div></section>
 <noscript>JavaScript is needed for local catalog browsing. Read acceptance-scenarios.md and lifecycle-scenarios.md in the parent directory for text descriptions and canonical source links.</noscript>
 </main></body></html>

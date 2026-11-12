@@ -1,3 +1,4 @@
+import {loadWorkflows, clearWorkflows} from './workflow-view.mjs';
 import {MAX_BYTES, parse, catalog, report, evidence, manifest, fixturePaths} from './model.mjs';
 const catalogs = new Map(), reports = new Map(), manifests = new Map();
 const root = new URL('../../../', import.meta.url);
@@ -14,7 +15,8 @@ async function digest(bytes) {
 }
 async function load(bytes, locator) {
   const value = parse(bytes), hash = await digest(bytes);
-  if (value.schema_version?.endsWith('-catalog/v1')) { const item = catalog(value, hash, locator); catalogs.set(item.kind, item); }
+  if (value.schema_version === 'flow.workflow-guide-catalog/v1') {loadWorkflows(value, hash, locator);}
+  else if (value.schema_version?.endsWith('-catalog/v1')) { const item = catalog(value, hash, locator); catalogs.set(item.kind, item); }
   else if (value.schema_version?.endsWith('-report/v1')) { const item = report(value, hash); reports.set(item.kind, item); }
   else { const item = manifest(value, hash, locator); manifests.set(item.id, item); }
   render();
@@ -42,6 +44,7 @@ $('repository').addEventListener('click', async () => {
     $('status').textContent = 'Local catalog files loaded. No execution report was fetched. Counts describe source recipes, not passing tests.';
   } catch (error) { recordFailure(error); }
 });
+$('workflow-load').addEventListener('click', async () => {try {await load(await repositoryFile('docs/integrations/showcase/workflows.json'), 'docs/integrations/showcase/workflows.json');$('status').textContent='Source workflow guides loaded locally. No execution or qualification evidence was fetched.';} catch(error){recordFailure(error);}});
 $('files').addEventListener('change', async event => {
   const files = [...event.target.files];
   if (files.length > 8 || files.reduce((sum, file) => sum + file.size, 0) > 32 * 1024 * 1024) return recordFailure(new Error('Select at most eight files totaling 32 MiB'));
@@ -53,7 +56,7 @@ $('files').addEventListener('change', async event => {
   } catch (error) { recordFailure(error); }
 });
 for (const id of ['search', 'family']) $(id).addEventListener('input', render);
-$('reset').addEventListener('click', () => { catalogs.clear(); reports.clear(); manifests.clear(); $('files').value = ''; render(); $('status').textContent = 'Loaded data cleared from this page.'; });
+$('reset').addEventListener('click', () => { catalogs.clear(); reports.clear(); manifests.clear(); clearWorkflows(); $('files').value = ''; render(); $('status').textContent = 'Loaded data cleared from this page.'; });
 function details(title, value, parent) { const detail = node('details', undefined, parent); node('summary', title, detail); json(value, detail); }
 function render() {
   $('catalogs').replaceChildren(); $('cases').replaceChildren(); $('manifests').replaceChildren();

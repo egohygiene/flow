@@ -1,0 +1,272 @@
+{
+  "schema_version": "flow.workflow-guide-catalog/v1",
+  "claim_scope": "source_guides_only",
+  "runtime_qualified": false,
+  "observed_executions": 0,
+  "workflows": [
+    {
+      "id": "workflow:static-publication",
+      "title": "Static and locale publication projects",
+      "description": "Prepare explicit default/locale branches through the existing canonical Renderflow adapter.",
+      "input_output": "Pinned ordered static sources and native target options → native plans → required-target readback.",
+      "availability": "draft_source",
+      "source": {
+        "repository": "flow",
+        "revision": "7e0b894609f807916635a948a608e82331aedca5",
+        "path": "src/static_project.rs"
+      },
+      "issue": "https://github.com/egohygiene/flow/issues/10",
+      "pull_request": "https://github.com/egohygiene/flow/pull/119",
+      "steps": [
+        {
+          "owner": "operator",
+          "action": "Supply actual default/locale source files and required native target IDs."
+        },
+        {
+          "owner": "flow",
+          "action": "Preview exact inputs/options/installed row and prepare a fresh private plan bundle."
+        },
+        {
+          "owner": "operator",
+          "action": "Review and separately authorize each exact native plan."
+        },
+        {
+          "owner": "renderflow",
+          "action": "Run the canonical owner route; retain its accepted publications and recovery state."
+        },
+        {
+          "owner": "flow",
+          "action": "Report observed target IDs and missing required artifacts."
+        }
+      ],
+      "prerequisites": [
+        "Independently prepared compatible Renderflow executable, descriptor and cohort row.",
+        "Explicit source/default language branch and actual selected locale sources.",
+        "Native target/format combinations must be accepted by their owner."
+      ],
+      "remaining": [
+        "Source is uncompiled/unrun; release and native acceptance remain unfinished.",
+        "Locale labels do not translate or authenticate review.",
+        "Rights, accessibility, translation and final publishing review remain human-owned."
+      ]
+    },
+    {
+      "id": "workflow:local-ai-preparation",
+      "title": "Offline AI file preparation",
+      "description": "Use the main Flow commands over existing local setup and redacted doctor owners.",
+      "input_output": "Explicit local runtime/model/configuration files → pinned private setup documents and current byte diagnostics.",
+      "availability": "draft_source",
+      "source": {
+        "repository": "flow",
+        "revision": "f1236283df4ef12ab2f2ad2c97ae57b3198750f0",
+        "path": "src/command/ai_setup_delivery.rs"
+      },
+      "issue": "https://github.com/egohygiene/flow/issues/80",
+      "pull_request": "https://github.com/egohygiene/flow/pull/120",
+      "steps": [
+        {
+          "owner": "operator",
+          "action": "Select an explicit profile, existing assets and private empty setup directory."
+        },
+        {
+          "owner": "flow",
+          "action": "Observe selected file bytes without contacting even a loopback service."
+        },
+        {
+          "owner": "flow",
+          "action": "Write/read the existing setup bundle and exact marker pin."
+        },
+        {
+          "owner": "operator",
+          "action": "Resolve missing assets and separately qualify native model/runtime/hardware/offline behavior."
+        }
+      ],
+      "prerequisites": [
+        "Already selected local files; no automatic download or model service start.",
+        "Existing profile/setup schemas and exact marker digest for status."
+      ],
+      "remaining": [
+        "Prepared bytes remain partial and grant no inference authority.",
+        "Actual runtime/model identity, licenses, memory and offline enforcement remain unqualified.",
+        "No remote/paid fallback or automatic acquisition occurs."
+      ]
+    },
+    {
+      "id": "workflow:video-folder-preview",
+      "title": "Tool-free video folder preview",
+      "description": "Inspect eligibility under the existing explicit v1 or broader v2 subset before tools/workspaces are prepared.",
+      "input_output": "Canonical Linux folder and bounded preview policy → content-bound eligibility and unsupported/skipped reasons.",
+      "availability": "draft_source",
+      "source": {
+        "repository": "optiflow",
+        "revision": "70ccbc6b7f99b79c86360af65eef88e312cbf200",
+        "path": "src/video_folder/preview.rs"
+      },
+      "issue": "https://github.com/egohygiene/optiflow/issues/146",
+      "pull_request": "https://github.com/egohygiene/optiflow/pull/190",
+      "steps": [
+        {
+          "owner": "operator",
+          "action": "Select tiny_v1 or bounded_v2 and explicit recursive/input/batch limits."
+        },
+        {
+          "owner": "optiflow",
+          "action": "Use the existing no-follow bounded walk and closed container classifier."
+        },
+        {
+          "owner": "operator",
+          "action": "Review exact refusals and separately prepare tools/guard for an actual candidate run."
+        }
+      ],
+      "prerequisites": [
+        "Linux source discovery owner; explicit canonical root and supported request.",
+        "The existing subset is closed SDR video-only Matroska/FFV1."
+      ],
+      "remaining": [
+        "No provider, candidate generation, full decode or writable workspace occurs in preview.",
+        "MP4/audio/HDR/lossy and broader native support remain outside this subset.",
+        "Preview cannot be adopted as run/resume inventory and grants no replacement/disposal authority."
+      ]
+    },
+    {
+      "id": "workflow:sonic-evidence",
+      "title": "Sonic DNA and cited music context",
+      "description": "Describe admitted audio evidence with grouped, bounded citations and explicit importance.",
+      "input_output": "Pinned native WAV and optional selected analysis/MIDI/stem/manual-timing context → Sonic DNA, review-required descriptions and guidance.",
+      "availability": "draft_source",
+      "source": {
+        "repository": "renderflow",
+        "revision": "c9790d7fac33b2a444e285a7d0e373db905fac31",
+        "path": "crates/renderflow-core/src/dna/sonic/render.rs"
+      },
+      "issue": "https://github.com/egohygiene/renderflow/issues/397",
+      "pull_request": "https://github.com/egohygiene/renderflow/pull/507",
+      "steps": [
+        {
+          "owner": "operator",
+          "action": "Supply exact supported WAV and explicitly selected hash-bound evidence."
+        },
+        {
+          "owner": "renderflow",
+          "action": "Normalize admitted source/clock/reference facts through existing owners."
+        },
+        {
+          "owner": "renderflow",
+          "action": "Group context with original uncertainty and separate declared corrections."
+        },
+        {
+          "owner": "renderflow",
+          "action": "Order guidance by explicit importance without altering confidence."
+        },
+        {
+          "owner": "operator",
+          "action": "Review factual grounding and musical usefulness."
+        }
+      ],
+      "prerequisites": [
+        "Supported bounded native WAV subset and existing evidence recipes.",
+        "AI is optional and disabled unless separately selected with existing authority."
+      ],
+      "remaining": [
+        "No direct listening, instrumentation/voice/mood inference or musical approval is established.",
+        "Source/hash binding does not authenticate an analyzer or prove estimates accurate.",
+        "New renderer revisions change future intent identity; historical bundles retain their original bytes."
+      ]
+    },
+    {
+      "id": "workflow:manual-srt-pilot",
+      "title": "Manual-SRT music-video pilot",
+      "description": "Prepare an explicitly selected video/timed-text/optional-audio publishing project.",
+      "input_output": "Edited source video + manually authored SRT + optional audio → native plans and accepted handoff candidates.",
+      "availability": "merged_source",
+      "source": {
+        "repository": "flow",
+        "revision": "01368118b8b74e9f9b8cd9a8c002f41ec4368223",
+        "path": "src/project.rs"
+      },
+      "issue": "https://github.com/egohygiene/flow/issues/78",
+      "pull_request": null,
+      "steps": [
+        {
+          "owner": "operator",
+          "action": "Supply the edited source, manually timed SRT, recipe and optional audio options."
+        },
+        {
+          "owner": "flow",
+          "action": "Prepare exact installed provider plans and separate native workspaces."
+        },
+        {
+          "owner": "operator",
+          "action": "Approve exact candidate or authenticated released plans through existing authority."
+        },
+        {
+          "owner": "aniflow",
+          "action": "Own temporal processing, original clocks, master/delivery creation and native acceptance."
+        },
+        {
+          "owner": "renderflow",
+          "action": "Own supported timed-text/audio derivative conversion."
+        },
+        {
+          "owner": "operator",
+          "action": "Review words/timing, sound, picture, captions and final exact files."
+        }
+      ],
+      "prerequisites": [
+        "Compatible independently built/pinned Aniflow and Renderflow profiles and needed tools/models.",
+        "Manual timing and lyrics are supplied; automatic recognition is not required."
+      ],
+      "remaining": [
+        "This is a source workflow, not observed native/installed qualification.",
+        "Human review, actual final-file QC and current destination requirements remain explicit.",
+        "Publication is a later separately authorized action."
+      ]
+    },
+    {
+      "id": "workflow:publishing-audio-readiness",
+      "title": "Publishing audio and final handoff report",
+      "description": "Correlate exact package bytes, recorded audio checks and remaining operator actions.",
+      "input_output": "Exact delivery manifest and optional pinned audio summary → remaining metadata/review/qualification/destination work.",
+      "availability": "draft_source",
+      "source": {
+        "repository": "flow",
+        "revision": "a0803dc663c48a242e79f3ea3f8ec86be05fbf93",
+        "path": "src/delivery/publishing_readiness.rs"
+      },
+      "issue": "https://github.com/egohygiene/flow/issues/78",
+      "pull_request": "https://github.com/egohygiene/flow/pull/118",
+      "steps": [
+        {
+          "owner": "operator",
+          "action": "Select exact accepted delivery payloads and metadata."
+        },
+        {
+          "owner": "aniflow",
+          "action": "Produce current exact-final-file QC and the explicitly selected goal comparison."
+        },
+        {
+          "owner": "flow",
+          "action": "Bind separately supplied exact check approvals and retain owner results."
+        },
+        {
+          "owner": "flow",
+          "action": "Read package identity and historical snapshots into the publishing report."
+        },
+        {
+          "owner": "operator",
+          "action": "Address review/metadata/route gaps and authorize actual publication separately."
+        }
+      ],
+      "prerequisites": [
+        "An Aniflow descriptor actually advertising the audio-policy-check route.",
+        "A separately selected current QC owner request for each checked final media file.",
+        "Explicit archival-master preservation choices and complete media/destination coverage."
+      ],
+      "remaining": [
+        "Retained results do not refresh owner QC or authenticate fresh release admission.",
+        "Every new encode, mux or media metadata change needs fresh final-file QC.",
+        "The report retains no current platform compliance, human approval or upload authority."
+      ]
+    }
+  ]
+}
