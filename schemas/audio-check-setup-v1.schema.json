@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.audio-check-setup/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_manifest", "installation", "workspace", "selections", "tool_directories", "limits", "timeout_ms"],
+  "properties": {
+    "schema_version": {"const": "flow.audio-check-setup/v1"},
+    "package_manifest": {"$ref": "delivery-request-v1.schema.json#/properties/project_record"},
+    "installation": {"oneOf": [{"type": "null"}, {"$ref": "publishing-project-v1.schema.json#/properties/installation"}]},
+    "workspace": {"$ref": "flow-native-request-v1.schema.json#/properties/cohort"},
+    "selections": {
+      "type": "array", "maxItems": 128,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["payload_id", "destination", "choice"],
+        "properties": {
+          "payload_id": {"type": "string", "minLength": 1, "maxLength": 96},
+          "destination": {"enum": ["archive", "soundcloud", "distrokid", "tiktok"]},
+          "choice": {
+            "oneOf": [
+              {
+                "type": "object", "additionalProperties": false, "required": ["kind", "owner_request"],
+                "properties": {
+                  "kind": {"const": "check"},
+                  "owner_request": {"$ref": "delivery-request-v1.schema.json#/properties/project_record"},
+                  "row_id": {"type": ["string", "null"], "minLength": 1, "maxLength": 4096}
+                }
+              },
+              {
+                "type": "object", "additionalProperties": false, "required": ["kind", "reason"],
+                "properties": {"kind": {"const": "keep_archive_master"}, "reason": {"type": "string", "minLength": 1, "maxLength": 512}}
+              }
+            ]
+          }
+        }
+      }
+    },
+    "tool_directories": {"type": "array", "maxItems": 32, "items": {"$ref": "flow-native-request-v1.schema.json#/properties/cohort"}},
+    "limits": {"$ref": "flow-native-request-v1.schema.json#/properties/limits"},
+    "timeout_ms": {"type": "integer", "minimum": 1, "maximum": 86400000}
+  }
+}
