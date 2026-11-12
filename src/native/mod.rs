@@ -33,6 +33,7 @@ fn directory(value: &Path) -> Result<(), Error> { if value.canonicalize().ok().a
 #[derive(Debug, Clone, Copy, Serialize)]
 pub struct SourceRoute { pub tool: Tool, pub profile: &'static str, pub contract: &'static str, pub maximum_inputs: usize, pub state: &'static str }
 pub const SOURCE_ROUTES: &[SourceRoute] = &[
+    SourceRoute {tool:Tool::Aniflow,profile:"gain-video-v1",contract:"aniflow.release-contract/v1",maximum_inputs:2,state:"implemented_picture_copy_selected_AAC_requires_fresh_encoded_QC"},
     SourceRoute {tool:Tool::Aniflow,profile:"final-lossless-audio-qc-v1",contract:"aniflow.release-contract/v1",maximum_inputs:1,state:"implemented_fresh_owner_QC_requires_exact_pins_and_explicit_approval"},
     SourceRoute {tool:Tool::Aniflow,profile:"final-video-audio-qc-v1",contract:"aniflow.release-contract/v1",maximum_inputs:1,state:"implemented_fresh_encoded_owner_QC_requires_exact_pins_and_explicit_approval"},
     SourceRoute {tool:Tool::Aniflow,profile:"fixed-audio-gain-v1",contract:"aniflow.release-contract/v1",maximum_inputs:1,state:"implemented_selected_gain_requires_exact_pins_and_explicit_approval"},

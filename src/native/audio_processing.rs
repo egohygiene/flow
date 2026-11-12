@@ -1,26 +1,50 @@
 //! Translation only. Aniflow retains audio math, native state and domain QC.
 use super::*;
 
-pub(super) fn supports(profile:&str)->bool {matches!(profile,"fixed-audio-gain-v1"|"final-lossless-audio-qc-v1"|"final-video-audio-qc-v1")}
+pub(super) fn supports(profile:&str)->bool {matches!(profile,"fixed-audio-gain-v1"|"final-lossless-audio-qc-v1"|"final-video-audio-qc-v1"|"gain-video-v1")}
 fn expected(profile:&str)->Result<(&'static str,&'static str,&'static str,&'static str),Error> {
     match profile {
         "fixed-audio-gain-v1"=>Ok(("aniflow.audio-gain-request/v1","gain_audio","audio_derivative","requires_fresh_exact_file_qc")),
         "final-lossless-audio-qc-v1"=>Ok(("aniflow.resumable-final-audio-qc-request/v1","final_audio_qc","supporting_document","measurements_only_selected_policy_check_required")),
         "final-video-audio-qc-v1"=>Ok(("aniflow.resumable-final-video-audio-qc-request/v1","final_audio_qc","supporting_document","measurements_only_selected_policy_check_required")),
+        "gain-video-v1"=>Ok(("aniflow.gain-video-request/v1","gain_video","video_delivery","requires_fresh_encoded_file_qc")),
         _=>Err(error(Code::Unavailable,"selected audio-processing route unavailable")),
     }
 }
 fn configuration(request:&Request,profile:&str)->Result<Value,Error> {
     let value:Value=serde_json::from_slice(&command::read_document(&path(&request.configuration)?,65_536)?).map_err(|_|error(Code::InvalidInput,"explicit native audio-processing JSON required"))?;
     let (schema,_,_,_)=expected(profile)?;
-    let (keys,provider):(&[&str],&Value)=if profile=="fixed-audio-gain-v1" {(&["schema","check","configuration","provider_executable"],&value["provider_executable"])}else{(&["schema","qc"],&value["qc"]["provider_executable"])};
+    let (keys,provider):(&[&str],&Value)=match profile {
+        "fixed-audio-gain-v1"=>(&["schema","check","configuration","provider_executable"],&value["provider_executable"]),
+        "gain-video-v1"=>(&["schema","gain_run_directory","gain_qc_directory","gain_qc_receipt_sha256","settings","audio_bitrate_kbps","provider_executable"],&value["provider_executable"]),
+        _=>(&["schema","qc"],&value["qc"]["provider_executable"]),
+    };
+    let required_inputs=if profile=="gain-video-v1"{2}else{1};
     if value["schema"]!=schema||value.as_object().is_none_or(|v|v.len()!=keys.len()||keys.iter().any(|k|!v.contains_key(*k)))
-        ||provider.as_str()!=path(&request.provider_executable)?.to_str()||request.inputs.len()!=1 {
-        return Err(error(Code::InvalidInput,"one exact final file and matching closed explicitly selected native request required"));
+        ||provider.as_str()!=path(&request.provider_executable)?.to_str()||request.inputs.len()!=required_inputs {
+        return Err(error(Code::InvalidInput,"exact source membership/order and matching closed explicitly selected native request required"));
     }
     let output=path(&request.run_directory)?;
     if selected_paths(&value,true)?.iter().any(|p|output.starts_with(p)||p.starts_with(&output)){return Err(error(Code::InvalidInput,"processing workspace overlaps native/QC/source/tool evidence"));}
     Ok(value)
+}
+
+#[cfg(test)]mod video_tests {
+    use super::*;
+    #[test]fn adjusted_video_retains_both_input_identities_and_cannot_become_a_clean_master() {
+        let input=|name:&str,sha:&str|NativeFile {locator:PathBuf::from(name),sha256:sha.repeat(64),byte_count:100};
+        let sources=vec![input("/synthetic/original.mp4","a"),input("/synthetic/gain.wav","b")];
+        let payload=OwnerPayload {profile:"gain-video-v1".into(),request:serde_json::json!({"schema":"aniflow.gain-video-request/v1"}),source_files:sources.clone(),native:serde_json::json!({"plan_sha256":"c".repeat(64)})};
+        let owner=OwnerPlan {schema:"aniflow.audio-processing-plan/v1".into(),plan_sha256:digest(&payload).unwrap(),payload};
+        let file=input("/synthetic/run/video.mp4","d");
+        let report=serde_json::json!({"schema":"aniflow.final-video-handoff/v1","plan_sha256":"c".repeat(64),"publication_authority":"none","proof_state":"not_asserted","artifacts":[{"artifact_id":"gain_video","locator":file.locator,"sha256":file.sha256,"byte_count":100,"variant":"clean_archival_master"}],"source_lineage":[{"id":"gain_video_source","sha256":sources[0].sha256,"byte_count":100},{"id":"gain_video_audio","sha256":sources[1].sha256,"byte_count":100}]});
+        let payload=HandoffPayload {plan:owner.clone(),run_directory:PathBuf::from("/synthetic/run"),native_intent_sha256:"c".repeat(64),artifacts:vec![Artifact {id:"gain_video".into(),purpose:"video_delivery".into(),file}],report,output_state:"requires_fresh_encoded_file_qc".into(),runtime_qualified:false,creative_approval:"not_performed".into(),publication_authority:"none".into()};
+        let valid=Handoff {schema:"aniflow.audio-processing-handoff/v1".into(),handoff_sha256:digest(&payload).unwrap(),payload};
+        assert!(validate_handoff(&owner,&valid).is_ok());
+        let mut promoted=valid.clone();promoted.payload.artifacts[0].purpose="clean_archival_master".into();promoted.handoff_sha256=digest(&promoted.payload).unwrap();assert!(validate_handoff(&owner,&promoted).is_err());
+        let mut swapped_owner=owner;swapped_owner.payload.source_files.swap(0,1);swapped_owner.plan_sha256=digest(&swapped_owner.payload).unwrap();
+        let mut swapped=valid;swapped.payload.plan=swapped_owner.clone();swapped.handoff_sha256=digest(&swapped.payload).unwrap();assert!(validate_handoff(&swapped_owner,&swapped).is_err());
+    }
 }
 fn selected_paths(value:&Value,current:bool)->Result<Vec<PathBuf>,Error> {
     fn visit(value:&Value,depth:usize,current:bool,out:&mut Vec<PathBuf>)->Result<(),Error> {
@@ -70,7 +94,7 @@ const RECORD_SCHEMA:&str="flow.aniflow-audio-processing-acceptance/v1";
 const RECORD_SCOPE:&str="current_owner_readback_at_acceptance; retained_status_does_not_refresh_QC";
 fn decode<T:for<'de> Deserialize<'de>>(v:Value)->Result<T,Error>{serde_json::from_value(v).map_err(|_|error(Code::ProviderRefused,"closed Aniflow audio-processing response required"))}
 fn native_intent(plan:&OwnerPlan)->Result<&str,Error>{
-    let value=if plan.payload.profile=="fixed-audio-gain-v1"{&plan.payload.native["native_plan"]["plan_sha256"]}else{&plan.payload.native["intent_sha256"]};
+    let value=match plan.payload.profile.as_str(){"fixed-audio-gain-v1"=>&plan.payload.native["native_plan"]["plan_sha256"],"gain-video-v1"=>&plan.payload.native["plan_sha256"],_=>&plan.payload.native["intent_sha256"]};
     value.as_str().filter(|s|release_cohort::is_digest(s)).ok_or_else(||error(Code::ProviderRefused,"native processing intent missing"))
 }
 fn validate_owner(profile:&str,config:&Value,sources:&[FilePin],owner:&OwnerPlan)->Result<(),Error>{
@@ -98,8 +122,22 @@ fn validate_handoff(owner:&OwnerPlan,value:&Handoff)->Result<(),Error>{
     }
     if owner.payload.profile=="fixed-audio-gain-v1" {
         if p.report["schema"]!="aniflow.audio-gain-completion/v1"||p.report["file"]!=serde_json::to_value(&a.file).map_err(|_|error(Code::InvalidInput,"gain file encoding"))?{return Err(error(Code::ProviderRefused,"gain completion file differs"));}
-    }else{validate_qc_report(owner,p)?;}
+    }else if owner.payload.profile=="gain-video-v1"{validate_video_report(owner,p)?;}else{validate_qc_report(owner,p)?;}
     Ok(())
+}
+fn validate_video_report(owner:&OwnerPlan,p:&HandoffPayload)->Result<(),Error>{
+    let r=&p.report;let a=&p.artifacts[0];
+    let artifacts=r["artifacts"].as_array().filter(|a|a.len()==1).ok_or_else(||error(Code::ProviderRefused,"one exact gain-video artifact required"))?;
+    let native=&artifacts[0];
+    if r["schema"]!="aniflow.final-video-handoff/v1"||r["plan_sha256"]!=p.native_intent_sha256||r["publication_authority"]!="none"||r["proof_state"]!="not_asserted"
+        ||native["artifact_id"]!=a.id||native["locator"].as_str()!=a.file.locator.to_str()||native["sha256"]!=a.file.sha256||native["byte_count"].as_u64()!=Some(a.file.byte_count) {
+        return Err(error(Code::ProviderRefused,"selected gain-video completion identity/authority differs"));
+    }
+    let lineage=r["source_lineage"].as_array().filter(|a|a.len()==2).ok_or_else(||error(Code::ProviderRefused,"exact video and adjusted-audio lineage required"))?;
+    if owner.payload.source_files.len()!=2{return Err(error(Code::ProviderRefused,"two ordered gain-video inputs required"));}
+    for (id,file) in ["gain_video_source","gain_video_audio"].iter().zip(&owner.payload.source_files) {
+        if lineage.iter().filter(|v|v["id"]==*id&&v["sha256"]==file.sha256&&v["byte_count"].as_u64()==Some(file.byte_count)).count()!=1{return Err(error(Code::ProviderRefused,"gain-video lineage differs from the exact selected input order/bytes"));}
+    }Ok(())
 }
 fn validate_qc_report(owner:&OwnerPlan,p:&HandoffPayload)->Result<(),Error>{
     let lossless=owner.payload.profile=="final-lossless-audio-qc-v1";

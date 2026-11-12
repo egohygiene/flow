@@ -83,6 +83,13 @@ intent, and agree with the actual accepted report file. Reports remain supportin
 evidence with separate selected-policy comparison; neither a WAV result nor a
 historical Flow status grants current encoded-video QC. This remains proposed.
 
+A separately selected gain-video route binds original video and adjusted WAV
+inputs and their returned lineage. Aniflow retains exact clock/picture/audio
+and current WAV-QC admission. Flow assigns only a delivery-derivative role,
+irrespective of an inherited native source variant. Fresh encoded-byte QC and
+human review remain required. This adds no engine or publication authority and
+does not ratify this proposal.
+
 ## Proposed installed-check preparation extension — November 12, 2026
 
 An operator can resolve supplied Aniflow QC/policy requests against exact delivery
