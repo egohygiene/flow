@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.27.0
+version: 0.28.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,17 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Publisher-authenticated clean installation
+
+A separate opaque publisher verifier authenticates portable owner reports and
+actual release metadata before local binaries or runtime witnesses exist. It
+reuses the existing fixed signature/client protocol under independently selected
+host policy. Its authority is limited to copying exact selected executable,
+contract and support bytes. Installation retains a pinned historical admission
+inside its existing receipt; status, rollback and removal remain local readback.
+Publisher authentication does not imply host/native readiness and cannot be
+converted from serialized receipt flags into native execution authority.
 
 ## Independent portable publisher declarations
 

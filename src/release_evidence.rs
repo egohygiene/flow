@@ -17,6 +17,9 @@ fn clock()->Result<u64,Error>{SystemTime::now().duration_since(UNIX_EPOCH).map(|
 #[derive(Debug,Clone,Serialize,Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Owner {pub tool:Tool,pub repository:String,pub signer_workflow:String,pub signer_revision:String,pub source_revision:String,pub source_ref:String}
+impl Owner {
+    fn validate(&self)->Result<(),Error>{let prefix=format!("{}/.github/workflows/",repo(self.tool));let name=self.signer_workflow.strip_prefix(&prefix).ok_or_else(||error(Code::InvalidInput,"exact owner workflow required"))?;if self.repository!=repo(self.tool)||!safe(name)||!name.ends_with(".yml")||!revision(&self.signer_revision)||!revision(&self.source_revision)||!(self.source_ref=="refs/heads/main"||self.source_ref.strip_prefix("refs/tags/").is_some_and(safe)){return Err(error(Code::InvalidInput,"owner repository/workflow/source policy differs"));}Ok(())}
+}
 #[derive(Debug,Clone,Serialize,Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Policy {pub schema_version:String,pub owners:Vec<Owner>,pub host_identity:FilePin,pub maximum_age_seconds:u64,#[serde(default,skip_serializing_if="Option::is_none")] pub github_credential:Option<FilePin>}
@@ -142,32 +145,13 @@ pub fn verify(request:&Request,trust:&TrustedConfiguration,output:&Path,allow_ve
     let action=(||{
         command::write_document(&output.join("request.json"),request)?;command::write_document(&output.join("policy.json"),&policy)?;
         let mut transcripts=vec![];
-        for (index,(s,_,_,owner)) in reports.iter().enumerate(){
-            for p in [&trust.verifier,&s.report,&s.sigstore_bundle]{p.current(536_870_912,&guard)?;}
-            let args:Vec<OsString>=vec!["attestation".into(),"verify".into(),native::path(&s.report.path)?.into_os_string(),"--bundle".into(),native::path(&s.sigstore_bundle.path)?.into_os_string(),"--repo".into(),owner.repository.clone().into(),"--signer-workflow".into(),owner.signer_workflow.clone().into(),"--signer-digest".into(),owner.signer_revision.clone().into(),"--source-digest".into(),owner.source_revision.clone().into(),"--source-ref".into(),owner.source_ref.clone().into(),"--deny-self-hosted-runners".into(),"--format".into(),"json".into()];
-            // Empty private HOME contains no inherited credentials or configuration.
-            let home=output.join(format!("verifier-home-{index:02}"));let mut b=fs::DirBuilder::new();#[cfg(unix)]{use std::os::unix::fs::DirBuilderExt;b.mode(0o700);}b.create(&home).map_err(|_|error(Code::Io,"private verifier home unavailable"))?;
-            let mut environment=vec![(OsString::from("HOME"),home.into_os_string())];
-            if let Some(pin)=&policy.github_credential{pin.current(4096,&guard)?;let p=native::path(&pin.path)?;#[cfg(unix)]{use std::os::unix::fs::PermissionsExt;if fs::metadata(&p).map_err(|_|error(Code::Unavailable,"credential metadata unavailable"))?.permissions().mode()&0o077!=0{return Err(error(Code::InvalidInput,"credential must exclude group/other access"));}}let bytes=command::read_document(&p,4096)?;if cohort::sha256(&bytes)!=pin.sha256{return Err(error(Code::StalePlan,"credential pin changed"));}let secret=std::str::from_utf8(&bytes).map_err(|_|error(Code::InvalidInput,"credential encoding"))?.trim();if secret.is_empty()||secret.chars().any(char::is_whitespace)||secret.chars().any(char::is_control){return Err(error(Code::InvalidInput,"single GitHub credential required"));}environment.push((OsString::from("GH_TOKEN"),OsString::from(secret)));}
-            let captured=crate::runner::capture_native(&native::path(&trust.verifier.path)?,&args,&environment,remaining(started,request.timeout_ms)?,MAX,65_536,&guard).map_err(|_|error(Code::Unavailable,"attestation verifier cancelled, unavailable or exceeded bounds"))?;
-            let document=serde_json::json!({"schema_version":"flow.attestation-verifier-capture/v1","row_id":s.row_id,"report_sha256":s.report.sha256,"verifier_sha256":trust.verifier.sha256,"exit_code":captured.code,"stdout":String::from_utf8_lossy(&captured.stdout),"stderr":String::from_utf8_lossy(&captured.stderr)});
-            let name=output.join(format!("verification-{index:02}.json"));command::write_document(&name,&document)?;transcripts.push(FilePin::observe(&NativePath::from_path(&name),MAX,&guard)?);
-            // The pinned trusted verifier authenticates the exact file subject.
-            // Domain acceptance above is required independently of process success.
-            let response:serde_json::Value=serde_json::from_slice(&captured.stdout).map_err(|_|error(Code::Unavailable,"attestation verifier returned invalid JSON"))?;
-            if captured.code!=Some(0)||!response.as_array().is_some_and(|v|!v.is_empty()&&v.len()<=32&&v.iter().all(serde_json::Value::is_object)){return Err(error(Code::Unavailable,"attestation did not authenticate this exact report"));}
-            // Observe the actual release and uploaded asset via the same pinned
-            // client. Authentication of a report alone does not prove publication.
-            let report=&reports[index].1;let row=&reports[index].2;
+        for (index,(s,report,row,owner)) in reports.iter().enumerate(){
             let publication=&report.publication;
-            let api_args:Vec<OsString>=vec!["api".into(),format!("/repos/{}/releases/{}",owner.repository,publication.release_id).into()];
-            let published=crate::runner::capture_native(&native::path(&trust.verifier.path)?,&api_args,&environment,remaining(started,request.timeout_ms)?,1_048_576,32_768,&guard).map_err(|_|error(Code::Unavailable,"public release metadata unavailable within bounds"))?;
-            let metadata:serde_json::Value=serde_json::from_slice(&published.stdout).map_err(|_|error(Code::Unavailable,"public release metadata JSON unavailable"))?;
+            let captured=authenticate(trust,owner,&s.row_id,&s.report,&s.sigstore_bundle,policy.github_credential.as_ref(),publication.release_id,&output,index,started,request.timeout_ms,&guard)?;
+            let metadata=captured.document;transcripts.extend(captured.receipts);
             let artifact=row.artifact.as_ref().ok_or_else(||error(Code::Unavailable,"published artifact pin absent"))?;
             let tag=format!("v{}",artifact.version);let archive_digest=format!("sha256:{}",publication.published_archive.sha256);
-            if published.code!=Some(0)||metadata["id"].as_u64()!=Some(publication.release_id)||metadata["draft"]!=false||metadata["tag_name"]!=tag||!metadata["assets"].as_array().is_some_and(|assets|assets.iter().any(|a|a["id"].as_u64()==Some(publication.asset_id)&&a["state"]=="uploaded"&&a["browser_download_url"]==publication.release_url&&a["digest"]==archive_digest&&a["size"].as_u64()==Some(publication.published_archive.byte_count))){return Err(error(Code::Unavailable,"exact published release asset or GitHub content digest is absent"));}
-            let public_path=output.join(format!("publication-{index:02}.json"));command::write_document(&public_path,&metadata)?;transcripts.push(FilePin::observe(&NativePath::from_path(&public_path),MAX,&guard)?);
-            for p in [&trust.verifier,&s.report,&s.sigstore_bundle]{p.current(536_870_912,&guard)?;}
+            if metadata["tag_name"]!=tag||!metadata["assets"].as_array().is_some_and(|assets|assets.iter().any(|a|a["id"].as_u64()==Some(publication.asset_id)&&a["state"]=="uploaded"&&a["browser_download_url"]==publication.release_url&&a["digest"]==archive_digest&&a["size"].as_u64()==Some(publication.published_archive.byte_count))){return Err(error(Code::Unavailable,"exact published release asset or GitHub content digest is absent"));}
         }
         let binding_sha256=hash(&(request,trust,&policy))?;
         let audit_path=output.join("verification.json");command::write_document(&audit_path,&serde_json::json!({"schema_version":"flow.authenticated-evidence-audit/v1","binding_sha256":binding_sha256,"cohort_sha256":request.cohort.sha256,"transcripts":transcripts,"verification_network_permitted":true,"media_or_provider_invoked":false}))?;
@@ -202,5 +186,37 @@ impl EvidencePort for VerifiedEvidence {fn observe(&self,row:&Row,dimension:Dime
     Ok(Observation{subject_sha256:cohort::subject(row)?,state:State::Passed,evidence_sha256:Some(e.selection.report.sha256.clone()),reason:"exact owner-authenticated report, positive clean-install/native acceptance and current explicit host/dependency/payload bindings".into()})
 }}
 
+struct AuthenticatedMetadata {document:serde_json::Value,receipts:Vec<FilePin>}
+fn authenticate(trust:&TrustedConfiguration,owner:&Owner,row_id:&str,report:&FilePin,bundle:&FilePin,credential:Option<&FilePin>,release_id:u64,output:&Path,index:usize,started:Instant,timeout_ms:u64,token:&dyn CancellationSignal)->Result<AuthenticatedMetadata,Error>{
+    let mut transcripts=vec![];
+            for p in [&trust.verifier,report,bundle]{p.current(536_870_912,token)?;}
+            let args:Vec<OsString>=vec!["attestation".into(),"verify".into(),native::path(&report.path)?.into_os_string(),"--bundle".into(),native::path(&bundle.path)?.into_os_string(),"--repo".into(),owner.repository.clone().into(),"--signer-workflow".into(),owner.signer_workflow.clone().into(),"--signer-digest".into(),owner.signer_revision.clone().into(),"--source-digest".into(),owner.source_revision.clone().into(),"--source-ref".into(),owner.source_ref.clone().into(),"--deny-self-hosted-runners".into(),"--format".into(),"json".into()];
+            // Empty private HOME contains no inherited credentials or configuration.
+            let home=output.join(format!("verifier-home-{index:02}"));let mut b=fs::DirBuilder::new();#[cfg(unix)]{use std::os::unix::fs::DirBuilderExt;b.mode(0o700);}b.create(&home).map_err(|_|error(Code::Io,"private verifier home unavailable"))?;
+            let mut environment=vec![(OsString::from("HOME"),home.into_os_string())];
+            if let Some(pin)=credential{pin.current(4096,token)?;let p=native::path(&pin.path)?;#[cfg(unix)]{use std::os::unix::fs::PermissionsExt;if fs::metadata(&p).map_err(|_|error(Code::Unavailable,"credential metadata unavailable"))?.permissions().mode()&0o077!=0{return Err(error(Code::InvalidInput,"credential must exclude group/other access"));}}let bytes=command::read_document(&p,4096)?;if cohort::sha256(&bytes)!=pin.sha256{return Err(error(Code::StalePlan,"credential pin changed"));}let secret=std::str::from_utf8(&bytes).map_err(|_|error(Code::InvalidInput,"credential encoding"))?.trim();if secret.is_empty()||secret.chars().any(char::is_whitespace)||secret.chars().any(char::is_control){return Err(error(Code::InvalidInput,"single GitHub credential required"));}environment.push((OsString::from("GH_TOKEN"),OsString::from(secret)));}
+            let captured=crate::runner::capture_native(&native::path(&trust.verifier.path)?,&args,&environment,remaining(started,timeout_ms)?,MAX,65_536,token).map_err(|_|error(Code::Unavailable,"attestation verifier cancelled, unavailable or exceeded bounds"))?;
+            let document=serde_json::json!({"schema_version":"flow.attestation-verifier-capture/v1","row_id":row_id,"report_sha256":report.sha256,"verifier_sha256":trust.verifier.sha256,"exit_code":captured.code,"stdout":String::from_utf8_lossy(&captured.stdout),"stderr":String::from_utf8_lossy(&captured.stderr)});
+            let name=output.join(format!("verification-{index:02}.json"));command::write_document(&name,&document)?;transcripts.push(FilePin::observe(&NativePath::from_path(&name),MAX,token)?);
+            // The pinned trusted verifier authenticates the exact file subject.
+            // Native/domain admission remains a separate caller-owned proof boundary.
+            let response:serde_json::Value=serde_json::from_slice(&captured.stdout).map_err(|_|error(Code::Unavailable,"attestation verifier returned invalid JSON"))?;
+            if captured.code!=Some(0)||!response.as_array().is_some_and(|v|!v.is_empty()&&v.len()<=32&&v.iter().all(serde_json::Value::is_object)){return Err(error(Code::Unavailable,"attestation did not authenticate this exact report"));}
+
+    let api_args:Vec<OsString>=vec!["api".into(),"--hostname".into(),"github.com".into(),format!("/repos/{}/releases/{}",owner.repository,release_id).into()];
+    let published=crate::runner::capture_native(&native::path(&trust.verifier.path)?,&api_args,&environment,remaining(started,timeout_ms)?,1_048_576,32_768,token).map_err(|_|error(Code::Unavailable,"public release metadata unavailable within bounds"))?;
+    let metadata:serde_json::Value=serde_json::from_slice(&published.stdout).map_err(|_|error(Code::Unavailable,"public release metadata JSON unavailable"))?;
+    if published.code!=Some(0)||metadata["id"].as_u64()!=Some(release_id)||metadata["draft"]!=false{return Err(error(Code::Unavailable,"actual non-draft release metadata required"));}
+    let public_path=output.join(format!("publication-{index:02}.json"));command::write_document(&public_path,&metadata)?;transcripts.push(FilePin::observe(&NativePath::from_path(&public_path),MAX,token)?);
+    for p in [&trust.verifier,report,bundle]{p.current(536_870_912,token)?;}
+    Ok(AuthenticatedMetadata{document:metadata,receipts:transcripts})
+}
+
+
+pub mod publisher;
+
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod publisher_tests;

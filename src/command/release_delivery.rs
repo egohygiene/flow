@@ -6,8 +6,7 @@ pub(super) fn execute(args:&Arguments,token:&dyn CancellationSignal)->Result<Opt
     if !special&&!(args.command=="release-matrix"&&args.options.contains_key("--evidence-request")){return Ok(None);}
     let request=evidence::Request::from_json_slice(&read_document(&path(args,"--evidence-request")?,1_048_576)?)?;
     if args.command=="release-matrix"{let selected=read_document(&path(args,"--cohort")?,1_048_576)?;if crate::release_cohort::sha256(&selected)!=request.cohort.sha256{return Err(error(Code::InvalidInput,"evidence request selects another cohort"));}}
-    let host_pin=|file:&str,digest:&str,maximum:u64|->Result<provider::FilePin,Error>{let expected=args.options.get(digest).and_then(|s|s.to_str()).ok_or_else(||error(Code::Usage,"explicit host trust digest required"))?;let actual=provider::FilePin::observe(&NativePath::from_path(&path(args,file)?),maximum,token)?;if actual.sha256!=expected{return Err(error(Code::StalePlan,"host trust file differs from explicit digest"));}Ok(actual)};
-    let trust=evidence::TrustedConfiguration::from_host_configuration(host_pin("--verification-policy","--policy-sha256",1_048_576)?,host_pin("--verifier-executable","--verifier-sha256",536_870_912)?)?;
+    let trust=selected_trust(args,token)?;
     let verified=evidence::verify(&request,&trust,&path(args,"--verification-directory")?,args.acknowledge_verification_network,token)?;
     match args.command.as_str(){
         "release-evidence"=>success("release-evidence",verified.summary(),Outcome::Complete).map(Some),
@@ -21,4 +20,10 @@ pub(super) fn execute(args:&Arguments,token:&dyn CancellationSignal)->Result<Opt
         "resume-released"=>success("resume-released",provider::resume_released(&path(args,"--run-directory")?,&path(args,"--native-run-directory")?,&verified,token)?,Outcome::Complete).map(Some),
         _=>Err(error(Code::Usage,"explicit release evidence command required")),
     }
+}
+
+pub(super) fn selected_trust(args:&Arguments,token:&dyn CancellationSignal)->Result<evidence::TrustedConfiguration,Error>{
+    let host_pin=|file:&str,digest:&str,maximum:u64|->Result<provider::FilePin,Error>{let expected=args.options.get(digest).and_then(|s|s.to_str()).ok_or_else(||error(Code::Usage,"explicit host trust digest required"))?;let actual=provider::FilePin::observe(&NativePath::from_path(&path(args,file)?),maximum,token)?;if actual.sha256!=expected{return Err(error(Code::StalePlan,"host trust file differs from explicit digest"));}Ok(actual)};
+    let trust=evidence::TrustedConfiguration::from_host_configuration(host_pin("--verification-policy","--policy-sha256",1_048_576)?,host_pin("--verifier-executable","--verifier-sha256",536_870_912)?)?;
+    Ok(trust)
 }
