@@ -47,10 +47,34 @@ directory is reserved for separately supplied operator authority; `native/`
 reserves later existing native attempts. Setup does not create check workspaces
 or invoke a provider. A failed operation preserves its partial root and reports
 that recovery directory. It never adopts or repairs that root; use a fresh
-workspace for another preparation. Retained integrity readback, explicit binding
-and command delivery follow as separate checkpoints.
+workspace for another preparation.
 
-This source checkpoint and its focused coverage/scope cases are authored,
+`delivery::audio_setup::status` selects the workspace and exact final record
+digest. It reconstructs the local selection and verifies source/configuration/
+installation/package pins, native plans and exact immutable core membership.
+Missing, changed, unknown or symbolic core members refuse and remain preserved.
+`approvals/` and `native/` are separate later-owner namespaces; setup status does
+not adopt or validate their contents as execution evidence. Status neither runs
+Aniflow nor rechecks the QC owner.
+
+For each prepared check, separately obtain its existing exact native candidate
+or released approval at the preview's reserved approval path. No preparation or
+binding call creates one. A closed `flow.audio-check-approvals/v1` document lists
+`payload_id`, `destination` and the existing audio-readiness `authority` containing
+that approval's FilePin. Archive-only preservation needs an empty approval list.
+
+`delivery::audio_setup::bind` consumes that complete, nonduplicated set and
+returns the existing `flow.audio-readiness-request/v1`. Approval pins and exact
+plan identity are checked. `save_binding` writes only outside the bundle and all
+selected package/source/provider/QC evidence. Missing, extra or wrong-plan
+approvals refuse. Binding a released approval does not authenticate it: the
+existing audio-readiness run must still obtain current opaque release evidence
+and its ordinary explicit verification acknowledgement before any invocation.
+The resulting request uses the existing read-only owner-check runner; there is
+no new process supervisor or acceptance database.
+
+These source checkpoints and their focused coverage/scope, archive-only roundtrip
+and stale-pin-before-write cases are authored,
 uncompiled/unrun. No tests, product validators, provider/native/media execution
 or CI were run. Release/native/reference-meter/platform and musical qualification
 remain with their existing owners. ADR-0019 remains proposed; Flow #88 stays last.

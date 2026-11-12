@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.34.0
+version: 0.35.0
 status: draft
 owners:
   - egohygiene
@@ -40,6 +40,13 @@ prepared record written last. Reserved approval and native-run directories have
 separate later owners. A failed preparation preserves its partial root and never
 adopts, overwrites or deletes a retained bundle; repeat preparation needs a fresh
 root. Preparation is local configuration writing, not an executable check.
+
+Readback reconstructs setup from current pinned inputs and verifies exact core
+membership, configurations and native plan records. It does not adopt unknown
+core members or make retained QC current. Binding consumes complete separately
+supplied approvals at the reserved paths and produces the existing readiness
+request. Released authority still requires fresh opaque evidence at execution;
+binding a retained approval cannot grant it or manufacture a review declaration.
 
 ## Exact-file audio delivery readiness
 

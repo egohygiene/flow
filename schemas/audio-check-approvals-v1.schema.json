@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "flow.audio-check-approvals/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "approvals"],
+  "properties": {
+    "schema_version": {"const": "flow.audio-check-approvals/v1"},
+    "approvals": {
+      "type": "array", "maxItems": 128,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["payload_id", "destination", "authority"],
+        "properties": {
+          "payload_id": {"type": "string", "minLength": 1, "maxLength": 96},
+          "destination": {"enum": ["archive", "soundcloud", "distrokid", "tiktok"]},
+          "authority": {"$ref": "audio-readiness-request-v1.schema.json#/properties/selections/items/properties/choice/oneOf/0/properties/authority"}
+        }
+      }
+    }
+  }
+}
