@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.26.0
+version: 0.27.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,15 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Independent portable publisher declarations
+
+`publisher_report` owns the closed portable archive/member and sidecar declaration
+used before a local installation or runtime witness exists. Parsing and row binding
+produce no authority. Each repository owns its offline report assembler; Flow's
+release owner emits the same protocol without importing siblings. Publisher
+signatures and actual release metadata must be independently verified by the host.
+Full local/native qualification retains the existing separate evidence contract.
 
 ## Authenticated release admission
 
