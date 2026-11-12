@@ -127,7 +127,7 @@ pub fn run(request:&Request,evidence:Option<&VerifiedEvidence>,token:&dyn Cancel
 }
 
 /// Keep explicit report/verification output outside selected originals, package,
-/// native workspaces, configuration, authorities and provider/tool bytes.
+/// native/QC evidence, configuration, authorities and provider/tool bytes.
 pub fn validate_output_path(request:&Request,output:&Path,token:&dyn CancellationSignal)->Result<(),Error>{
     let prepared=prepare(request,token)?;let output=command::absolute(output)?;
     let package=native::path(&prepared.package.current_root)?;
@@ -138,6 +138,7 @@ pub fn validate_output_path(request:&Request,output:&Path,token:&dyn Cancellatio
         for pin in [plan,approval]{if overlaps(&native::path(&pin.path)?){return Err(error(Code::InvalidInput,"audio readiness output overlaps selected plan/authority"));}}
     }}
     for (_,plan,_) in &prepared.plans {
+        for p in native::audio_policy_protected_paths(&plan.request)? {if overlaps(&p){return Err(error(Code::InvalidInput,"audio readiness output overlaps native/QC owner evidence"));}}
         for p in [&plan.request.run_directory,&plan.request.provider_executable,&plan.request.release_descriptor,&plan.request.cohort,&plan.request.configuration].into_iter().chain(plan.request.inputs.iter()).chain(plan.request.tool_directories.iter()) {
             if overlaps(&native::path(p)?){return Err(error(Code::InvalidInput,"audio readiness output overlaps source/provider/native context"));}
         }

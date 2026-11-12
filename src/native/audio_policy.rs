@@ -7,9 +7,29 @@ fn configuration(request:&Request)->Result<Value,Error>{
     let value:Value=serde_json::from_slice(&command::read_document(&path(&request.configuration)?,131_072)?).map_err(|_|error(Code::InvalidInput,"audio policy request JSON required"))?;
     if request.inputs.len()!=1||path(&request.inputs[0])?.to_str().is_none()||value["schema"]!="aniflow.audio-policy-check-request/v1"||value["policy"]["schema"]!="aniflow.audio-delivery-policy/v1"
         ||!matches!(value["input"]["kind"].as_str(),Some("accepted_video_with_qc"|"accepted_audio_with_qc"))
-        ||value.as_object().is_none_or(|v|v.len()!=3||!["schema","input","policy"].iter().all(|k|v.contains_key(*k))){return Err(error(Code::InvalidInput,"one explicit final media file and closed Aniflow current-QC policy request required"));}Ok(value)
+        ||value.as_object().is_none_or(|v|v.len()!=3||!["schema","input","policy"].iter().all(|k|v.contains_key(*k))){return Err(error(Code::InvalidInput,"one explicit final media file and closed Aniflow current-QC policy request required"));}
+    let output=path(&request.run_directory)?;
+    if declared_paths(&value)?.iter().any(|p|output.starts_with(p)||p.starts_with(&output)){return Err(error(Code::InvalidInput,"audio check workspace must be outside original native/QC evidence"));}
+    Ok(value)
 }
 pub(super) fn validate_configuration(request:&Request)->Result<(),Error>{configuration(request).map(|_|())}
+fn declared_paths(value:&Value)->Result<Vec<PathBuf>,Error>{
+    let input=&value["input"];let mut selected=vec![&input["qc_directory"]];
+    if input["kind"]=="accepted_video_with_qc" {selected.push(&input["run_directory"]);}else{
+        let subject=&input["subject"];
+        match subject["kind"].as_str(){
+            Some("accepted_pcm")=>selected.extend([&subject["signal_run_directory"],&subject["file"]]),
+            Some("accepted_audio_export"|"accepted_gain_candidate")=>selected.push(&subject["run_directory"]),
+            _=>return Err(error(Code::Unavailable,"supported exact final audio subject required")),
+        }
+    }
+    let mut paths=vec![];for selected in selected {
+        let p=PathBuf::from(selected.as_str().ok_or_else(||error(Code::InvalidInput,"explicit QC/native source path required"))?);
+        if !p.is_absolute()||p.components().any(|c|matches!(c,std::path::Component::CurDir|std::path::Component::ParentDir))||p.canonicalize().ok().as_deref()!=Some(p.as_path()){return Err(error(Code::Unavailable,"canonical current native/QC source path required"));}
+        paths.push(p);
+    }Ok(paths)
+}
+pub(super) fn protected_paths(request:&Request)->Result<Vec<PathBuf>,Error>{declared_paths(&configuration(request)?)}
 
 fn validate_assessment(plan:&Plan,value:&Value)->Result<(),Error>{
     let config=configuration(&plan.request)?;let source=&plan.sources[0];
@@ -90,5 +110,15 @@ pub(super) fn validate_retained(plan:&Plan,receipt:&Receipt,value:&Value)->Resul
         assert!(validate_subject(&config,&source,&make(&evaluation)).is_ok());
         let mut stale=make(&evaluation);stale["subject"]["file"]["sha256"]=Value::String("b".repeat(64));assert!(validate_subject(&config,&source,&stale).is_err());
         evaluation["runtime_qualified"]=Value::Bool(true);assert!(validate_subject(&config,&source,&make(&evaluation)).is_err());
+    }
+    #[test]fn check_workspaces_cannot_mutate_the_qc_namespace() {
+        let t=tempfile::tempdir().unwrap();let root=t.path().canonicalize().unwrap();
+        let qc=root.join("qc");let video=root.join("video-run");fs::create_dir(&qc).unwrap();fs::create_dir(&video).unwrap();
+        let file=root.join("final.mp4");fs::write(&file,b"synthetic").unwrap();let config=root.join("check.json");
+        fs::write(&config,serde_json::to_vec(&serde_json::json!({"schema":"aniflow.audio-policy-check-request/v1","input":{"kind":"accepted_video_with_qc","run_directory":video,"artifact_id":"delivery","qc_directory":qc,"qc_receipt_sha256":"b".repeat(64)},"policy":{"schema":"aniflow.audio-delivery-policy/v1","id":"synthetic","revision":"1","purpose":"Synthetic scope fixture","target_milli_lufs":-14000,"tolerance_milli_lu":500,"maximum_true_peak_milli_dbtp":-1000}})).unwrap()).unwrap();
+        let pin=|p:&Path|NativePath::from_path(p);
+        let mut request=Request {schema_version:REQUEST_SCHEMA.into(),cohort:pin(&root.join("cohort.json")),cohort_sha256:"a".repeat(64),row_id:"audio-check".into(),provider_executable:pin(&root.join("aniflow")),release_descriptor:pin(&root.join("descriptor.json")),inputs:vec![pin(&file)],configuration:pin(&config),run_directory:pin(&qc.join("unsafe-native")),tool_directories:vec![],limits:Limits::default(),preparation:None};
+        assert!(validate_configuration(&request).is_err());assert!(!qc.join("unsafe-native").exists());
+        request.run_directory=pin(&root.join("separate-native"));validate_configuration(&request).unwrap();
     }
 }

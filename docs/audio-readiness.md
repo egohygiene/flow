@@ -76,9 +76,10 @@ Native local status reobserves selected bytes and record identity but does not
 refresh the QC owner. Request a fresh explicitly approved check for current
 readiness. If a batch fails, ordinary native attempts/receipts remain; no new
 replay/state engine adopts or overwrites them. Reports and verifier output must
-stay outside packages, originals, provider/configuration and native workspaces.
+stay outside packages, originals, provider/configuration, native workspaces and
+the selected Aniflow QC/native evidence directories.
 
-All three focused protocol/source/archive/parser cases and contracts are
+All focused protocol/source/scope/archive/parser cases and contracts are
 authored, uncompiled/unrun. No tests/compiler/build/package/dependencies/lint/
 format/schema/docs/drift/product validators, CLI/SDK/native/media/provider/model/
 browser/container/CI, acquisition, actual source replacement/disposal, signing/

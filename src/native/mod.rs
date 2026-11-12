@@ -398,6 +398,7 @@ pub fn audio_policy_snapshot(root:&Path,expected_plan_sha256:&str,token:&dyn Can
     if value["schema_version"]!="flow.aniflow-audio-policy-acceptance/v1"{return Err(error(Code::InvalidInput,"selected receipt is not an audio policy owner check"));}
     Ok(value["assessment"].clone())
 }
+pub(crate) fn audio_policy_protected_paths(request:&Request)->Result<Vec<PathBuf>,Error>{audio_policy::protected_paths(request)}
 /// Translate accepted owner artifact identities and roles without inferring a
 /// master from a filename or invoking a provider.
 pub fn artifact_inventory(root:&Path,expected_plan_sha256:&str,token:&dyn CancellationSignal)->Result<Vec<ArtifactDescription>,Error>{
