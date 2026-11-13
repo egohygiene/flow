@@ -3,6 +3,7 @@
 //! does not establish publication, qualification, creative review or provenance.
 mod aniflow;
 mod audio_policy;
+mod audio_processing;
 mod renderflow;
 mod preparation;
 mod released;
@@ -32,6 +33,7 @@ fn directory(value: &Path) -> Result<(), Error> { if value.canonicalize().ok().a
 #[derive(Debug, Clone, Copy, Serialize)]
 pub struct SourceRoute { pub tool: Tool, pub profile: &'static str, pub contract: &'static str, pub maximum_inputs: usize, pub state: &'static str }
 pub const SOURCE_ROUTES: &[SourceRoute] = &[
+    SourceRoute {tool:Tool::Aniflow,profile:"fixed-audio-gain-v1",contract:"aniflow.release-contract/v1",maximum_inputs:1,state:"implemented_selected_gain_requires_exact_pins_and_explicit_approval"},
     SourceRoute { tool: Tool::Aniflow, profile: "music-video-source-v1", contract: "aniflow.release-contract/v1", maximum_inputs: 1, state: "implemented_source_candidate_requires_exact_pins_and_explicit_approval" },
     SourceRoute { tool: Tool::Renderflow, profile: "canonical-build-v1", contract: "renderflow.release-contract/v2", maximum_inputs: 8192, state: "implemented_source_candidate_requires_exact_pins_and_explicit_approval" },
     SourceRoute {tool:Tool::Aniflow,profile:"audio-policy-check-v1",contract:"aniflow.release-contract/v1",maximum_inputs:1,state:"implemented_read_only_owner_check_requires_exact_pins_and_explicit_approval"},
@@ -200,7 +202,7 @@ pub fn prepare(request: &Request, token: &dyn CancellationSignal) -> Result<Plan
         || !description["profiles"].as_array().is_some_and(|profiles| profiles.iter().any(|p| p["id"] == row.profile && p["source_mutation"] == false))
         || !row.contracts.iter().any(|c| c.identifier == schema && c.sha256 == descriptor.sha256)
         || row.artifact.as_ref().is_none_or(|a| description["version"] != a.version) { return Err(error(Code::Unavailable, "pinned native profile/descriptor/release contract differs")); }
-    match row.tool { Tool::Aniflow if row.profile==audio_policy::PROFILE => audio_policy::validate_configuration(request)?, Tool::Aniflow => aniflow::validate_configuration(request)?, Tool::Renderflow => renderflow::validate_configuration(request)?, _ => return Err(error(Code::Unavailable, "native configuration route unavailable")) }
+    match row.tool { Tool::Aniflow if row.profile==audio_policy::PROFILE => audio_policy::validate_configuration(request)?, Tool::Aniflow if audio_processing::supports(&row.profile) => audio_processing::validate_configuration(request)?, Tool::Aniflow => aniflow::validate_configuration(request)?, Tool::Renderflow => renderflow::validate_configuration(request)?, _ => return Err(error(Code::Unavailable, "native configuration route unavailable")) }
     let root = path(&request.run_directory)?;
     directory(root.parent().ok_or_else(|| error(Code::InvalidInput, "existing native output parent required"))?)?;
     if fs::symlink_metadata(&root).is_ok() { return Err(error(Code::RecoveryRequired, "fresh run directory required; use status/resume for retained attempts")); }
@@ -338,7 +340,7 @@ fn run_authorized<T: Serialize>(plan:&Plan,approval:&T,release_evidence:Option<&
         }
         create_directory(&root.join("native"))?; create_directory(&root.join("attempt-0000"))?;
         let context = Context { plan, root: root.clone(), evidence: root.join("attempt-0000"), started: Instant::now(), token, release_evidence };
-        match plan.row.tool { Tool::Aniflow if plan.row.profile==audio_policy::PROFILE => audio_policy::execute(&context,None), Tool::Aniflow => aniflow::execute(&context, None), Tool::Renderflow => renderflow::execute(&context, None), _ => Err(error(Code::Unavailable, "native route unavailable")) }
+        match plan.row.tool { Tool::Aniflow if plan.row.profile==audio_policy::PROFILE => audio_policy::execute(&context,None), Tool::Aniflow if audio_processing::supports(&plan.row.profile) => audio_processing::execute(&context,None), Tool::Aniflow => aniflow::execute(&context, None), Tool::Renderflow => renderflow::execute(&context, None), _ => Err(error(Code::Unavailable, "native route unavailable")) }
     })(); action.map_err(|e| context_error(e, &root))
 }
 fn basis(root: &Path) -> Result<(Plan, Approval), Error> {
@@ -359,7 +361,7 @@ fn current_status(root: &Path, plan: &Plan, token: &dyn CancellationSignal) -> R
         || !release_cohort::is_digest(&receipt.native_intent_sha256) || !native_run.starts_with(root.join("native")) || native_run == root.join("native") || !acceptance.starts_with(root) || receipt.artifacts.is_empty() || receipt.artifacts.len() > plan.request.limits.max_artifacts
         || release_cohort::sha256(&command::read_document(&acceptance, MAX_DOCUMENT)?) != receipt.acceptance_sha256 { return Err(error(Code::RecoveryRequired, "retained native acceptance identity changed")); }
     let domain: Value = read(&acceptance)?;
-    match plan.row.tool { Tool::Aniflow if plan.row.profile==audio_policy::PROFILE => audio_policy::validate_retained(plan,&receipt,&domain)?, Tool::Aniflow => aniflow::validate_retained(plan, &receipt, &domain)?, Tool::Renderflow => renderflow::validate_retained(plan, &receipt, &domain)?, _ => return Err(error(Code::Unavailable, "native retained route unsupported")) }
+    match plan.row.tool { Tool::Aniflow if plan.row.profile==audio_policy::PROFILE => audio_policy::validate_retained(plan,&receipt,&domain)?, Tool::Aniflow if audio_processing::supports(&plan.row.profile) => audio_processing::validate_retained(plan,&receipt,&domain)?, Tool::Aniflow => aniflow::validate_retained(plan, &receipt, &domain)?, Tool::Renderflow => renderflow::validate_retained(plan, &receipt, &domain)?, _ => return Err(error(Code::Unavailable, "native retained route unsupported")) }
     let mut seen = BTreeSet::new(); let mut total = 0_u64;
     for artifact in &receipt.artifacts {
         let file = path(&artifact.path)?;
@@ -410,7 +412,9 @@ pub fn artifact_inventory(root:&Path,expected_plan_sha256:&str,token:&dyn Cancel
     if release_cohort::sha256(&bytes)!=receipt.acceptance_sha256{return Err(error(Code::StalePlan,"domain acceptance changed during artifact inventory"));}
     let domain:Value=serde_json::from_slice(&bytes).map_err(|_|error(Code::RecoveryRequired,"domain acceptance malformed"))?;
     let mut result=vec![];let mut ids=BTreeSet::new();
-    if domain["schema_version"]=="flow.aniflow-audio-policy-acceptance/v1"{
+    if domain["schema_version"]=="flow.aniflow-audio-processing-acceptance/v1"{
+        result=audio_processing::inventory(&receipt,&domain)?;
+    }else if domain["schema_version"]=="flow.aniflow-audio-policy-acceptance/v1"{
         if receipt.artifacts.len()!=1{return Err(error(Code::RecoveryRequired,"one retained policy assessment required"));}
         result.push(ArtifactDescription {artifact_id:"audio_policy_assessment".into(),purpose:"supporting_document".into(),file:receipt.artifacts[0].clone()});
     }else if domain["schema_version"]=="flow.aniflow-domain-acceptance/v1"{
@@ -453,5 +457,5 @@ fn resume_authorized(root:&Path,native_run:&Path,plan:&Plan,release_evidence:Opt
     let evidence = attempt.ok_or_else(|| error(Code::RecoveryRequired, "retained resume attempt bound reached"))?;
     let context = Context { plan, root: root.to_owned(), evidence, started: Instant::now(), token, release_evidence };
     context.require_native_run(native_run)?;
-    match plan.row.tool { Tool::Aniflow if plan.row.profile==audio_policy::PROFILE => audio_policy::execute(&context,Some(native_run)), Tool::Aniflow => aniflow::execute(&context, Some(native_run)), Tool::Renderflow => renderflow::execute(&context, Some(native_run)), _ => Err(error(Code::Unavailable, "native route unavailable")) }.map_err(|e| context_error(e, root))
+    match plan.row.tool { Tool::Aniflow if plan.row.profile==audio_policy::PROFILE => audio_policy::execute(&context,Some(native_run)), Tool::Aniflow if audio_processing::supports(&plan.row.profile) => audio_processing::execute(&context,Some(native_run)), Tool::Aniflow => aniflow::execute(&context, Some(native_run)), Tool::Renderflow => renderflow::execute(&context, Some(native_run)), _ => Err(error(Code::Unavailable, "native route unavailable")) }.map_err(|e| context_error(e, root))
 }
