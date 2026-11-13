@@ -77,6 +77,12 @@ historical measurements current. A gained WAV remains an unreviewed derivative
 requiring fresh exact-file QC; no limiter, automatic mastering or upload is
 introduced. This extension remains proposed and unqualified.
 
+The same translation boundary can select either existing resumable final-file
+QC owner. Captured reports must describe the exact selected bytes and native
+intent, and agree with the actual accepted report file. Reports remain supporting
+evidence with separate selected-policy comparison; neither a WAV result nor a
+historical Flow status grants current encoded-video QC. This remains proposed.
+
 ## Proposed installed-check preparation extension — November 12, 2026
 
 An operator can resolve supplied Aniflow QC/policy requests against exact delivery

@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.41.0
+version: 0.42.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,18 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Fresh final-file audio-QC translation
+
+Separately selected native routes delegate final-lossless and encoded-video
+measurement to Aniflow's existing resumable QC owners. Exact current source
+bytes, full QC configuration and native intent bind each run. Their accepted
+artifacts are supporting reports rather than replacement media. Retained report
+content must agree with the captured owner report and exact final-file subject;
+neither a WAV measurement nor retained status substitutes for a fresh encoded
+video check. Selected-policy comparison, native/reference qualification and
+human review remain separate. Existing authority, attempts and resume owners
+are reused, with no automatic gain or policy choice.
 
 ## Selected audio-processing native translation
 
