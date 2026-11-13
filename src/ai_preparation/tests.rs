@@ -11,3 +11,23 @@ fn fixture(p:&Profile)->(Fixture,LocalPreparation){static NEXT:AtomicU64=AtomicU
 #[test] fn incompatible_modality_hard_cost_or_egress_policy_is_explicit(){let mut p=profile();p.modality=Modality::Video;assert_eq!(inspect(&p,None,&crate::NeverCancelled).unwrap().state,State::Incompatible);p.modality=Modality::Text;p.budgets.hard_cost_microunits=Some(0);assert_eq!(inspect(&p,None,&crate::NeverCancelled).unwrap().state,State::Incompatible);p.budgets.hard_cost_microunits=None;let (_f,mut prep)=fixture(&p);prep.service_egress_disabled_declared=false;assert_eq!(inspect(&p,Some(&prep),&crate::NeverCancelled).unwrap().state,State::Refused);}
 #[test] fn profile_changes_invalidate_preparation_and_unknown_fields_refuse(){let mut p=profile();let (_f,prep)=fixture(&p);p.model_revision="changed".into();assert!(inspect(&p,Some(&prep),&crate::NeverCancelled).is_err());let mut v=serde_json::to_value(&p).unwrap();v["credential"]=serde_json::json!("never accept raw keys");assert!(Profile::from_json_slice(&serde_json::to_vec(&v).unwrap()).is_err());}
 #[test] fn duplicate_assets_unbounded_attempts_and_cancellation_refuse(){let mut p=profile();let (_f,mut prep)=fixture(&p);prep.assets.push(prep.assets[0].clone());assert!(prep.validate().is_err());p.budgets.attempts=2;assert!(p.validate().is_err());p.budgets.attempts=1;struct Cancelled;impl CancellationSignal for Cancelled{fn is_cancelled(&self)->bool{true}}assert!(inspect(&p,None,&Cancelled).is_err());}
+
+#[cfg(unix)]
+#[test] fn hard_linked_assets_are_not_prepared_even_when_bytes_match(){
+    let p=profile();let (f,prep)=fixture(&p);
+    std::fs::hard_link(&prep.assets[0].path,f.0.join("runtime-alias")).unwrap();
+    let report=inspect(&p,Some(&prep),&crate::NeverCancelled).unwrap();
+    assert_eq!(report.state,State::Unavailable);assert!(!report.invocation_authority);
+}
+#[cfg(unix)]
+#[test] fn equal_bytes_and_mtime_cannot_hide_a_replaced_asset_path(){
+    use std::cell::Cell;
+    let p=profile();let (f,prep)=fixture(&p);let asset=&prep.assets[0];
+    let before=std::fs::metadata(&asset.path).unwrap();let changed=Cell::new(false);
+    let token=||{if !changed.replace(true){
+        std::fs::rename(&asset.path,f.0.join("held-runtime")).unwrap();
+        std::fs::write(&asset.path,b"runtime").unwrap();
+        std::fs::File::open(&asset.path).unwrap().set_times(std::fs::FileTimes::new().set_modified(before.modified().unwrap())).unwrap();
+    }false};
+    assert_eq!(observe(asset,&token).unwrap().state,AssetState::Changed);
+}

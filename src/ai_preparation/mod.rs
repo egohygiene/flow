@@ -1,5 +1,5 @@
 //! Proposed #80 preparation evidence only. No installer, inference or authority.
-use std::{collections::BTreeSet,fs::File,io::Read,net::SocketAddr,path::PathBuf};
+use std::{collections::BTreeSet,io::Read,net::SocketAddr,path::PathBuf};
 use serde::{Serialize,Deserialize};
 use sha2::{Digest,Sha256};
 use crate::{CancellationSignal,ValidationError};
@@ -62,13 +62,30 @@ impl LocalPreparation {
         if total>self.maximum_observation_bytes||self.assets.iter().filter(|a|a.kind==AssetKind::RuntimeExecutable).count()!=1||!self.assets.iter().any(|a|a.kind==AssetKind::ModelWeights)||!self.assets.iter().any(|a|a.kind==AssetKind::ModelConfiguration){return Err(error("preparation needs one runtime, weights and model configuration within observed byte bound"));}Ok(())
     }
 }
+fn same_asset(before:&std::fs::Metadata,after:&std::fs::Metadata)->bool {
+    if !before.is_file()||!after.is_file()||before.len()!=after.len()
+        ||before.modified().ok().is_none()||before.modified().ok()!=after.modified().ok(){return false;}
+    #[cfg(unix)] {use std::os::unix::fs::MetadataExt;
+        before.nlink()==1&&after.nlink()==1&&before.dev()==after.dev()&&before.ino()==after.ino()
+            &&before.ctime()==after.ctime()&&before.ctime_nsec()==after.ctime_nsec()
+    }
+    #[cfg(not(unix))] {false}
+}
 fn observe(a:&Asset,cancel:&impl CancellationSignal)->Result<AssetObservation,ValidationError>{
     let mut out=AssetObservation {asset_id:a.asset_id.clone(),kind:a.kind,state:AssetState::Unavailable,observed_sha256:None,observed_bytes:None};
     let before=match std::fs::symlink_metadata(&a.path){Ok(m)=>m,Err(e) if e.kind()==std::io::ErrorKind::NotFound=>{out.state=AssetState::Missing;return Ok(out);},Err(_)=>return Ok(out)};
     if !before.file_type().is_file()||a.path.canonicalize().ok().as_ref()!=Some(&a.path){return Ok(out);}if before.len()!=a.byte_count{out.state=AssetState::Changed;out.observed_bytes=Some(before.len());return Ok(out);}
-    let Ok(mut file)=File::open(&a.path)else{return Ok(out);};let mut hasher=Sha256::new();let mut bytes=0u64;let mut buffer=[0u8;65_536];
+    if !same_asset(&before,&before){return Ok(out);}
+    let mut options=std::fs::OpenOptions::new();options.read(true);
+    #[cfg(unix)] {use std::os::unix::fs::OpenOptionsExt;options.custom_flags(nix::libc::O_NOFOLLOW|nix::libc::O_CLOEXEC|nix::libc::O_NONBLOCK);}
+    let Ok(mut file)=options.open(&a.path)else{return Ok(out);};
+    let Ok(opened)=file.metadata()else{return Ok(out);};if !same_asset(&before,&opened){out.state=AssetState::Changed;return Ok(out);}
+    let mut hasher=Sha256::new();let mut bytes=0u64;let mut buffer=[0u8;65_536];
     loop{if cancel.is_cancelled(){return Err(error("cancelled; no preparation acceptance"));}let n=match file.read(&mut buffer){Ok(n)=>n,Err(_)=>return Ok(out)};if n==0{break;}bytes=bytes.checked_add(n as u64).ok_or_else(||error("observed byte overflow"))?;if bytes>a.byte_count{out.state=AssetState::Changed;return Ok(out);}hasher.update(&buffer[..n]);}
-    let after=match std::fs::symlink_metadata(&a.path){Ok(m)=>m,Err(_)=>return Ok(out)};if !after.file_type().is_file()||a.path.canonicalize().ok().as_ref()!=Some(&a.path)||after.len()!=before.len()||after.modified().ok()!=before.modified().ok(){out.state=AssetState::Changed;return Ok(out);}
+    let after=match std::fs::symlink_metadata(&a.path){Ok(m)=>m,Err(_)=>return Ok(out)};
+    let Ok(after_fd)=file.metadata()else{return Ok(out);};
+    if after.file_type().is_symlink()||a.path.canonicalize().ok().as_ref()!=Some(&a.path)
+        ||!same_asset(&before,&after_fd)||!same_asset(&before,&after){out.state=AssetState::Changed;return Ok(out);}
     let sha=format!("{:x}",hasher.finalize());out.observed_sha256=Some(sha.clone());out.observed_bytes=Some(bytes);out.state=if sha==a.sha256&&bytes==a.byte_count{AssetState::MatchedBytes}else{AssetState::Changed};Ok(out)
 }
 /// Explicit read-only byte observation. This never opens a socket, executes a
