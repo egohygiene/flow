@@ -12,6 +12,20 @@ impl Fixture {
     }
 }
 impl Drop for Fixture {fn drop(&mut self){let _=fs::remove_dir_all(&self.0);}}
+
+#[test]fn flat_unexpected_installation_trees_cannot_bypass_the_entry_bound(){
+    let fixture=Fixture::new();for i in 0..512{fs::write(fixture.0.join(format!("file-{i}")),b"generated").unwrap();}
+    assert_eq!(membership(&fixture.0,&NeverCancelled).unwrap().len(),512);
+    fs::write(fixture.0.join("one-too-many"),b"retain").unwrap();
+    assert_eq!(membership(&fixture.0,&NeverCancelled).unwrap_err().code,Code::RecoveryRequired);
+    assert_eq!(fs::read_dir(&fixture.0).unwrap().count(),513);
+}
+#[test]fn cancellation_interrupts_flat_membership_without_removing_unknown_files(){
+    let fixture=Fixture::new();for i in 0..20{fs::write(fixture.0.join(format!("file-{i}")),b"retain").unwrap();}
+    let calls=std::cell::Cell::new(0);let cancelled=||{calls.set(calls.get()+1);calls.get()>=4};
+    assert_eq!(membership(&fixture.0,&cancelled).unwrap_err().code,Code::Cancelled);
+    assert_eq!(calls.get(),4);assert_eq!(fs::read_dir(&fixture.0).unwrap().count(),20);
+}
 #[cfg(unix)]
 #[test]
 fn offline_bundle_rebases_only_owned_members_after_move(){let fixture=Fixture::new();let request=fixture.request();let bundle_root=fixture.0.join("bundle");let receipt=bundle(&request,&bundle_root,&NeverCancelled).unwrap();let moved=fixture.0.join("moved");fs::rename(&bundle_root,&moved).unwrap();let restored=open_bundle(&moved,&receipt.sha256,&fixture.0.join("installed"),&NeverCancelled).unwrap();let installed=install(&restored,true,&NeverCancelled).unwrap();assert!(installed.current_copied_bytes);assert!(!installed.receipt.native_qualified&&!installed.receipt.provider_invoked&&!installed.receipt.publisher_authenticated);assert_eq!(fs::read(path(&request.tools[0].executable.path).unwrap()).unwrap(),b"synthetic bytes; never executed");}

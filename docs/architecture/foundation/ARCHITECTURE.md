@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.46.0
+version: 0.47.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,14 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Installation membership readback
+
+The distribution owner bounds every directory entry and checks caller
+cancellation during immutable installation readback. Unexpected large trees
+cannot bypass the entry budget within a flat directory. Membership and current
+file bytes remain observations, separate from launch, publisher and native
+qualification; refusal preserves unknown material and existing management gates.
 
 ## Local planning deadline
 

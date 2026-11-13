@@ -142,13 +142,17 @@ fn install_owned(request:&Request,publisher:Option<&crate::release_evidence::pub
         status(&root,&hash(&data),&budget)
     })();action.map_err(|mut e: Error|{e.recovery_directory=Some(NativePath::from_path(&root));if !token.is_cancelled()&&started.elapsed().as_millis()>=u128::from(request.timeout_ms){e.code=Code::RecoveryRequired;e.message="installation observation/copy deadline exceeded; preserve partial root".into();}e})
 }
-fn membership(root: &Path) -> Result<BTreeSet<String>,Error> {
-    fn visit(root: &Path, current: &Path, depth: usize, names: &mut BTreeSet<String>) -> Result<(),Error> {
-        if depth>4||names.len()>512{return Err(error(Code::RecoveryRequired,"owned installation membership bound"));}
-        for entry in fs::read_dir(current).map_err(|_|error(Code::Io,"installation membership unavailable"))? {let path=entry.map_err(|_|error(Code::Io,"installation entry unavailable"))?.path();let metadata=fs::symlink_metadata(&path).map_err(|_|error(Code::Io,"installation entry metadata"))?;if metadata.file_type().is_symlink(){return Err(error(Code::RecoveryRequired,"installation contains an unexpected link"));}let relative=path.strip_prefix(root).map_err(|_|error(Code::RecoveryRequired,"installation path escaped"))?.to_str().ok_or_else(||error(Code::RecoveryRequired,"owned path encoding changed"))?.replace(std::path::MAIN_SEPARATOR,"/");if metadata.is_dir(){directory(&path)?;names.insert(relative+"/");visit(root,&path,depth+1,names)?;}else if metadata.is_file(){names.insert(relative);}else{return Err(error(Code::RecoveryRequired,"installation contains a special node"));}}
+fn membership(root: &Path,token:&dyn CancellationSignal) -> Result<BTreeSet<String>,Error> {
+    fn visit(root: &Path, current: &Path, depth: usize, names: &mut BTreeSet<String>,seen:&mut usize,token:&dyn CancellationSignal) -> Result<(),Error> {
+        if token.is_cancelled(){return Err(error(Code::Cancelled,"installation membership observation cancelled"));}
+        if depth>4{return Err(error(Code::RecoveryRequired,"owned installation membership bound"));}
+        for entry in fs::read_dir(current).map_err(|_|error(Code::Io,"installation membership unavailable"))? {
+            if token.is_cancelled(){return Err(error(Code::Cancelled,"installation membership observation cancelled"));}
+            if *seen>=512{return Err(error(Code::RecoveryRequired,"owned installation membership bound"));}*seen+=1;
+            let path=entry.map_err(|_|error(Code::Io,"installation entry unavailable"))?.path();let metadata=fs::symlink_metadata(&path).map_err(|_|error(Code::Io,"installation entry metadata"))?;if metadata.file_type().is_symlink(){return Err(error(Code::RecoveryRequired,"installation contains an unexpected link"));}let relative=path.strip_prefix(root).map_err(|_|error(Code::RecoveryRequired,"installation path escaped"))?.to_str().ok_or_else(||error(Code::RecoveryRequired,"owned path encoding changed"))?.replace(std::path::MAIN_SEPARATOR,"/");if metadata.is_dir(){directory(&path)?;names.insert(relative+"/");visit(root,&path,depth+1,names,seen,token)?;}else if metadata.is_file(){names.insert(relative);}else{return Err(error(Code::RecoveryRequired,"installation contains a special node"));}}
         Ok(())
     }
-    let mut names=BTreeSet::new();visit(root,root,0,&mut names)?;Ok(names)
+    let mut names=BTreeSet::new();visit(root,root,0,&mut names,&mut 0,token)?;Ok(names)
 }
 pub fn status(root: &Path, expected_receipt_sha256: &str, token: &dyn CancellationSignal) -> Result<Observation,Error> {
     directory(root)?;let data=command::read_document(&root.join(RECEIPT),MAX_JSON)?;
@@ -164,7 +168,7 @@ pub fn status(root: &Path, expected_receipt_sha256: &str, token: &dyn Cancellati
     let mut expected=BTreeSet::from([RECEIPT.to_owned(),"installation-intent.json".into()]);
     for ((relative,pin),file) in entries.iter().zip(&receipt.files){if relative!=&file.relative||pin.sha256!=file.sha256||pin.byte_count!=file.byte_count||!expected.insert(relative.clone()){return Err(error(Code::RecoveryRequired,"installation copied identity differs from intent"));}FilePin {path:NativePath::from_path(&root.join(relative)),sha256:file.sha256.clone(),byte_count:file.byte_count}.current(MAX_FILE,token)?;}
     for (relative,_) in &entries {let mut parent=Path::new(relative).parent();while let Some(dir)=parent{if dir.as_os_str().is_empty(){break;}expected.insert(dir.to_string_lossy().replace(std::path::MAIN_SEPARATOR,"/")+"/");parent=dir.parent();}}
-    if membership(root)?!=expected{return Err(error(Code::RecoveryRequired,"installation has missing or unknown files/directories; preserve them"));}
+    if membership(root,token)?!=expected{return Err(error(Code::RecoveryRequired,"installation has missing or unknown files/directories; preserve them"));}
     Ok(Observation {schema_version:"flow.suite-installation-status/v1".into(),receipt,receipt_sha256:expected_receipt_sha256.into(),current_copied_bytes:true,required_runtime_evidence:"publisher authentication, when recorded, is an installation-time observation; current dependency/backend/profile qualification remains independent; no provider was invoked".into()})
 }
 pub fn bundle(request: &Request, output: &Path, token: &dyn CancellationSignal) -> Result<FilePin,Error> {
@@ -197,7 +201,7 @@ pub fn open_bundle(root: &Path, expected_bundle_sha256: &str, install_directory:
     rebase(&mut request.cohort)?;for tool in &mut request.tools{rebase(&mut tool.executable)?;for contract in &mut tool.contracts{rebase(&mut contract.file)?;}for extra in &mut tool.extras{rebase(&mut extra.file)?;}}
     if ordinal!=receipt.file_count{return Err(error(Code::InvalidInput,"offline bundle member count differs"));}
     let mut expected=BTreeSet::from(["bundle.json".into(),"install-request.json".into(),"files/".into()]);for index in 0..ordinal{expected.insert(format!("files/{index:04}"));}
-    if membership(root)?!=expected{return Err(error(Code::InvalidInput,"offline bundle contains missing/unknown entries"));}
+    if membership(root,token)?!=expected{return Err(error(Code::InvalidInput,"offline bundle contains missing/unknown entries"));}
     request.install_directory=NativePath::from_path(install_directory);request.validate()?;validate_cohort(&request,token)?;Ok(request)
 }
 fn separate_record(root: &Path, output: &Path) -> Result<(),Error> {
