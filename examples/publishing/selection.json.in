@@ -1,0 +1,34 @@
+{
+  "schema_version": "flow.publishing-project-selection/v1",
+  "metadata": {
+    "work_id": "example-song",
+    "title": "Example song",
+    "language": "en"
+  },
+  "video": {
+    "encoding": "utf8",
+    "value": "/absolute/private/original-video.mp4"
+  },
+  "manual_srt": {
+    "encoding": "utf8",
+    "value": "/absolute/private/manual-lyrics.srt"
+  },
+  "audio": {
+    "path": {
+      "encoding": "utf8",
+      "value": "/absolute/private/original-mix.wav"
+    },
+    "format": "wav",
+    "options": {
+      "encoding": "utf8",
+      "value": "/absolute/private/audio-options.json"
+    }
+  },
+  "workspace": {
+    "encoding": "utf8",
+    "value": "/absolute/private/fresh-song-work"
+  },
+  "destinations": null,
+  "rows": null,
+  "video_configuration": null
+}

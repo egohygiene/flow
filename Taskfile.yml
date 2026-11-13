@@ -1,6 +1,17 @@
 version: '3'
 
 tasks:
+  project:resolve:
+    desc: Resolve an explicit reusable publishing preset into a new project file
+    requires:
+      vars: [PRESET, SELECTION, OUTPUT]
+    env:
+      FLOW_PROJECT_PRESET: '{{.PRESET}}'
+      FLOW_PROJECT_SELECTION: '{{.SELECTION}}'
+      FLOW_RESOLVED_PROJECT: '{{.OUTPUT}}'
+    cmds:
+      - flow project-resolve --preset "$FLOW_PROJECT_PRESET" --selection "$FLOW_PROJECT_SELECTION" --output "$FLOW_RESOLVED_PROJECT" --format json
+
   diagnostics:preview:
     desc: Preview generated support metadata without writing a bundle
     requires:

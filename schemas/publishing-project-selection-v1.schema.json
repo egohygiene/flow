@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/egohygiene/flow/schemas/publishing-project-selection-v1.schema.json",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "flow.publishing-project-selection/v1"
+    },
+    "metadata": {
+      "$ref": "publishing-project-v1.schema.json#/properties/metadata"
+    },
+    "video": {
+      "$ref": "publishing-project-v1.schema.json#/properties/video"
+    },
+    "manual_srt": {
+      "$ref": "publishing-project-v1.schema.json#/properties/manual_srt"
+    },
+    "workspace": {
+      "$ref": "publishing-project-v1.schema.json#/properties/workspace"
+    },
+    "audio": {
+      "anyOf": [
+        {
+          "$ref": "publishing-project-v1.schema.json#/properties/audio"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "destinations": {
+      "anyOf": [
+        {
+          "$ref": "publishing-project-v1.schema.json#/properties/destinations"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rows": {
+      "anyOf": [
+        {
+          "$ref": "publishing-project-v1.schema.json#/properties/rows"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "video_configuration": {
+      "anyOf": [
+        {
+          "$ref": "publishing-project-v1.schema.json#/properties/video_configuration"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "metadata",
+    "video",
+    "manual_srt",
+    "workspace"
+  ],
+  "additionalProperties": false
+}

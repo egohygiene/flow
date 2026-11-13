@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.51.0
+version: 0.52.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,16 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Reusable publishing project presets
+
+A typed preset and explicit per-project selection resolve into the existing
+publishing project contract. Selected video/manual SRT, metadata and workspace
+are mandatory; optional overrides replace whole named settings rather than
+performing an arbitrary deep merge. Resolution exposes semantic identities and
+inherited/overridden fields without inspecting media or invoking providers.
+Existing project preview/preparation, native approval, execution and recovery
+remain the owners of current pins and effects; a preset grants no authority.
 
 ## Static publication artifact catalog
 

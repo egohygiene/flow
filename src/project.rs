@@ -1,5 +1,6 @@
 //! One publishing project over selected installed interfaces and existing native
 //! configuration owners. Preview is read-only; prepare writes a fresh bundle.
+pub mod preset;
 use std::{collections::BTreeSet,fs,path::Path};
 use serde::{Serialize,Deserialize};
 use serde_json::{json,Value};
