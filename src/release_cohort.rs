@@ -12,6 +12,7 @@ use crate::CancellationSignal;
 
 pub const COHORT_SCHEMA: &str = "flow.release-cohort/v1";
 pub const MATRIX_SCHEMA: &str = "flow.release-matrix/v1";
+pub mod coverage;
 const MAX_DOCUMENT: usize = 1_048_576;
 
 #[derive(Debug, thiserror::Error)]

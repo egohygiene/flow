@@ -35,7 +35,6 @@ fn matrix(args: &Arguments, token: &dyn CancellationSignal) -> Result<Matrix, Er
     }
     release_cohort::project(&cohort, &LocalFiles { installations }, token).map_err(cohort_error)
 }
-fn matrix_outcome(value: &Matrix) -> Outcome { if value.green == value.rows.len() { Outcome::Complete } else { Outcome::Partial } }
 fn native_plan(args: &Arguments, request: &provider::Request, token: &dyn CancellationSignal) -> Result<Envelope, Error> {
     let plan = provider::prepare(request, token)?;
     if args.options.contains_key("--output") { provider::save_document(&plan, &path(args, "--output")?, &plan)?; }
@@ -50,7 +49,7 @@ fn local_native(args: &Arguments, request: &crate::local_input::Request, selecti
 /// `None` leaves the original released Optiflow delivery path in charge.
 pub(super) fn execute(args: &Arguments, token: &dyn CancellationSignal) -> Result<Option<Envelope>, Error> {
     match args.command.as_str() {
-        "release-matrix" => { let value = matrix(args, token)?; let outcome = matrix_outcome(&value); Ok(Some(success("release-matrix", value, outcome)?)) }
+        "release-matrix" => { let value = matrix(args, token)?; release_delivery::matrix_response(args,value,token).map(Some) }
         "doctor" => {
             let executable = args.options.get("--provider-executable").map(|_| path(args, "--provider-executable")).transpose()?;
             let released = doctor(executable.as_deref(), token)?;

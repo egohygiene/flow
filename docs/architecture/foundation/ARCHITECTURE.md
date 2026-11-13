@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.47.0
+version: 0.48.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,15 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Requested release coverage
+
+A separate coverage request enumerates the tool/interface/target/profile rows
+the operator intends to qualify. The existing release matrix remains the
+evidence owner. Coverage exposes omitted and ambiguous rows alongside blocked,
+unverified and green rows, rather than letting a small declared cohort imply
+universal availability. Requested coverage cannot establish whole-suite
+qualification or create publication, installation or runtime evidence.
 
 ## Installation membership readback
 
