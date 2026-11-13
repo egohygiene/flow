@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.44.1
+version: 0.44.2
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,16 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Federated support diagnostics
+
+The diagnostics contract defines a metadata-only support profile for each
+independently built CLI. Product-owned adapters use existing hashes and guarded
+file I/O; the shared schema and conformance cases do not introduce a sibling
+dependency or a shared observability implementation. Generated health states
+describe compiled support and explicitly unknown runtime measurements. No
+collector, raw-log reader, global subscriber, upload or domain evidence is
+created by diagnostics. Unsupported exporter/host capabilities remain visible.
 
 ## Canonical scenario explanations
 

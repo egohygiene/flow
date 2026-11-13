@@ -17,6 +17,7 @@ pub mod catalog;
 pub mod command;
 pub mod contracts;
 pub mod distribution;
+pub mod diagnostics;
 pub mod delivery;
 pub mod execution;
 pub mod execution_subjects;
