@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.43.0
+version: 0.44.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,19 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Adjusted native delivery selections
+
+Delivery packages can explicitly select an accepted gain WAV or gain-video
+derivative with exact retained native processing, matching final-file QC and
+selected-policy check records. The original input remains anchored to the pilot;
+an actual accepted clean master remains required. The existing package copier
+retains the selected bytes and bounded history snapshots without transforming,
+refreshing QC or granting released execution, review or upload authority. A
+canonical lineage identity enters the payload's review subject, so changed
+processing/QC/policy history invalidates prior review even for identical payload
+bytes. Portable readback checks retained copy/history bindings independently of
+the original host paths; it does not reproduce native or release qualification.
 
 ## Selected adjusted-audio video translation
 

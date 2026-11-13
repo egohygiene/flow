@@ -65,6 +65,7 @@ fn selected_paths(value:&Value,current:bool)->Result<Vec<PathBuf>,Error> {
     let mut result=vec![];visit(value,0,current,&mut result)?;Ok(result)
 }
 pub(super) fn validate_configuration(request:&Request,profile:&str)->Result<(),Error>{configuration(request,profile).map(|_|())}
+pub(super) fn protected_paths(request:&Request,profile:&str)->Result<Vec<PathBuf>,Error>{selected_paths(&configuration(request,profile)?,true)}
 
 #[derive(Debug,Clone,PartialEq,Eq,Serialize,Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -221,6 +222,25 @@ pub(super) fn validate_retained(plan:&Plan,receipt:&Receipt,value:&Value)->Resul
         return Err(error(Code::RecoveryRequired,"retained processing request/intent/scope differs"));
     }
     inventory(receipt,value).map(|_|())
+}
+/// Portable framing of a captured owner record. No current owner, source path,
+/// tool, release or approval is observed by this function.
+pub(super) fn retained_record(plan:&Plan,receipt:&Receipt,config:&Value,value:&Value)->Result<Value,Error>{
+    let record:Record=decode(value.clone())?;
+    validate_owner(&plan.row.profile,config,&plan.sources,&record.native_plan)?;
+    validate_handoff(&record.native_plan,&record.native_handoff)?;
+    let mut unsigned=plan.clone();unsigned.plan_sha256.clear();
+    if plan.row.tool!=Tool::Aniflow||plan.schema_version!=PLAN_SCHEMA||digest(&unsigned)?!=plan.plan_sha256
+        ||record.schema_version!=RECORD_SCHEMA||record.scope!=RECORD_SCOPE||record.source_pins!=plan.sources
+        ||receipt.schema_version!=RECEIPT_SCHEMA||receipt.state!=State::Complete||receipt.plan_sha256!=plan.plan_sha256||receipt.row_subject_sha256!=plan.row_subject_sha256
+        ||receipt.release_qualified||receipt.creative_approval_inferred||receipt.publication_authority
+        ||record.native_handoff.payload.native_intent_sha256!=receipt.native_intent_sha256||record.native_handoff.payload.run_directory!=path(&receipt.native_run)? {
+        return Err(error(Code::RecoveryRequired,"portable processing history framing differs"));
+    }
+    let artifacts=&record.native_handoff.payload.artifacts;
+    if artifacts.len()!=receipt.artifacts.len(){return Err(error(Code::RecoveryRequired,"portable processing artifact membership differs"));}
+    for (a,p) in artifacts.iter().zip(&receipt.artifacts){if a.file.locator!=path(&p.path)?||a.file.sha256!=p.sha256||a.file.byte_count!=p.byte_count{return Err(error(Code::RecoveryRequired,"portable processing artifact identity differs"));}}
+    serde_json::to_value(record.native_handoff).map_err(|_|error(Code::InvalidInput,"retained processing handoff encoding"))
 }
 pub(super) fn inventory(receipt:&Receipt,value:&Value)->Result<Vec<ArtifactDescription>,Error>{
     let record:Record=decode(value.clone())?;let artifacts=&record.native_handoff.payload.artifacts;

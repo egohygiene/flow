@@ -90,6 +90,16 @@ irrespective of an inherited native source variant. Fresh encoded-byte QC and
 human review remain required. This adds no engine or publication authority and
 does not ratify this proposal.
 
+Adjusted delivery selection requires an accepted native derivative, matching
+final-file QC and explicit selected-policy snapshot under the same provider
+cohort. The original source remains bound to the pilot and an accepted clean
+master stays in the package. Exact copied history enters a canonical lineage
+identity in the payload's review subject. Portable readback checks the captured
+relations and current package bytes without observing original host paths or
+refreshing native/release/QC authority. Package copying remains the only effect;
+human review, current platform proof and publication remain separate. This
+extension remains proposed and unqualified.
+
 ## Proposed installed-check preparation extension — November 12, 2026
 
 An operator can resolve supplied Aniflow QC/policy requests against exact delivery

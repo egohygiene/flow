@@ -389,6 +389,7 @@ pub fn observe_receipt(root:&Path,expected_plan_sha256:&str,token:&dyn Cancellat
     value.domain_evidence="retained native domain acceptance and current payload bytes only; serialized approval and release admission were not reverified".into();
     value.next_action="use separate opaque release admission for qualification or released execution; this readback grants no authority".into();
     if plan.row.profile==audio_policy::PROFILE {value.domain_evidence="retained audio-policy snapshot and current selected media bytes; current QC owner was not rechecked".into();value.next_action="start a fresh explicitly approved owner check for current audio delivery readiness".into();}
+    if audio_processing::supports(&plan.row.profile){value.domain_evidence="retained processing/QC handoff and current selected source/output bytes; current QC owner was not rechecked".into();value.next_action="retain clean masters; use fresh explicitly approved final-file QC/policy checks and separate human review before delivery".into();}
     Ok(value)
 }
 #[derive(Debug,Clone,PartialEq,Eq,Serialize)]
@@ -406,6 +407,8 @@ pub fn audio_policy_snapshot(root:&Path,expected_plan_sha256:&str,token:&dyn Can
 pub(crate) fn audio_policy_protected_paths(request:&Request)->Result<Vec<PathBuf>,Error>{audio_policy::protected_paths(request)}
 pub(crate) fn retained_audio_policy_record(value:&Value,sha256:&str,byte_count:u64)->Result<Value,Error>{audio_policy::retained_record(value,sha256,byte_count)}
 pub(crate) fn retained_audio_policy_paths(assessment:&Value)->Result<Vec<PathBuf>,Error>{audio_policy::retained_paths(assessment)}
+pub(crate) fn audio_processing_protected_paths(request:&Request,profile:&str)->Result<Vec<PathBuf>,Error>{audio_processing::protected_paths(request,profile)}
+pub(crate) fn retained_audio_processing_record(plan:&Plan,receipt:&Receipt,configuration:&Value,value:&Value)->Result<Value,Error>{audio_processing::retained_record(plan,receipt,configuration,value)}
 /// Translate accepted owner artifact identities and roles without inferring a
 /// master from a filename or invoking a provider.
 pub fn artifact_inventory(root:&Path,expected_plan_sha256:&str,token:&dyn CancellationSignal)->Result<Vec<ArtifactDescription>,Error>{
