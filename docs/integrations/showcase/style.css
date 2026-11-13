@@ -16,3 +16,4 @@ pre { overflow: auto; max-height: 26rem; padding: .8rem; border: 1px solid GrayT
 .identity { font-family: ui-monospace, monospace; font-size: .88rem; overflow-wrap: anywhere; }
 .notice, .evidence { border-inline-start: .3rem solid GrayText; padding: .65rem 1rem; }
 :focus-visible { outline: 3px solid Highlight; outline-offset: 3px; }
+.linked-case { outline: 2px solid currentColor; outline-offset: 3px; scroll-margin-top: 1rem; }

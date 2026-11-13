@@ -1,8 +1,24 @@
 // Authored/unrun pure documentation-boundary regressions; no provider/browser.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {catalog, report, evidence, fixturePaths, parse, MAX_BYTES} from '../docs/integrations/showcase/model.mjs';
+import {catalog, report, evidence, fixturePaths, parse, MAX_BYTES, scenarioLink, scenarioSelection, resolveScenario} from '../docs/integrations/showcase/model.mjs';
 const sha = 'a'.repeat(64), source = 'b'.repeat(64);
+test('catalog-specific links disambiguate identical canonical IDs', () => {
+  const rows = [{kind:'acceptance',id:'scenario:same'}, {kind:'lifecycle',id:'scenario:same'}];
+  const selected = resolveScenario(rows, scenarioSelection(scenarioLink('lifecycle','scenario:same')));
+  assert.equal(selected.state, 'selected'); assert.equal(selected.row.kind, 'lifecycle');
+  assert.equal(resolveScenario(rows, scenarioSelection('#scenario%3Asame')).state, 'ambiguous');
+});
+test('links wait for explicit catalogs without inventing verification or loading paths', () => {
+  const selection = scenarioSelection(scenarioLink('acceptance','scenario:not-loaded'));
+  assert.equal(resolveScenario([],selection).state,'missing');
+  assert.equal(scenarioSelection('#browse-title'),null);
+  assert.equal(scenarioSelection('#javascript:alert(1)'),null);
+});
+test('malformed or traversal-like scenario fragments cannot become locators', () => {
+  for (const fragment of ['#scenario=acceptance/%GG','#scenario=acceptance/..%2Fsecret','#scenario=foreign/scenario%3Afoo','#scenario='+ 'a'.repeat(1024)]) assert.throws(() => scenarioSelection(fragment));
+  assert.throws(() => scenarioLink('acceptance','https://example.com/private'));
+});
 const fixture = () => ({schema_version:'flow.acceptance-scenario-catalog/v1',fixture_version:'1.0.0',tier:'synthetic',budget:{},known_gaps:['No native qualification.'],
   scenarios:[{scenario_id:'scenario:fixture-refusal',family:'artifact',recipe:'fixture',expected:{code:'invalid',accepted:false}}]});
 test('expected refusal is catalog intent and cannot create a verified result', () => {

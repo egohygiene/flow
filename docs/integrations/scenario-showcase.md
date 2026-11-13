@@ -1,5 +1,18 @@
 # Browse Flow's scenario evidence
 
+## Stable links across catalogs
+
+Scenario links now qualify both the canonical catalog family and scenario ID:
+`#scenario=acceptance/scenario%3Aexample`. Existing ID-only links remain readable
+when exactly one loaded catalog matches. Multiple matches stay ambiguous;
+missing catalogs require explicit local selection. Links fetch nothing.
+
+A linked recipe remains visible alongside filter matches, has a text marker
+and keyboard/screen-reader focus, and can be cleared without changing loaded
+evidence. Fragment selection never changes expected outcomes or turns supplied
+report claims into current verification. Three focused link/refusal regressions
+are authored, unrun; no browser, documentation tool or provider was executed.
+
 ## Publishing workflow source guides
 
 The same local page now has a separate **Load publishing workflow guides**

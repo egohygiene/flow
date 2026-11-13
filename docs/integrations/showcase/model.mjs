@@ -1,5 +1,34 @@
 // Read-only documentation projection. Never an execution/receipt validator.
 export const MAX_BYTES = 8 * 1024 * 1024;
+const scenarioId = value => typeof value === 'string' && value.length <= 256 && /^scenario:[a-z0-9_.-]+$/.test(value);
+export function scenarioLink(kind, id) {
+  if (!['acceptance', 'lifecycle'].includes(kind) || !scenarioId(id)) throw new Error('Unsupported canonical scenario selection.');
+  return `#scenario=${kind}/${encodeURIComponent(id)}`;
+}
+export function scenarioSelection(fragment) {
+  if (typeof fragment !== 'string' || fragment.length > 1024) throw new Error('Scenario link exceeds its bound.');
+  if (fragment.startsWith('#scenario=')) {
+    const match = /^#scenario=(acceptance|lifecycle)\/(.+)$/.exec(fragment);
+    if (!match) throw new Error('Unsupported canonical scenario selection.');
+    let id; try { id = decodeURIComponent(match[2]); } catch { throw new Error('Malformed scenario link encoding.'); }
+    if (!scenarioId(id)) throw new Error('Unsupported canonical scenario identity.');
+    return {kind: match[1], id};
+  }
+  // Preserve existing ID-only links without choosing the first catalog match.
+  if (/^#scenario(?::|%3a)/i.test(fragment)) {
+    let id; try { id = decodeURIComponent(fragment.slice(1)); } catch { throw new Error('Malformed scenario link encoding.'); }
+    if (!scenarioId(id)) throw new Error('Unsupported canonical scenario identity.');
+    return {kind: null, id};
+  }
+  return null;
+}
+export function resolveScenario(rows, selection) {
+  if (!selection) return {state: 'none'};
+  const matches = rows.filter(row => row.id === selection.id && (!selection.kind || row.kind === selection.kind));
+  if (!matches.length) return {state: 'missing'};
+  if (matches.length > 1) return {state: 'ambiguous'};
+  return {state: 'selected', row: matches[0]};
+}
 const schemas = new Map([
   ['flow.acceptance-scenario-catalog/v1', 'acceptance'],
   ['flow.lifecycle-scenario-catalog/v1', 'lifecycle'],

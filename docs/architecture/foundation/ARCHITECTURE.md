@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.52.0
+version: 0.53.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,14 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Scenario navigation
+
+Documentation links select a canonical scenario by catalog family and stable
+ID. Legacy ID-only links resolve only when unambiguous across loaded catalogs.
+Selection remains local, survives filtering and requests no files or reports.
+It cannot promote authored expectations, supplied report claims or source guides
+into current execution or qualification evidence.
 
 ## Reusable publishing project presets
 

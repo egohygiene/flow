@@ -1,7 +1,8 @@
 import {loadWorkflows, clearWorkflows} from './workflow-view.mjs';
-import {MAX_BYTES, parse, catalog, report, evidence, manifest, fixturePaths} from './model.mjs';
+import {MAX_BYTES, parse, catalog, report, evidence, manifest, fixturePaths, scenarioLink, scenarioSelection, resolveScenario} from './model.mjs';
 const catalogs = new Map(), reports = new Map(), manifests = new Map();
 const root = new URL('../../../', import.meta.url);
+let focusedLink = null;
 const $ = id => document.getElementById(id);
 function node(tag, value, parent) {
   const element = document.createElement(tag);
@@ -61,6 +62,16 @@ function details(title, value, parent) { const detail = node('details', undefine
 function render() {
   $('catalogs').replaceChildren(); $('cases').replaceChildren(); $('manifests').replaceChildren();
   const rows = [...catalogs.values()].flatMap(c => c.rows);
+  let linked = {state: 'none'};
+  try { linked = resolveScenario(rows, scenarioSelection(location.hash)); }
+  catch { linked = {state: 'invalid'}; }
+  $('clear-link').hidden = linked.state === 'none';
+  $('link-status').textContent = {
+    none: '', missing: 'Linked source recipe is not loaded. Select its canonical catalog; no file is fetched automatically.',
+    ambiguous: 'This legacy link matches multiple catalogs. Use a catalog-specific scenario link.',
+    invalid: 'Unsupported or malformed scenario link. No content is fetched.',
+    selected: 'Linked source recipe is shown even when other filters exclude it. This is authored test intent, not verification.'
+  }[linked.state];
   $('count').textContent = `${rows.length} source recipes across ${catalogs.size} loaded catalogs; ${manifests.size} manifest examples. No current verified count is asserted.`;
   const families = [...new Set(rows.map(r => r.family))].sort(); const selected = $('family').value;
   $('family').replaceChildren();
@@ -77,19 +88,29 @@ function render() {
   }
   const query = $('search').value.trim().toLowerCase(); let visible = 0;
   for (const row of rows) {
-    if ($('family').value && row.family !== $('family').value) continue;
-    if (query && !JSON.stringify(row).toLowerCase().includes(query)) continue;
-    visible++; const article = node('article', undefined, $('cases')); article.id = row.id;
-    const heading = node('h3', undefined, article); const anchor = node('a', row.id, heading); anchor.href = `#${encodeURIComponent(row.id)}`;
+    const chosen = linked.state === 'selected' && linked.row.kind === row.kind && linked.row.id === row.id;
+    if (!chosen && $('family').value && row.family !== $('family').value) continue;
+    if (!chosen && query && !JSON.stringify(row).toLowerCase().includes(query)) continue;
+    visible++; const article = node('article', undefined, $('cases')); article.id = `scenario-${row.kind}-${row.id}`;
+    article.tabIndex = -1;
+    const heading = node('h3', undefined, article); const anchor = node('a', row.id, heading); anchor.href = scenarioLink(row.kind, row.id);
+    anchor.setAttribute('aria-label', `Link to ${row.kind} source recipe ${row.id}`);
+    if (chosen) { article.className = 'linked-case'; node('p', 'Linked source recipe — authored expectation only', article); }
     node('p', `${row.kind} / ${row.family} · ${row.recipe} · expected code: ${row.code}`, article);
     node('p', `Expected ${row.graph ? 'graph A → B, independent C' : 'single boundary/step'}; recovery classification: ${row.recovery}`, article);
     details('Expected typed outcome / ordered trace (test intent)', row.expected, article);
   }
-  $('shown').textContent = `${visible} matching source recipes`;
+  $('shown').textContent = `${visible} shown source recipes`;
   for (const item of manifests.values()) {
     const article = node('article', undefined, $('manifests')); node('h3', item.title, article); node('p', item.id, article); node('p', item.description, article);
     node('p', `Raw example SHA-256: ${item.rawSha256} · ${item.locator}`, article).className = 'identity';
     details('Declared topology, outcome and coverage (not execution)', {stages: item.stages, expected: item.expected, coverage: item.coverage}, article);
   }
+  if (linked.state === 'selected' && focusedLink !== location.hash) {
+    const selected = document.getElementById(`scenario-${linked.row.kind}-${linked.row.id}`);
+    if (selected) { focusedLink = location.hash; selected.focus({preventScroll: true}); selected.scrollIntoView({block: 'start', behavior: 'auto'}); }
+  }
 }
+window.addEventListener('hashchange', () => { focusedLink = null; render(); });
+$('clear-link').addEventListener('click', () => { history.replaceState(null, '', location.pathname + location.search); focusedLink = null; render(); });
 render();

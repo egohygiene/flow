@@ -1,5 +1,10 @@
 # Flow #11 completion-roadmap handoff
 
+Current source continuation: [ten-issue overnight source batch 2026-11-13](TEN-20261113.md).
+Nine Flow checkpoints and a separate Optiflow #93 simulation lane are staged
+for morning reconciliation. Re-query live branches; no merge or qualification
+is implied by this source handoff.
+
 Current source continuation: [audio processing/delivery wiring 2026-11-12](AUDIO-WIRING-20261112.md).
 Previous source continuation: [standalone publishing lanes 2026-11-12](OTHER-LANES-20261112.md).
 Previous source continuation: [publishing checks 2026-11-12](PUBLISHING-CHECKS-20261112.md).
