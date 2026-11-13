@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.45.0
+version: 0.46.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,14 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Local planning deadline
+
+Local input inspection, explicit native preparation and final source reobservation
+share one caller-selected deadline and cancellation signal. A nested owner cannot
+refresh the local planning budget, and a late success cannot become a returned
+plan. Native resource limits keep their separate meaning; inspection limits do
+not silently become execution limits or an input-freezing guarantee.
 
 ## Local AI asset observation
 

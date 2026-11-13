@@ -77,10 +77,17 @@ pub enum Availability {InspectionOnly,ScopePlanOnly,Unavailable}
 #[derive(Debug,Clone,Serialize,Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Planning {pub schema_version:String,pub inventory:Inventory,pub availability:Availability,pub reason:String,pub command_plan:Option<command::Plan>,pub inspection_limits_apply_to_native_execution:bool}
+fn planning_scope<T>(token:&dyn CancellationSignal,deadline:Instant,operation:impl FnOnce(&dyn CancellationSignal)->Result<T,Error>)->Result<T,Error>{
+    let check=||{if token.is_cancelled(){Err(error(Code::Cancelled,"local input planning cancelled"))}else if Instant::now()>=deadline{Err(error(Code::InvalidInput,"local input planning deadline exhausted"))}else{Ok(())}};
+    check()?;
+    let guard=||token.is_cancelled()||Instant::now()>=deadline;
+    let result=operation(&guard);
+    check()?;
+    result
+}
 pub fn plan(request:&Request,token:&dyn CancellationSignal)->Result<Planning,Error>{
     request.validate()?;let deadline=Instant::now().checked_add(Duration::from_millis(request.limits.deadline_ms)).ok_or_else(||error(Code::InvalidInput,"local planning deadline overflow"))?;
-    let guard=||token.is_cancelled()||Instant::now()>=deadline;
-    let result=plan_guarded(request,&guard);result.map_err(|mut e|{if !token.is_cancelled()&&Instant::now()>=deadline{e.code=Code::InvalidInput;e.message="local input planning deadline exhausted".into();}e})
+    planning_scope(token,deadline,|guard|plan_guarded(request,guard))
 }
 fn plan_guarded(request:&Request,token:&dyn CancellationSignal)->Result<Planning,Error>{let inventory=inspect(request,token)?;let mut result=Planning {schema_version:"flow.local-input-plan/v1".into(),inventory,availability:Availability::Unavailable,reason:"selected immutable provider route unavailable; no fallback".into(),command_plan:None,inspection_limits_apply_to_native_execution:false};
     if request.profile==Profile::InspectOnly{result.availability=Availability::InspectionOnly;result.reason="filesystem identities only; no media/provider acceptance".into();return Ok(result)}
@@ -101,6 +108,10 @@ pub struct NativeRequest { pub schema_version: String, pub request: Request, pub
 pub struct NativePlanning { pub schema_version: String, pub inventory: Inventory, pub command_plan: crate::native::Plan, pub release_qualified: bool }
 pub fn plan_native(request: &Request, selection: &crate::native::Request, token: &dyn CancellationSignal) -> Result<NativePlanning, Error> {
     request.validate()?;
+    let deadline=Instant::now().checked_add(Duration::from_millis(request.limits.deadline_ms)).ok_or_else(||error(Code::InvalidInput,"local planning deadline overflow"))?;
+    planning_scope(token,deadline,|guard|plan_native_guarded(request,selection,guard))
+}
+fn plan_native_guarded(request: &Request, selection: &crate::native::Request, token: &dyn CancellationSignal) -> Result<NativePlanning, Error> {
     if !matches!(request.profile, Profile::AniflowTemporal | Profile::RenderflowPublication) { return Err(error(Code::InvalidInput, "explicit Aniflow or Renderflow local profile required for native selection")); }
     let selected = match &request.input { Input::File { path } => vec![path.clone()], Input::OrderedCollection { members } => members.clone(), Input::Directory { .. } => return Err(error(Code::InvalidInput, "native local route requires a selected file or explicit ordered collection; no directory expansion")) };
     if selected != selection.inputs || request.provider_executable.as_ref().is_some_and(|p| p != &selection.provider_executable) || request.run_directory.as_ref().is_some_and(|p| p != &selection.run_directory) { return Err(error(Code::InvalidInput, "local input and native selection scopes/overrides differ")); }

@@ -1,5 +1,18 @@
 //! Authored/uncompiled/unrun. Synthetic local bytes only; no provider is launched.
 use super::*;
+
+#[test]fn exhausted_planning_budget_never_enters_a_nested_owner(){
+    let entered=std::cell::Cell::new(false);
+    let deadline=Instant::now().checked_sub(Duration::from_secs(1)).unwrap();
+    let result=planning_scope(&crate::NeverCancelled,deadline,|_|{entered.set(true);Ok(())});
+    assert_eq!(result.unwrap_err().code,Code::InvalidInput);assert!(!entered.get());
+}
+#[test]fn cancellation_after_nested_preparation_cannot_return_a_plan(){
+    let cancelled=std::cell::Cell::new(false);let signal=||cancelled.get();
+    let deadline=Instant::now()+Duration::from_secs(60);
+    let result=planning_scope(&signal,deadline,|guard|{assert!(!guard.is_cancelled());cancelled.set(true);assert!(guard.is_cancelled());Ok("would-be plan")});
+    assert_eq!(result.unwrap_err().code,Code::Cancelled);
+}
 struct Fixture {root:PathBuf}
 impl Fixture {fn new()->Self {use std::sync::atomic::{AtomicU64,Ordering};static NEXT:AtomicU64=AtomicU64::new(0);let root=std::env::temp_dir().join(format!("flow-local-input-{}-{}",std::process::id(),NEXT.fetch_add(1,Ordering::Relaxed)));fs::create_dir(&root).unwrap();Self {root:root.canonicalize().unwrap()}}fn file(&self,name:&str,bytes:&[u8])->NativePath{let path=self.root.join(name);fs::write(&path,bytes).unwrap();NativePath::from_path(&path)}}
 impl Drop for Fixture {fn drop(&mut self){let _=fs::remove_dir_all(&self.root);}}
