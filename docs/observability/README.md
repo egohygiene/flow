@@ -1,5 +1,9 @@
 # Suite observability profile
 
+The separate [generated support metadata owner](diagnostics.md) is a bounded
+source checkpoint for #21. It does not adopt this proposed profile or supply
+native telemetry, exporter health or execution qualification.
+
 Profile: `flow.observability-profile`, revision **0.1.0, proposed**.
 Owner: [Flow #15](https://github.com/egohygiene/flow/issues/15), under #14.
 Observation date: October 26, 2026. This is a contract candidate for the two

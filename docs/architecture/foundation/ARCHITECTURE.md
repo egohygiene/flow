@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.48.0
+version: 0.49.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,15 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Generated support metadata
+
+The diagnostics owner can preview, write and inspect a bounded local JSON
+support container from explicitly selected generated metadata categories.
+It accepts no source paths, raw logs, content or arbitrary attachments. Static
+member names, typed payloads and per-member digests make inspection independent
+of archive extraction. A bundle is untrusted support material, never execution,
+qualification, provenance or upload authority. Broader telemetry remains separate.
 
 ## Requested release coverage
 
