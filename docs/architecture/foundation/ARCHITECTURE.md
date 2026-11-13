@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.42.0
+version: 0.43.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,17 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Selected adjusted-audio video translation
+
+A separate two-input native route binds the exact original video and accepted
+gain WAV in order. Aniflow owns current gain-QC/policy admission, picture-copy
+and explicitly selected AAC encoding, rational clocks, channel/tail preservation,
+metadata and final-video acceptance. Flow verifies the returned input lineage
+and confined video artifact through the existing native lifecycle. The result
+is a video derivative requiring fresh encoded-file QC and human review; inherited
+native variant labels cannot promote it into a clean archival master. No
+automatic re-encode, trimming, approval or publication is introduced.
 
 ## Fresh final-file audio-QC translation
 

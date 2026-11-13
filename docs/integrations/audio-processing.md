@@ -37,7 +37,17 @@ choose a policy, transform audio or grant a numeric pass. An encoded-video check
 cannot consume a WAV report as its final-byte measurement. Re-encoding after QC
 requires another explicitly selected final-file check.
 
-Four focused source/pinning/QC-boundary cases are authored, uncompiled/unrun. All
+`gain-video-v1` selects two exact inputs in order: the original accepted picture
+and the accepted adjusted WAV. Its original native request names the gain run
+and fresh goal-matching WAV QC. Aniflow copies the supported H.264 picture and
+encodes the selected AAC bitrate once; full original audio origin, sample count,
+stereo and tails remain owner-validated. The initial plain/burned SDR, 48 kHz
+mono/stereo subset and unsupported soft-subtitle/timing cases stay explicit.
+Flow binds both returned lineage identities and treats `gain_video` as a
+`video_delivery` derivative even if the native source variant was a clean
+master. Its encoded bytes still require fresh video-audio QC and policy matching.
+
+Five focused source/pinning/QC/lineage cases are authored, uncompiled/unrun. All
 tests/compiler/build/dependencies/lint/format/schema/docs/drift/native/provider/
 media/model/CLI/SDK/browser/container/installer and CI execution stays deferred.
 No actual media/review, release, upload, source replacement/disposal, signature,
