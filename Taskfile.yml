@@ -1,6 +1,39 @@
 version: '3'
 
 tasks:
+  diagnostics:preview:
+    desc: Preview generated support categories without creating a bundle
+    requires:
+      vars: [REQUEST]
+    env:
+      FLOW_SUPPORT_REQUEST: '{{.REQUEST}}'
+    cmds:
+      - flow diagnostics-preview --request "$FLOW_SUPPORT_REQUEST" --format json
+
+  diagnostics:bundle:
+    desc: Explicitly create a fresh private metadata-only support bundle
+    requires:
+      vars: [REQUEST, OUTPUT]
+    env:
+      FLOW_SUPPORT_REQUEST: '{{.REQUEST}}'
+      FLOW_SUPPORT_OUTPUT: '{{.OUTPUT}}'
+    cmds:
+      - flow diagnostics-bundle --request "$FLOW_SUPPORT_REQUEST" --output "$FLOW_SUPPORT_OUTPUT" --format json
+
+  diagnostics:inspect:
+    desc: Inspect support structure and digest without extracting or trusting content
+    requires:
+      vars: [BUNDLE]
+    env:
+      FLOW_SUPPORT_BUNDLE: '{{.BUNDLE}}'
+    cmds:
+      - flow diagnostics-inspect --bundle "$FLOW_SUPPORT_BUNDLE" --format json
+
+  diagnostics:doctor:
+    desc: Describe compiled observability capabilities without discovery or network
+    cmds:
+      - flow doctor-observability --format json
+
   ai:doctor:
     desc: Inspect selected local AI profile without contacting a runtime
     requires:

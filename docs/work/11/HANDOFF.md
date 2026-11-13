@@ -1,3 +1,14 @@
+## Current source-only closeouts — November 13, 2026
+
+Independent #62 showcase closeout: draft [#135](https://github.com/egohygiene/flow/pull/135),
+with [scope and pending verification](../62/CLOSEOUT-20261113.md).
+The stacked #21 support checkpoint has [its own handoff](../21/CLOSEOUT-20261113.md),
+[profile](../../observability/support-profile.md) and [operator runbook](../../observability/support-runbook.md).
+The former nine-PR stack is not merged or silently closed. #130/#131/#134 overlap
+these isolated replacements and need reconciliation before any ordered merge.
+No tests/builds/format/schema/native/hosted checks ran; focused execution remains
+pending the maintainer's response. #88 remains unchanged and last.
+
 # Flow #11 completion-roadmap handoff
 
 Current source continuation: [audio processing/delivery wiring 2026-11-12](AUDIO-WIRING-20261112.md).
