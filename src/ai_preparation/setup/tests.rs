@@ -1,28 +1,195 @@
 use super::*;
-struct Fixture {root:PathBuf,request:Request}
-impl Drop for Fixture {fn drop(&mut self){let _=std::fs::remove_dir_all(&self.root);}}
-fn fixture()->Fixture {use std::sync::atomic::{AtomicU64,Ordering};static NEXT:AtomicU64=AtomicU64::new(0);let root=std::env::temp_dir().join(format!("flow-selected-ai-{}-{}",std::process::id(),NEXT.fetch_add(1,Ordering::Relaxed)));std::fs::create_dir(&root).unwrap();let root=root.canonicalize().unwrap();let profile=Profile::from_json_slice(include_bytes!("../../../docs/ai/examples/preparation-profile.json")).unwrap();let mut assets=Vec::new();for (name,kind) in [("runtime",AssetKind::RuntimeExecutable),("weights",AssetKind::ModelWeights),("configuration",AssetKind::ModelConfiguration)]{let path=root.join(name);std::fs::write(&path,b"synthetic bytes only").unwrap();assets.push(Selection {asset_id:name.into(),kind,path,expected_sha256:None});}let request=Request {schema_version:"flow.ai-local-setup/v1".into(),profile,deployment_id:"selected-local".into(),endpoint:"127.0.0.1:11434".parse().unwrap(),service_egress_disabled_declared:true,runtime_license:"operator-declared".into(),model_license:"operator-declared".into(),quantization:"operator-declared".into(),maximum_observation_bytes:1024,deadline_ms:1000,assets};Fixture {root,request}}
-#[test] fn setup_derives_bytes_without_granting_runtime_or_offline_qualification(){let f=fixture();let result=prepare(&f.request,&crate::NeverCancelled).unwrap();assert_eq!(result.doctor.report.state,State::PreparedBytes);assert!(result.private_preparation.is_some());assert!(!result.doctor.runtime_or_service_contacted&&!result.doctor.report.invocation_authority&&!result.doctor.report.runtime_qualified);assert!(result.doctor.actions.iter().all(|a|!a.automatic));}
-#[test] fn an_independent_mismatched_pin_never_becomes_preparation(){let mut f=fixture();f.request.assets[1].expected_sha256=Some("a".repeat(64));let result=prepare(&f.request,&crate::NeverCancelled).unwrap();assert_eq!(result.doctor.report.state,State::Changed);assert!(result.private_preparation.is_none());assert!(result.doctor.actions.iter().any(|a|a.kind==ActionKind::CorrectAssetPin));}
-#[test] fn missing_asset_actions_are_redacted_and_never_install_or_fallback(){let f=fixture();std::fs::remove_file(&f.request.assets[1].path).unwrap();let result=prepare(&f.request,&crate::NeverCancelled).unwrap();assert_eq!(result.doctor.report.state,State::Missing);let text=serde_json::to_string(&result.doctor).unwrap();assert!(!text.contains(f.root.to_str().unwrap())&&!text.contains("127.0.0.1"));assert!(result.private_preparation.is_none());}
-#[test] fn disabled_setup_does_not_read_even_invalid_private_selections(){let mut f=fixture();f.request.profile.mode=Mode::Disabled;f.request.endpoint="192.0.2.1:9".parse().unwrap();f.request.assets[0].path="/never/open/this".into();let result=prepare(&f.request,&crate::NeverCancelled).unwrap();assert_eq!(result.doctor.report.state,State::Disabled);assert!(result.doctor.report.assets.is_empty());}
-#[test] fn cancellation_and_observation_bounds_refuse_before_acceptance(){let mut f=fixture();assert!(prepare(&f.request,&||true).is_err());f.request.maximum_observation_bytes=1;assert!(prepare(&f.request,&crate::NeverCancelled).is_err());}
-
-#[cfg(unix)] fn bundle(f:&Fixture)->PathBuf{use std::os::unix::fs::PermissionsExt;let output=f.root.join("bundle");std::fs::create_dir(&output).unwrap();std::fs::set_permissions(&output,std::fs::Permissions::from_mode(0o700)).unwrap();output}
-#[cfg(unix)] #[test] fn new_private_bundle_and_status_preserve_no_invocation_authority(){let f=fixture();let out=bundle(&f);let value=documents::write(&f.request,&out,&crate::NeverCancelled).unwrap();assert!(value.documents_match);assert_eq!(value.current.report.state,State::PreparedBytes);assert!(!value.current.report.invocation_authority&&!value.current.runtime_or_service_contacted);}
-#[cfg(unix)] #[test] fn bundle_status_reports_changed_assets_without_rewriting_saved_preparation(){let f=fixture();let out=bundle(&f);documents::write(&f.request,&out,&crate::NeverCancelled).unwrap();let original=std::fs::read(out.join("preparation.json")).unwrap();std::fs::write(&f.request.assets[1].path,b"changed model bytes").unwrap();let status=documents::status(&out,&crate::NeverCancelled).unwrap();assert_eq!(status.current.report.state,State::Changed);assert_eq!(std::fs::read(out.join("preparation.json")).unwrap(),original);}
-#[cfg(unix)] #[test] fn unknown_bundle_member_is_not_adopted_or_removed(){let f=fixture();let out=bundle(&f);documents::write(&f.request,&out,&crate::NeverCancelled).unwrap();std::fs::write(out.join("unknown"),b"preserve").unwrap();assert!(documents::status(&out,&crate::NeverCancelled).is_err());assert_eq!(std::fs::read(out.join("unknown")).unwrap(),b"preserve");}
-
-#[cfg(unix)] #[test] fn self_consistent_marker_cannot_rebind_preparation_to_a_different_deployment(){
-    let f=fixture();let out=bundle(&f);documents::write(&f.request,&out,&crate::NeverCancelled).unwrap();
-    let mut changed=f.request.clone();changed.endpoint="127.0.0.1:11435".parse().unwrap();
-    let mut request_bytes=serde_json::to_vec_pretty(&changed).unwrap();request_bytes.push(b'\n');std::fs::write(out.join("request.json"),&request_bytes).unwrap();
-    let mut marker:documents::Marker=serde_json::from_slice(&std::fs::read(out.join("setup.json")).unwrap()).unwrap();
-    let member=marker.members.iter_mut().find(|m|m.name=="request.json").unwrap();member.byte_count=request_bytes.len() as u64;member.sha256=format!("{:x}",Sha256::digest(&request_bytes));
-    let mut marker_bytes=serde_json::to_vec_pretty(&marker).unwrap();marker_bytes.push(b'\n');std::fs::write(out.join("setup.json"),marker_bytes).unwrap();
-    assert!(documents::status(&out,&crate::NeverCancelled).is_err());
+struct Fixture {
+    root: PathBuf,
+    request: Request,
 }
-#[test] fn missing_or_changed_assets_do_not_claim_a_current_total(){
-    let f=fixture();std::fs::remove_file(&f.request.assets[1].path).unwrap();let result=prepare(&f.request,&crate::NeverCancelled).unwrap();assert!(result.doctor.selected_logical_bytes.is_none());
-    let f=fixture();let result=prepare(&f.request,&crate::NeverCancelled).unwrap();let prepared=result.private_preparation.unwrap();std::fs::write(&f.request.assets[1].path,b"changed").unwrap();let doctor=diagnose(&f.request.profile,Some(&prepared),&crate::NeverCancelled).unwrap();assert_eq!(doctor.report.state,State::Changed);assert!(doctor.selected_logical_bytes.is_none());
+impl Drop for Fixture {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.root);
+    }
+}
+fn fixture() -> Fixture {
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+    let root = std::env::temp_dir().join(format!(
+        "flow-selected-ai-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    std::fs::create_dir(&root).unwrap();
+    let root = root.canonicalize().unwrap();
+    let profile = Profile::from_json_slice(include_bytes!(
+        "../../../docs/ai/examples/preparation-profile.json"
+    ))
+    .unwrap();
+    let mut assets = Vec::new();
+    for (name, kind) in [
+        ("runtime", AssetKind::RuntimeExecutable),
+        ("weights", AssetKind::ModelWeights),
+        ("configuration", AssetKind::ModelConfiguration),
+    ] {
+        let path = root.join(name);
+        std::fs::write(&path, b"synthetic bytes only").unwrap();
+        assets.push(Selection {
+            asset_id: name.into(),
+            kind,
+            path,
+            expected_sha256: None,
+        });
+    }
+    let request = Request {
+        schema_version: "flow.ai-local-setup/v1".into(),
+        profile,
+        deployment_id: "selected-local".into(),
+        endpoint: "127.0.0.1:11434".parse().unwrap(),
+        service_egress_disabled_declared: true,
+        runtime_license: "operator-declared".into(),
+        model_license: "operator-declared".into(),
+        quantization: "operator-declared".into(),
+        maximum_observation_bytes: 1024,
+        deadline_ms: 1000,
+        assets,
+    };
+    Fixture { root, request }
+}
+#[test]
+fn setup_derives_bytes_without_granting_runtime_or_offline_qualification() {
+    let f = fixture();
+    let result = prepare(&f.request, &crate::NeverCancelled).unwrap();
+    assert_eq!(result.doctor.report.state, State::PreparedBytes);
+    assert!(result.private_preparation.is_some());
+    assert!(
+        !result.doctor.runtime_or_service_contacted
+            && !result.doctor.report.invocation_authority
+            && !result.doctor.report.runtime_qualified
+    );
+    assert!(result.doctor.actions.iter().all(|a| !a.automatic));
+}
+#[test]
+fn an_independent_mismatched_pin_never_becomes_preparation() {
+    let mut f = fixture();
+    f.request.assets[1].expected_sha256 = Some("a".repeat(64));
+    let result = prepare(&f.request, &crate::NeverCancelled).unwrap();
+    assert_eq!(result.doctor.report.state, State::Changed);
+    assert!(result.private_preparation.is_none());
+    assert!(
+        result
+            .doctor
+            .actions
+            .iter()
+            .any(|a| a.kind == ActionKind::CorrectAssetPin)
+    );
+}
+#[test]
+fn missing_asset_actions_are_redacted_and_never_install_or_fallback() {
+    let f = fixture();
+    std::fs::remove_file(&f.request.assets[1].path).unwrap();
+    let result = prepare(&f.request, &crate::NeverCancelled).unwrap();
+    assert_eq!(result.doctor.report.state, State::Missing);
+    let text = serde_json::to_string(&result.doctor).unwrap();
+    assert!(!text.contains(f.root.to_str().unwrap()) && !text.contains("127.0.0.1"));
+    assert!(result.private_preparation.is_none());
+}
+#[test]
+fn disabled_setup_does_not_read_even_invalid_private_selections() {
+    let mut f = fixture();
+    f.request.profile.mode = Mode::Disabled;
+    f.request.endpoint = "192.0.2.1:9".parse().unwrap();
+    f.request.assets[0].path = "/never/open/this".into();
+    let result = prepare(&f.request, &crate::NeverCancelled).unwrap();
+    assert_eq!(result.doctor.report.state, State::Disabled);
+    assert!(result.doctor.report.assets.is_empty());
+}
+#[test]
+fn cancellation_and_observation_bounds_refuse_before_acceptance() {
+    let mut f = fixture();
+    assert!(prepare(&f.request, &|| true).is_err());
+    f.request.maximum_observation_bytes = 1;
+    assert!(prepare(&f.request, &crate::NeverCancelled).is_err());
+}
+
+#[cfg(unix)]
+fn bundle(f: &Fixture) -> PathBuf {
+    use std::os::unix::fs::PermissionsExt;
+    let output = f.root.join("bundle");
+    std::fs::create_dir(&output).unwrap();
+    std::fs::set_permissions(&output, std::fs::Permissions::from_mode(0o700)).unwrap();
+    output
+}
+#[cfg(unix)]
+#[test]
+fn new_private_bundle_and_status_preserve_no_invocation_authority() {
+    let f = fixture();
+    let out = bundle(&f);
+    let value = documents::write(&f.request, &out, &crate::NeverCancelled).unwrap();
+    assert!(value.documents_match);
+    assert_eq!(value.current.report.state, State::PreparedBytes);
+    assert!(
+        !value.current.report.invocation_authority && !value.current.runtime_or_service_contacted
+    );
+}
+#[cfg(unix)]
+#[test]
+fn bundle_status_reports_changed_assets_without_rewriting_saved_preparation() {
+    let f = fixture();
+    let out = bundle(&f);
+    documents::write(&f.request, &out, &crate::NeverCancelled).unwrap();
+    let original = std::fs::read(out.join("preparation.json")).unwrap();
+    std::fs::write(&f.request.assets[1].path, b"changed model bytes").unwrap();
+    let status = documents::status(&out, &crate::NeverCancelled).unwrap();
+    assert_eq!(status.current.report.state, State::Changed);
+    assert_eq!(
+        std::fs::read(out.join("preparation.json")).unwrap(),
+        original
+    );
+}
+#[cfg(unix)]
+#[test]
+fn unknown_bundle_member_is_not_adopted_or_removed() {
+    let f = fixture();
+    let out = bundle(&f);
+    documents::write(&f.request, &out, &crate::NeverCancelled).unwrap();
+    std::fs::write(out.join("unknown"), b"preserve").unwrap();
+    assert!(documents::status(&out, &crate::NeverCancelled).is_err());
+    assert_eq!(std::fs::read(out.join("unknown")).unwrap(), b"preserve");
+}
+
+#[cfg(unix)]
+#[test]
+fn self_consistent_marker_cannot_rebind_preparation_to_a_different_deployment() {
+    let f = fixture();
+    let out = bundle(&f);
+    documents::write(&f.request, &out, &crate::NeverCancelled).unwrap();
+    let mut changed = f.request.clone();
+    changed.endpoint = "127.0.0.1:11435".parse().unwrap();
+    let mut request_bytes = serde_json::to_vec_pretty(&changed).unwrap();
+    request_bytes.push(b'\n');
+    std::fs::write(out.join("request.json"), &request_bytes).unwrap();
+    let mut marker: documents::Marker =
+        serde_json::from_slice(&std::fs::read(out.join("setup.json")).unwrap()).unwrap();
+    let member = marker
+        .members
+        .iter_mut()
+        .find(|m| m.name == "request.json")
+        .unwrap();
+    member.byte_count = request_bytes.len() as u64;
+    member.sha256 = format!("{:x}", Sha256::digest(&request_bytes));
+    let mut marker_bytes = serde_json::to_vec_pretty(&marker).unwrap();
+    marker_bytes.push(b'\n');
+    std::fs::write(out.join("setup.json"), marker_bytes).unwrap();
+    assert!(documents::status(&out, &crate::NeverCancelled).is_err());
+}
+#[test]
+fn missing_or_changed_assets_do_not_claim_a_current_total() {
+    let f = fixture();
+    std::fs::remove_file(&f.request.assets[1].path).unwrap();
+    let result = prepare(&f.request, &crate::NeverCancelled).unwrap();
+    assert!(result.doctor.selected_logical_bytes.is_none());
+    let f = fixture();
+    let result = prepare(&f.request, &crate::NeverCancelled).unwrap();
+    let prepared = result.private_preparation.unwrap();
+    std::fs::write(&f.request.assets[1].path, b"changed").unwrap();
+    let doctor = diagnose(&f.request.profile, Some(&prepared), &crate::NeverCancelled).unwrap();
+    assert_eq!(doctor.report.state, State::Changed);
+    assert!(doctor.selected_logical_bytes.is_none());
 }

@@ -133,7 +133,7 @@ fn durable_success_records_intent_before_events_and_reopens_without_reexecution(
         ),
         Err(DurableExecutionError::State(StateError::Transition))
     ));
-    assert!(events.is_empty());
+    assert_eq!(events, [] as [flow::ExtensionEvent; 0]);
     assert_eq!(snapshots(&fixture.workspace()), before);
     assert_eq!(
         fs::read(fixture.artifacts.join(INPUT_LOCATOR)).unwrap(),
@@ -259,7 +259,10 @@ fn durable_input_drift_and_prestart_cancellation_prevent_launch() {
     ));
     assert!(!cancelled.kit.output_path().exists());
     assert_eq!(store.state().steps[0].attempt, 0);
-    assert!(store.state().authority_decisions.is_empty());
+    assert_eq!(
+        store.state().authority_decisions,
+        [] as [flow::RunAuthorityDecision; 0]
+    );
 }
 
 #[test]

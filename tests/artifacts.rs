@@ -438,7 +438,7 @@ fn empty_directories_have_a_stable_identity() {
     let output = &observed.evidence().artifacts[1];
     assert_eq!(output.digest, digest(b"[]"));
     assert_eq!(output.size_bytes, 0);
-    assert!(output.manifest.is_empty());
+    assert_eq!(output.manifest, [] as [flow::DirectoryManifestEntry; 0]);
 }
 
 #[test]

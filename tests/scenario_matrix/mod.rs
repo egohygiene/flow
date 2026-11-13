@@ -129,7 +129,7 @@ fn executable_acceptance_matrix() {
     );
     assert_eq!(catalog.fixture_version, "1.0.0");
     assert_eq!(catalog.tier, "pull-request");
-    assert!(!catalog.known_gaps.is_empty());
+    assert_ne!(catalog.known_gaps, [] as [std::string::String; 0]);
     assert_eq!(catalog.budget.repetitions, 2);
     assert!(catalog.budget.timeout_ms > 0);
     let (provider_bytes, executable_name) = provider_binary_snapshot();
