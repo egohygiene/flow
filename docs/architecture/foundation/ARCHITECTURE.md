@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.44.0
+version: 0.44.1
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-11-12
+updated: 2026-11-13
 governed_by:
   - architecture-architecture
 depends_on:
@@ -20,6 +20,15 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Canonical scenario explanations
+
+The local documentation viewer derives explanatory titles, setup descriptions
+and expected decisions from each loaded canonical scenario ID and declaration.
+Catalog families own reusable explanatory vocabulary; no second scenario/count
+inventory is maintained. Catalog-qualified links and explicit evidence states
+keep navigation, authored expectations and recorded execution claims separate.
+Loading or explaining a recipe executes no provider, report or test.
 
 ## Adjusted native delivery selections
 
