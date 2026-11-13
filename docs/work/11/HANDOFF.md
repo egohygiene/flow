@@ -1,13 +1,20 @@
-## Current source-only closeouts — November 13, 2026
+## Current continuation — November 13, 2026
 
-Independent #62 showcase closeout: draft [#135](https://github.com/egohygiene/flow/pull/135),
-with [scope and pending verification](../62/CLOSEOUT-20261113.md).
-The stacked #21 support checkpoint has [its own handoff](../21/CLOSEOUT-20261113.md),
-[profile](../../observability/support-profile.md) and [operator runbook](../../observability/support-runbook.md).
-The former nine-PR stack is not merged or silently closed. #130/#131/#134 overlap
-these isolated replacements and need reconciliation before any ordered merge.
-No tests/builds/format/schema/native/hosted checks ran; focused execution remains
-pending the maintainer's response. #88 remains unchanged and last.
+The maintainer authorized and merged Flow [#135](https://github.com/egohygiene/flow/pull/135)
+then [#136](https://github.com/egohygiene/flow/pull/136), plus native diagnostics
+Aniflow #223, Optiflow #205 and Renderflow #508. These are source merges;
+#62/#21 acceptance and #21's existing adoption dependencies remain open.
+The former nine-PR stack is not silently merged or closed; #130/#131/#134
+overlap the replacements and still require reconciliation.
+
+The read-only Actions audit is [Flow #137](https://github.com/egohygiene/flow/issues/137).
+The next approved source repairs are checkpoint 1 (workflow context/lint) and
+checkpoint 2 (Aniflow/Optiflow compiler errors). See the
+[checkpoint 1 source handoff](../137/01-workflow-expressions.md).
+No tests/builds/format/lint/schema/native/hosted checks ran, and no CI was
+manually triggered. Both repair acceptance and earlier source acceptance remain
+pending execution under the maintainer's existing deferral. #88 is unchanged
+and last; existing failure causes/limits remain preserved.
 
 # Flow #11 completion-roadmap handoff
 
