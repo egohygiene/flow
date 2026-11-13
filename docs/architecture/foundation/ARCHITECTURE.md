@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.49.0
+version: 0.50.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,15 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Diagnostic command delivery
+
+Explicit support-preview/bundle/inspection commands delegate to the diagnostics
+SDK with the existing closed argv and single-result envelope. Local creation
+requires a destination; preview/inspection accept no approval, network or provider
+options. Observability doctor describes the unimplemented Flow-owned signal
+surface and unknown collector/queue health without probing services. These
+operational results cannot become domain evidence or change run/resume decisions.
 
 ## Generated support metadata
 

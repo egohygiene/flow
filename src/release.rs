@@ -10,6 +10,13 @@ pub fn describe() -> Value {
         "source_candidate_routes":crate::native::SOURCE_ROUTES,
         "released_optiflow_version":crate::optiflow::PROVIDER_VERSION,
         "contracts":[
+            pin("flow.diagnostics-request/v1",include_bytes!("../schemas/diagnostics-request-v1.schema.json")),
+            pin("flow.diagnostics-bundle/v1",include_bytes!("../schemas/diagnostics-bundle-v1.schema.json")),
+            pin("flow.diagnostics-preview/v1",include_bytes!("../schemas/diagnostics-preview-v1.schema.json")),
+            pin("flow.diagnostics-inspection/v1",include_bytes!("../schemas/diagnostics-inspection-v1.schema.json")),
+            pin("flow.release-coverage-request/v1",include_bytes!("../schemas/release-coverage-request-v1.schema.json")),
+            pin("flow.release-coverage/v1",include_bytes!("../schemas/release-coverage-v1.schema.json")),
+            pin("flow.observability-health/v1",include_bytes!("../schemas/observability-health-v1.schema.json")),
             pin("flow.command-result/v1",include_bytes!("../schemas/command-result-v1.schema.json")),
             pin("flow.release-cohort/v1",include_bytes!("../schemas/flow-release-cohort-v1.schema.json")),
             pin("flow.release-matrix/v1",include_bytes!("../schemas/flow-release-matrix-v1.schema.json")),

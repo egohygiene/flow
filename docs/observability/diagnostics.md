@@ -4,6 +4,25 @@ Relates to #21. The public `diagnostics` owner previews, creates and inspects a
 bounded JSON support container. It is support material, not provenance, a run
 receipt, release qualification or a success signal. No data is uploaded.
 
+The #53 delivery checkpoint adds these explicit commands and matching task
+aliases. They use the same SDK and single versioned command-result envelope:
+
+```bash
+flow diagnostics-preview --request /private/support-request.json --format json
+flow diagnostics-bundle --request /private/support-request.json --output /private/new-support.json --format json
+flow diagnostics-inspect --bundle /private/new-support.json --format json
+flow doctor-observability --format json
+task diagnostics:preview REQUEST=/private/support-request.json
+task diagnostics:bundle REQUEST=/private/support-request.json OUTPUT=/private/new-support.json
+task diagnostics:inspect BUNDLE=/private/new-support.json
+task observability:doctor
+```
+
+`doctor-observability` reports unimplemented Flow-owned instrumentation/exporters
+and unknown collector/queue/flush health as partial. It does not read environment
+configuration or connect to a collector. No telemetry is enabled by these commands.
+Two additional parser/health regressions are authored, uncompiled/unrun.
+
 The closed `flow.diagnostics-request/v1` request explicitly selects one to three
 unique categories: `build`, `platform`, `contracts`. Build uses the Cargo product
 version; platform records compiled OS/architecture, not observed physical

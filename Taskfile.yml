@@ -1,6 +1,39 @@
 version: '3'
 
 tasks:
+  diagnostics:preview:
+    desc: Preview generated support metadata without writing a bundle
+    requires:
+      vars: [REQUEST]
+    env:
+      FLOW_SUPPORT_REQUEST: '{{.REQUEST}}'
+    cmds:
+      - flow diagnostics-preview --request "$FLOW_SUPPORT_REQUEST" --format json
+
+  diagnostics:bundle:
+    desc: Create a private generated support bundle without upload
+    requires:
+      vars: [REQUEST, OUTPUT]
+    env:
+      FLOW_SUPPORT_REQUEST: '{{.REQUEST}}'
+      FLOW_SUPPORT_OUTPUT: '{{.OUTPUT}}'
+    cmds:
+      - flow diagnostics-bundle --request "$FLOW_SUPPORT_REQUEST" --output "$FLOW_SUPPORT_OUTPUT" --format json
+
+  diagnostics:inspect:
+    desc: Inspect support bundle structure without extraction or execution
+    requires:
+      vars: [BUNDLE]
+    env:
+      FLOW_SUPPORT_BUNDLE: '{{.BUNDLE}}'
+    cmds:
+      - flow diagnostics-inspect --bundle "$FLOW_SUPPORT_BUNDLE" --format json
+
+  observability:doctor:
+    desc: Describe Flow-owned operational signal support without probing a collector
+    cmds:
+      - flow doctor-observability --format json
+
   ai:doctor:
     desc: Inspect selected local AI profile without contacting a runtime
     requires:

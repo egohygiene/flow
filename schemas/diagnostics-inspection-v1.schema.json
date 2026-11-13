@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/egohygiene/flow/schemas/diagnostics-inspection-v1.schema.json",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "flow.diagnostics-inspection/v1"
+    },
+    "archive_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "archive_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65536
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "build",
+          "platform",
+          "contracts"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 3
+    },
+    "member_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "metadata_claims_authenticated": {
+      "const": false
+    },
+    "domain_evidence": {
+      "const": false
+    },
+    "network_contacted": {
+      "const": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "archive_sha256",
+    "archive_bytes",
+    "categories",
+    "member_count",
+    "metadata_claims_authenticated",
+    "domain_evidence",
+    "network_contacted"
+  ],
+  "additionalProperties": false
+}
