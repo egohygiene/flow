@@ -181,6 +181,22 @@
                     }
                   }
                 }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "selection"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "adjusted_native"
+                  },
+                  "selection": {
+                    "$ref": "adjusted-delivery-lineage-v1.schema.json#/$defs/selection"
+                  }
+                }
               }
             ]
           },

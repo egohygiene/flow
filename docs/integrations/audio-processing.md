@@ -47,7 +47,26 @@ Flow binds both returned lineage identities and treats `gain_video` as a
 `video_delivery` derivative even if the native source variant was a clean
 master. Its encoded bytes still require fresh video-audio QC and policy matching.
 
-Five focused source/pinning/QC/lineage cases are authored, uncompiled/unrun. All
+Delivery payloads can explicitly choose source kind `adjusted_native`, with a
+`selection` containing `processing_plan`, `artifact_id`, `qc_plan` and
+`policy_plan`. Each plan is an exact existing Flow native-plan FilePin. Gain
+WAVs use role `audio_derivative`; adjusted video uses `video_delivery`. Both
+require matching accepted final-file QC and selected-policy snapshots under
+the same pinned provider cohort. The original processing input must belong to
+the selected pilot, and the ordinary accepted clean master must remain selected
+separately. Missing/incompatible QC or nonmatching goals refuse the selection.
+
+Packaging copies the derivative and retained plans/configurations/receipts/owner
+records, including the exact QC and policy artifacts, to a fresh private package.
+It invokes no provider and never refreshes measurements. A canonical lineage
+digest enters the payload's review subject: new processing/QC/policy history
+requires a new supplied review even if the media bytes remain identical.
+Portable package status reads copied records and payloads only. A later fresh
+approved audio-readiness check is still required to assert current owner-QC
+readiness; these historical package records do not establish it or qualify a
+release, platform, musical review or upload.
+
+Seven focused source/pinning/QC/lineage/review cases are authored, uncompiled/unrun. All
 tests/compiler/build/dependencies/lint/format/schema/docs/drift/native/provider/
 media/model/CLI/SDK/browser/container/installer and CI execution stays deferred.
 No actual media/review, release, upload, source replacement/disposal, signature,

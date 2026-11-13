@@ -16,6 +16,7 @@ pub fn describe() -> Value {
             pin("flow.native-request/v1",include_bytes!("../schemas/flow-native-request-v1.schema.json")),
             pin("flow.publisher-verification-request/v1",include_bytes!("../schemas/publisher-verification-request-v1.schema.json")),
             pin("flow.delivery-request/v1",include_bytes!("../schemas/delivery-request-v1.schema.json")),
+            pin("flow.adjusted-delivery-lineage/v1",include_bytes!("../schemas/adjusted-delivery-lineage-v1.schema.json")),
             pin("flow.delivery-review/v1",include_bytes!("../schemas/delivery-review-v1.schema.json")),
             pin("flow.audio-readiness-request/v1",include_bytes!("../schemas/audio-readiness-request-v1.schema.json")),
             pin("flow.audio-readiness-summary/v1",include_bytes!("../schemas/audio-readiness-summary-v1.schema.json")),

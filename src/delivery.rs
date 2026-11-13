@@ -4,6 +4,7 @@
 pub mod audio_readiness;
 pub mod audio_setup;
 pub mod publishing_readiness;
+pub mod adjusted;
 use std::{collections::{BTreeMap,BTreeSet},fs,path::Path,time::{Duration,Instant}};
 use serde::{Serialize,Deserialize};
 use serde_json::{json,Value};
@@ -25,7 +26,7 @@ fn parents(root:&Path,relative:&str)->Result<(),Error>{let mut at=root.to_path_b
 pub enum Role{CleanMaster,VideoDelivery,OriginalAudio,AudioDerivative,Lyrics,Artwork,SupportingDocument}
 #[derive(Debug,Clone,Serialize,Deserialize)]
 #[serde(tag="kind",rename_all="snake_case",deny_unknown_fields)]
-pub enum Source{Native{stage:String,artifact_id:String},OriginalAudio,ManualSrt,External{file:FilePin}}
+pub enum Source{Native{stage:String,artifact_id:String},AdjustedNative{selection:adjusted::Selection},OriginalAudio,ManualSrt,External{file:FilePin}}
 #[derive(Debug,Clone,Serialize,Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Selection{pub id:String,pub role:Role,pub source:Source,pub file_name:String,pub destinations:Vec<Destination>}
@@ -136,21 +137,26 @@ impl Member{fn owned(&self)->OwnedFile{match self{Self::Copy{relative,source}=>O
 struct Build{preview:Preview,members:Vec<Member>,manifest_bytes:Vec<u8>}
 fn public_index(preview:&Preview)->Value{json!({"schema_version":"flow.delivery-index/v1","package_subject_sha256":preview.package_subject_sha256,"metadata":"metadata.json","metadata_sha256":preview.metadata_sha256,"requested_destinations":preview.requested_destinations,"payloads":preview.payloads,"review_state":preview.reviews,"missing_destination_payloads":preview.missing_destination_payloads,"missing_metadata":preview.missing_metadata,"platform_preflight":"required_from_domain_owner; not_performed_by_packaging","publishing_authority":false})}
 fn build(request:&Request,token:&dyn CancellationSignal)->Result<Build,Error>{
-    request.validate()?;let context=context(&request.project_record,&request.handoff,token)?;let mut members=vec![];let mut payloads=vec![];let mut selected_sources=vec![];
+    request.validate()?;let context=context(&request.project_record,&request.handoff,token)?;let mut members=vec![];let mut payloads=vec![];let mut selected_sources=vec![];let mut adjusted_protected=vec![];
     for selected in &request.payloads{
         if selected.destinations.iter().any(|d|!context.catalog.requested_destinations.contains(d)){return Err(error(Code::InvalidInput,"payload destination absent from selected project"));}
         let (source,state)=match &selected.source{
+            Source::AdjustedNative{selection}=>{
+                let resolved=adjusted::resolve(selection,selected,&context,token)?;
+                adjusted_protected.extend(resolved.protected);members.extend(resolved.members);
+                (resolved.file,resolved.source_state)
+            },
             Source::Native{stage,artifact_id}=>{let a=context.catalog.artifacts.iter().find(|a|&a.stage==stage&& &a.artifact_id==artifact_id).ok_or_else(||error(Code::Unavailable,"exact accepted native artifact ID required"))?;
-                let permitted=match selected.role{Role::CleanMaster=>stage=="video"&&a.purpose=="clean_archival_master",Role::VideoDelivery=>stage=="video"&&a.purpose=="destination_copy",Role::AudioDerivative=>stage=="audio",Role::Lyrics=>stage=="timed_text",_=>false};if !permitted{return Err(error(Code::InvalidInput,"payload role differs from accepted owner artifact/stage; no master inferred from filename"));}(a.file.clone(),"accepted_native_artifact")},
-            Source::OriginalAudio=>{if selected.role!=Role::OriginalAudio{return Err(error(Code::InvalidInput,"original audio role required"));}(context.catalog.original_audio.clone().ok_or_else(||error(Code::Unavailable,"project has no selected original audio"))?,"unchanged_selected_original_audio")},
-            Source::ManualSrt=>{if selected.role!=Role::Lyrics{return Err(error(Code::InvalidInput,"manual SRT requires lyric role"));}(context.catalog.manual_srt.clone(),"unchanged_manual_srt")},
-            Source::External{file}=>{if !matches!(selected.role,Role::Artwork|Role::SupportingDocument){return Err(error(Code::InvalidInput,"external files cannot claim accepted native/master roles"));}file.current(request.limits.maximum_payload_bytes,token)?;(file.clone(),"explicit_external_asset; domain_preflight_not_performed")},
+                let permitted=match selected.role{Role::CleanMaster=>stage=="video"&&a.purpose=="clean_archival_master",Role::VideoDelivery=>stage=="video"&&a.purpose=="destination_copy",Role::AudioDerivative=>stage=="audio",Role::Lyrics=>stage=="timed_text",_=>false};if !permitted{return Err(error(Code::InvalidInput,"payload role differs from accepted owner artifact/stage; no master inferred from filename"));}(a.file.clone(),"accepted_native_artifact".to_string())},
+            Source::OriginalAudio=>{if selected.role!=Role::OriginalAudio{return Err(error(Code::InvalidInput,"original audio role required"));}(context.catalog.original_audio.clone().ok_or_else(||error(Code::Unavailable,"project has no selected original audio"))?,"unchanged_selected_original_audio".to_string())},
+            Source::ManualSrt=>{if selected.role!=Role::Lyrics{return Err(error(Code::InvalidInput,"manual SRT requires lyric role"));}(context.catalog.manual_srt.clone(),"unchanged_manual_srt".to_string())},
+            Source::External{file}=>{if !matches!(selected.role,Role::Artwork|Role::SupportingDocument){return Err(error(Code::InvalidInput,"external files cannot claim accepted native/master roles"));}file.current(request.limits.maximum_payload_bytes,token)?;(file.clone(),"explicit_external_asset; domain_preflight_not_performed".to_string())},
         };
         if selected.role==Role::CleanMaster&&selected.destinations.iter().any(|d|*d!=Destination::Archive){return Err(error(Code::InvalidInput,"clean archival master must stay in the archival selection"));}
         if source.byte_count>request.limits.maximum_payload_bytes{return Err(error(Code::InvalidInput,"selected delivery payload exceeds byte budget"));}
         let relative=format!("{}/{}/{}",if selected.role==Role::CleanMaster{"archive"}else{"deliver"},selected.id,selected.file_name);
-        selected_sources.push(SelectedSource{payload_id:selected.id.clone(),file:source.clone(),source_state:state.into()});
-        payloads.push(Payload{id:selected.id.clone(),role:selected.role,relative:relative.clone(),sha256:source.sha256.clone(),byte_count:source.byte_count,destinations:selected.destinations.clone(),source_state:state.into()});members.push(Member::Copy{relative,source});
+        selected_sources.push(SelectedSource{payload_id:selected.id.clone(),file:source.clone(),source_state:state.clone()});
+        payloads.push(Payload{id:selected.id.clone(),role:selected.role,relative:relative.clone(),sha256:source.sha256.clone(),byte_count:source.byte_count,destinations:selected.destinations.clone(),source_state:state});members.push(Member::Copy{relative,source});
     }
     if !payloads.iter().any(|p|p.role==Role::CleanMaster){return Err(error(Code::InvalidInput,"retain an actual accepted clean archival master in the local package"));}
     if request.metadata.destination_fields.iter().any(|m|!context.catalog.requested_destinations.contains(&m.destination)){return Err(error(Code::InvalidInput,"metadata destination absent from project"));}
@@ -166,6 +172,7 @@ fn build(request:&Request,token:&dyn CancellationSignal)->Result<Build,Error>{
     let intent=bytes(request)?;let request_sha256=release_cohort::sha256(&intent);
     members.extend([Member::Generated{relative:"intent.json".into(),data:intent},Member::Generated{relative:"metadata.json".into(),data:metadata},Member::Generated{relative:"delivery-index.json".into(),data:bytes(&public_index(&preview))?}]);
     let root=native::path(&request.output_directory)?;
+    if adjusted_protected.iter().any(|p|root.starts_with(p)||p.starts_with(&root)){return Err(error(Code::InvalidInput,"delivery output overlaps adjusted processing/QC/policy source or evidence"));}
     for stage in &context.plan.stages{let native_root=native::path(&stage.plan.request.run_directory)?;if root.starts_with(&native_root)||native_root.starts_with(&root){return Err(error(Code::InvalidInput,"delivery package overlaps a retained native run"));}}
     let pilot_root=native::path(&context.plan.request.run_directory)?;if root.starts_with(&pilot_root)||pilot_root.starts_with(&root){return Err(error(Code::InvalidInput,"delivery package overlaps the retained pilot run"));}
     for m in &members{if let Member::Copy{source,..}=m{let input=native::path(&source.path)?;if root.starts_with(&input)||input.starts_with(&root){return Err(error(Code::InvalidInput,"delivery output overlaps an original or evidence file"));}}}
@@ -208,6 +215,7 @@ pub fn status(root:&Path,expected_manifest_sha256:&str,token:&dyn CancellationSi
     let mut expected=BTreeSet::from(["manifest.json".into()]);let mut total=manifest_pin.byte_count;
     for f in &manifest.files{if !crate::publisher_report::safe_member(&f.relative)||!expected.insert(f.relative.clone()){return Err(error(Code::RecoveryRequired,"delivery member namespace changed"));}FilePin{path:NativePath::from_path(&root.join(&f.relative)),sha256:f.sha256.clone(),byte_count:f.byte_count}.current(request.limits.maximum_payload_bytes.max(MAX_DOC),&guard)?;total=total.checked_add(f.byte_count).ok_or_else(||error(Code::RecoveryRequired,"delivery byte overflow"))?;let mut parent=Path::new(&f.relative).parent();while let Some(p)=parent{if p.as_os_str().is_empty(){break;}expected.insert(p.to_string_lossy().replace(std::path::MAIN_SEPARATOR,"/")+"/");parent=p.parent();}}
     if total>request.limits.maximum_total_bytes||membership(root)?!=expected{return Err(error(Code::RecoveryRequired,"delivery has changed, missing, oversized or unknown members; preserve them"));}
+    adjusted::validate_package(root,&request,&manifest.preview,&manifest.files,&guard)?;
     if !manifest.files.iter().any(|f|f.relative=="metadata.json"&&f.sha256==manifest.preview.metadata_sha256)||manifest.preview.payloads.iter().any(|p|!manifest.files.iter().any(|f|f.relative==p.relative&&f.sha256==p.sha256&&f.byte_count==p.byte_count)){return Err(error(Code::RecoveryRequired,"delivery payload/metadata ledger differs"));}
     let index:Value=serde_json::from_slice(&command::read_document(&root.join("delivery-index.json"),MAX_DOC)?).map_err(|_|error(Code::RecoveryRequired,"delivery index malformed"))?;if index!=public_index(&manifest.preview){return Err(error(Code::RecoveryRequired,"public delivery index differs from private pinned ledger"));}
     let review_values=manifest.review_files.iter().map(|name|{if !manifest.files.iter().any(|f|&f.relative==name){return Err(error(Code::RecoveryRequired,"review outside owned delivery set"));}serde_json::from_slice::<Review>(&command::read_document(&root.join(name),MAX_DOC)?).map_err(|_|error(Code::RecoveryRequired,"retained review malformed"))}).collect::<Result<Vec<_>,_>>()?;

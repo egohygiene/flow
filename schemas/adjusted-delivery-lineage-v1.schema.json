@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egohygiene.github.io/flow/schemas/adjusted-delivery-lineage-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "payload_id",
+    "role",
+    "pilot_plan_sha256",
+    "selection",
+    "file",
+    "anchor",
+    "processing",
+    "qc",
+    "policy",
+    "policy_sha256",
+    "evidence_scope",
+    "native_release_admission_reverified",
+    "current_owner_rechecked",
+    "upload_authority"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "flow.adjusted-delivery-lineage/v1"
+    },
+    "payload_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]{1,96}$"
+    },
+    "role": {
+      "enum": [
+        "audio_derivative",
+        "video_delivery"
+      ]
+    },
+    "pilot_plan_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "selection": {
+      "$ref": "#/$defs/selection"
+    },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "byte_count"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "flow-native-request-v1.schema.json#/properties/cohort"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 68719476736
+        }
+      }
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "byte_count"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "flow-native-request-v1.schema.json#/properties/cohort"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "byte_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 68719476736
+        }
+      }
+    },
+    "processing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan",
+        "configuration",
+        "receipt",
+        "acceptance"
+      ],
+      "properties": {
+        "plan": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "configuration": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "receipt": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "acceptance": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        }
+      }
+    },
+    "qc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan",
+        "configuration",
+        "receipt",
+        "acceptance"
+      ],
+      "properties": {
+        "plan": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "configuration": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "receipt": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "acceptance": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan",
+        "configuration",
+        "receipt",
+        "acceptance"
+      ],
+      "properties": {
+        "plan": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "configuration": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "receipt": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "acceptance": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        }
+      }
+    },
+    "policy_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "evidence_scope": {
+      "const": "retained_native_processing_QC_and_policy_snapshots; current_QC_release_and_human_review_not_reverified"
+    },
+    "native_release_admission_reverified": {
+      "const": false
+    },
+    "current_owner_rechecked": {
+      "const": false
+    },
+    "upload_authority": {
+      "const": false
+    }
+  },
+  "$defs": {
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "processing_plan",
+        "artifact_id",
+        "qc_plan",
+        "policy_plan"
+      ],
+      "properties": {
+        "processing_plan": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "artifact_id": {
+          "enum": [
+            "gain_audio",
+            "gain_video"
+          ]
+        },
+        "qc_plan": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        },
+        "policy_plan": {
+          "$ref": "delivery-request-v1.schema.json#/properties/project_record"
+        }
+      }
+    }
+  }
+}
