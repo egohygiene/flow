@@ -1,0 +1,151 @@
+{
+  "actual_host": "Linux x86_64",
+  "actual_mac_execution": "unavailable_not_executed",
+  "builds": 0,
+  "checks": [
+    {
+      "case": "focused-tests",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "stderr_sha256": "68fd171e8236dab7442e5efa3b8df046a89b304a79fc5644983e7e49b35fb9c7",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "plan-apple",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "a3c3769f616c6f65c61d0a5d6678caf4dbc1665733dd99e7f79dbc7dae3c6254"
+    },
+    {
+      "case": "preflight-apple",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "77b42b02799f887f10a3aeb7716651c9753e7a2b4671e09d5165e61a081b8335"
+    },
+    {
+      "case": "preflight-intel",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "363867380429a4e3ddfeeb90bc0060fe44350e8338d47dfeb06e7f3572892557"
+    },
+    {
+      "case": "static-source",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "327cf3c02e81461a546cdb57e79ed7284fa1297be1b6e93b573047e9a1c8468a"
+    },
+    {
+      "case": "diff-check",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "downloads": 0,
+  "focused_test_command": "python3 -B -m unittest discover --start-directory tools --pattern test_macos_native_trial.py",
+  "focused_test_count": 17,
+  "installations": 0,
+  "inventory_excludes": [
+    "OBSERVATIONS.json"
+  ],
+  "observer": {
+    "clean_source_at_execution": true,
+    "driver_sha256": "dcf48735cdd0aa1d832945753f151d1589fe0213c92e3a4618c4169391c74120",
+    "revision": "8c7c1fccd0a6e97eebc8dad66728d61a5b8e26ce",
+    "test_sha256": "b3673c3ff11ebdb74b715b31ba037c60b132ac7c6c640bdbd04349c17c9e3ac9",
+    "tree": "e58cdd4313b530aadb220a2990fa2340803c012d"
+  },
+  "portable_reports": [
+    "plan-apple/report.json",
+    "preflight-apple/report.json",
+    "preflight-intel/report.json"
+  ],
+  "provider_executions": 0,
+  "remaining": [
+    "Matching native Mac operator execution",
+    "Reviewed Aniflow successor candidate for both Mac targets",
+    "Installed frozen toolchains/dependencies/cache/disk headroom",
+    "Actual native builds and independent artifact/contract inspection",
+    "Existing suite management and Mac workload/domain acceptance",
+    "Human reviews and authenticated immutable release qualification"
+  ],
+  "retained_private_file_count_excluding_seal": 17,
+  "retained_private_file_inventory": {
+    "apple-request.json": {
+      "byte_count": 1083,
+      "sha256": "ce116ae0948d0dfdecc034ee23c5b6821ace1b0fce89988e38cc44bf879f869a"
+    },
+    "diff-check.stderr": {
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diff-check.stdout": {
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused-tests.stderr": {
+      "byte_count": 116,
+      "sha256": "68fd171e8236dab7442e5efa3b8df046a89b304a79fc5644983e7e49b35fb9c7"
+    },
+    "focused-tests.stdout": {
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "intel-request.json": {
+      "byte_count": 1082,
+      "sha256": "4e4ec6ff7f29b01e4decbbc55d40acb844b0473f7f51d7c512360c1d81367712"
+    },
+    "plan-apple.stderr": {
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "plan-apple.stdout": {
+      "byte_count": 1783,
+      "sha256": "a3c3769f616c6f65c61d0a5d6678caf4dbc1665733dd99e7f79dbc7dae3c6254"
+    },
+    "plan-apple/report.json": {
+      "byte_count": 1989,
+      "sha256": "736938b8d8b1302122c878f230662d30753bb4c836b95fc212c740390f5715e4"
+    },
+    "preflight-apple.stderr": {
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight-apple.stdout": {
+      "byte_count": 2365,
+      "sha256": "77b42b02799f887f10a3aeb7716651c9753e7a2b4671e09d5165e61a081b8335"
+    },
+    "preflight-apple/report.json": {
+      "byte_count": 2725,
+      "sha256": "39ba98357d24dd79f7e603b718ca0f681845a05b951b60c5f695f7f464a51884"
+    },
+    "preflight-intel.stderr": {
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight-intel.stdout": {
+      "byte_count": 2364,
+      "sha256": "363867380429a4e3ddfeeb90bc0060fe44350e8338d47dfeb06e7f3572892557"
+    },
+    "preflight-intel/report.json": {
+      "byte_count": 2724,
+      "sha256": "f6d87ad103e272ab657938a60770f2c6a7fa889488bf4ef3c1926b94f3c1fa23"
+    },
+    "static-source.stderr": {
+      "byte_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "static-source.stdout": {
+      "byte_count": 71,
+      "sha256": "327cf3c02e81461a546cdb57e79ed7284fa1297be1b6e93b573047e9a1c8468a"
+    }
+  },
+  "schema_version": "flow.macos-native-trial-checkpoint/v1",
+  "signing_or_publication": false,
+  "task_runtime": "unavailable_not_executed_yaml_checked_only"
+}

@@ -1,6 +1,19 @@
 version: '3'
 
 tasks:
+  macos:trial:preflight:
+    desc: Read-only native Mac trial plan/prerequisite/byte matrix through existing owners
+    requires:
+      vars: [REQUEST, OUTPUT]
+    vars:
+      ACTION: '{{default "preflight" .ACTION}}'
+    env:
+      FLOW_MACOS_TRIAL_ACTION: '{{.ACTION}}'
+      FLOW_MACOS_TRIAL_REQUEST: '{{.REQUEST}}'
+      FLOW_MACOS_TRIAL_OUTPUT: '{{.OUTPUT}}'
+    cmds:
+      - python3 -B tools/macos_native_trial.py "$FLOW_MACOS_TRIAL_ACTION" --request "$FLOW_MACOS_TRIAL_REQUEST" --output "$FLOW_MACOS_TRIAL_OUTPUT"
+
   ci:local:plan:
     desc: Plan the reviewed local selection without executing checks (requires Realm checkout)
     requires:
