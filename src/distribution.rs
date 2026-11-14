@@ -593,14 +593,22 @@ fn install_owned(
         e
     })
 }
-fn membership(root: &Path) -> Result<BTreeSet<String>, Error> {
+fn membership(root: &Path, token: &dyn CancellationSignal) -> Result<BTreeSet<String>, Error> {
     fn visit(
         root: &Path,
         current: &Path,
         depth: usize,
         names: &mut BTreeSet<String>,
+        seen: &mut usize,
+        token: &dyn CancellationSignal,
     ) -> Result<(), Error> {
-        if depth > 4 || names.len() > 512 {
+        if token.is_cancelled() {
+            return Err(error(
+                Code::Cancelled,
+                "installation membership observation cancelled",
+            ));
+        }
+        if depth > 4 {
             return Err(error(
                 Code::RecoveryRequired,
                 "owned installation membership bound",
@@ -609,6 +617,19 @@ fn membership(root: &Path) -> Result<BTreeSet<String>, Error> {
         for entry in fs::read_dir(current)
             .map_err(|_| error(Code::Io, "installation membership unavailable"))?
         {
+            if token.is_cancelled() {
+                return Err(error(
+                    Code::Cancelled,
+                    "installation membership observation cancelled",
+                ));
+            }
+            if *seen >= 512 {
+                return Err(error(
+                    Code::RecoveryRequired,
+                    "owned installation membership bound",
+                ));
+            }
+            *seen += 1;
             let path = entry
                 .map_err(|_| error(Code::Io, "installation entry unavailable"))?
                 .path();
@@ -629,7 +650,7 @@ fn membership(root: &Path) -> Result<BTreeSet<String>, Error> {
             if metadata.is_dir() {
                 directory(&path)?;
                 names.insert(relative + "/");
-                visit(root, &path, depth + 1, names)?;
+                visit(root, &path, depth + 1, names, seen, token)?;
             } else if metadata.is_file() {
                 names.insert(relative);
             } else {
@@ -642,7 +663,7 @@ fn membership(root: &Path) -> Result<BTreeSet<String>, Error> {
         Ok(())
     }
     let mut names = BTreeSet::new();
-    visit(root, root, 0, &mut names)?;
+    visit(root, root, 0, &mut names, &mut 0, token)?;
     Ok(names)
 }
 pub fn status(
@@ -738,7 +759,7 @@ pub fn status(
             parent = dir.parent();
         }
     }
-    if membership(root)? != expected {
+    if membership(root, token)? != expected {
         return Err(error(
             Code::RecoveryRequired,
             "installation has missing or unknown files/directories; preserve them",
@@ -873,7 +894,7 @@ pub fn open_bundle(
     for index in 0..ordinal {
         expected.insert(format!("files/{index:04}"));
     }
-    if membership(root)? != expected {
+    if membership(root, token)? != expected {
         return Err(error(
             Code::InvalidInput,
             "offline bundle contains missing/unknown entries",
