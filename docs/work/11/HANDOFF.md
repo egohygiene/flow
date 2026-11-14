@@ -35,6 +35,9 @@ accepted executable or native artifact was removed.
 The [handoff archive record](../54/combined-source-20261114/handoff-archive.json)
 identifies a private Linux x86-64 offline suite bundle plus actual synthetic
 example outputs. The PDF provider is separately prepared, not silently bundled.
+The archive README creates a fresh executable bootstrap copy while retaining
+nonexecutable bundle payload modes; a targeted extracted-copy version check
+passes without changing the bundle or repeating the 73-call workload.
 Both new ELF files require GLIBC symbols through 2.39; the combined installed
 workload ran on the current glibc 2.41 host. This is no full supported-host
 qualification. Proof tooling and documentation are later source-only changes,

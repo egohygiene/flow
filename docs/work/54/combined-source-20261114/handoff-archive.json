@@ -1,12 +1,12 @@
 {
   "schema_version": "flow.candidate-handoff-archive/v1",
-  "archive": "flow-suite-linux-x86_64-candidate-20261114.tar.gz",
-  "sha256": "43c9a9a44fdba0d69cf9c10fec96e8ab4c16641a7917ac564264bb17c382e82f",
-  "bytes": 15700509,
+  "archive": "flow-suite-linux-x86_64-candidate-20261114-r2.tar.gz",
+  "sha256": "8c081f66bb5666853960153a88e5b18992252d7f0f382ce0fa41b16f0d527fc5",
+  "bytes": 15700750,
   "members": {
     "flow-suite-linux-x86_64-candidate-20261114/README.txt": {
-      "sha256": "78dd6122a3481b63e385953fcd71beb329c3c13fec8440106d4c1047dac144af",
-      "bytes": 2345,
+      "sha256": "ce94f8cf49e4eedebe1044db2f33747743bf4f2e4f8ce62c2f2281c98b92d549",
+      "bytes": 2692,
       "mode": 420
     },
     "flow-suite-linux-x86_64-candidate-20261114/bundle/bundle.json": {
@@ -76,5 +76,10 @@
   "scope": "archive transport of the existing private candidate bundle plus actual synthetic examples; no new install/runtime qualification",
   "release_authenticated": false,
   "publication_performed": false,
-  "native_matrix_qualified": false
+  "native_matrix_qualified": false,
+  "transport_amendment": {
+    "prior_archive_sha256": "43c9a9a44fdba0d69cf9c10fec96e8ab4c16641a7917ac564264bb17c382e82f",
+    "reason": "README now creates a new executable bootstrap copy; product-owned bundle payload modes remain unchanged",
+    "product_build_or_full_workload_repeated": false
+  }
 }
