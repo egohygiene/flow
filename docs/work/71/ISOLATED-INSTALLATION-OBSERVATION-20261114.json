@@ -1,0 +1,174 @@
+{
+  "a_retained": true,
+  "cases": [
+    {
+      "case": "candidate-ack-required",
+      "command": "suite-install",
+      "exit_code": 5,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "60c4fe5edd63a25b818d79709b20b8590c03e28f21bdebff906396cec80a29a3"
+    },
+    {
+      "case": "install-a",
+      "command": "suite-install",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "273d45bfae08efd98280ab0a46bd8d24fa1b08f537219259b803c6e4c05db6ce"
+    },
+    {
+      "case": "installed-status-a",
+      "command": "suite-status",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c68db12eadd78fc07b863b7c97167efa1a87804d7a6a8ceb9f69f164eedaf65b"
+    },
+    {
+      "case": "receipt-pin-refusal",
+      "command": "suite-status",
+      "exit_code": 3,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "cfd4864efefdc3a924e0db0413110efb1e252d88709457c10071ff5517d0c4e4"
+    },
+    {
+      "case": "installed-contract",
+      "command": "release-contract",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "a840485145c25f6a7441b2a5eaba4ddb8bc4698a51fd1f9e958c87be1b7e63f5"
+    },
+    {
+      "case": "installed-help",
+      "command": "help",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "3822ad92c38a453b35f2896acf00d3611aa7fa3d62377f74140da707200f34c4"
+    },
+    {
+      "case": "installed-version",
+      "command": "version",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "fddad2cc5fae1177274ff357925a89a37fd8ede37a1583f46aea2be0d342d958"
+    },
+    {
+      "case": "offline-bundle",
+      "command": "suite-bundle",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "02913c5069f9bd0dc64f75c2d92ef70c81ffbe71ac9f0de355bac42832b2902c"
+    },
+    {
+      "case": "install-moved-bundle-b",
+      "command": "suite-install",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "7e5f106bead6e1584242e97e7da79a57bba6bb24cff143885bf6b88d4e4bfa58"
+    },
+    {
+      "case": "activate-a",
+      "command": "suite-activate",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "58438a84833706c97239fc4824dbb0b63e28b007b8221079cfcf615544ff23d1"
+    },
+    {
+      "case": "activate-b",
+      "command": "suite-activate",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "5da163f6ed853fb0e8ea52d4a57d1926ba4ec57348232e9d44d0e6add7d11896"
+    },
+    {
+      "case": "stale-selection-refusal",
+      "command": "suite-rollback",
+      "exit_code": 3,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "b07aa9252c645e429395af58f0e9dabbeb02dd834dc8a6b8259af7f7c9cb9a2a"
+    },
+    {
+      "case": "rollback-a",
+      "command": "suite-rollback",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "d30103c6740ee2de8ab3cecd590c9bc61b56bab6ad9f686d189a106413625704"
+    },
+    {
+      "case": "changed-copy-refusal",
+      "command": "suite-status",
+      "exit_code": 3,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "568c1e73de70a380c57a94e29311b5b42110ed35aef1b93654dc45c73da09b4e"
+    },
+    {
+      "case": "unknown-member-refusal",
+      "command": "suite-uninstall",
+      "exit_code": 7,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "8d1f1ba716920c13cfa543983c87dd5c7c51ab3e81d5ecaf487aad8929aeb251"
+    },
+    {
+      "case": "owned-only-uninstall-b",
+      "command": "suite-uninstall",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c439001b3361dde74f538ecb9b4206affa8ba42eb5930db3c9ade8973c3d5e87"
+    },
+    {
+      "case": "retained-status-a",
+      "command": "suite-status",
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c68db12eadd78fc07b863b7c97167efa1a87804d7a6a8ceb9f69f164eedaf65b"
+    }
+  ],
+  "command_cwd_outside_checkout": true,
+  "empty_command_cwd_preserved": true,
+  "flow_source_revision": "71d034263da17c8755cb2c7202cf68ca5b5df6fd",
+  "host": {
+    "libc": [
+      "glibc",
+      "2.41"
+    ],
+    "machine": "x86_64",
+    "system": "Linux"
+  },
+  "hosted_ci_dispatched": false,
+  "inputs": {
+    "flow": {
+      "byte_count": 6539600,
+      "sha256": "aa03c1eb6a85316446edbed4d1127deee4e594f8b214d3080d34bac19b998eb4"
+    },
+    "flow-contract": {
+      "byte_count": 8027,
+      "sha256": "bc3b58373f19ff8b9bd849e39cc80585676c85177c74cd9dba3b596f26ce5db0"
+    },
+    "optiflow": {
+      "byte_count": 11098688,
+      "sha256": "46af9399f3785607f835d9a805a8daa42c93597772c6ee812911615ea4b76280"
+    },
+    "renderflow": {
+      "byte_count": 19965256,
+      "sha256": "b0a55e600e7888428b6971b99dc4566eac285cebf7338b99d6ed75415d1a3a56"
+    },
+    "renderflow-contract": {
+      "byte_count": 372295,
+      "sha256": "9ff99a410bcf98a82801eeadf3e35fdc40539c36d192ce066365769c98e9aa74"
+    }
+  },
+  "limits": "same-version candidate root selection/rollback; no OS integration, authenticated installation or media qualification",
+  "native_matrix_qualified": false,
+  "observed_at": "2026-11-14T19:38:55.988468+00:00",
+  "offline_bundle_moved": true,
+  "original_assets_preserved": true,
+  "owned_b_removed": true,
+  "provider_workload_invoked": false,
+  "publisher_authenticated": false,
+  "receipt_a_sha256": "15d8c6a535d2aa44d197ddc1cee3bc54dd08c1826472b6b449494264e4bb04b1",
+  "receipt_b_sha256": "243c2a0c037fad13b8bc4934e10a7414f493e51bc1f3ef8542a16f3ae50a5583",
+  "release_published": false,
+  "retained_binaries_and_contracts_rehashed": true,
+  "schema_version": "flow.isolated-suite-installation-proof/v1",
+  "selection_restored": true,
+  "status": "passed",
+  "target": "x86_64-unknown-linux-gnu"
+}
