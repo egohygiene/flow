@@ -41,8 +41,9 @@ jobs:
         run: |
           cargo update --workspace --locked
 
-      - name: Check formatting
-        run: cargo fmt --all -- --check
+      - name: Check canonical formatting
+        if: matrix.toolchain == '1.85.0'
+        run: cargo +1.85.0 fmt --all -- --check
 
       - name: Lint all targets
         run: cargo clippy --all-targets --all-features --locked -- -D warnings

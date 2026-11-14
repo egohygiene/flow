@@ -1,6 +1,16 @@
 version: '3'
 
 tasks:
+  format:
+    desc: Apply the canonical Rust 1.85.0 formatting policy
+    cmds:
+      - cargo +1.85.0 fmt --all
+
+  format:check:
+    desc: Check source formatting with the canonical formatter
+    cmds:
+      - cargo +1.85.0 fmt --all -- --check
+
   ci:lock:
     desc: Resolve owning dependency metadata without permitting lockfile changes
     cmds:

@@ -185,7 +185,7 @@ fn executable_lifecycle_matrix() {
     assert_eq!(catalog.schema_version, "flow.lifecycle-scenario-catalog/v1");
     assert_eq!(catalog.fixture_version, "1.1.0");
     assert_eq!(catalog.tier, "pull-request-linux");
-    assert!(!catalog.known_gaps.is_empty());
+    assert_ne!(catalog.known_gaps, [] as [std::string::String; 0]);
     assert_eq!(catalog.budget.repetitions, 2);
     assert_eq!(catalog.budget.test_threads, 1);
     // These are enforced by the Python runner; direct cargo is a diagnostic run.

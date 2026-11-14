@@ -1,15 +1,155 @@
 use super::*;
-use std::io::{Read,Write};
-pub(super) fn directory(path:&Path)->Result<(),Error>{if !path.is_absolute()||path.canonicalize().ok().as_deref()!=Some(path)||!fs::metadata(path).is_ok_and(|m|m.is_dir()){return Err(error(Code::InvalidInput,"canonical directory required"));}Ok(())}
-pub(super) fn create_directory(path:&Path)->Result<(),Error>{directory(path.parent().ok_or_else(||error(Code::InvalidInput,"existing output parent required"))?)?;let mut builder=fs::DirBuilder::new();#[cfg(unix)]{use std::os::unix::fs::DirBuilderExt;builder.mode(0o700);}builder.create(path).map_err(|_|error(Code::RecoveryRequired,"output already exists or cannot be created; preserve it"))?;directory(path)}
-pub fn read_document(path:&Path,maximum:u64)->Result<Vec<u8>,Error>{if maximum==0||maximum>16_777_216||!path.is_absolute()||path.canonicalize().ok().as_deref()!=Some(path){return Err(error(Code::InvalidInput,"canonical bounded document path required"));}
-    let before=fs::symlink_metadata(path).map_err(|_|error(Code::Io,"selected document unavailable"))?;if !before.is_file()||before.len()==0||before.len()>maximum{return Err(error(Code::InvalidInput,"bounded regular document required"));}
-    let mut options=fs::OpenOptions::new();options.read(true);#[cfg(unix)]{use std::os::unix::fs::OpenOptionsExt;options.custom_flags(nix::libc::O_NOFOLLOW|nix::libc::O_CLOEXEC|nix::libc::O_NONBLOCK);}
-    let mut file=options.open(path).map_err(|_|error(Code::Io,"selected document cannot be opened"))?;let opened=file.metadata().map_err(|_|error(Code::Io,"document identity unavailable"))?;
-    if !opened.is_file()||opened.len()!=before.len()||opened.modified().ok()!=before.modified().ok(){return Err(error(Code::StalePlan,"document changed while opening"));}
-    #[cfg(unix)] {use std::os::unix::fs::MetadataExt;if opened.dev()!=before.dev()||opened.ino()!=before.ino()||opened.nlink()!=1||opened.ctime()!=before.ctime()||opened.ctime_nsec()!=before.ctime_nsec(){return Err(error(Code::StalePlan,"document changed or aliased while opening"));}}
-    let mut bytes=Vec::new();(&mut file).take(maximum+1).read_to_end(&mut bytes).map_err(|_|error(Code::Io,"selected document cannot be read"))?;
-    let after_fd=file.metadata().map_err(|_|error(Code::Io,"document identity unavailable"))?;let after=fs::symlink_metadata(path).map_err(|_|error(Code::Io,"document changed"))?;
-    for m in [&opened,&after_fd,&after] {if !m.is_file()||bytes.len() as u64!=before.len()||m.len()!=before.len()||m.modified().ok()!=before.modified().ok(){return Err(error(Code::StalePlan,"document changed during observation"));}#[cfg(unix)] {use std::os::unix::fs::MetadataExt;if m.dev()!=before.dev()||m.ino()!=before.ino()||m.nlink()!=1||m.ctime()!=before.ctime()||m.ctime_nsec()!=before.ctime_nsec(){return Err(error(Code::StalePlan,"document changed or aliased"));}}}Ok(bytes)
+use std::io::{Read, Write};
+pub(super) fn directory(path: &Path) -> Result<(), Error> {
+    if !path.is_absolute()
+        || path.canonicalize().ok().as_deref() != Some(path)
+        || !fs::metadata(path).is_ok_and(|m| m.is_dir())
+    {
+        return Err(error(Code::InvalidInput, "canonical directory required"));
+    }
+    Ok(())
 }
-pub fn write_document<T:Serialize>(path:&Path,value:&T)->Result<(),Error>{let path=absolute(path)?;directory(path.parent().ok_or_else(||error(Code::InvalidInput,"document parent required"))?)?;let mut bytes=serde_json::to_vec_pretty(value).map_err(|_|error(Code::InvalidInput,"document cannot be encoded"))?;bytes.push(b'\n');if bytes.len()>262_144{return Err(error(Code::InvalidInput,"operation document exceeds256KiB"));}let mut options=fs::OpenOptions::new();options.create_new(true).write(true);#[cfg(unix)]{use std::os::unix::fs::OpenOptionsExt;options.mode(0o600).custom_flags(nix::libc::O_NOFOLLOW|nix::libc::O_CLOEXEC);}let mut file=options.open(&path).map_err(|_|error(Code::Io,"document already exists or cannot be reserved"))?;file.write_all(&bytes).and_then(|_|file.sync_all()).map_err(|_|error(Code::Io,"document incomplete; preserve it"))?;fs::File::open(path.parent().ok_or_else(||error(Code::InvalidInput,"document parent required"))?).and_then(|f|f.sync_all()).map_err(|_|error(Code::Io,"cannot synchronize document parent"))}
+pub(super) fn create_directory(path: &Path) -> Result<(), Error> {
+    directory(
+        path.parent()
+            .ok_or_else(|| error(Code::InvalidInput, "existing output parent required"))?,
+    )?;
+    let mut builder = fs::DirBuilder::new();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::DirBuilderExt;
+        builder.mode(0o700);
+    }
+    builder.create(path).map_err(|_| {
+        error(
+            Code::RecoveryRequired,
+            "output already exists or cannot be created; preserve it",
+        )
+    })?;
+    directory(path)
+}
+pub fn read_document(path: &Path, maximum: u64) -> Result<Vec<u8>, Error> {
+    if maximum == 0
+        || maximum > 16_777_216
+        || !path.is_absolute()
+        || path.canonicalize().ok().as_deref() != Some(path)
+    {
+        return Err(error(
+            Code::InvalidInput,
+            "canonical bounded document path required",
+        ));
+    }
+    let before =
+        fs::symlink_metadata(path).map_err(|_| error(Code::Io, "selected document unavailable"))?;
+    if !before.is_file() || before.len() == 0 || before.len() > maximum {
+        return Err(error(
+            Code::InvalidInput,
+            "bounded regular document required",
+        ));
+    }
+    let mut options = fs::OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.custom_flags(nix::libc::O_NOFOLLOW | nix::libc::O_CLOEXEC | nix::libc::O_NONBLOCK);
+    }
+    let mut file = options
+        .open(path)
+        .map_err(|_| error(Code::Io, "selected document cannot be opened"))?;
+    let opened = file
+        .metadata()
+        .map_err(|_| error(Code::Io, "document identity unavailable"))?;
+    if !opened.is_file()
+        || opened.len() != before.len()
+        || opened.modified().ok() != before.modified().ok()
+    {
+        return Err(error(Code::StalePlan, "document changed while opening"));
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        if opened.dev() != before.dev()
+            || opened.ino() != before.ino()
+            || opened.nlink() != 1
+            || opened.ctime() != before.ctime()
+            || opened.ctime_nsec() != before.ctime_nsec()
+        {
+            return Err(error(
+                Code::StalePlan,
+                "document changed or aliased while opening",
+            ));
+        }
+    }
+    let mut bytes = Vec::new();
+    (&mut file)
+        .take(maximum + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|_| error(Code::Io, "selected document cannot be read"))?;
+    let after_fd = file
+        .metadata()
+        .map_err(|_| error(Code::Io, "document identity unavailable"))?;
+    let after = fs::symlink_metadata(path).map_err(|_| error(Code::Io, "document changed"))?;
+    for m in [&opened, &after_fd, &after] {
+        if !m.is_file()
+            || bytes.len() as u64 != before.len()
+            || m.len() != before.len()
+            || m.modified().ok() != before.modified().ok()
+        {
+            return Err(error(
+                Code::StalePlan,
+                "document changed during observation",
+            ));
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::MetadataExt;
+            if m.dev() != before.dev()
+                || m.ino() != before.ino()
+                || m.nlink() != 1
+                || m.ctime() != before.ctime()
+                || m.ctime_nsec() != before.ctime_nsec()
+            {
+                return Err(error(Code::StalePlan, "document changed or aliased"));
+            }
+        }
+    }
+    Ok(bytes)
+}
+pub fn write_document<T: Serialize>(path: &Path, value: &T) -> Result<(), Error> {
+    let path = absolute(path)?;
+    directory(
+        path.parent()
+            .ok_or_else(|| error(Code::InvalidInput, "document parent required"))?,
+    )?;
+    let mut bytes = serde_json::to_vec_pretty(value)
+        .map_err(|_| error(Code::InvalidInput, "document cannot be encoded"))?;
+    bytes.push(b'\n');
+    if bytes.len() > 262_144 {
+        return Err(error(
+            Code::InvalidInput,
+            "operation document exceeds256KiB",
+        ));
+    }
+    let mut options = fs::OpenOptions::new();
+    options.create_new(true).write(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options
+            .mode(0o600)
+            .custom_flags(nix::libc::O_NOFOLLOW | nix::libc::O_CLOEXEC);
+    }
+    let mut file = options
+        .open(&path)
+        .map_err(|_| error(Code::Io, "document already exists or cannot be reserved"))?;
+    file.write_all(&bytes)
+        .and_then(|_| file.sync_all())
+        .map_err(|_| error(Code::Io, "document incomplete; preserve it"))?;
+    fs::File::open(
+        path.parent()
+            .ok_or_else(|| error(Code::InvalidInput, "document parent required"))?,
+    )
+    .and_then(|f| f.sync_all())
+    .map_err(|_| error(Code::Io, "cannot synchronize document parent"))
+}

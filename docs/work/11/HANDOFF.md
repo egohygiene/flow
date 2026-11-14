@@ -1,3 +1,23 @@
+## Current CI repair continuation — November 13, 2026
+
+The maintainer selected checkpoints 3 and 4 of [Flow #137](https://github.com/egohygiene/flow/issues/137).
+Checkpoint 3 draft source work is Flow #139, Aniflow #226, Optiflow #208 and
+Renderflow #510, stacked after the still-open checkpoint 1/2 drafts.
+Checkpoint 4 is the following formatting/lint source batch; use its
+[scope and formatter observations](../137/04-format-lint.md).
+
+All five owning lock graphs passed explicit-version locked/offline metadata
+resolution without lock changes after the scoped refresh. All four owning
+source formatters plus the fuzz formatter passed their pinned format checks.
+These newly authorized generated-source checks supersede the earlier blanket
+format/metadata deferral for this batch only. Product compilation/builds, tests,
+Clippy, corpus/schema/native and hosted execution remain deferred. The parent
+issue retains full acceptance gates and the original failure limits.
+
+No additional PR was merged in this batch. The earlier six CI repair drafts
+remain open; the prior #135/#136/native diagnostics source merges remain as
+recorded below. #62/#21 acceptance stays open. #88 remains unchanged and last.
+
 ## Current continuation — November 13, 2026
 
 The maintainer authorized and merged Flow [#135](https://github.com/egohygiene/flow/pull/135)

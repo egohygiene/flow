@@ -223,7 +223,7 @@ fn graph_reopen_preserves_success_and_never_repeats_a_completed_launch() {
                 }))
             ));
         }
-        assert!(repeated.is_empty());
+        assert_eq!(repeated, [] as [flow::ExtensionEvent; 0]);
         assert_eq!(history(&graph), before);
         assert!(store.state().steps.iter().all(|step| step.attempt == 1));
     }
@@ -360,7 +360,7 @@ fn graph_execution_rechecks_ancestors_and_refuses_single_step_bypass() {
             StateError::DependencyEvidenceRequired
         ))
     ));
-    assert!(events.is_empty());
+    assert_eq!(events, [] as [flow::ExtensionEvent; 0]);
     assert!(!graph.nodes[1].kit.output_path().exists());
     assert_eq!(history(&graph), before);
     // Unrelated ready work still runs; the stale branch does not poison the whole plan.
@@ -414,7 +414,7 @@ fn graph_inventory_and_plan_identity_are_required_before_any_launch() {
             boundary: StateBoundary::Plan
         }))
     ));
-    assert!(events.is_empty());
+    assert_eq!(events, [] as [flow::ExtensionEvent; 0]);
     assert_eq!(history(&graph), before);
 }
 
@@ -450,7 +450,7 @@ fn graph_unresolved_dependencies_block_without_observing_future_inputs() {
             eligibility: DependencyBlocked
         }))
     ));
-    assert!(events.is_empty());
+    assert_eq!(events, [] as [flow::ExtensionEvent; 0]);
     assert_eq!(history(&graph), before);
     store
         .decide_recovery(

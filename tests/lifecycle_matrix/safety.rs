@@ -145,7 +145,7 @@ fn refuse_execution(
         &NoSecrets, &NeverCancelled, &mut events),
         Err(DurableExecutionError::State(StateError::Ineligible { eligibility })) if eligibility == expected)
     );
-    assert!(events.is_empty());
+    assert_eq!(events, [] as [flow::ExtensionEvent; 0]);
     assert_eq!(history(&fixture.workspace()), before);
     assert_eq!(observe(fixture, "refusal"), effects);
 }

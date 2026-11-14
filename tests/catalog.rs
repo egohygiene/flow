@@ -148,7 +148,10 @@ fn forbidden_and_resume_only_policies_do_not_fallback() {
 
         assert_eq!(outcome.evidence().result, ResolutionResult::Blocked);
         assert!(outcome.resolved().is_none());
-        assert!(outcome.evidence().fallback_order.is_empty());
+        assert_eq!(
+            outcome.evidence().fallback_order,
+            [] as [std::string::String; 0]
+        );
         assert!(outcome.evidence().candidates.iter().any(|candidate| {
             candidate.extension_id == "org.example.local-fallback"
                 && candidate.compatible
@@ -249,7 +252,10 @@ fn equal_precedence_unavailable_after_selected_does_not_trigger_fallback() {
         outcome.resolved().unwrap().extension_id(),
         "org.example.equal-first-available"
     );
-    assert!(outcome.evidence().fallback_order.is_empty());
+    assert_eq!(
+        outcome.evidence().fallback_order,
+        [] as [std::string::String; 0]
+    );
 }
 
 #[test]
@@ -288,7 +294,10 @@ fn disabled_high_precedence_candidate_does_not_trigger_fallback_policy() {
         .unwrap();
     assert!(!rejected.authorized);
     assert!(!rejected.available);
-    assert!(outcome.evidence().fallback_order.is_empty());
+    assert_eq!(
+        outcome.evidence().fallback_order,
+        [] as [std::string::String; 0]
+    );
 }
 
 #[test]
@@ -305,7 +314,10 @@ fn malformed_manifest_makes_catalog_resolution_atomic() {
     .resolve(&request());
 
     assert_eq!(outcome.evidence().result, ResolutionResult::Malformed);
-    assert!(outcome.evidence().candidates.is_empty());
+    assert_eq!(
+        outcome.evidence().candidates,
+        [] as [flow::ResolutionCandidate; 0]
+    );
     assert!(outcome.resolved().is_none());
     assert!(outcome.evidence().reasons[0].contains("resolution-v1 cannot represent"));
     outcome.evidence().validate().unwrap();
@@ -351,7 +363,10 @@ fn empty_catalog_reports_no_compatible_provider() {
         outcome.evidence().result,
         ResolutionResult::NoCompatibleProvider
     );
-    assert!(outcome.evidence().candidates.is_empty());
+    assert_eq!(
+        outcome.evidence().candidates,
+        [] as [flow::ResolutionCandidate; 0]
+    );
     outcome.evidence().validate().unwrap();
 }
 
@@ -368,7 +383,10 @@ fn partially_materialized_trusted_policy_fails_closed() {
                 .resolve(&request());
 
         assert_eq!(outcome.evidence().result, ResolutionResult::Malformed);
-        assert!(outcome.evidence().candidates.is_empty());
+        assert_eq!(
+            outcome.evidence().candidates,
+            [] as [flow::ResolutionCandidate; 0]
+        );
         assert!(outcome.resolved().is_none());
         outcome.evidence().validate().unwrap();
     }
@@ -406,7 +424,10 @@ fn substituted_preferred_pin_cannot_bypass_fallback_policy() {
             .resolve(&request());
 
             assert_eq!(outcome.evidence().result, ResolutionResult::Malformed);
-            assert!(outcome.evidence().candidates.is_empty());
+            assert_eq!(
+                outcome.evidence().candidates,
+                [] as [flow::ResolutionCandidate; 0]
+            );
             assert!(outcome.resolved().is_none());
             outcome.evidence().validate().unwrap();
         }
