@@ -1,0 +1,229 @@
+{
+  "schema_version": "egohygiene.diagnostics-conformance-report/v1",
+  "observed_unix_seconds": 1794635943,
+  "scope": "local metadata-only synthetic CLI profile",
+  "tools": [
+    {
+      "tool": "flow",
+      "state": "passed",
+      "binary": {
+        "sha256": "739382665293d6191bbd94c6479cb5fd417982710ba5f87a37e40eb050630516",
+        "byte_count": 55666864
+      },
+      "cases": [
+        {
+          "id": "preview-no-write",
+          "state": "passed"
+        },
+        {
+          "id": "bundle-generated-allowlist",
+          "state": "passed"
+        },
+        {
+          "id": "inspect-unsigned",
+          "state": "passed"
+        },
+        {
+          "id": "no-clobber",
+          "state": "passed"
+        },
+        {
+          "id": "unknown-input-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "tampered-member-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "path-traversal-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "duplicate-member-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "oversize-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "alias-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "health-unknown-not-zero",
+          "state": "passed"
+        }
+      ]
+    },
+    {
+      "tool": "aniflow",
+      "state": "passed",
+      "binary": {
+        "sha256": "570f8a183ffd6b02a0528d01a4ce29bd8b4e64c65e0de86a6183b7fbd2283544",
+        "byte_count": 38963280
+      },
+      "cases": [
+        {
+          "id": "preview-no-write",
+          "state": "passed"
+        },
+        {
+          "id": "bundle-generated-allowlist",
+          "state": "passed"
+        },
+        {
+          "id": "inspect-unsigned",
+          "state": "passed"
+        },
+        {
+          "id": "no-clobber",
+          "state": "passed"
+        },
+        {
+          "id": "unknown-input-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "tampered-member-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "path-traversal-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "duplicate-member-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "oversize-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "alias-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "health-unknown-not-zero",
+          "state": "passed"
+        }
+      ]
+    },
+    {
+      "tool": "optiflow",
+      "state": "passed",
+      "binary": {
+        "sha256": "419f0356b07efac1e8d646b0fc81388cb6ef17e8bff8b4bbd3913968eab2f0f2",
+        "byte_count": 183362552
+      },
+      "cases": [
+        {
+          "id": "preview-no-write",
+          "state": "passed"
+        },
+        {
+          "id": "bundle-generated-allowlist",
+          "state": "passed"
+        },
+        {
+          "id": "inspect-unsigned",
+          "state": "passed"
+        },
+        {
+          "id": "no-clobber",
+          "state": "passed"
+        },
+        {
+          "id": "unknown-input-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "tampered-member-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "path-traversal-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "duplicate-member-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "oversize-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "alias-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "health-unknown-not-zero",
+          "state": "passed"
+        }
+      ]
+    },
+    {
+      "tool": "renderflow",
+      "state": "passed",
+      "binary": {
+        "sha256": "e93a71583a3c3530871c292e56fc21fac5e836fec6dafd1dc14eb849f542dc3c",
+        "byte_count": 19979800
+      },
+      "cases": [
+        {
+          "id": "preview-no-write",
+          "state": "passed"
+        },
+        {
+          "id": "bundle-generated-allowlist",
+          "state": "passed"
+        },
+        {
+          "id": "inspect-unsigned",
+          "state": "passed"
+        },
+        {
+          "id": "no-clobber",
+          "state": "passed"
+        },
+        {
+          "id": "unknown-input-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "tampered-member-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "path-traversal-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "duplicate-member-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "oversize-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "alias-refusal",
+          "state": "passed"
+        },
+        {
+          "id": "health-unknown-not-zero",
+          "state": "passed"
+        }
+      ]
+    }
+  ],
+  "unobserved_tools": [],
+  "all_selected_passed": true,
+  "complete": true,
+  "native_media_qualified": false,
+  "telemetry_profile_adopted": false,
+  "release_qualified": false
+}
