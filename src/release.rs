@@ -1,5 +1,5 @@
 //! Compiled release interfaces; no provider/filesystem/environment observation.
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 pub const RELEASE_CONTRACT_V1: &str = "flow.release-contract/v1";
 pub fn describe() -> Value {

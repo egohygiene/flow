@@ -140,7 +140,7 @@ fn mismatched_port_is_rejected_before_invocation() {
 
     assert!(matches!(error, ExecutionError::Preflight { .. }));
     assert_eq!(port.calls.get(), 0);
-    assert!(observed.is_empty());
+    assert_eq!(observed, [] as [flow::ExtensionEvent; 0]);
 }
 
 #[test]

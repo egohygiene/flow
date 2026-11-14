@@ -1,3 +1,56 @@
+## Remaining CI repair source sprint — November 13, 2026
+
+The maintainer expanded [Flow #137](https://github.com/egohygiene/flow/issues/137)
+to checkpoints 5–12 as stacked draft PRs. Begin with the
+[current source sprint and reconciliation order](../137/05-12-source-sprint.md)
+and [CI budget/evidence boundary](../137/12-ci-budget.md), then re-query live
+PR heads before review or merge. No PR is merged by this sprint.
+
+The primary stack preserves Optiflow Rust 1.85 and its unresolved SQLite
+advisory. Optional Optiflow #215 is a concrete Rust 1.89 proposal for a separate
+compatibility decision; it is not an automatic merge dependency. Focused Python,
+workflow-source and local static-site observations do not establish product,
+platform, package or release qualification. #137 retains its acceptance gates;
+#88's original final-pass ledger remains unchanged and last.
+
+## Current CI repair continuation — November 13, 2026
+
+The maintainer selected checkpoints 3 and 4 of [Flow #137](https://github.com/egohygiene/flow/issues/137).
+Checkpoint 3 draft source work is Flow #139, Aniflow #226, Optiflow #208 and
+Renderflow #510, stacked after the still-open checkpoint 1/2 drafts.
+Checkpoint 4 is the following formatting/lint source batch; use its
+[scope and formatter observations](../137/04-format-lint.md).
+
+All five owning lock graphs passed explicit-version locked/offline metadata
+resolution without lock changes after the scoped refresh. All four owning
+source formatters plus the fuzz formatter passed their pinned format checks.
+These newly authorized generated-source checks supersede the earlier blanket
+format/metadata deferral for this batch only. Product compilation/builds, tests,
+Clippy, corpus/schema/native and hosted execution remain deferred. The parent
+issue retains full acceptance gates and the original failure limits.
+
+No additional PR was merged in this batch. The earlier six CI repair drafts
+remain open; the prior #135/#136/native diagnostics source merges remain as
+recorded below. #62/#21 acceptance stays open. #88 remains unchanged and last.
+
+## Current continuation — November 13, 2026
+
+The maintainer authorized and merged Flow [#135](https://github.com/egohygiene/flow/pull/135)
+then [#136](https://github.com/egohygiene/flow/pull/136), plus native diagnostics
+Aniflow #223, Optiflow #205 and Renderflow #508. These are source merges;
+#62/#21 acceptance and #21's existing adoption dependencies remain open.
+The former nine-PR stack is not silently merged or closed; #130/#131/#134
+overlap the replacements and still require reconciliation.
+
+The read-only Actions audit is [Flow #137](https://github.com/egohygiene/flow/issues/137).
+The next approved source repairs are checkpoint 1 (workflow context/lint) and
+checkpoint 2 (Aniflow/Optiflow compiler errors). See the
+[checkpoint 1 source handoff](../137/01-workflow-expressions.md).
+No tests/builds/format/lint/schema/native/hosted checks ran, and no CI was
+manually triggered. Both repair acceptance and earlier source acceptance remain
+pending execution under the maintainer's existing deferral. #88 is unchanged
+and last; existing failure causes/limits remain preserved.
+
 # Flow #11 completion-roadmap handoff
 
 Current source continuation: [audio processing/delivery wiring 2026-11-12](AUDIO-WIRING-20261112.md).
