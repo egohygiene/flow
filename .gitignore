@@ -7,3 +7,6 @@ dist/
 
 # Raster export from the committed roadmap snapshot, renderer and SVG.
 /docs/roadmaps/flow-suite-completion.png
+
+# Private cache owned by the selected local act launcher.
+/.cache/realm/local-ci/
