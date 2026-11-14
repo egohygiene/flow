@@ -1,6 +1,45 @@
 //! Explicit effectful evidence delivery. Default doctor/matrix stays read-only.
 use super::*;
 use crate::{native as provider, release_evidence as evidence};
+pub(super) fn matrix_response(
+    args: &Arguments,
+    matrix: crate::release_cohort::Matrix,
+    token: &dyn CancellationSignal,
+) -> Result<Envelope, Error> {
+    if args.options.contains_key("--coverage-request") {
+        let request = crate::release_cohort::coverage::Request::from_json_slice(&read_document(
+            &path(args, "--coverage-request")?,
+            1_048_576,
+        )?)
+        .map_err(|_| {
+            error(
+                Code::InvalidInput,
+                "closed nonempty release coverage request required",
+            )
+        })?;
+        let report = crate::release_cohort::coverage::evaluate(matrix, &request, token).map_err(
+            |e| match e {
+                crate::release_cohort::Error::Cancelled => {
+                    error(Code::Cancelled, "coverage projection cancelled")
+                }
+                _ => error(Code::InvalidInput, "coverage/matrix binding differs"),
+            },
+        )?;
+        let outcome = if report.all_requested_green {
+            Outcome::Complete
+        } else {
+            Outcome::Partial
+        };
+        success("release-matrix", report, outcome)
+    } else {
+        let outcome = if matrix.green == matrix.rows.len() {
+            Outcome::Complete
+        } else {
+            Outcome::Partial
+        };
+        success("release-matrix", matrix, outcome)
+    }
+}
 pub(super) fn execute(
     args: &Arguments,
     token: &dyn CancellationSignal,
@@ -43,15 +82,7 @@ pub(super) fn execute(
         "release-evidence" => {
             success("release-evidence", verified.summary(), Outcome::Complete).map(Some)
         }
-        "release-matrix" => {
-            let value = verified.matrix(token)?;
-            let outcome = if value.green == value.rows.len() {
-                Outcome::Complete
-            } else {
-                Outcome::Partial
-            };
-            success("release-matrix", value, outcome).map(Some)
-        }
+        "release-matrix" => matrix_response(args, verified.matrix(token)?, token).map(Some),
         "approve-released" | "run-released" => {
             let plan = provider::Plan::from_json_slice(&read_document(
                 &path(args, "--plan")?,

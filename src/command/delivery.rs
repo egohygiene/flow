@@ -378,6 +378,7 @@ pub fn parse(values: Vec<OsString>) -> Result<Arguments, Error> {
             ],
             "release-matrix" => &[
                 "--cohort",
+                "--coverage-request",
                 "--installations",
                 "--evidence-request",
                 "--verification-directory",

@@ -98,13 +98,6 @@ fn matrix(args: &Arguments, token: &dyn CancellationSignal) -> Result<Matrix, Er
     }
     release_cohort::project(&cohort, &LocalFiles { installations }, token).map_err(cohort_error)
 }
-fn matrix_outcome(value: &Matrix) -> Outcome {
-    if value.green == value.rows.len() {
-        Outcome::Complete
-    } else {
-        Outcome::Partial
-    }
-}
 fn native_plan(
     args: &Arguments,
     request: &provider::Request,
@@ -147,8 +140,7 @@ pub(super) fn execute(
     match args.command.as_str() {
         "release-matrix" => {
             let value = matrix(args, token)?;
-            let outcome = matrix_outcome(&value);
-            Ok(Some(success("release-matrix", value, outcome)?))
+            release_delivery::matrix_response(args, value, token).map(Some)
         }
         "doctor" => {
             let executable = args
