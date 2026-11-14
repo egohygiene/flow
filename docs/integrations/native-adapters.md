@@ -11,6 +11,13 @@ or remote URIs are admitted. The configuration must explicitly set
 denied; custom transform YAML and scoped composition/presentation/briefing packages
 require their own future routes. These retained inventory rows remain visible.
 
+Renderflow requires collection member paths relative to the configuration's
+parent, without parent traversal. Flow resolves those normal relative locators
+before comparing exact absolute `Request.inputs`. Keep publication artwork paths
+consistent with those native locators. A single-file configuration may retain its
+explicit absolute path. See the [executed candidate pilot](../work/52/NATIVE-PUBLICATION-PILOT.md)
+for the bounded EPUB/PDF proof and its remaining release gates.
+
 Set `output.bundle_root` to the exact absolute `RUN/native/output` path and keep
 collision policy `error`. This separates every native publication from selected
 source files and preserves existing output for recovery. Flow reuses native

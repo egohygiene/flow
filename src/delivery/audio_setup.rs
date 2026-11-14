@@ -984,9 +984,9 @@ pub(super) mod tests {
         assert!(ensure_separate(Path::new("/synthetic/setup"), root).is_ok());
     }
 
-    pub(in crate::delivery) fn archive_fixture() -> (tempfile::TempDir, Request) {
+    pub(in crate::delivery) fn archive_fixture() -> (crate::test_workspace::Workspace, Request) {
         use crate::delivery as d;
-        let temp = tempfile::tempdir().unwrap();
+        let temp = crate::test_workspace::Workspace::new().unwrap();
         let root = temp.path().canonicalize().unwrap();
         let original = root.join("synthetic 音.wav");
         fs::write(&original, b"synthetic bytes, not real audio").unwrap();

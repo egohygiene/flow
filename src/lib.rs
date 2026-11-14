@@ -36,6 +36,8 @@ pub mod runner;
 pub mod scenario;
 pub mod state;
 pub mod static_project;
+#[cfg(test)]
+mod test_workspace;
 
 pub use artifacts::*;
 pub use authority::*;

@@ -37,6 +37,29 @@ fn config(request: &Request) -> Result<Value, Error> {
         )
     })
 }
+fn source_path(configuration: &Path, locator: &str) -> Result<PathBuf, Error> {
+    let selected = Path::new(locator);
+    if selected.as_os_str().is_empty()
+        || selected.components().any(|c| {
+            matches!(
+                c,
+                std::path::Component::ParentDir | std::path::Component::CurDir
+            )
+        })
+    {
+        return Err(error(
+            Code::InvalidInput,
+            "native source locator must not traverse directories",
+        ));
+    }
+    if selected.is_absolute() {
+        return Ok(selected.to_path_buf());
+    }
+    let parent = configuration
+        .parent()
+        .ok_or_else(|| error(Code::InvalidInput, "native configuration parent required"))?;
+    Ok(parent.join(selected))
+}
 fn selected_sources(value: &Value) -> Result<Vec<&Value>, Error> {
     let sources = value["sources"].as_array().ok_or_else(|| {
         error(
@@ -150,7 +173,8 @@ pub(super) fn validate_configuration(request: &Request) -> Result<(), Error> {
         ));
     }
     for (source, selected) in sources.iter().zip(&request.inputs) {
-        if string(source, "path").map(Path::new)? != path(selected)? {
+        if source_path(&path(&request.configuration)?, string(source, "path")?)? != path(selected)?
+        {
             return Err(error(
                 Code::InvalidInput,
                 "native ordered source path differs from selected input",
@@ -192,7 +216,10 @@ fn validate_plan(context: &Context<'_>, native: &Value) -> Result<String, Error>
             ));
         }
         for (member, pin) in members.iter().zip(&context.plan.sources) {
-            if string(member, "locator").map(Path::new)? != path(&pin.path)?
+            if source_path(
+                &path(&context.plan.request.configuration)?,
+                string(member, "locator")?,
+            )? != path(&pin.path)?
                 || member["artifact"]["digest"] != format!("sha256:{}", pin.sha256)
                 || member["artifact"]["size_bytes"].as_u64() != Some(pin.byte_count)
             {
@@ -520,6 +547,21 @@ pub(super) fn validate_retained(
 #[cfg(test)]
 mod tests {
     use serde_json::json;
+    #[test]
+    fn relative_collection_locators_resolve_against_the_selected_configuration() {
+        let config = std::path::Path::new("/selected/config/native.json");
+        assert_eq!(
+            super::source_path(config, "pages/作品 1.png").unwrap(),
+            std::path::Path::new("/selected/config/pages/作品 1.png")
+        );
+        assert_eq!(
+            super::source_path(config, "/selected/file.png").unwrap(),
+            std::path::Path::new("/selected/file.png")
+        );
+        for locator in ["", "../outside.png", "pages/../../outside.png"] {
+            assert!(super::source_path(config, locator).is_err());
+        }
+    }
     #[test]
     fn collection_order_is_semantic_and_unselected_members_are_refused() {
         let value = json!({"sources":[{"id":"second","path":"/pages/2.png"},{"id":"first","path":"/pages/1.png"},{"id":"book","kind":"collection","members":["first","second"]}]});
