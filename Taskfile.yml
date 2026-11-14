@@ -1,8 +1,42 @@
 version: '3'
 
 tasks:
+  ci:budget:
+    desc: Inspect workflow budget sources; qualification remains deferred or unobserved
+    cmds:
+      - python3 -B scripts/ci_budget.py --event pull_request
+
+  ci:budget:test:
+    desc: Run the bounded synthetic workflow-budget source regressions
+    cmds:
+      - python3 -B -m unittest discover --start-directory tests/ci_budget --pattern 'test_*.py'
+
+  format:
+    desc: Apply the canonical Rust 1.85.0 formatting policy
+    cmds:
+      - cargo +1.85.0 fmt --all
+
+  format:check:
+    desc: Check source formatting with the canonical formatter
+    cmds:
+      - cargo +1.85.0 fmt --all -- --check
+
+  ci:lock:
+    desc: Resolve owning dependency metadata without permitting lockfile changes
+    cmds:
+      - cargo update --workspace --locked
+
+  ci:workflows:
+    desc: Check workflow expression scopes using an explicitly installed actionlint 1.7.12
+    requires:
+      vars: [ACTIONLINT]
+    env:
+      WORKFLOW_LINT_EXECUTABLE: '{{.ACTIONLINT}}'
+    cmds:
+      - python3 -B scripts/check-workflows.py --actionlint "$WORKFLOW_LINT_EXECUTABLE"
+
   diagnostics:preview:
-    desc: Preview generated support metadata without writing a bundle
+    desc: Preview generated support categories without creating a bundle
     requires:
       vars: [REQUEST]
     env:
@@ -11,7 +45,7 @@ tasks:
       - flow diagnostics-preview --request "$FLOW_SUPPORT_REQUEST" --format json
 
   diagnostics:bundle:
-    desc: Create a private generated support bundle without upload
+    desc: Explicitly create a fresh private metadata-only support bundle
     requires:
       vars: [REQUEST, OUTPUT]
     env:
@@ -21,7 +55,7 @@ tasks:
       - flow diagnostics-bundle --request "$FLOW_SUPPORT_REQUEST" --output "$FLOW_SUPPORT_OUTPUT" --format json
 
   diagnostics:inspect:
-    desc: Inspect support bundle structure without extraction or execution
+    desc: Inspect support structure and digest without extracting or trusting content
     requires:
       vars: [BUNDLE]
     env:
@@ -29,8 +63,8 @@ tasks:
     cmds:
       - flow diagnostics-inspect --bundle "$FLOW_SUPPORT_BUNDLE" --format json
 
-  observability:doctor:
-    desc: Describe Flow-owned operational signal support without probing a collector
+  diagnostics:doctor:
+    desc: Describe compiled observability capabilities without discovery or network
     cmds:
       - flow doctor-observability --format json
 

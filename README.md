@@ -177,6 +177,7 @@ or a sandbox.
 - [Durable lifecycle scenarios and recovery evidence](docs/integrations/lifecycle-scenarios.md)
 - [Hermetic provider kit](docs/integrations/hermetic-provider-kit.md)
 - [Versioned contracts](contracts/README.md)
+- [Support diagnostics and operator runbook](docs/observability/support-profile.md)
 - [Roadmap](ROADMAP.md)
 
 The `.agents/` directory contains the repository-local Aether specifications,
