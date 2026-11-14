@@ -87,7 +87,7 @@ deciding to share it. No transmission, attachment, upload or cleanup is automati
 | Product | Preview | Create | Inspect | Health |
 | --- | --- | --- | --- | --- |
 | Flow | `flow diagnostics-preview --request FILE --format json` | `flow diagnostics-bundle --request FILE --output NEW --format json` | `flow diagnostics-inspect --bundle FILE --format json` | `flow doctor-observability --format json` |
-| Aniflow | `aniflow --output json diagnostics preview --request FILE` | `aniflow --output json diagnostics bundle --request FILE --output NEW` | `aniflow --output json diagnostics inspect --bundle FILE` | `aniflow --output json diagnostics doctor` |
+| Aniflow | `aniflow --output json diagnostics preview --request FILE` | `aniflow --output json diagnostics bundle --request FILE --output-file NEW` | `aniflow --output json diagnostics inspect --bundle FILE` | `aniflow --output json diagnostics doctor` |
 | Optiflow | `optiflow --json diagnostics preview --request FILE` | `optiflow --json diagnostics bundle --request FILE --output NEW` | `optiflow --json diagnostics inspect --bundle FILE` | `optiflow --json diagnostics doctor` |
 | Renderflow | `renderflow diagnostics preview --request FILE` | `renderflow diagnostics bundle --request FILE --output NEW` | `renderflow diagnostics inspect --bundle FILE` | `renderflow diagnostics doctor` |
 
@@ -113,6 +113,14 @@ python3 tools/check_support_clis.py \
   --output /absolute/new-support-conformance.json
 ```
 
+The equivalent Task entry is `diagnostics:conformance`, with explicit `FLOW`,
+`ANIFLOW`, `OPTIFLOW`, `RENDERFLOW` and `OUTPUT` variables. It does not build or
+download products. `diagnostics:conformance:test` checks the driver's negative
+observers without launching a product. The current unreleased Aniflow candidate
+uses `--output-file` for the bundle destination; `--output` remains the global
+human/JSON presentation option. The older colliding destination spelling
+panicked and is not retained as an alias.
+
 Omitting a binary records that tool as unobserved; a partial run cannot satisfy
 all-CLI acceptance. The driver retains executable SHA-256/length, actual case
 results and observation time only after execution. It searches generated bundle
@@ -122,6 +130,15 @@ or content and does not prove absence of every possible side effect. Each child
 has a 15-second subprocess timeout; captured-output checks are post-capture and
 are not an operating-system memory sandbox. Use only the explicitly selected
 trusted build under review.
+
+Every negative case must match its native command and exact support-domain
+refusal. A panic, argument error or unrelated failure is not a passing refusal.
+The driver retains completed cases and a fixed failure reason for a failed
+product, continues the other selected products and exits nonzero if any fail.
+`all_selected_passed` covers only selected products; `complete` additionally
+requires all four. Existing report paths are refused before any command runs.
+Actual selected Linux observations and their remaining limits are recorded in
+[the dated checkpoint](../work/21/LOCAL-SUPPORT-20261114.md).
 
 The bundle/request/health schemas are in `schemas/support-*-v1.schema.json`;
 digest equality, canonical typed serialization, cross-field agreement and total

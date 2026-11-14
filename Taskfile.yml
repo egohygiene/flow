@@ -110,6 +110,27 @@ tasks:
     cmds:
       - flow doctor-observability --format json
 
+  diagnostics:conformance:
+    desc: Exercise explicit built CLIs against the local metadata-only support fixture
+    requires:
+      vars: [FLOW, ANIFLOW, OPTIFLOW, RENDERFLOW, OUTPUT]
+    env:
+      SUPPORT_FLOW: '{{.FLOW}}'
+      SUPPORT_ANIFLOW: '{{.ANIFLOW}}'
+      SUPPORT_OPTIFLOW: '{{.OPTIFLOW}}'
+      SUPPORT_RENDERFLOW: '{{.RENDERFLOW}}'
+      SUPPORT_OUTPUT: '{{.OUTPUT}}'
+    cmds:
+      - >-
+        python3 -B tools/check_support_clis.py --flow "$SUPPORT_FLOW"
+        --aniflow "$SUPPORT_ANIFLOW" --optiflow "$SUPPORT_OPTIFLOW"
+        --renderflow "$SUPPORT_RENDERFLOW" --output "$SUPPORT_OUTPUT"
+
+  diagnostics:conformance:test:
+    desc: Verify support-driver refusal and incomplete-report observers without launching products
+    cmds:
+      - python3 -B -m unittest discover --start-directory tools --pattern test_support_clis.py
+
   ai:doctor:
     desc: Inspect selected local AI profile without contacting a runtime
     requires:
