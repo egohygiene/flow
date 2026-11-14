@@ -1,5 +1,13 @@
 # Flow command source (#53/#70)
 
+The [released read-only CLI checkpoint](../work/53/RELEASED-READ-ONLY-CLI-PILOT.md)
+now records an actual bounded Linux run through the immutable Optiflow v0.1.1
+provider: public CLI inspection/planning, supplied read-only approval, native
+scan/report/review-plan, retained status/resume and refusal controls. This source
+CLI proof preserves partial/unavailable release state and does not establish
+installed-suite or broader platform acceptance. Earlier dated execution
+statements below retain their original scope.
+
 [Static publication projects](../static-publication-project.md) prepare explicit
 default/locale source branches and native Renderflow plans. Each branch uses the
 existing separately approved native run/resume path; status lists missing required
