@@ -1,3 +1,53 @@
+## Ten-checkpoint execution sprint — November 14, 2026
+
+The maintainer selected ten further outcomes delivered through separate draft
+PRs, without automatic merge. Re-query [the live sprint tracker](https://github.com/egohygiene/flow/issues/11)
+for exact draft heads and per-repository order before review. The combined local
+source integrates disjoint checkpoints; it is not represented as a newly built,
+released or platform-qualified suite.
+
+- Renderflow workspace/all-target Rust 1.94 compilation passes after bounded API
+  and test-source repairs; five exact changed-boundary tests pass (Render #523).
+- Optiflow all-target/all-feature Rust 1.89 compilation and both root/fuzz frozen
+  dependency-policy scans pass with unchanged locks/policy (Opti #221 → #222).
+- [Actual direct native publishing](../52/NATIVE-PUBLICATION-PILOT.md) produces
+  and independently inspects synthetic EPUB/PDF through 24 Flow calls, including
+  12 named refusal observations. Relative collection binding and cfg(test)-only
+  fixture repairs preserve existing owners. Inspection amendments retain the
+  original full-run receipt and strengthen all PDF coordinates/EPUB spine bytes.
+- [Isolated suite installation](../71/ISOLATED-INSTALLATION-20261114.md) and
+  [actual package proof](../54/PACKAGE-CANDIDATE-20261114.md) exercise existing
+  owners, exact copied binaries, activation/rollback and owned-only uninstall.
+  Two independent Rust 1.85 release binaries/descriptors match. Their measured
+  source is baseline main `71d034263da17c8755cb2c7202cf68ca5b5df6fd`, distinct
+  from the later Render route and static-project repairs; no combined-tip
+  package or whole-archive bit reproducibility is claimed.
+- [Static publication projects](../70/STATIC-PUBLICATION-PILOT.md) retain supplied
+  metadata/geometry and selected-source staging into actual installed-provider
+  EPUB/PDF artifacts. Explicit aggregate staging limits are separate from native
+  output budgets. Required output/catalog evidence remains distinct from pending
+  creative/locale review, release admission and upload authority.
+- [Actual local scenario-browser proof](../62/BROWSER-OBSERVATIONS.md) fixes
+  linked focus/clear-link focus and long-text overflow, with 16 Chromium checks,
+  exact served-byte/browser identity bindings and retained screenshots. Matching
+  synthetic reports remain source-unconfirmed; Pages was not deployed.
+- [Four-CLI root-help proof](../22/PTY-20261114.md) observes 108 cases/136 calls.
+  Owning Aniflow #242, Optiflow #223 and Renderflow #524 preserve plain root-help
+  fallbacks; Flow needs no presentation product patch. Human wordmark approval,
+  assistive technology and other platform qualification remain separate.
+- Optiflow #224 exercises its existing explanation SDK with a fake process,
+  exact citations/identities and preserved sources. It repairs real SIGINT
+  mapping to native/structured 130. Actual models, config-overlay qualification
+  and production AI telemetry remain within #133, with no new router/fallback.
+
+All named observations retain exact source/binary/log or capture identities.
+Focused local builds/checks are authorized; prior blanket deferrals remain
+superseded only within selected scope. No hosted CI was manually dispatched,
+models/private media/native Mac or physical volumes used, releases signed or
+published, content approved or uploaded. Existing parent issues remain open for
+their full gates; no duplicate ticket or automatic closing keyword is added.
+Flow #88's exact original title/body/state remains untouched and last.
+
 ## Focused local validation continuation — November 13, 2026
 
 The maintainer authorized the five scoped checkpoints Optiflow #146, Flow #137,
