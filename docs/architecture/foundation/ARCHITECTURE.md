@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.50.0
+version: 0.51.1
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-11-13
+updated: 2026-11-14
 governed_by:
   - architecture-architecture
 depends_on:
@@ -174,6 +174,20 @@ target IDs with the declared requirements without treating locale labels as
 translation evidence or granting human/release/upload authority. Renderflow owns
 conversion, locale content and artifact validation. No new runner or sibling
 dependency is introduced; full #10 orchestration remains broader than this preset.
+
+Ordered page branches preserve explicit native media types, geometry and pinned
+publication metadata. Preparation uses the existing bounded immutable copier to
+stage exact members below each configuration parent, as required by Renderflow's
+relative collection contract. Only explicitly selected artwork locators are
+rebound to those copies. Original pins remain part of project readback and native
+plans bind the copied bytes. Preview performs no staging; neither operation
+invents alt text, rights, geometry or human publication approval.
+
+A separate finite staging budget is checked over every planned collection-copy
+reference before source content observation or workspace creation. It counts an
+original again for each locale copy and remains independent of native output
+limits or peak-disk estimates. The omitted/default budget preserves prior project
+identity and readback; explicit nondefault policy participates in that identity.
 
 ## Installed audio-check preparation
 

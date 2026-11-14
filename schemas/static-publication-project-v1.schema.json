@@ -12,6 +12,7 @@
     "tool_directories":{"type":"array","maxItems":32,"items":{"$ref":"flow-native-request-v1.schema.json#/properties/cohort"}},
     "limits":{"$ref":"flow-native-request-v1.schema.json#/properties/limits"},
     "timeout_ms":{"type":"integer","minimum":1,"maximum":86400000},
+    "maximum_staged_bytes":{"type":"integer","minimum":0,"maximum":68719476736,"default":268435456},
     "branches":{"type":"array","minItems":1,"maxItems":16,"items":{
       "type":"object","additionalProperties":false,"required":["id","locale","sources","options","required_artifacts"],
       "properties":{
@@ -24,10 +25,25 @@
           "properties":{
             "id":{"type":"string","minLength":1,"maxLength":96,"pattern":"^[A-Za-z0-9_-]+$"},
             "file":{"$ref":"delivery-request-v1.schema.json#/properties/project_record"},
-            "format":{"type":"string","minLength":1,"maxLength":48,"pattern":"^[a-z0-9_-]+$"}
+            "format":{"type":"string","minLength":1,"maxLength":48,"pattern":"^[a-z0-9_-]+$"},
+            "media_type":{"type":["string","null"],"minLength":1,"maxLength":128,"pattern":"^[^\\u0000-\\u001f]+/[^\\u0000-\\u001f]+$"},
+            "geometry":{"anyOf":[{"type":"null"},{"$ref":"#/$defs/page_geometry"}]}
           }
         }}
       }
     }}
+  },
+  "$defs":{
+    "page_geometry":{
+      "type":"object","additionalProperties":false,"required":["width","height","unit"],
+      "properties":{
+        "width":{"type":"number","exclusiveMinimum":0},
+        "height":{"type":"number","exclusiveMinimum":0},
+        "unit":{"type":"string","minLength":1,"maxLength":16,"pattern":"^[A-Za-z]+$"},
+        "margin":{"type":["number","null"],"minimum":0},
+        "bleed":{"type":["number","null"],"minimum":0},
+        "safe_area":{"type":["number","null"],"minimum":0}
+      }
+    }
   }
 }

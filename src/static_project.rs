@@ -18,6 +18,14 @@ use std::{
     time::{Duration, Instant},
 };
 const MAX: u64 = 16_777_216;
+const DEFAULT_MAXIMUM_STAGED_BYTES: u64 = 268_435_456;
+const MAXIMUM_STAGED_BYTES: u64 = 68_719_476_736;
+fn default_maximum_staged_bytes() -> u64 {
+    DEFAULT_MAXIMUM_STAGED_BYTES
+}
+fn is_default_maximum_staged_bytes(value: &u64) -> bool {
+    *value == DEFAULT_MAXIMUM_STAGED_BYTES
+}
 fn error(code: Code, s: &str) -> Error {
     Error {
         code,
@@ -44,10 +52,41 @@ fn read(pin: &FilePin, maximum: u64, token: &dyn CancellationSignal) -> Result<V
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct PageGeometry {
+    pub width: f64,
+    pub height: f64,
+    pub unit: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub margin: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bleed: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub safe_area: Option<f64>,
+}
+impl PageGeometry {
+    fn validate(&self) -> bool {
+        [self.width, self.height]
+            .iter()
+            .all(|v| v.is_finite() && *v > 0.0)
+            && !self.unit.is_empty()
+            && self.unit.len() <= 16
+            && self.unit.bytes().all(|c| c.is_ascii_alphabetic())
+            && [self.margin, self.bleed, self.safe_area]
+                .iter()
+                .flatten()
+                .all(|v| v.is_finite() && *v >= 0.0)
+    }
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Source {
     pub id: String,
     pub file: FilePin,
     pub format: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub media_type: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub geometry: Option<PageGeometry>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -70,6 +109,11 @@ pub struct Project {
     pub tool_directories: Vec<NativePath>,
     pub limits: native::Limits,
     pub timeout_ms: u64,
+    #[serde(
+        default = "default_maximum_staged_bytes",
+        skip_serializing_if = "is_default_maximum_staged_bytes"
+    )]
+    pub maximum_staged_bytes: u64,
 }
 impl Project {
     pub fn from_json_slice(raw: &[u8]) -> Result<Self, Error> {
@@ -88,6 +132,12 @@ impl Project {
     fn validate(&self) -> Result<(), Error> {
         self.limits.validate()?;
         native::path(&self.workspace)?;
+        if self.maximum_staged_bytes > MAXIMUM_STAGED_BYTES {
+            return Err(error(
+                Code::InvalidInput,
+                "static staging budget exceeds 64 GiB",
+            ));
+        }
         if self.schema_version != "flow.static-publication-project/v1"
             || self.branches.is_empty()
             || self.branches.len() > 16
@@ -149,6 +199,14 @@ impl Project {
                         .format
                         .bytes()
                         .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || b"_-".contains(&c))
+                    || (b.sources.len() > 1 && s.media_type.is_none())
+                    || s.media_type.as_ref().is_some_and(|m| {
+                        m.is_empty()
+                            || m.len() > 128
+                            || !m.contains('/')
+                            || m.chars().any(char::is_control)
+                    })
+                    || s.geometry.as_ref().is_some_and(|g| !g.validate())
                 {
                     return Err(error(
                         Code::InvalidInput,
@@ -163,7 +221,28 @@ impl Project {
                 "include the declared source/default locale within the total source bound",
             ));
         }
+        self.staged_bytes()?;
         Ok(())
+    }
+    fn staged_bytes(&self) -> Result<u64, Error> {
+        // Every collection reference gets its own private copy, including an
+        // original reused by another locale. Single-file branches stage none.
+        let total = self
+            .branches
+            .iter()
+            .filter(|b| b.sources.len() > 1)
+            .flat_map(|b| &b.sources)
+            .try_fold(0_u64, |sum, source| {
+                sum.checked_add(source.file.byte_count)
+                    .ok_or_else(|| error(Code::InvalidInput, "static staged byte total overflow"))
+            })?;
+        if total > self.maximum_staged_bytes {
+            return Err(error(
+                Code::InvalidInput,
+                "static collection copies exceed maximum_staged_bytes",
+            ));
+        }
+        Ok(total)
     }
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -194,6 +273,75 @@ struct Draft {
     preview: Preview,
     inputs: Vec<FilePin>,
     configs: Vec<(PathBuf, Vec<u8>)>,
+    copies: Vec<(FilePin, PathBuf)>,
+}
+fn publication_metadata(
+    value: &mut serde_json::Map<String, Value>,
+    sources: &[Source],
+    locators: &[String],
+    options: &Path,
+) -> Result<(), Error> {
+    if let Some(artwork) = value.get_mut("artwork") {
+        let artwork = artwork.as_array_mut().ok_or_else(|| {
+            error(
+                Code::InvalidInput,
+                "native publication artwork array required",
+            )
+        })?;
+        if artwork.len() > 1024 {
+            return Err(error(
+                Code::InvalidInput,
+                "native publication artwork bound",
+            ));
+        }
+        for item in artwork {
+            let object = item.as_object_mut().ok_or_else(|| {
+                error(
+                    Code::InvalidInput,
+                    "native publication artwork object required",
+                )
+            })?;
+            let locator = object.get("path").and_then(Value::as_str).ok_or_else(|| {
+                error(
+                    Code::InvalidInput,
+                    "explicit selected publication artwork path required",
+                )
+            })?;
+            let locator = Path::new(locator);
+            if locator.as_os_str().is_empty()
+                || locator.components().any(|c| {
+                    matches!(
+                        c,
+                        std::path::Component::ParentDir | std::path::Component::CurDir
+                    )
+                })
+            {
+                return Err(error(
+                    Code::InvalidInput,
+                    "publication artwork path must not traverse directories",
+                ));
+            }
+            let selected = if locator.is_absolute() {
+                locator.to_path_buf()
+            } else {
+                options
+                    .parent()
+                    .ok_or_else(|| error(Code::InvalidInput, "native options parent required"))?
+                    .join(locator)
+            };
+            let index = sources
+                .iter()
+                .position(|s| native::path(&s.file.path).ok().as_ref() == Some(&selected))
+                .ok_or_else(|| {
+                    error(
+                        Code::InvalidInput,
+                        "publication artwork must name an explicitly selected source",
+                    )
+                })?;
+            object.insert("path".into(), json!(locators[index]));
+        }
+    }
+    Ok(())
 }
 fn draft(p: &Project, token: &dyn CancellationSignal) -> Result<Draft, Error> {
     p.validate()?;
@@ -233,6 +381,7 @@ fn draft(p: &Project, token: &dyn CancellationSignal) -> Result<Draft, Error> {
     let mut protected = vec![native::path(&p.installation.root)?];
     let mut inputs = vec![];
     let mut configs = vec![];
+    let mut copies = vec![];
     let mut branches = vec![];
     let mut source_bytes = 0_u64;
     for d in &p.tool_directories {
@@ -254,6 +403,8 @@ fn draft(p: &Project, token: &dyn CancellationSignal) -> Result<Draft, Error> {
             schema_version: String,
             targets: Value,
             execution: Value,
+            #[serde(default)]
+            publication: Option<serde_json::Map<String, Value>>,
         }
         let mut options: Options = serde_json::from_slice(&read(&b.options, 1_048_576, token)?)
             .map_err(|_| {
@@ -289,7 +440,9 @@ fn draft(p: &Project, token: &dyn CancellationSignal) -> Result<Draft, Error> {
         options.execution["requirements"]["offline"] = json!(true);
         options.execution["requirements"]["local_only"] = json!(true);
         let mut sources = vec![];
-        for s in &b.sources {
+        let mut native_inputs = vec![];
+        let mut locators = vec![];
+        for (member, s) in b.sources.iter().enumerate() {
             s.file.current(p.limits.max_input_bytes, token)?;
             let path = native::path(&s.file.path)?;
             protected.push(path.clone());
@@ -297,7 +450,25 @@ fn draft(p: &Project, token: &dyn CancellationSignal) -> Result<Draft, Error> {
             source_bytes = source_bytes
                 .checked_add(s.file.byte_count)
                 .ok_or_else(|| error(Code::InvalidInput, "static source byte overflow"))?;
-            sources.push(json!({"id":s.id,"path":utf8(&path)?,"format":s.format,"immutable":true}));
+            let locator = if b.sources.len() > 1 {
+                let relative = format!("source-{i:02}/{member:04}.{}", s.format);
+                let copied = root.join("configuration").join(&relative);
+                copies.push((s.file.clone(), copied.clone()));
+                native_inputs.push(NativePath::from_path(&copied));
+                relative
+            } else {
+                native_inputs.push(s.file.path.clone());
+                utf8(&path)?.to_owned()
+            };
+            let mut source = json!({"id":s.id,"path":locator,"format":s.format,"sha256":s.file.sha256,"immutable":true});
+            if let Some(media_type) = &s.media_type {
+                source["media_type"] = json!(media_type);
+            }
+            if let Some(geometry) = &s.geometry {
+                source["geometry"] = json!(geometry);
+            }
+            sources.push(source);
+            locators.push(locator);
         }
         if b.sources.len() > 1 {
             sources.push(json!({"kind":"collection","id":"flow-collection","members":b.sources.iter().map(|s|&s.id).collect::<Vec<_>>()}));
@@ -306,7 +477,16 @@ fn draft(p: &Project, token: &dyn CancellationSignal) -> Result<Draft, Error> {
         let configuration = root
             .join("configuration")
             .join(format!("branch-{i:02}.json"));
-        let config = json!({"schema":"renderflow/v2","sources":sources,"targets":options.targets,"execution":options.execution,"output":{"bundle_root":utf8(&run.join("native/output"))?,"naming_template":"{source.id}/{target.id}.{ext}","collision":"error"}});
+        let mut config = json!({"schema":"renderflow/v2","sources":sources,"targets":options.targets,"execution":options.execution,"output":{"bundle_root":utf8(&run.join("native/output"))?,"naming_template":"{source.id}/{target.id}.{ext}","collision":"error"}});
+        if let Some(mut publication) = options.publication {
+            publication_metadata(
+                &mut publication,
+                &b.sources,
+                &locators,
+                &native::path(&b.options.path)?,
+            )?;
+            config["publication"] = Value::Object(publication);
+        }
         let data = bytes(&config)?;
         if data.len() > 1_048_576 {
             return Err(error(
@@ -330,7 +510,7 @@ fn draft(p: &Project, token: &dyn CancellationSignal) -> Result<Draft, Error> {
                 row_id: row.row_id.clone(),
                 provider_executable: row.provider.path.clone(),
                 release_descriptor: row.descriptor.path.clone(),
-                inputs: b.sources.iter().map(|s| s.file.path.clone()).collect(),
+                inputs: native_inputs,
                 configuration: NativePath::from_path(&configuration),
                 run_directory: NativePath::from_path(&run),
                 tool_directories: p.tool_directories.clone(),
@@ -366,6 +546,7 @@ fn draft(p: &Project, token: &dyn CancellationSignal) -> Result<Draft, Error> {
         },
         inputs,
         configs,
+        copies,
     })
 }
 pub fn preview(p: &Project, token: &dyn CancellationSignal) -> Result<Preview, Error> {
@@ -411,6 +592,22 @@ pub fn prepare(p: &Project, token: &dyn CancellationSignal) -> Result<Prepared, 
     let action = (|| {
         for name in ["configuration", "plans", "native"] {
             create(&root.join(name))?;
+        }
+        let mut directories = BTreeSet::new();
+        for (source, destination) in &selected.copies {
+            let parent = destination
+                .parent()
+                .ok_or_else(|| error(Code::InvalidInput, "staged source parent required"))?;
+            if directories.insert(parent.to_path_buf()) {
+                create(parent)?;
+            }
+            distribution::copy_bounded(
+                source,
+                destination,
+                false,
+                p.limits.max_input_bytes,
+                &guard,
+            )?;
         }
         let mut configurations = vec![];
         for (path, data) in &selected.configs {
@@ -744,6 +941,129 @@ pub fn artifact_catalog(
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn staging_project() -> Value {
+        let pin = |name: &str| json!({"path":{"encoding":"utf8","value":format!("/synthetic/{name}")},"sha256":"a".repeat(64),"byte_count":219});
+        let branch = |locale: &str| {
+            json!({"id":locale,"locale":locale,"sources":[
+            {"id":"one","file":pin("one.png"),"format":"png","media_type":"image/png"},
+            {"id":"two","file":pin("two.png"),"format":"png","media_type":"image/png"}],
+            "options":pin("options.json"),"required_artifacts":["synthetic"]})
+        };
+        json!({"schema_version":"flow.static-publication-project/v1","metadata":{"work_id":"synthetic","title":"Synthetic","language":"en"},
+            "installation":{"root":{"encoding":"utf8","value":"/synthetic/install"},"receipt_sha256":"b".repeat(64)},
+            "workspace":{"encoding":"utf8","value":"/synthetic/fresh"},"branches":[branch("en"),branch("fr")],
+            "tool_directories":[],"limits":native::Limits::default(),"timeout_ms":1000})
+    }
+    fn parse_project(value: &Value) -> Result<Project, Error> {
+        Project::from_json_slice(&serde_json::to_vec(value).unwrap())
+    }
+    #[test]
+    fn staging_budget_counts_repeated_originals_for_each_locale_copy() {
+        let mut value = staging_project();
+        value["maximum_staged_bytes"] = json!(876);
+        let project = parse_project(&value).unwrap();
+        assert_eq!(project.staged_bytes().unwrap(), 876);
+        value["maximum_staged_bytes"] = json!(875);
+        assert_eq!(
+            parse_project(&value).unwrap_err().message,
+            "static collection copies exceed maximum_staged_bytes"
+        );
+        value["maximum_staged_bytes"] = json!(MAXIMUM_STAGED_BYTES + 1);
+        assert_eq!(
+            parse_project(&value).unwrap_err().message,
+            "static staging budget exceeds 64 GiB"
+        );
+    }
+    #[test]
+    fn zero_staging_budget_allows_only_unstaged_single_file_branches() {
+        let mut value = staging_project();
+        value["maximum_staged_bytes"] = json!(0);
+        assert!(parse_project(&value).is_err());
+        for branch in value["branches"].as_array_mut().unwrap() {
+            branch["sources"].as_array_mut().unwrap().truncate(1);
+        }
+        assert_eq!(parse_project(&value).unwrap().staged_bytes().unwrap(), 0);
+    }
+    #[test]
+    fn default_staging_budget_preserves_project_identity_and_explicit_limits_bind() {
+        let mut value = staging_project();
+        let project = parse_project(&value).unwrap();
+        assert!(
+            serde_json::to_value(&project)
+                .unwrap()
+                .get("maximum_staged_bytes")
+                .is_none()
+        );
+        value["maximum_staged_bytes"] = json!(DEFAULT_MAXIMUM_STAGED_BYTES);
+        assert_eq!(
+            hash(&parse_project(&value).unwrap()).unwrap(),
+            hash(&project).unwrap()
+        );
+        value["maximum_staged_bytes"] = json!(876);
+        assert_ne!(
+            hash(&parse_project(&value).unwrap()).unwrap(),
+            hash(&project).unwrap()
+        );
+        value["branches"][0]["sources"][0]["file"]["byte_count"] = json!(u64::MAX);
+        assert_eq!(
+            parse_project(&value).unwrap_err().message,
+            "static staged byte total overflow"
+        );
+    }
+    #[test]
+    fn selected_artwork_rebinding_preserves_metadata_and_refuses_scope_widening() {
+        let source = Source {
+            id: "page".into(),
+            file: FilePin {
+                path: NativePath::from_path(Path::new("/selected/作品.png")),
+                sha256: "a".repeat(64),
+                byte_count: 10,
+            },
+            format: "png".into(),
+            media_type: Some("image/png".into()),
+            geometry: None,
+        };
+        let mut metadata = serde_json::from_value::<serde_json::Map<String, Value>>(json!({"title":"Explicit title","artwork":[{"role":"page","path":"作品.png","alt_text":"Supplied words"}]})).unwrap();
+        publication_metadata(
+            &mut metadata,
+            &[source.clone()],
+            &["source-00/0000.png".into()],
+            Path::new("/selected/options.json"),
+        )
+        .unwrap();
+        assert_eq!(metadata["title"], "Explicit title");
+        assert_eq!(metadata["artwork"][0]["path"], "source-00/0000.png");
+        assert_eq!(metadata["artwork"][0]["alt_text"], "Supplied words");
+        for locator in ["/other/unselected.png", "../作品.png"] {
+            metadata["artwork"][0]["path"] = json!(locator);
+            assert!(
+                publication_metadata(
+                    &mut metadata,
+                    &[source.clone()],
+                    &["source-00/0000.png".into()],
+                    Path::new("/selected/options.json")
+                )
+                .is_err()
+            );
+        }
+    }
+    #[test]
+    fn page_geometry_refuses_nonfinite_and_negative_boundaries() {
+        let mut g = PageGeometry {
+            width: 90.0,
+            height: 90.0,
+            unit: "mm".into(),
+            margin: None,
+            bleed: Some(5.0),
+            safe_area: None,
+        };
+        assert!(g.validate());
+        g.width = f64::NAN;
+        assert!(!g.validate());
+        g.width = 90.0;
+        g.bleed = Some(-1.0);
+        assert!(!g.validate());
+    }
     fn artifact(id: &str) -> native::ArtifactDescription {
         native::ArtifactDescription {
             artifact_id: id.into(),
