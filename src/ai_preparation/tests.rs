@@ -187,3 +187,36 @@ fn duplicate_assets_unbounded_attempts_and_cancellation_refuse() {
     }
     assert!(inspect(&p, None, &Cancelled).is_err());
 }
+
+#[cfg(unix)]
+#[test]
+fn hard_linked_assets_are_not_prepared_even_when_bytes_match() {
+    let p = profile();
+    let (f, prep) = fixture(&p);
+    std::fs::hard_link(&prep.assets[0].path, f.0.join("runtime-alias")).unwrap();
+    let report = inspect(&p, Some(&prep), &crate::NeverCancelled).unwrap();
+    assert_eq!(report.state, State::Unavailable);
+    assert!(!report.invocation_authority);
+}
+#[cfg(unix)]
+#[test]
+fn equal_bytes_and_mtime_cannot_hide_a_replaced_asset_path() {
+    use std::cell::Cell;
+    let p = profile();
+    let (f, prep) = fixture(&p);
+    let asset = &prep.assets[0];
+    let before = std::fs::metadata(&asset.path).unwrap();
+    let changed = Cell::new(false);
+    let token = || {
+        if !changed.replace(true) {
+            std::fs::rename(&asset.path, f.0.join("held-runtime")).unwrap();
+            std::fs::write(&asset.path, b"runtime").unwrap();
+            std::fs::File::open(&asset.path)
+                .unwrap()
+                .set_times(std::fs::FileTimes::new().set_modified(before.modified().unwrap()))
+                .unwrap();
+        }
+        false
+    };
+    assert_eq!(observe(asset, &token).unwrap().state, AssetState::Changed);
+}

@@ -2,7 +2,7 @@
 use crate::{CancellationSignal, ValidationError};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::{collections::BTreeSet, fs::File, io::Read, net::SocketAddr, path::PathBuf};
+use std::{collections::BTreeSet, io::Read, net::SocketAddr, path::PathBuf};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Mode {
@@ -280,6 +280,30 @@ impl LocalPreparation {
         Ok(())
     }
 }
+fn same_asset(before: &std::fs::Metadata, after: &std::fs::Metadata) -> bool {
+    if !before.is_file()
+        || !after.is_file()
+        || before.len() != after.len()
+        || before.modified().ok().is_none()
+        || before.modified().ok() != after.modified().ok()
+    {
+        return false;
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        before.nlink() == 1
+            && after.nlink() == 1
+            && before.dev() == after.dev()
+            && before.ino() == after.ino()
+            && before.ctime() == after.ctime()
+            && before.ctime_nsec() == after.ctime_nsec()
+    }
+    #[cfg(not(unix))]
+    {
+        false
+    }
+}
 fn observe(
     a: &Asset,
     cancel: &impl CancellationSignal,
@@ -307,9 +331,26 @@ fn observe(
         out.observed_bytes = Some(before.len());
         return Ok(out);
     }
-    let Ok(mut file) = File::open(&a.path) else {
+    if !same_asset(&before, &before) {
+        return Ok(out);
+    }
+    let mut options = std::fs::OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.custom_flags(nix::libc::O_NOFOLLOW | nix::libc::O_CLOEXEC | nix::libc::O_NONBLOCK);
+    }
+    let Ok(mut file) = options.open(&a.path) else {
         return Ok(out);
     };
+    let Ok(opened) = file.metadata() else {
+        return Ok(out);
+    };
+    if !same_asset(&before, &opened) {
+        out.state = AssetState::Changed;
+        return Ok(out);
+    }
     let mut hasher = Sha256::new();
     let mut bytes = 0u64;
     let mut buffer = [0u8; 65_536];
@@ -337,10 +378,13 @@ fn observe(
         Ok(m) => m,
         Err(_) => return Ok(out),
     };
-    if !after.file_type().is_file()
+    let Ok(after_fd) = file.metadata() else {
+        return Ok(out);
+    };
+    if after.file_type().is_symlink()
         || a.path.canonicalize().ok().as_ref() != Some(&a.path)
-        || after.len() != before.len()
-        || after.modified().ok() != before.modified().ok()
+        || !same_asset(&before, &after_fd)
+        || !same_asset(&before, &after)
     {
         out.state = AssetState::Changed;
         return Ok(out);

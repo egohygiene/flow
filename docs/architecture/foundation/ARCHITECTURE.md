@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.44.2
+version: 0.45.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,15 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Local AI asset observation
+
+Preparation reads bounded bytes through a non-following, nonblocking held file
+and compares descriptor/path identity and metadata throughout observation.
+Hard-link aliases and changed subjects cannot become prepared assets. Portable
+reports retain fixed reasons without paths or native errors. Byte preparation
+still grants no runtime/model/offline qualification or inference authority;
+platforms without the required identity observation remain unavailable.
 
 ## Federated support diagnostics
 
