@@ -17,7 +17,7 @@ pub(super) fn run(fixture: &KitFixture, recipe: &str) -> (Outcome, Value) {
             .iter()
             .find(|a| a.kind == ArtifactKind::Directory)
             .unwrap();
-        assert!(directory.manifest.is_empty());
+        assert_eq!(directory.manifest, [] as [flow::DirectoryManifestEntry; 0]);
         assert_eq!(directory.size_bytes, 0);
         let mut actual = outcome(
             "observation",
