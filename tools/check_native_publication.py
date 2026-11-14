@@ -64,9 +64,15 @@ def inventory(root):
     return result
 
 
-def public_candidate_build(value):
+def public_candidate_build(value, installed=None):
     # Reuse public identity type checks; this local candidate makes no claim
     # that its source tree equals a remote branch.
+    if installed is not None:
+        from installed_candidate_subjects import InstalledCandidate
+        require(type(installed) is InstalledCandidate, "admitted installed candidate required")
+        installed.reobserve()
+        require(value is None or value == installed.flow_identity, "installed package identity substitution")
+        return copy.deepcopy(installed.flow_identity)
     selected = copy.deepcopy(value)
     selected["equivalent_remote_revision"] = selected.get("actual_build_revision")
     result = public_build_identity(selected)
@@ -246,23 +252,34 @@ def epub_source_images(data, sources):
         return hashes
 
 
-def run_pilot(flow, provider, descriptor, img2pdf, output, provenance):
-    provenance = public_candidate_build(provenance)
+def run_pilot(flow, provider, descriptor, img2pdf, output, provenance, installed=None):
+    provenance = public_candidate_build(provenance, installed)
     data = build_binary(flow)
     require({"sha256": sha(data), "bytes": len(data)} == provenance["binary"], "Flow supplied build differs")
     provider_pin, descriptor_pin = pin(provider), pin(descriptor)
-    require(provider_pin["sha256"] == PROVIDER_SHA and descriptor_pin["sha256"] == CONTRACT_SHA,
+    selected_provider = ({"version": "0.3.0-rc.1", "source_revision": PROVIDER_SOURCE,
+        "sha256": PROVIDER_SHA, "contract_sha256": CONTRACT_SHA, "target": TARGET,
+        "publication": "not_performed"} if installed is None else installed.render_identity)
+    require(provider_pin["sha256"] == selected_provider["sha256"]
+            and descriptor_pin["sha256"] == selected_provider["contract_sha256"],
             "selected captured candidate differs")
+    if installed is not None:
+        require(flow == installed.flow and provider == installed.provider and descriptor == installed.descriptor,
+                "proof must execute the selected installed paths")
     require(output.is_absolute() and output.parent.resolve(strict=True) == output.parent, "canonical fresh evidence parent required")
     output.mkdir(mode=0o700)
-    copied = output / "flow"; copied.write_bytes(data); copied.chmod(0o700); flow = copied
+    if installed is None:
+        copied = output / "flow"; copied.write_bytes(data); copied.chmod(0o700); flow = copied
     logs = output / "commands"; logs.mkdir(mode=0o700)
     source = output / "source 作品 with spaces"; source.mkdir(mode=0o700)
     sources = [source / "page 001.png", source / "page 002.png"]
     for path, color in zip(sources, [(30, 70, 130), (180, 90, 40)]):
         path.write_bytes(png(color))
     originals = [pin(p) for p in sources]
-    cohort_path = output / "cohort.json"; put(cohort_path, cohort(provider_pin, descriptor_pin))
+    if installed is None:
+        cohort_path = output / "cohort.json"; put(cohort_path, cohort(provider_pin, descriptor_pin))
+    else:
+        cohort_path = installed.cohort_path
     observations, publications = [], []
     started = time.monotonic()
     def invoke(label, args, expected_code=0, expected_outcome="complete", diagnostic=None):
@@ -337,15 +354,19 @@ def run_pilot(flow, provider, descriptor, img2pdf, output, provenance):
             summary["inspection_stdout_sha256"] = sha(stdout)
     require([pin(p) for p in sources] == originals and pin(provider) == provider_pin and pin(descriptor) == descriptor_pin,
             "source/candidate bytes changed")
+    require(build_binary(flow) == data, "selected Flow bytes changed")
+    if installed is not None:
+        installed.reobserve()
     return {"schema_version": "flow.native-publication-cli-pilot/v1", "status": "passed",
         "observed_utc": datetime.now(timezone.utc).isoformat(), "driver_sha256": pin(Path(__file__).resolve())["sha256"],
-        "flow_build": provenance, "provider": {"version": "0.3.0-rc.1", "source_revision": PROVIDER_SOURCE,
-        "sha256": PROVIDER_SHA, "contract_sha256": CONTRACT_SHA, "target": TARGET, "publication": "not_performed"},
+        "flow_build": provenance, "provider": copy.deepcopy(selected_provider),
         "commands": observations, "publications": publications, "fixture": {"files": 2,
         "logical_bytes": sum(p["byte_count"] for p in originals), "originals_unchanged": True},
         "elapsed_seconds": round(time.monotonic() - started, 6), "source_mutation_authority": False,
         "human_creative_approval": False, "release_authenticated": False, "native_matrix_qualified": False,
-        "hosted_ci_dispatched": False, "scope": "synthetic public CLI candidate proof; no release or installed-suite qualification"}
+        "hosted_ci_dispatched": False,
+        "execution_subject": "captured_dev_cli" if installed is None else "installed_packaged_cli",
+        "scope": "synthetic public CLI candidate proof; no release or full installed-suite qualification"}
 
 
 def main():

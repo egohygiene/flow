@@ -14,22 +14,31 @@ import time
 import check_native_publication as native
 
 
-def run_pilot(flow, installation, receipt_sha, img2pdf, seed, output, provenance):
-    provenance = native.public_candidate_build(provenance)
+def run_pilot(flow, installation, receipt_sha, img2pdf, seed, output, provenance, installed=None):
+    provenance = native.public_candidate_build(provenance, installed)
     data = native.build_binary(flow)
     native.require({"sha256": native.sha(data), "bytes": len(data)} == provenance["binary"], "Flow build differs")
     native.require(output.is_absolute() and output.parent.resolve(strict=True) == output.parent, "canonical fresh parent required")
     output.mkdir(mode=0o700)
-    copied = output / "flow"; copied.write_bytes(data); copied.chmod(0o700); flow = copied
+    if installed is None:
+        copied = output / "flow"; copied.write_bytes(data); copied.chmod(0o700); flow = copied
+    else:
+        native.require(flow == installed.flow and installation == installed.root
+            and receipt_sha == installed.selection["installation_receipt_sha256"], "installed static subject differs")
     logs = output / "commands"; logs.mkdir(mode=0o700)
     source = output / "source 作品 with spaces"; source.mkdir(mode=0o700)
     sources = [source / "page 001.png", source / "page 002.png"]
     for p, color in zip(sources, [(30, 70, 130), (180, 90, 40)]): p.write_bytes(native.png(color))
     originals = [native.pin(p) for p in sources]
     seed_report = native.document(native.OWNER_IO.regular(seed / "report.json", 1048576))
+    expected_provider = native.PROVIDER_SHA if installed is None else installed.render_identity["sha256"]
     native.require(seed_report["schema_version"] == "flow.native-publication-cli-pilot/v1"
-        and seed_report["status"] == "passed" and seed_report["provider"]["sha256"] == native.PROVIDER_SHA,
+        and seed_report["status"] == "passed" and seed_report["provider"]["sha256"] == expected_provider,
         "selected prior direct candidate evidence required")
+    if installed is not None:
+        native.require(seed_report["execution_subject"] == "installed_packaged_cli"
+            and seed_report["flow_build"] == provenance and seed_report["provider"] == installed.render_identity,
+            "direct seed belongs to another installed candidate")
     observations, branches = [], []
     started = time.monotonic()
     def invoke(label, args, code=0, outcome="complete", diagnostic=None):
@@ -44,9 +53,9 @@ def run_pilot(flow, installation, receipt_sha, img2pdf, seed, output, provenance
         observations.append({"case": label, "command": args[0], "exit_code": actual, "outcome": outcome,
             "stdout_sha256": native.sha(stdout), "stdout_bytes": len(stdout), "stderr_bytes": len(stderr)})
         return value["result"]
-    installed = invoke("installation-current", ["suite-status", "--installation-root", str(installation), "--receipt-sha256", receipt_sha])
-    native.require(installed["current_copied_bytes"] is True and installed["receipt"]["candidate_acknowledged"] is True
-        and installed["receipt"]["publisher_authenticated"] is False and installed["receipt"]["native_qualified"] is False,
+    installation_status = invoke("installation-current", ["suite-status", "--installation-root", str(installation), "--receipt-sha256", receipt_sha])
+    native.require(installation_status["current_copied_bytes"] is True and installation_status["receipt"]["candidate_acknowledged"] is True
+        and installation_status["receipt"]["publisher_authenticated"] is False and installation_status["receipt"]["native_qualified"] is False,
         "candidate install became runtime/release qualification")
     for fmt in ["epub", "pdf"]:
         seed_plan = native.document(native.OWNER_IO.regular(seed / (fmt + "-run/attempt-0000/native-plan.json"), 16777216))
@@ -137,6 +146,9 @@ def run_pilot(flow, installation, receipt_sha, img2pdf, seed, output, provenance
         summary.update(locale="en-US", required_target_id=target_id, original_source_bytes_unchanged=True,
             staged_sources_match=True, creative_review_pending=True, status_outcome="partial")
         branches.append(summary)
+    native.require(native.build_binary(flow) == data, "selected Flow bytes changed")
+    if installed is not None:
+        installed.reobserve()
     return {"schema_version": "flow.static-publication-cli-pilot/v1", "status": "passed",
         "observed_utc": datetime.now(timezone.utc).isoformat(), "flow_build": provenance,
         "driver_sha256": native.pin(Path(__file__).resolve())["sha256"],
@@ -146,7 +158,9 @@ def run_pilot(flow, installation, receipt_sha, img2pdf, seed, output, provenance
         "seed_report_sha256": native.pin(seed / "report.json")["sha256"], "installation_receipt_sha256": receipt_sha,
         "commands": observations, "branches": branches, "elapsed_seconds": round(time.monotonic()-started, 6),
         "human_creative_approval": False, "release_authenticated": False, "native_matrix_qualified": False,
-        "hosted_ci_dispatched": False, "scope": "two separate single-locale synthetic candidate policies; not released-suite or human qualification"}
+        "hosted_ci_dispatched": False,
+        "execution_subject": "captured_dev_cli" if installed is None else "installed_packaged_cli",
+        "scope": "two separate single-locale synthetic candidate policies; not released-suite or human qualification"}
 
 
 def main():

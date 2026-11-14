@@ -1,0 +1,13 @@
+{
+  "version": "0.1.1",
+  "source_revision": "b82599a2231e997d42fd9f26f4b59587f4ae14cf",
+  "target": "x86_64-unknown-linux-gnu",
+  "bundle_sha256": "f576131f2695a218fabfaa5167fd16f17641c267194254a9e624303a8cf23e07",
+  "archive_sha256": "5e8a0eea84f5ab55fe75fc8a8abc2e9d36e3512537b754262b1f34a9c40aae31",
+  "executable_sha256": "46af9399f3785607f835d9a805a8daa42c93597772c6ee812911615ea4b76280",
+  "executable_bytes": 11098688,
+  "embedded_provenance_checked": true,
+  "signature_verification_performed": false,
+  "verification_scope": "embedded source/target declarations and pinned archive/executable hashes; no signature verification",
+  "verifier_sha256": "e967ac193d620c55dc855e67de9023b06165a7cfa464bdc1b517c8ce0b2b4ac4"
+}

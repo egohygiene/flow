@@ -1,3 +1,54 @@
+## Combined installed publishing candidate — November 14, 2026
+
+The maintainer authorized the next milestone: merge the 13 reviewed checkpoints,
+then build/package/exercise one candidate from their combined source. All 13
+feature PRs are merged in dependency order with exact tree/parent readback:
+Flow #145–150, Optiflow #221–224, Renderflow #523–524 and Aniflow #242.
+
+The [installed-candidate guide](../../integrations/combined-installed-candidate.md)
+and [package handoff](../54/COMBINED-SOURCE-CANDIDATE-20261114.md) retain the actual
+measurements. Flow source `69eafaf74af8891bde1c7a769fb57dbca815476c` produced two
+fresh isolated equal release executables/descriptors; its eight assets, 376 Git
+source members and 40 SPDX lock packages pass readback. The fresh captured
+Renderflow source is `fe1054a87648f294c2fc8c58f75b26e87200685c`, with a passed
+Ubuntu 24.04/glibc 2.39 build and native EPUB/PDF smoke. Optiflow is the actual
+immutable v0.1.1 read-only release, deliberately separate from newer main.
+
+A retained three-tool installation passes management/activation/rollback and
+owned-only uninstall controls. The first new installed workload passes **73
+top-level Flow CLI calls**: direct publishing 24, static projects 22, aggregate
+staging 7, released Optiflow 18 and before/after suite status 2. Both EPUB spines
+and every finite PDF box coordinate match independently checked source/artifact
+bytes. Originals and installed subjects remain unchanged; static status keeps
+creative review pending. Forty-one focused observer cases and independent source,
+package, install and 73-capture/artifact reviews pass. A fixed admission-file
+binding gap and the exact two-provider-to-three-tool cohort projection are
+documented; no product Rust source changed after the 13 feature merges.
+
+The [Ubuntu candidate observation](../54/combined-source-20261114/renderflow-ubuntu-candidate.json)
+preserves its reused-cache/zero-independent-rebuild scope. The first ENOSPC is
+retained separately; measured Docker VFS rootfs copies cost about 3.38 GB per
+container. Only inactive compiler intermediates were removed, actual in-container
+headroom was measured and the same-source retry passed. No image prune, source,
+accepted executable or native artifact was removed.
+
+The [handoff archive record](../54/combined-source-20261114/handoff-archive.json)
+identifies a private Linux x86-64 offline suite bundle plus actual synthetic
+example outputs. The PDF provider is separately prepared, not silently bundled.
+The archive README creates a fresh executable bootstrap copy while retaining
+nonexecutable bundle payload modes; a targeted extracted-copy version check
+passes without changing the bundle or repeating the 73-call workload.
+Both new ELF files require GLIBC symbols through 2.39; the combined installed
+workload ran on the current glibc 2.41 host. This is no full supported-host
+qualification. Proof tooling and documentation are later source-only changes,
+not a newly compiled or repackaged version of that later documentation tip.
+
+All observations preserve their explicit false/unknown authority fields. No
+release, signature, actual content/site publication, private media/model use,
+source disposal, native Mac/physical-volume qualification or hosted workflow
+dispatch is claimed. Existing parent issues retain their full acceptance.
+Flow #88's exact original title/body/state remains unchanged and last.
+
 ## Ten-checkpoint execution sprint — November 14, 2026
 
 The maintainer selected ten further outcomes delivered through separate draft

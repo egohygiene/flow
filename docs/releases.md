@@ -1,5 +1,13 @@
 # Flow artifact preparation
 
+The [combined-source Linux candidate](work/54/COMBINED-SOURCE-CANDIDATE-20261114.md)
+now records two actual isolated release builds and an installed suite from merged
+Flow `69eafaf…`, alongside fresh Renderflow `fe1054a…` and actual released
+Optiflow 0.1.1. Its portable receipts distinguish package preparation,
+installation management and the separate 73-call installed runtime proof. The
+older authoring-only and baseline-package statements below retain their history;
+none establishes an authenticated or published release.
+
 Flow's Cargo package version is the single CLI/library authority. `publish=false`
 remains in force: the occupied crates.io name `flow` is not presented as ours.
 The GitHub CLI artifact and portable tracked source archive are distinct channels;

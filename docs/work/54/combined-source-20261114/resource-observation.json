@@ -1,0 +1,31 @@
+{
+  "schema_version": "renderflow.combined-candidate-resource-observation/v1",
+  "source_revision": "fe1054a87648f294c2fc8c58f75b26e87200685c",
+  "first_attempt": {
+    "result": "failed before binary capture",
+    "error": "ENOSPC creating rustc metadata directory",
+    "log_sha256": "3de185e205d3e076aac2b768f3419c0e42ae1c2d999a9a29ae49dcc99e286a0e"
+  },
+  "observed_storage_driver": "vfs",
+  "transient_container_rootfs_bytes": 3379142656,
+  "same_target_bind_verified": true,
+  "witness_identity_and_bytes_match": true,
+  "cleanup_visibility_verified": true,
+  "mapping_probe_removed": true,
+  "after_cleanup": {
+    "outside_available_bytes": 5115564032,
+    "inside_target_available_bytes": 1736302592,
+    "probe_removed": true
+  },
+  "same_source_owner_retry": "passed; see separate actual Ubuntu candidate summary",
+  "product_source_or_policy_changes": false,
+  "independent_rebuilds": 0,
+  "release_authenticated": false,
+  "native_matrix_qualified": false,
+  "publication_performed": false,
+  "private_evidence_sha256": {
+    "storage_mapping": "d51afdaf527423438c1f2d49f1df370b20d9c8455cd7c866098d36ec74537adc",
+    "post_cleanup_headroom": "424e61babee29572b3d5cb6d908da360d750ba5cf0dbca3e9cdd4b6ab81dc1aa",
+    "owner_portable_summary": "d4b9326587b2ef8d4f5b63361ba06290c3476537ca8985c178978e74740ca4f6"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "flow.candidate-bootstrap-smoke/v1",
+  "archive_sha256": "8c081f66bb5666853960153a88e5b18992252d7f0f382ce0fa41b16f0d527fc5",
+  "bundle_payload_sha256": "0de124114f96cab0256f09735b68ca56eecab646d608c051f1651892c20585e4",
+  "original_bundle_mode": "0600",
+  "bootstrap_mode": "0700",
+  "command": "version",
+  "native_exit": 0,
+  "stdout_sha256": "fddad2cc5fae1177274ff357925a89a37fd8ede37a1583f46aea2be0d342d958",
+  "stderr_bytes": 0,
+  "original_bundle_unchanged": true,
+  "scope": "one targeted extracted-archive executable bootstrap observation; no new installation or full workload rerun",
+  "release_authenticated": false,
+  "native_matrix_qualified": false
+}
