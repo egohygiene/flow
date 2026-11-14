@@ -1,3 +1,33 @@
+## Focused local validation continuation — November 13, 2026
+
+The maintainer authorized the five scoped checkpoints Optiflow #146, Flow #137,
+Renderflow #419, Aniflow #228 and Aniflow #212, including selected local builds
+and smoke checks. Delivery remains separate draft PRs, with no hosted workflow
+execution, native-volume work, signing or publication selected. Re-query
+[the current cross-repository tracker](https://github.com/egohygiene/flow/issues/137)
+for its draft heads, dependency order and final provider evidence.
+
+Flow now supplies a reviewed Realm `realm.local-ci/v1` consumer using pinned
+Realm `75c1b2e1475b972a0ce1c8594e8daba2e1cf8686`. The declared Rust 1.85 library
+check, budget regressions/source plan and actual pinned act budget job pass at
+the clean source revision/tree recorded in
+[the local-run handoff](../137/13-local-ci-consumers.md). Four explicit coverage
+gaps remain visible; selected completion does not qualify full CI or releases.
+[The local guide](../../local-ci.md) owns setup and canonical Task aliases.
+
+Provider build repairs, the captured Renderflow Linux candidate, archived
+Aniflow trial reconciliation and the synthetic CPU/manual-SRT pilot remain
+owned by their existing repositories/issues. Provider source or a local smoke
+must not become a released adapter pin. Current Optiflow development source
+selects Rust 1.89; older not-adopted statements below are dated history.
+
+The prior blanket deferral is superseded only for the explicitly selected local
+checks. Full native/platform/provider/release acceptance and #88's original
+45-ticket final pass remain separate, unchanged and last. The known Flow
+bounded-wrapper timeout and Aniflow alignment/start-marker failure retain
+their unresolved/unproven limits. Historical dated observations below are
+preserved and do not override the new scoped authorization or live tracker.
+
 ## Whole-queue source reconciliation — November 13, 2026
 
 The maintainer authorized merging the open Flow-suite PR queues and then syncing.
