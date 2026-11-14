@@ -1,5 +1,30 @@
 //! Authored/uncompiled/unrun. Synthetic local bytes only; no provider is launched.
 use super::*;
+
+#[test]
+fn exhausted_planning_budget_never_enters_a_nested_owner() {
+    let entered = std::cell::Cell::new(false);
+    let deadline = Instant::now().checked_sub(Duration::from_secs(1)).unwrap();
+    let result = planning_scope(&crate::NeverCancelled, deadline, |_| {
+        entered.set(true);
+        Ok(())
+    });
+    assert_eq!(result.unwrap_err().code, Code::InvalidInput);
+    assert!(!entered.get());
+}
+#[test]
+fn cancellation_after_nested_preparation_cannot_return_a_plan() {
+    let cancelled = std::cell::Cell::new(false);
+    let signal = || cancelled.get();
+    let deadline = Instant::now() + Duration::from_secs(60);
+    let result = planning_scope(&signal, deadline, |guard| {
+        assert!(!guard.is_cancelled());
+        cancelled.set(true);
+        assert!(guard.is_cancelled());
+        Ok("would-be plan")
+    });
+    assert_eq!(result.unwrap_err().code, Code::Cancelled);
+}
 struct Fixture {
     root: PathBuf,
 }

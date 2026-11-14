@@ -517,20 +517,35 @@ pub struct Planning {
     pub command_plan: Option<command::Plan>,
     pub inspection_limits_apply_to_native_execution: bool,
 }
+fn planning_scope<T>(
+    token: &dyn CancellationSignal,
+    deadline: Instant,
+    operation: impl FnOnce(&dyn CancellationSignal) -> Result<T, Error>,
+) -> Result<T, Error> {
+    let check = || {
+        if token.is_cancelled() {
+            Err(error(Code::Cancelled, "local input planning cancelled"))
+        } else if Instant::now() >= deadline {
+            Err(error(
+                Code::InvalidInput,
+                "local input planning deadline exhausted",
+            ))
+        } else {
+            Ok(())
+        }
+    };
+    check()?;
+    let guard = || token.is_cancelled() || Instant::now() >= deadline;
+    let result = operation(&guard);
+    check()?;
+    result
+}
 pub fn plan(request: &Request, token: &dyn CancellationSignal) -> Result<Planning, Error> {
     request.validate()?;
     let deadline = Instant::now()
         .checked_add(Duration::from_millis(request.limits.deadline_ms))
         .ok_or_else(|| error(Code::InvalidInput, "local planning deadline overflow"))?;
-    let guard = || token.is_cancelled() || Instant::now() >= deadline;
-    let result = plan_guarded(request, &guard);
-    result.map_err(|mut e| {
-        if !token.is_cancelled() && Instant::now() >= deadline {
-            e.code = Code::InvalidInput;
-            e.message = "local input planning deadline exhausted".into();
-        }
-        e
-    })
+    planning_scope(token, deadline, |guard| plan_guarded(request, guard))
 }
 fn plan_guarded(request: &Request, token: &dyn CancellationSignal) -> Result<Planning, Error> {
     let inventory = inspect(request, token)?;
@@ -608,6 +623,18 @@ pub fn plan_native(
     token: &dyn CancellationSignal,
 ) -> Result<NativePlanning, Error> {
     request.validate()?;
+    let deadline = Instant::now()
+        .checked_add(Duration::from_millis(request.limits.deadline_ms))
+        .ok_or_else(|| error(Code::InvalidInput, "local planning deadline overflow"))?;
+    planning_scope(token, deadline, |guard| {
+        plan_native_guarded(request, selection, guard)
+    })
+}
+fn plan_native_guarded(
+    request: &Request,
+    selection: &crate::native::Request,
+    token: &dyn CancellationSignal,
+) -> Result<NativePlanning, Error> {
     if !matches!(
         request.profile,
         Profile::AniflowTemporal | Profile::RenderflowPublication
