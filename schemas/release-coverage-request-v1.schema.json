@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/egohygiene/flow/schemas/release-coverage-request-v1.schema.json",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "flow.release-coverage-request/v1"
+    },
+    "cohort_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+    },
+    "required": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tool": {
+            "enum": [
+              "flow",
+              "aniflow",
+              "optiflow",
+              "renderflow"
+            ]
+          },
+          "interface": {
+            "enum": [
+              "standalone_cli",
+              "rust_library",
+              "flow_route"
+            ]
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+          },
+          "profile": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+          },
+          "row_id": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096,
+                "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "tool",
+          "interface",
+          "target",
+          "profile"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 512,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "cohort_id",
+    "required"
+  ],
+  "additionalProperties": false
+}
