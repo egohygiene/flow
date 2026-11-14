@@ -37,6 +37,10 @@ jobs:
         with:
           key: ${{ matrix.toolchain }}
 
+      - name: Check locked dependency metadata
+        run: |
+          cargo update --workspace --locked
+
       - name: Check formatting
         run: cargo fmt --all -- --check
 
