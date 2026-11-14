@@ -1,0 +1,74 @@
+{
+  "schema": "flow.scenario-browser-baseline-observations/v1",
+  "claim_scope": "local_browser_presentation_only",
+  "base_commit": "71d034263da17c8755cb2c7202cf68ca5b5df6fd",
+  "baseline_sources": [
+    {
+      "path": "docs/integrations/showcase/view.mjs",
+      "bytes": 9722,
+      "sha256": "c5573f6f4e7df942429cb624efd17d0ade2645d2f19d6762d61292feb700309d"
+    },
+    {
+      "path": "docs/integrations/showcase/style.css",
+      "bytes": 1350,
+      "sha256": "6001f3eaae7dda50347216187a8db30e86195f10b2959f2dedcc6302431e0394"
+    }
+  ],
+  "recording": "Observed browser instrumentation transcribed from the pre-fix walkthrough; this is not an automated passing receipt.",
+  "browser": {
+    "engine": "Chromium",
+    "version": "151.0.7922.173",
+    "headless": true
+  },
+  "observations": [
+    {
+      "id": "deep_link_load_focus_lost",
+      "steps": "Open canonical acceptance deep link, keyboard-activate Load repository catalogs, await all catalog/manifest renders.",
+      "actual": {
+        "active_tag": "BODY",
+        "active_id": "",
+        "visible_linked_id": "scenario-acceptance-scenario:acceptance-resolution-compatible"
+      },
+      "expected": "The selected linked article retains focus."
+    },
+    {
+      "id": "clear_link_focus_lost",
+      "steps": "Keyboard-select acceptance-resolution-missing-provider and activate Clear linked scenario.",
+      "before_clear": {
+        "active_tag": "ARTICLE",
+        "active_id": "scenario-acceptance-scenario:acceptance-resolution-missing-provider"
+      },
+      "actual": {
+        "active_tag": "BODY",
+        "active_id": "",
+        "hash": ""
+      },
+      "expected": "Search receives focus after the clear control becomes hidden."
+    }
+  ],
+  "narrow_overflow": {
+    "receipt": "narrow-overflow-before-proof.json",
+    "state": "failed",
+    "viewport_width": 360,
+    "actual_document_scroll_width": 575,
+    "cause": "Unbroken workflow catalog SHA and workflow text overflow after loading publishing guides.",
+    "scope": "Recorded after the focus repair and before the wrapping repair; source_identity in the failed receipt names that intermediate source."
+  },
+  "screenshots": [
+    {
+      "path": "narrow-before.png",
+      "bytes": 54908,
+      "sha256": "c1cae29435478a835719bd5b8bbb75878a184c1fd866ca46e43e4cf0798019b6",
+      "storage": "Local workspace evidence; not committed."
+    },
+    {
+      "path": "run-03/failed-view.png",
+      "bytes": 45329,
+      "sha256": "719ae4acae1b3759073d194a228416053d527482dc64bde885eab30f1b1cef38",
+      "storage": "Local workspace evidence; not committed."
+    }
+  ],
+  "product_qualified": false,
+  "native_provider_qualified": false,
+  "publication_performed": false
+}
