@@ -1436,7 +1436,7 @@ pub fn artifact_inventory(
                 .find(|p| {
                     path(&p.path).ok().as_deref() == Some(file.as_path())
                         && a["sha256"] == p.sha256
-                        && a["byte_count"].as_u64() == Some(p.byte_count)
+                        && a["size_bytes"].as_u64() == Some(p.byte_count)
                 })
                 .ok_or_else(|| {
                     error(
