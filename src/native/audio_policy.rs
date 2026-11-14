@@ -392,7 +392,7 @@ mod tests {
     }
     #[test]
     fn check_workspaces_cannot_mutate_the_qc_namespace() {
-        let t = tempfile::tempdir().unwrap();
+        let t = crate::test_workspace::Workspace::new().unwrap();
         let root = t.path().canonicalize().unwrap();
         let qc = root.join("qc");
         let video = root.join("video-run");

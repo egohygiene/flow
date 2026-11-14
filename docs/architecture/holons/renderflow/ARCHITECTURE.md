@@ -32,6 +32,12 @@ domain validation and native checkpoint logic. No sibling crate dependency,
 duplicate planner or release qualification is introduced. Scoped native packages,
 AI and custom extension execution remain separately owned routes.
 
+Ordered native collection locators may be normal relative paths under the pinned
+configuration's parent. Flow resolves those paths before comparing each member
+with the exact absolute selected input, retaining order and digest checks.
+Parent traversal is refused; this translates Renderflow's native collection
+contract without expanding source scope or granting mutation authority.
+
 ## Purpose and scope
 
 Refine the existing workspace shape into durable boundaries for the reusable
