@@ -1,5 +1,37 @@
 # Browse Flow's scenario evidence
 
+## Plain-language recipe explanations
+
+Every displayed recipe has a readable title, boundary purpose, setup description
+and expected decision derived from its loaded canonical row. The stable scenario
+ID remains visible and linkable. Reusable family descriptions explain why the
+boundary matters; there is no duplicated scenario/count inventory. Lifecycle
+summaries count only the declared final snapshot and never actual executions.
+Unmapped future families are visibly unclassified until their copy is supplied.
+
+A declaration that expects rejection says explicitly that no artifacts are
+accepted and that correct refusal can pass a test. That explanatory sentence
+does not establish that the test ran. The original typed expectation remains
+expandable alongside missing/mismatched/unconfirmed report states.
+
+The focused source test suite reads both actual canonical catalogs and requires
+an ID-keyed explanation for every current row. It also checks declared refusal
+and lifecycle semantics. Execution results belong in the closeout receipt;
+authored tests alone do not establish browser, native or provider qualification.
+
+## Stable links across catalogs
+
+Scenario links now qualify both the canonical catalog family and scenario ID:
+`#scenario=acceptance/scenario%3Aexample`. Existing ID-only links remain readable
+when exactly one loaded catalog matches. Multiple matches stay ambiguous;
+missing catalogs require explicit local selection. Links fetch nothing.
+
+A linked recipe remains visible alongside filter matches, has a text marker
+and keyboard/screen-reader focus, and can be cleared without changing loaded
+evidence. Fragment selection never changes expected outcomes or turns supplied
+report claims into current verification. Three focused link/refusal regressions
+are authored, unrun; no browser, documentation tool or provider was executed.
+
 ## Publishing workflow source guides
 
 The same local page now has a separate **Load publishing workflow guides**

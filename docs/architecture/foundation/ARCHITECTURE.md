@@ -46,6 +46,25 @@ reports retain fixed reasons without paths or native errors. Byte preparation
 still grants no runtime/model/offline qualification or inference authority;
 platforms without the required identity observation remain unavailable.
 
+## Federated support diagnostics
+
+The diagnostics contract defines a metadata-only support profile for each
+independently built CLI. Product-owned adapters use existing hashes and guarded
+file I/O; the shared schema and conformance cases do not introduce a sibling
+dependency or a shared observability implementation. Generated health states
+describe compiled support and explicitly unknown runtime measurements. No
+collector, raw-log reader, global subscriber, upload or domain evidence is
+created by diagnostics. Unsupported exporter/host capabilities remain visible.
+
+## Canonical scenario explanations
+
+The local documentation viewer derives explanatory titles, setup descriptions
+and expected decisions from each loaded canonical scenario ID and declaration.
+Catalog families own reusable explanatory vocabulary; no second scenario/count
+inventory is maintained. Catalog-qualified links and explicit evidence states
+keep navigation, authored expectations and recorded execution claims separate.
+Loading or explaining a recipe executes no provider, report or test.
+
 ## Adjusted native delivery selections
 
 Delivery packages can explicitly select an accepted gain WAV or gain-video

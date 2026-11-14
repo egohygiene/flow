@@ -1,16 +1,171 @@
 //! Provisional source utility for the local setup SDK, not the Flow product CLI.
-use std::{collections::BTreeMap,path::{Path,PathBuf}};
-use flow::ai_preparation::{Profile,LocalPreparation,setup::{self,documents}};
-fn absolute(value:&Path)->Result<PathBuf,String>{let path=if value.is_absolute(){value.to_path_buf()}else{std::env::current_dir().map_err(|_|"working directory unavailable")?.join(value)};if path.components().any(|p|matches!(p,std::path::Component::ParentDir)){return Err("parent traversal in document locator refused".into());}Ok(path.components().filter(|p|!matches!(p,std::path::Component::CurDir)).collect())}
-fn arguments(values:Vec<std::ffi::OsString>)->Result<(String,BTreeMap<String,PathBuf>),String>{let mut it=values.into_iter();let command=it.next().and_then(|v|v.into_string().ok()).ok_or("prepare, doctor or status required")?;let mut options=BTreeMap::new();while let Some(key)=it.next(){let key=key.into_string().map_err(|_|"recognized option name required")?;if !["--request","--output-directory","--profile","--preparation","--directory"].contains(&key.as_str()){return Err("unknown local setup option".into());}let value=it.next().ok_or("option value required")?;if options.insert(key,absolute(Path::new(&value))?).is_some(){return Err("duplicate local setup option".into());}}Ok((command,options))}
-fn run()->Result<serde_json::Value,String>{let (command,options)=arguments(std::env::args_os().skip(1).collect())?;let get=|key:&str|options.get(key).ok_or_else(||format!("required option {key} missing"));let guard=flow::NeverCancelled;
-    let value=match command.as_str(){
-        "prepare"=>{if options.len()!=2||options.keys().any(|k|k!="--request"&&k!="--output-directory"){return Err("prepare needs exactly --request and --output-directory".into());}let request=setup::Request::from_json_slice(&documents::read(get("--request")?,131_072).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;serde_json::to_value(documents::write(&request,get("--output-directory")?,&guard).map_err(|e|e.to_string())?)},
-        "doctor"=>{if options.len()>2||!options.contains_key("--profile")||options.keys().any(|k|k!="--profile"&&k!="--preparation"){return Err("doctor needs --profile and optional --preparation".into());}let profile=Profile::from_json_slice(&documents::read(get("--profile")?,32_768).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;let preparation=if profile.mode==flow::ai_preparation::Mode::Disabled{None}else{options.get("--preparation").map(|p|documents::read(p,65_536).and_then(|b|LocalPreparation::from_json_slice(&b))).transpose().map_err(|e|e.to_string())?};serde_json::to_value(setup::diagnose(&profile,preparation.as_ref(),&guard).map_err(|e|e.to_string())?)},
-        "status"=>{if options.len()!=1{return Err("status needs exactly --directory".into());}serde_json::to_value(documents::status(get("--directory")?,&guard).map_err(|e|e.to_string())?)},
-        _=>return Err("supported local setup commands: prepare, doctor, status".into()),
-    };value.map_err(|_|"local setup output unavailable".into())
+use flow::ai_preparation::{
+    LocalPreparation, Profile,
+    setup::{self, documents},
+};
+use std::{
+    collections::BTreeMap,
+    path::{Path, PathBuf},
+};
+fn absolute(value: &Path) -> Result<PathBuf, String> {
+    let path = if value.is_absolute() {
+        value.to_path_buf()
+    } else {
+        std::env::current_dir()
+            .map_err(|_| "working directory unavailable")?
+            .join(value)
+    };
+    if path
+        .components()
+        .any(|p| matches!(p, std::path::Component::ParentDir))
+    {
+        return Err("parent traversal in document locator refused".into());
+    }
+    Ok(path
+        .components()
+        .filter(|p| !matches!(p, std::path::Component::CurDir))
+        .collect())
 }
-fn main()->std::process::ExitCode{use std::io::Write;let (out,code)=match run(){Ok(v)=>(v,0),Err(message)=>(serde_json::json!({"schema_version":"flow.ai-local-setup-error/v1","message":message,"runtime_or_service_contacted":false}),2)};let mut bytes=match serde_json::to_vec(&out){Ok(b)=>b,Err(_)=>return std::process::ExitCode::from(1)};bytes.push(b'\n');if std::io::stdout().lock().write_all(&bytes).is_err(){return std::process::ExitCode::from(1);}std::process::ExitCode::from(code)}
-#[cfg(test)] mod tests {use super::*;
-#[test] fn setup_parser_rejects_unknown_duplicate_or_implicit_download(){assert!(arguments(["prepare","--request","r.json","--request","other.json"].into_iter().map(Into::into).collect()).is_err());assert!(arguments(["prepare","--download-model","selected"].into_iter().map(Into::into).collect()).is_err());}}
+fn arguments(
+    values: Vec<std::ffi::OsString>,
+) -> Result<(String, BTreeMap<String, PathBuf>), String> {
+    let mut it = values.into_iter();
+    let command = it
+        .next()
+        .and_then(|v| v.into_string().ok())
+        .ok_or("prepare, doctor or status required")?;
+    let mut options = BTreeMap::new();
+    while let Some(key) = it.next() {
+        let key = key
+            .into_string()
+            .map_err(|_| "recognized option name required")?;
+        if ![
+            "--request",
+            "--output-directory",
+            "--profile",
+            "--preparation",
+            "--directory",
+        ]
+        .contains(&key.as_str())
+        {
+            return Err("unknown local setup option".into());
+        }
+        let value = it.next().ok_or("option value required")?;
+        if options.insert(key, absolute(Path::new(&value))?).is_some() {
+            return Err("duplicate local setup option".into());
+        }
+    }
+    Ok((command, options))
+}
+fn run() -> Result<serde_json::Value, String> {
+    let (command, options) = arguments(std::env::args_os().skip(1).collect())?;
+    let get = |key: &str| {
+        options
+            .get(key)
+            .ok_or_else(|| format!("required option {key} missing"))
+    };
+    let guard = flow::NeverCancelled;
+    let value = match command.as_str() {
+        "prepare" => {
+            if options.len() != 2
+                || options
+                    .keys()
+                    .any(|k| k != "--request" && k != "--output-directory")
+            {
+                return Err("prepare needs exactly --request and --output-directory".into());
+            }
+            let request = setup::Request::from_json_slice(
+                &documents::read(get("--request")?, 131_072).map_err(|e| e.to_string())?,
+            )
+            .map_err(|e| e.to_string())?;
+            serde_json::to_value(
+                documents::write(&request, get("--output-directory")?, &guard)
+                    .map_err(|e| e.to_string())?,
+            )
+        }
+        "doctor" => {
+            if options.len() > 2
+                || !options.contains_key("--profile")
+                || options
+                    .keys()
+                    .any(|k| k != "--profile" && k != "--preparation")
+            {
+                return Err("doctor needs --profile and optional --preparation".into());
+            }
+            let profile = Profile::from_json_slice(
+                &documents::read(get("--profile")?, 32_768).map_err(|e| e.to_string())?,
+            )
+            .map_err(|e| e.to_string())?;
+            let preparation = if profile.mode == flow::ai_preparation::Mode::Disabled {
+                None
+            } else {
+                options
+                    .get("--preparation")
+                    .map(|p| {
+                        documents::read(p, 65_536)
+                            .and_then(|b| LocalPreparation::from_json_slice(&b))
+                    })
+                    .transpose()
+                    .map_err(|e| e.to_string())?
+            };
+            serde_json::to_value(
+                setup::diagnose(&profile, preparation.as_ref(), &guard)
+                    .map_err(|e| e.to_string())?,
+            )
+        }
+        "status" => {
+            if options.len() != 1 {
+                return Err("status needs exactly --directory".into());
+            }
+            serde_json::to_value(
+                documents::status(get("--directory")?, &guard).map_err(|e| e.to_string())?,
+            )
+        }
+        _ => return Err("supported local setup commands: prepare, doctor, status".into()),
+    };
+    value.map_err(|_| "local setup output unavailable".into())
+}
+fn main() -> std::process::ExitCode {
+    use std::io::Write;
+    let (out, code) = match run() {
+        Ok(v) => (v, 0),
+        Err(message) => (
+            serde_json::json!({"schema_version":"flow.ai-local-setup-error/v1","message":message,"runtime_or_service_contacted":false}),
+            2,
+        ),
+    };
+    let mut bytes = match serde_json::to_vec(&out) {
+        Ok(b) => b,
+        Err(_) => return std::process::ExitCode::from(1),
+    };
+    bytes.push(b'\n');
+    if std::io::stdout().lock().write_all(&bytes).is_err() {
+        return std::process::ExitCode::from(1);
+    }
+    std::process::ExitCode::from(code)
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn setup_parser_rejects_unknown_duplicate_or_implicit_download() {
+        assert!(
+            arguments(
+                ["prepare", "--request", "r.json", "--request", "other.json"]
+                    .into_iter()
+                    .map(Into::into)
+                    .collect()
+            )
+            .is_err()
+        );
+        assert!(
+            arguments(
+                ["prepare", "--download-model", "selected"]
+                    .into_iter()
+                    .map(Into::into)
+                    .collect()
+            )
+            .is_err()
+        );
+    }
+}

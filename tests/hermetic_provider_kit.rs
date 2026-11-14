@@ -361,7 +361,10 @@ fn templates_freeze_the_provider_identity_and_four_capabilities() {
     assert_eq!(manifest.publisher.id, "org.egohygiene");
     assert_eq!(manifest.integrity.value, INTEGRITY_SENTINEL);
     assert_eq!(manifest.checkpoint.mode, CheckpointMode::None);
-    assert!(manifest.checkpoint.compatibility_keys.is_empty());
+    assert_eq!(
+        manifest.checkpoint.compatibility_keys,
+        [] as [std::string::String; 0]
+    );
     assert_eq!(
         manifest
             .capabilities
@@ -403,10 +406,22 @@ fn templates_freeze_the_provider_identity_and_four_capabilities() {
     assert_eq!(process.limits.max_stdout_bytes, 65_536);
     assert_eq!(process.limits.max_stderr_bytes, 65_536);
     assert_eq!(process.limits.cancellation_grace_ms, 250);
-    assert!(manifest.requested_permissions.network_hosts.is_empty());
-    assert!(manifest.requested_permissions.subprocesses.is_empty());
-    assert!(manifest.requested_permissions.ai_providers.is_empty());
-    assert!(manifest.requested_permissions.environment_read.is_empty());
+    assert_eq!(
+        manifest.requested_permissions.network_hosts,
+        [] as [std::string::String; 0]
+    );
+    assert_eq!(
+        manifest.requested_permissions.subprocesses,
+        [] as [std::string::String; 0]
+    );
+    assert_eq!(
+        manifest.requested_permissions.ai_providers,
+        [] as [std::string::String; 0]
+    );
+    assert_eq!(
+        manifest.requested_permissions.environment_read,
+        [] as [std::string::String; 0]
+    );
     assert!(!manifest.requested_permissions.gpu);
     assert!(!manifest.requested_permissions.source_mutation);
     assert!(!manifest.requested_permissions.destructive);
@@ -639,8 +654,14 @@ fn unavailable_provider_is_blocked_before_invocation_with_retained_evidence() {
     outcome.evidence().validate().unwrap();
     assert!(outcome.resolved().is_none());
     assert_eq!(outcome.evidence().result, ResolutionResult::Blocked);
-    assert!(outcome.evidence().selected_extension_ids.is_empty());
-    assert!(outcome.evidence().fallback_order.is_empty());
+    assert_eq!(
+        outcome.evidence().selected_extension_ids,
+        [] as [std::string::String; 0]
+    );
+    assert_eq!(
+        outcome.evidence().fallback_order,
+        [] as [std::string::String; 0]
+    );
     assert_eq!(outcome.evidence().candidates.len(), 1);
     let candidate = &outcome.evidence().candidates[0];
     assert!(candidate.compatible);
@@ -680,8 +701,14 @@ fn incompatible_provider_is_rejected_before_invocation_with_retained_evidence() 
         outcome.evidence().result,
         ResolutionResult::NoCompatibleProvider
     );
-    assert!(outcome.evidence().selected_extension_ids.is_empty());
-    assert!(outcome.evidence().fallback_order.is_empty());
+    assert_eq!(
+        outcome.evidence().selected_extension_ids,
+        [] as [std::string::String; 0]
+    );
+    assert_eq!(
+        outcome.evidence().fallback_order,
+        [] as [std::string::String; 0]
+    );
     assert_eq!(outcome.evidence().candidates.len(), 1);
     let candidate = &outcome.evidence().candidates[0];
     assert!(!candidate.compatible);
@@ -756,7 +783,10 @@ fn warning_and_partial_results_remain_semantically_distinct() {
     assert_eq!(partial_events, partial_execution.events());
     assert_eq!(partial_execution.result().outcome, flow::Outcome::Produced);
     assert!(partial_execution.result().partial_result);
-    assert!(partial_execution.result().diagnostics.is_empty());
+    assert_eq!(
+        partial_execution.result().diagnostics,
+        [] as [flow::Diagnostic; 0]
+    );
     let partial_observed = observe_artifacts(
         &partial_fixture.root.path().join(WORKSPACE_LOCATOR),
         &partial_fixture.bindings,
@@ -985,7 +1015,7 @@ fn corrupt_artifact_evidence_never_promotes_execution() {
         } => {
             assert_eq!(message, "result.provenance[2].value: must not be empty");
             assert_eq!(retained_events.len(), 3);
-            assert!(result.provenance[2].value.is_empty());
+            assert_eq!(result.provenance[2].value, "");
         }
         other => panic!("unexpected corrupt-artifact-evidence error: {other:?}"),
     }
@@ -1016,7 +1046,10 @@ fn contradictory_artifact_evidence_fails_exact_acceptance() {
     .unwrap();
 
     assert_eq!(events, execution.events());
-    assert!(execution.events()[1].artifact_refs.is_empty());
+    assert_eq!(
+        execution.events()[1].artifact_refs,
+        [] as [std::string::String; 0]
+    );
     assert_eq!(
         execution.result().produced_artifacts,
         [fixture.bindings.outputs[0].artifact_id.as_str()]
@@ -1353,7 +1386,7 @@ fn stdout_and_stderr_overflow_retain_only_the_limit_sentinel() {
                 && observed_limit == limit
                 && observed == limit + 1
         ));
-        assert!(events.is_empty());
+        assert_eq!(events, [] as [flow::ExtensionEvent; 0]);
         assert!(!fixture.output_path().exists());
         fixture.assert_subjects_unchanged(&prepared);
         fixture.assert_immutable_workspace_bytes(&immutable_before);
@@ -1388,7 +1421,7 @@ fn timeout_and_readiness_gated_cancellation_reap_the_direct_child() {
         cancellation_error,
         ProcessRunnerError::Cancelled { forced: false }
     ));
-    assert!(cancellation_events.is_empty());
+    assert_eq!(cancellation_events, [] as [flow::ExtensionEvent; 0]);
     assert!(cancellation_control.is_file());
     assert_recorded_process_reaped(&cancellation_control);
     assert!(!cancellation_fixture.output_path().exists());
@@ -1417,7 +1450,7 @@ fn timeout_and_readiness_gated_cancellation_reap_the_direct_child() {
             forced: false,
         }
     ));
-    assert!(timeout_events.is_empty());
+    assert_eq!(timeout_events, [] as [flow::ExtensionEvent; 0]);
     assert!(timeout_control.is_file());
     assert_recorded_process_reaped(&timeout_control);
     assert!(!timeout_fixture.output_path().exists());
@@ -1552,7 +1585,7 @@ impl CompositionFixture {
     fn run(&self) -> CompositionRunEvidence {
         let inspect_spec = self.spec.stages[0];
         assert_eq!(inspect_spec.stage_id, "inspect");
-        assert!(inspect_spec.depends_on.is_empty());
+        assert_eq!(inspect_spec.depends_on, []);
         assert_eq!(inspect_spec.consumes, [INPUT_ID]);
         let inspect_input = CompositionInput {
             artifact_id: INPUT_ID.to_owned(),
@@ -1868,7 +1901,7 @@ fn assert_composition_fixture(
             .collect::<Vec<_>>(),
         ["inspect", "transform"]
     );
-    assert!(first.stages[0].depends_on.is_empty());
+    assert_eq!(first.stages[0].depends_on, [] as [std::string::String; 0]);
     assert_eq!(first.stages[1].depends_on, ["inspect"]);
     assert_eq!(
         first.stages[0].accepted.outputs()[0],
@@ -2312,7 +2345,7 @@ impl KitFixture {
         .unwrap();
         assert_eq!(events, execution.events());
         assert_eq!(execution.result().outcome, flow::Outcome::Produced);
-        assert!(execution.result().diagnostics.is_empty());
+        assert_eq!(execution.result().diagnostics, [] as [flow::Diagnostic; 0]);
         assert_eq!(
             execution
                 .events()
@@ -2325,12 +2358,18 @@ impl KitFixture {
                 (2, EventKind::PhaseCompleted, EventState::Produced),
             ]
         );
-        assert!(execution.events()[0].artifact_refs.is_empty());
+        assert_eq!(
+            execution.events()[0].artifact_refs,
+            [] as [std::string::String; 0]
+        );
         assert_eq!(
             execution.events()[1].artifact_refs,
             [self.bindings.outputs[0].artifact_id.as_str()]
         );
-        assert!(execution.events()[2].artifact_refs.is_empty());
+        assert_eq!(
+            execution.events()[2].artifact_refs,
+            [] as [std::string::String; 0]
+        );
         assert_eq!(execution.result().consumed_artifacts, [INPUT_ID]);
         assert_eq!(
             execution.result().produced_artifacts,
