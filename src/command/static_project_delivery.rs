@@ -26,18 +26,27 @@ pub(super) fn execute(
                 .map(Some)
             }
         }
-        "publication-project-status" => {
+        "publication-project-status" | "publication-project-catalog" => {
             let sha = args
                 .options
                 .get("--record-sha256")
                 .and_then(|s| s.to_str())
                 .ok_or_else(|| error(Code::Usage, "exact static project record digest required"))?;
-            success(
-                &args.command,
-                static_project::status(&path(args, "--workspace")?, sha, token)?,
-                Outcome::Partial,
-            )
-            .map(Some)
+            if args.command == "publication-project-catalog" {
+                success(
+                    &args.command,
+                    static_project::artifact_catalog(&path(args, "--workspace")?, sha, token)?,
+                    Outcome::Partial,
+                )
+                .map(Some)
+            } else {
+                success(
+                    &args.command,
+                    static_project::status(&path(args, "--workspace")?, sha, token)?,
+                    Outcome::Partial,
+                )
+                .map(Some)
+            }
         }
         _ => Ok(None),
     }

@@ -615,9 +615,182 @@ pub fn status(
         upload_authority: false,
     })
 }
+#[derive(Debug, Serialize)]
+pub struct BranchArtifact {
+    pub branch_id: String,
+    pub declared_locale: String,
+    pub artifact_id: String,
+    pub purpose: String,
+    pub file: FilePin,
+    pub required: bool,
+}
+#[derive(Debug, Serialize)]
+pub struct ArtifactCatalog {
+    pub schema_version: String,
+    pub metadata: pilot::Metadata,
+    pub status: Status,
+    pub artifacts: Vec<BranchArtifact>,
+    pub locale_content_reviewed: bool,
+    pub upload_authority: bool,
+}
+fn correlate_artifacts(
+    branch_id: &str,
+    locale: &str,
+    required: &[String],
+    status: &BranchStatus,
+    inventory: Vec<native::ArtifactDescription>,
+) -> Result<Vec<BranchArtifact>, Error> {
+    let ids = inventory
+        .iter()
+        .map(|a| a.artifact_id.clone())
+        .collect::<Vec<_>>();
+    if branch_id != status.id
+        || locale != status.locale
+        || ids != status.artifact_ids
+        || ids.iter().collect::<BTreeSet<_>>().len() != ids.len()
+        || status.state != "native_accepted" && !inventory.is_empty()
+    {
+        return Err(error(
+            Code::StalePlan,
+            "static artifact inventory differs from observed branch status",
+        ));
+    }
+    Ok(inventory
+        .into_iter()
+        .map(|a| BranchArtifact {
+            branch_id: branch_id.into(),
+            declared_locale: locale.into(),
+            required: required.contains(&a.artifact_id),
+            artifact_id: a.artifact_id,
+            purpose: a.purpose,
+            file: a.file,
+        })
+        .collect())
+}
+/// Exact current output references from existing native owners; declarations
+/// and retained acceptance never substitute for locale/content/publication review.
+pub fn artifact_catalog(
+    root: &Path,
+    expected_record_sha256: &str,
+    token: &dyn CancellationSignal,
+) -> Result<ArtifactCatalog, Error> {
+    let started = Instant::now();
+    let before = status(root, expected_record_sha256, token)?;
+    let record: Record = serde_json::from_slice(&read(&before.record, MAX, token)?)
+        .map_err(|_| error(Code::RecoveryRequired, "closed static record required"))?;
+    let guard = || {
+        token.is_cancelled()
+            || started.elapsed() >= Duration::from_millis(record.project.timeout_ms)
+    };
+    let mut artifacts = vec![];
+    if record.branches.len() != before.branches.len() {
+        return Err(error(
+            Code::StalePlan,
+            "static catalog branch membership changed",
+        ));
+    }
+    for (branch, observed) in record.branches.iter().zip(&before.branches) {
+        if guard() {
+            return Err(error(
+                Code::Cancelled,
+                "static catalog cancelled or deadline exhausted",
+            ));
+        }
+        let inventory = if observed.state == "native_accepted" {
+            native::artifact_inventory(
+                &native::path(&branch.plan.request.run_directory)?,
+                &branch.plan.plan_sha256,
+                &guard,
+            )?
+        } else {
+            vec![]
+        };
+        artifacts.extend(correlate_artifacts(
+            &branch.id,
+            &branch.locale,
+            &branch.required_artifacts,
+            observed,
+            inventory,
+        )?);
+        if artifacts.len() > 4096 {
+            return Err(error(
+                Code::InvalidInput,
+                "static artifact catalog exceeds4096 entries",
+            ));
+        }
+    }
+    let after = status(root, expected_record_sha256, &guard)?;
+    if hash(&before)? != hash(&after)? {
+        return Err(error(
+            Code::StalePlan,
+            "static branch status changed while collecting output references",
+        ));
+    }
+    if guard() {
+        return Err(error(
+            Code::Cancelled,
+            "static catalog cancelled or deadline exhausted",
+        ));
+    }
+    Ok(ArtifactCatalog {
+        schema_version: "flow.static-publication-artifact-catalog/v1".into(),
+        metadata: record.project.metadata,
+        status: after,
+        artifacts,
+        locale_content_reviewed: false,
+        upload_authority: false,
+    })
+}
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn artifact(id: &str) -> native::ArtifactDescription {
+        native::ArtifactDescription {
+            artifact_id: id.into(),
+            purpose: "synthetic_target".into(),
+            file: FilePin {
+                path: NativePath::from_path(Path::new("/synthetic/output.pdf")),
+                sha256: "a".repeat(64),
+                byte_count: 10,
+            },
+        }
+    }
+    #[test]
+    fn catalog_keeps_required_targets_distinct_from_observed_payloads() {
+        let status = BranchStatus {
+            id: "en".into(),
+            locale: "en".into(),
+            state: "native_accepted".into(),
+            artifact_ids: vec!["pdf".into()],
+            missing_required_artifacts: vec!["epub".into()],
+        };
+        let values = correlate_artifacts(
+            "en",
+            "en",
+            &["pdf".into(), "epub".into()],
+            &status,
+            vec![artifact("pdf")],
+        )
+        .unwrap();
+        assert_eq!(values.len(), 1);
+        assert!(values[0].required);
+        assert_eq!(values[0].declared_locale, "en");
+        assert_eq!(status.missing_required_artifacts, vec!["epub"]);
+    }
+    #[test]
+    fn stale_or_orphan_artifact_inventories_cannot_enter_a_locale_catalog() {
+        let mut status = BranchStatus {
+            id: "en".into(),
+            locale: "en".into(),
+            state: "native_accepted".into(),
+            artifact_ids: vec!["pdf".into()],
+            missing_required_artifacts: vec![],
+        };
+        assert!(correlate_artifacts("en", "en", &[], &status, vec![artifact("epub")]).is_err());
+        assert!(correlate_artifacts("en", "fr", &[], &status, vec![artifact("pdf")]).is_err());
+        status.state = "recovery_required".into();
+        assert!(correlate_artifacts("en", "en", &[], &status, vec![artifact("pdf")]).is_err());
+    }
     #[test]
     fn locale_labels_require_default_sources_and_unique_artifact_requirements() {
         let pin = json!({"path":{"encoding":"utf8","value":"/synthetic/page.png"},"sha256":"b".repeat(64),"byte_count":10});

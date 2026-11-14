@@ -97,6 +97,16 @@ tasks:
     cmds:
       - flow ai-setup-status --directory "$FLOW_LOCAL_AI_DIRECTORY" --marker-sha256 "$FLOW_LOCAL_AI_MARKER_SHA256" --format json
 
+  publication:project:catalog:
+    desc: Reobserve private locale branch output references without publishing
+    requires:
+      vars: [WORKSPACE, RECORD_SHA256]
+    env:
+      FLOW_STATIC_CATALOG_WORKSPACE: '{{.WORKSPACE}}'
+      FLOW_STATIC_CATALOG_RECORD: '{{.RECORD_SHA256}}'
+    cmds:
+      - flow publication-project-catalog --workspace "$FLOW_STATIC_CATALOG_WORKSPACE" --record-sha256 "$FLOW_STATIC_CATALOG_RECORD" --format json
+
   publication:project:preview:
     desc: Preview explicit static publication locale/source branches
     requires:

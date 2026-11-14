@@ -64,6 +64,7 @@ pub const COMMANDS: &[&str] = &[
     "ai-setup-status",
     "publication-project-preview",
     "publication-project-prepare",
+    "publication-project-catalog",
     "publication-project-status",
     "project-preview",
     "project-prepare",
@@ -219,7 +220,9 @@ pub fn parse(values: Vec<OsString>) -> Result<Arguments, Error> {
             "ai-doctor" => &["--profile", "--preparation"],
             "ai-setup-status" => &["--directory", "--marker-sha256"],
             "publication-project-preview" | "publication-project-prepare" => &["--project"],
-            "publication-project-status" => &["--workspace", "--record-sha256"],
+            "publication-project-status" | "publication-project-catalog" => {
+                &["--workspace", "--record-sha256"]
+            }
             "publishing-readiness" => &["--request", "--output"],
             "audio-setup-preview" | "audio-setup-prepare" => &["--request"],
             "audio-setup-status" => &["--workspace", "--record-sha256"],
@@ -415,7 +418,9 @@ pub fn parse(values: Vec<OsString>) -> Result<Arguments, Error> {
         "ai-doctor" => &["--profile"],
         "ai-setup-status" => &["--directory", "--marker-sha256"],
         "publication-project-preview" | "publication-project-prepare" => &["--project"],
-        "publication-project-status" => &["--workspace", "--record-sha256"],
+        "publication-project-status" | "publication-project-catalog" => {
+            &["--workspace", "--record-sha256"]
+        }
         "publishing-readiness" => &["--request"],
         "audio-setup-preview" | "audio-setup-prepare" => &["--request"],
         "audio-setup-status" => &["--workspace", "--record-sha256"],

@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.48.0
+version: 0.49.0
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,15 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Static publication artifact catalog
+
+The static project owner joins fresh retained branch status with the existing
+native artifact inventory to expose exact output files, target IDs, declared
+locale branches and required/optional selection. Status is reobserved before
+returning the catalog; missing branches and stale membership cannot be hidden.
+This is private read-only coordination metadata. It performs no conversion,
+translation review, content approval, packaging, release admission or publication.
 
 ## Requested release coverage
 
