@@ -61,6 +61,8 @@ for (const id of ['search', 'family']) $(id).addEventListener('input', render);
 $('reset').addEventListener('click', () => { catalogs.clear(); reports.clear(); manifests.clear(); clearWorkflows(); $('files').value = ''; render(); $('status').textContent = 'Loaded data cleared from this page.'; });
 function details(title, value, parent) { const detail = node('details', undefined, parent); node('summary', title, detail); json(value, detail); }
 function render() {
+  const hadLinkedCase = Boolean($('cases').querySelector('.linked-case'));
+  const focusedCase = document.activeElement?.closest('.linked-case')?.id;
   $('catalogs').replaceChildren(); $('cases').replaceChildren(); $('manifests').replaceChildren();
   const rows = [...catalogs.values()].flatMap(c => c.rows);
   let linked = {state: 'none'};
@@ -112,11 +114,11 @@ function render() {
     node('p', `Raw example SHA-256: ${item.rawSha256} · ${item.locator}`, article).className = 'identity';
     details('Declared topology, outcome and coverage (not execution)', {stages: item.stages, expected: item.expected, coverage: item.coverage}, article);
   }
-  if (linked.state === 'selected' && focusedLink !== location.hash) {
+  if (linked.state === 'selected' && (!hadLinkedCase || focusedLink !== location.hash || focusedCase)) {
     const selected = document.getElementById(`scenario-${linked.row.kind}-${linked.row.id}`);
     if (selected) { focusedLink = location.hash; selected.focus({preventScroll: true}); selected.scrollIntoView({block: 'start', behavior: 'auto'}); }
   }
 }
 window.addEventListener('hashchange', () => { focusedLink = null; render(); });
-$('clear-link').addEventListener('click', () => { history.replaceState(null, '', location.pathname + location.search); focusedLink = null; render(); });
+$('clear-link').addEventListener('click', () => { history.replaceState(null, '', location.pathname + location.search); focusedLink = null; render(); $('search').focus(); });
 render();

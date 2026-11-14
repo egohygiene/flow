@@ -1,0 +1,183 @@
+{
+  "schema": "flow.scenario-browser-proof/v1",
+  "state": "failed",
+  "claim_scope": "local_browser_presentation_only",
+  "product_qualified": false,
+  "native_provider_qualified": false,
+  "publication_performed": false,
+  "synthetic_report_fixtures": true,
+  "source_identity": {
+    "algorithm": "sha256",
+    "digest": "43d53e33d829570fe688cfaedfe07001f7df00511612b183be4e7e00fd81cbe3",
+    "files": [
+      {
+        "path": "contracts/examples/scenario-manifest.v1.example.json",
+        "bytes": 3625,
+        "sha256": "039cbcb0774b06da2d8098d46ebacd1e21bdab175c0d169fdc14e334ea052dd7"
+      },
+      {
+        "path": "contracts/fixtures/scenarios/canonical-digests.v1.json",
+        "bytes": 945,
+        "sha256": "ce90eb908a5ceccc8a13a6ba32c8ca502746c5a5dbb12eaa07791b7463d0cbed"
+      },
+      {
+        "path": "contracts/fixtures/scenarios/interrupted.v1.fixture.json",
+        "bytes": 3746,
+        "sha256": "2e0fe2cb20ffca7ae9592bae6658963a3310a4246dffe6eb336e5d76b5181b11"
+      },
+      {
+        "path": "contracts/fixtures/scenarios/multi-provider.v1.fixture.json",
+        "bytes": 5225,
+        "sha256": "cd3fa4119811f2aceceb08ef2e0615a0d73feca82e605812b570b7f5329eb542"
+      },
+      {
+        "path": "contracts/fixtures/scenarios/observed-empty.v1.fixture.json",
+        "bytes": 3469,
+        "sha256": "33c75cbf3f8fc8e361f01d3fc14cf904f145f69e6cc120cb41841f0f94ad67eb"
+      },
+      {
+        "path": "contracts/fixtures/scenarios/unavailable.v1.fixture.json",
+        "bytes": 3707,
+        "sha256": "877d6bba5657ff4f74983d27d323567838fc01753f9600f9c38b9106912718ad"
+      },
+      {
+        "path": "docs/integrations/showcase/explanations.mjs",
+        "bytes": 3492,
+        "sha256": "c6690aed06d19f1f357dbe371293d7d741102695747ece448e492cee58bd9a59"
+      },
+      {
+        "path": "docs/integrations/showcase/index.html",
+        "bytes": 3340,
+        "sha256": "48e47c5d5d78f57c2949ef6e6e9ac91a60593f27ef679601f9292072fa7f43c3"
+      },
+      {
+        "path": "docs/integrations/showcase/model.mjs",
+        "bytes": 7479,
+        "sha256": "6a4a03538a404430996414a5499c2866bbdf8eeee5e066f907147205ee4b1c1d"
+      },
+      {
+        "path": "docs/integrations/showcase/style.css",
+        "bytes": 1350,
+        "sha256": "6001f3eaae7dda50347216187a8db30e86195f10b2959f2dedcc6302431e0394"
+      },
+      {
+        "path": "docs/integrations/showcase/view.mjs",
+        "bytes": 9928,
+        "sha256": "8b4128a24f8f30e3c10d8820c88d453047be83b86ab88108985283bb6d4d3025"
+      },
+      {
+        "path": "docs/integrations/showcase/workflow-view.mjs",
+        "bytes": 2185,
+        "sha256": "cfdc7289e17b5030795fd9b71e8599c99b1efa2a718a75860e445cecc72b4552"
+      },
+      {
+        "path": "docs/integrations/showcase/workflows.json",
+        "bytes": 11843,
+        "sha256": "f618e33bcd8c827fcc144f8df77520934ce1902fadcd47e48373069f83022dbe"
+      },
+      {
+        "path": "docs/integrations/showcase/workflows.mjs",
+        "bytes": 3431,
+        "sha256": "dd8633fcce7eed85677f158b44d29179c9324a15cfc56c35c97ad269a9f03fc3"
+      },
+      {
+        "path": "docs/integrations/showcase/workflows.schema.json",
+        "bytes": 2070,
+        "sha256": "22b57c089eeeb83d381521f162c99b661f87d2815d4858805b6f650ad2c90418"
+      },
+      {
+        "path": "tests/fixtures/acceptance-scenarios.v1.json",
+        "bytes": 29203,
+        "sha256": "c21d52bf5ea26abd449d10278c433bfcb74615791a04d5fcde09900d358153a8"
+      },
+      {
+        "path": "tests/fixtures/lifecycle-scenarios.v1.json",
+        "bytes": 212247,
+        "sha256": "a025cf67b28ce1d636b18e54f344635cd706b7114d9685ca2e286f6b05d22107"
+      },
+      {
+        "path": "tools/prove_scenario_browser.mjs",
+        "bytes": 15773,
+        "sha256": "b97bdd1e7022bc924f78e49eefae63617e069881b79f7ffdcfc331e555d540b5"
+      }
+    ]
+  },
+  "observed_counts": {
+    "acceptance": 81,
+    "lifecycle": 49,
+    "manifest_examples": 5,
+    "publishing_guides": 6
+  },
+  "checks": [
+    {
+      "id": "initial_unavailable_and_explicit_keyboard_load",
+      "state": "passed"
+    },
+    {
+      "id": "canonical_ids_and_refusal_explanation",
+      "state": "passed"
+    },
+    {
+      "id": "keyboard_search_family_and_link_navigation",
+      "state": "passed"
+    },
+    {
+      "id": "deep_link_focus_survives_all_catalog_and_manifest_renders",
+      "state": "passed"
+    },
+    {
+      "id": "matching_synthetic_report_stays_unconfirmed",
+      "state": "passed"
+    },
+    {
+      "id": "different_catalog_report_is_mismatched",
+      "state": "passed"
+    },
+    {
+      "id": "incomplete_report_stays_incomplete",
+      "state": "passed"
+    },
+    {
+      "id": "conflicting_report_stays_conflicting",
+      "state": "passed"
+    },
+    {
+      "id": "invalid_selected_file_refuses_without_network_or_view_loss",
+      "state": "passed"
+    },
+    {
+      "id": "publishing_guides_keep_separate_source_counts",
+      "state": "passed"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "desktop-unconfirmed.png",
+      "bytes": 97676,
+      "sha256": "d1ed5fd8f7c7bce2137048d6e6ffadf655399f117eb93fe2147754d8e3f667ee"
+    },
+    {
+      "path": "failed-view.png",
+      "bytes": 45329,
+      "sha256": "719ae4acae1b3759073d194a228416053d527482dc64bde885eab30f1b1cef38"
+    }
+  ],
+  "browser": {
+    "engine": "Chromium",
+    "version": "151.0.7922.173",
+    "headless": true,
+    "playwright_version": "1.62.1"
+  },
+  "failure": "{\"width\":360,\"scroll_width\":575,\"overflow\":[]}",
+  "remaining": [
+    "Other browser engines and assistive technologies",
+    "Published Pages/deployment behavior",
+    "Actual source/native report qualification, provider execution and full Flow #88 acceptance"
+  ],
+  "network": {
+    "requests": 39,
+    "all_same_origin_get": true,
+    "blocked_requests": 0,
+    "page_errors": 0
+  }
+}

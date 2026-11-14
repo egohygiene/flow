@@ -30,7 +30,9 @@ A linked recipe remains visible alongside filter matches, has a text marker
 and keyboard/screen-reader focus, and can be cleared without changing loaded
 evidence. Fragment selection never changes expected outcomes or turns supplied
 report claims into current verification. Three focused link/refusal regressions
-are authored, unrun; no browser, documentation tool or provider was executed.
+are included in the executed local model suite. The local browser walkthrough
+also checks focus through successive catalog renders and back to search when
+clearing the link. This does not establish provider execution.
 
 ## Publishing workflow source guides
 
@@ -52,10 +54,11 @@ duplicate IDs, traversing source references and nonallowlisted links. Values are
 rendered as text nodes; source links are not fetched automatically. The existing
 same-origin/no-upload CSP, bounded reads and local report states remain intact.
 
-Three source-guide model cases are authored, uncompiled/unrun. No browser,
-Node/test/build/dependency/schema/docs/drift/product/native/provider/SDK/CLI or CI
-execution occurred. Rendering/accessibility qualification stays deferred to #88;
-there is no new paid CI, runtime engine, telemetry or publication authority.
+The three source-guide model cases passed locally alongside the nine scenario
+model cases. A headless Chromium walkthrough loaded and searched the guides,
+kept their counts separate and checked a 360-pixel viewport. Broader browser and
+assistive-technology qualification stays with #88; this adds no paid CI, runtime
+engine, telemetry or publication authority.
 
 The [scenario showcase](showcase/index.html) is a local, read-only documentation
 browser for the current synthetic catalogs and indexed contract examples. Search
@@ -65,8 +68,9 @@ families, and expand expected typed traces without opening Rust source.
 IDs and counts come directly from the selected canonical JSON. No duplicated
 scenario registry or frozen total is maintained by the page. Loading source
 recipes does not run tests, launch providers, build the suite or produce evidence.
-The showcase source is authored and unqualified; browser/model checks and full
-documentation qualification are deferred to [flow #88](https://github.com/egohygiene/flow/issues/88).
+The [local browser receipt](../work/62/BROWSER-OBSERVATIONS.md) records the bounded
+model, source-drift and actual Chromium checks. Full suite qualification remains
+with [flow #88](https://github.com/egohygiene/flow/issues/88).
 
 ## Open a local checkout
 
@@ -75,10 +79,10 @@ tooling already used by Flow. This is an explicit local viewer command, not a
 product Flow CLI or test command; it is not run by opening the Markdown.
 
 ```console
-python3 -m http.server 8000 --bind 127.0.0.1 --directory .
+python3 -m http.server 8763 --bind 127.0.0.1 --directory .
 ```
 
-Open <http://127.0.0.1:8000/docs/integrations/showcase/> in a modern browser and
+Open <http://127.0.0.1:8763/docs/integrations/showcase/> in a modern browser and
 choose **Load repository catalogs**. The page fetches only these same-origin
 source files after that explicit action:
 
@@ -159,15 +163,40 @@ a generated copy or refreshed count. Unknown catalog/report versions refuse.
 The contract-example index supplies only examples that it explicitly names;
 its declared canonical digests remain distinct from raw file hashes shown here.
 
-The optional pure model regression command, for a later authorized check session
-with Node already available, is:
+With Node and Python already available, the local model and deterministic source
+checks are:
 
 ```console
-node --test tools/test_scenario_showcase.mjs
+node --test tools/test_scenario_showcase.mjs tools/test_workflow_guides.mjs
+python3 -B tools/generate_scenario_sources.py --check
 ```
 
-Three focused tests are authored, uncompiled/unrun; no browser, generator,
-validator, provider or CI check was executed for this checkpoint. No Node
-dependency or CI workflow is added. Later qualification should exercise keyboard
-navigation, narrow screens, source catalog changes, missing/mismatched/partial
-reports and text-only rendering alongside the existing native validators.
+The optional actual-browser replay uses an existing Playwright installation and
+native Chromium executable. It neither installs dependencies nor changes the
+viewer. Start the server above, then select an existing output parent outside
+the checkout and a fresh output directory:
+
+```console
+node tools/prove_scenario_browser.mjs \
+  --url http://127.0.0.1:8763/docs/integrations/showcase/ \
+  --chromium /path/to/chromium \
+  --output /path/to/existing-parent/fresh-browser-proof
+```
+
+If Playwright is installed outside Node's normal module search path, supply
+`--playwright-module /path/to/playwright`. The replay requires the exact local
+viewer path, allows only same-origin GET requests and refuses an existing output
+directory. It checks canonical IDs and rendered expectations, keyboard links and
+details, narrow layout, source-guide separation and synthetic report states.
+It hashes the browser executable and compares actual served source bodies with
+the selected checkout; equal recipe counts alone are insufficient. The JSON
+receipt and viewport screenshots contain only these public fixtures and browser
+observations. Selected report fixtures are synthetic presentation inputs and
+cannot establish execution, freshness or provider qualification.
+
+The recorded run passed 12 model cases, five deterministic source recipes and
+16 Chromium presentation checks. Other browser engines, assistive technologies,
+deployed Pages behavior and actual native/provider report qualification remain
+unproved. No CI workflow, frontend dependency or publication is added. Earlier
+source-only receipts under `docs/work/62/` remain historical records of checks
+that had not yet run.

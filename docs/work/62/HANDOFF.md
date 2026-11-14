@@ -1,5 +1,9 @@
 # Scenario showcase source checkpoint
 
+Current local browser/source observations are recorded in
+[BROWSER-OBSERVATIONS.md](BROWSER-OBSERVATIONS.md). The source-only account below
+is preserved as history.
+
 Approved source batch, November 8, 2026 (America/New_York). Base main
 3db95853c3730865a5bea47034cb997b3f69fdd7; branch
 codex/62-scenario-showcase-20261108. #28/#30 were observed closed before work.
