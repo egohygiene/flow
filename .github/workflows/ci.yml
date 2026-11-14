@@ -10,8 +10,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: false
+
 jobs:
   rust:
+    timeout-minutes: 30
+    if: >-
+      (github.event_name == 'workflow_dispatch' || vars.FLOW_SUITE_HOSTED_CI == 'enabled') && (github.event_name != 'schedule' || vars.FLOW_SUITE_SCHEDULED_CI == 'enabled')
     name: Rust ${{ matrix.toolchain }}
     runs-on: ubuntu-latest
     env:
@@ -77,6 +84,9 @@ jobs:
         run: cargo package --locked
 
   repository-validators:
+    timeout-minutes: 30
+    if: >-
+      (github.event_name == 'workflow_dispatch' || vars.FLOW_SUITE_HOSTED_CI == 'enabled') && (github.event_name != 'schedule' || vars.FLOW_SUITE_SCHEDULED_CI == 'enabled')
     name: Repository validators
     runs-on: ubuntu-latest
     steps:
@@ -119,6 +129,8 @@ jobs:
         run: python3 .agents/agents/validate-agents.py
 
   durable-portability:
+    if: >-
+      (github.event_name == 'workflow_dispatch' || vars.FLOW_SUITE_HOSTED_CI == 'enabled') && (github.event_name != 'schedule' || vars.FLOW_SUITE_SCHEDULED_CI == 'enabled')
     name: Durable state ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
