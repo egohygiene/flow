@@ -1,5 +1,6 @@
 //! One publishing project over selected installed interfaces and existing native
 //! configuration owners. Preview is read-only; prepare writes a fresh bundle.
+pub mod preset;
 use crate::{
     CancellationSignal,
     command::{self, Code, Error},

@@ -5,6 +5,29 @@ pub(super) fn execute(
     args: &Arguments,
     token: &dyn CancellationSignal,
 ) -> Result<Option<Envelope>, Error> {
+    if args.command == "project-resolve" {
+        let preset_path = path(args, "--preset")?;
+        let selection_path = path(args, "--selection")?;
+        let preset_bytes = read_document(&preset_path, 131_072)?;
+        let selection_bytes = read_document(&selection_path, 131_072)?;
+        let preset = project::preset::Preset::from_json_slice(&preset_bytes)?;
+        let selection = project::preset::Selection::from_json_slice(&selection_bytes)?;
+        let resolution = project::preset::resolve(&preset, &selection)?;
+        if read_document(&preset_path, 131_072)? != preset_bytes
+            || read_document(&selection_path, 131_072)? != selection_bytes
+        {
+            return Err(error(
+                Code::StalePlan,
+                "preset or project selection changed during resolution",
+            ));
+        }
+        cancelled(token)?;
+        let output = path(args, "--output")?;
+        write_document(&output, &resolution.project)?;
+        let file =
+            crate::native::FilePin::observe(&NativePath::from_path(&output), 131_072, token)?;
+        return success(&args.command,serde_json::json!({"schema_version":"flow.publishing-project-resolution-command/v1","resolution":resolution,"project_file":file}),Outcome::Complete).map(Some);
+    }
     if args.command == "project-status" {
         let sha = args
             .options

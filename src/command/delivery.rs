@@ -66,6 +66,7 @@ pub const COMMANDS: &[&str] = &[
     "publication-project-prepare",
     "publication-project-catalog",
     "publication-project-status",
+    "project-resolve",
     "project-preview",
     "project-prepare",
     "project-status",
@@ -276,6 +277,7 @@ pub fn parse(values: Vec<OsString>) -> Result<Arguments, Error> {
                 "--verifier-executable",
                 "--verifier-sha256",
             ],
+            "project-resolve" => &["--preset", "--selection", "--output"],
             "project-preview" | "project-prepare" => &["--project"],
             "project-status" => &["--workspace", "--record-sha256"],
             "publisher-verify" => &[
@@ -464,6 +466,7 @@ pub fn parse(values: Vec<OsString>) -> Result<Arguments, Error> {
             "--verifier-executable",
             "--verifier-sha256",
         ],
+        "project-resolve" => &["--preset", "--selection", "--output"],
         "project-preview" | "project-prepare" => &["--project"],
         "project-status" => &["--workspace", "--record-sha256"],
         "publisher-verify" => &[

@@ -1,0 +1,35 @@
+{
+  "schema_version": "flow.publishing-project-preset/v1",
+  "preset_id": "manual-amv",
+  "installation": {
+    "root": {
+      "encoding": "utf8",
+      "value": "/absolute/private/suite"
+    },
+    "receipt_sha256": "REPLACE_WITH_EXACT_INSTALLATION_RECEIPT_SHA256"
+  },
+  "video_configuration": {
+    "encoding": "utf8",
+    "value": "/absolute/private/aniflow-source-recipe.json"
+  },
+  "destinations": [
+    "archive",
+    "soundcloud",
+    "distrokid",
+    "tiktok"
+  ],
+  "tool_directories": [],
+  "limits": {
+    "timeout_ms": 3600000,
+    "max_input_bytes": 8589934592,
+    "max_output_bytes": 8589934592,
+    "max_total_output_bytes": 17179869184,
+    "max_artifacts": 256
+  },
+  "rows": {
+    "video": null,
+    "timed_text": null,
+    "audio": null
+  },
+  "preparation": null
+}
