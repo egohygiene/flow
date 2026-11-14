@@ -1,5 +1,5 @@
 //! Compiled release interfaces; no provider/filesystem/environment observation.
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 pub const RELEASE_CONTRACT_V1: &str = "flow.release-contract/v1";
 pub fn describe() -> Value {
@@ -12,13 +12,8 @@ pub fn describe() -> Value {
         "contracts":[
             pin("flow.publishing-project-preset/v1",include_bytes!("../schemas/publishing-project-preset-v1.schema.json")),
             pin("flow.publishing-project-selection/v1",include_bytes!("../schemas/publishing-project-selection-v1.schema.json")),
-            pin("flow.diagnostics-request/v1",include_bytes!("../schemas/diagnostics-request-v1.schema.json")),
-            pin("flow.diagnostics-bundle/v1",include_bytes!("../schemas/diagnostics-bundle-v1.schema.json")),
-            pin("flow.diagnostics-preview/v1",include_bytes!("../schemas/diagnostics-preview-v1.schema.json")),
-            pin("flow.diagnostics-inspection/v1",include_bytes!("../schemas/diagnostics-inspection-v1.schema.json")),
             pin("flow.release-coverage-request/v1",include_bytes!("../schemas/release-coverage-request-v1.schema.json")),
             pin("flow.release-coverage/v1",include_bytes!("../schemas/release-coverage-v1.schema.json")),
-            pin("flow.observability-health/v1",include_bytes!("../schemas/observability-health-v1.schema.json")),
             pin("flow.command-result/v1",include_bytes!("../schemas/command-result-v1.schema.json")),
             pin("flow.release-cohort/v1",include_bytes!("../schemas/flow-release-cohort-v1.schema.json")),
             pin("flow.release-matrix/v1",include_bytes!("../schemas/flow-release-matrix-v1.schema.json")),

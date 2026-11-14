@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.52.0
+version: 0.50.0
 status: draft
 owners:
   - egohygiene
@@ -40,24 +40,6 @@ returning the catalog; missing branches and stale membership cannot be hidden.
 This is private read-only coordination metadata. It performs no conversion,
 translation review, content approval, packaging, release admission or publication.
 
-## Diagnostic command delivery
-
-Explicit support-preview/bundle/inspection commands delegate to the diagnostics
-SDK with the existing closed argv and single-result envelope. Local creation
-requires a destination; preview/inspection accept no approval, network or provider
-options. Observability doctor describes the unimplemented Flow-owned signal
-surface and unknown collector/queue health without probing services. These
-operational results cannot become domain evidence or change run/resume decisions.
-
-## Generated support metadata
-
-The diagnostics owner can preview, write and inspect a bounded local JSON
-support container from explicitly selected generated metadata categories.
-It accepts no source paths, raw logs, content or arbitrary attachments. Static
-member names, typed payloads and per-member digests make inspection independent
-of archive extraction. A bundle is untrusted support material, never execution,
-qualification, provenance or upload authority. Broader telemetry remains separate.
-
 ## Requested release coverage
 
 A separate coverage request enumerates the tool/interface/target/profile rows
@@ -91,6 +73,25 @@ Hard-link aliases and changed subjects cannot become prepared assets. Portable
 reports retain fixed reasons without paths or native errors. Byte preparation
 still grants no runtime/model/offline qualification or inference authority;
 platforms without the required identity observation remain unavailable.
+
+## Federated support diagnostics
+
+The diagnostics contract defines a metadata-only support profile for each
+independently built CLI. Product-owned adapters use existing hashes and guarded
+file I/O; the shared schema and conformance cases do not introduce a sibling
+dependency or a shared observability implementation. Generated health states
+describe compiled support and explicitly unknown runtime measurements. No
+collector, raw-log reader, global subscriber, upload or domain evidence is
+created by diagnostics. Unsupported exporter/host capabilities remain visible.
+
+## Canonical scenario explanations
+
+The local documentation viewer derives explanatory titles, setup descriptions
+and expected decisions from each loaded canonical scenario ID and declaration.
+Catalog families own reusable explanatory vocabulary; no second scenario/count
+inventory is maintained. Catalog-qualified links and explicit evidence states
+keep navigation, authored expectations and recorded execution claims separate.
+Loading or explaining a recipe executes no provider, report or test.
 
 ## Adjusted native delivery selections
 

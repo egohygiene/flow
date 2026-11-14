@@ -735,7 +735,10 @@ impl OptiflowReadOnlyAdapter {
 
     /// Observe only explicit local bytes and the fixed release/host mapping.
     /// No version command, installation or native operation is performed.
-    pub fn observe_release(executable: &Path, cancellation: &dyn crate::CancellationSignal) -> Result<ProviderIdentity, AdapterError> {
+    pub fn observe_release(
+        executable: &Path,
+        cancellation: &dyn crate::CancellationSignal,
+    ) -> Result<ProviderIdentity, AdapterError> {
         check_cancelled(cancellation)?;
         let target = match (std::env::consts::ARCH, std::env::consts::OS) {
             ("x86_64", "linux") => "x86_64-unknown-linux-gnu",
@@ -743,26 +746,60 @@ impl OptiflowReadOnlyAdapter {
             ("aarch64", "macos") => "aarch64-apple-darwin",
             _ => return Err(AdapterError::Incompatible),
         };
-        let profile = RELEASE_PROFILES.iter().find(|p| p.target == target).ok_or(AdapterError::Incompatible)?;
-        if !executable.is_absolute() || executable.canonicalize().ok().as_deref()!=Some(executable) { return Err(AdapterError::Incompatible); }
-        let before=fs::symlink_metadata(executable).map_err(|_| AdapterError::Unavailable)?;
-        if !before.is_file() || before.file_type().is_symlink() || before.len()>536_870_912 {
+        let profile = RELEASE_PROFILES
+            .iter()
+            .find(|p| p.target == target)
+            .ok_or(AdapterError::Incompatible)?;
+        if !executable.is_absolute()
+            || executable.canonicalize().ok().as_deref() != Some(executable)
+        {
             return Err(AdapterError::Incompatible);
         }
-        if sha256_file_with_cancellation(executable,536_870_912,cancellation)? != profile.executable_sha256 {
+        let before = fs::symlink_metadata(executable).map_err(|_| AdapterError::Unavailable)?;
+        if !before.is_file() || before.file_type().is_symlink() || before.len() > 536_870_912 {
+            return Err(AdapterError::Incompatible);
+        }
+        if sha256_file_with_cancellation(executable, 536_870_912, cancellation)?
+            != profile.executable_sha256
+        {
             return Err(AdapterError::Incompatible);
         }
         check_cancelled(cancellation)?;
-        Ok(ProviderIdentity { version:PROVIDER_VERSION.to_owned(),source_revision:PROVIDER_SOURCE_REVISION.to_owned(),target:target.to_owned(),archive_sha256:profile.archive_sha256.to_owned(),executable_sha256:profile.executable_sha256.to_owned(),interface:COMMAND_RESULT_SCHEMA.to_owned() })
+        Ok(ProviderIdentity {
+            version: PROVIDER_VERSION.to_owned(),
+            source_revision: PROVIDER_SOURCE_REVISION.to_owned(),
+            target: target.to_owned(),
+            archive_sha256: profile.archive_sha256.to_owned(),
+            executable_sha256: profile.executable_sha256.to_owned(),
+            interface: COMMAND_RESULT_SCHEMA.to_owned(),
+        })
     }
 
     /// Existing exact native version probe with caller-owned cancellation.
-    pub fn probe_with_cancellation(executable:&Path,cancellation:&dyn crate::CancellationSignal)->Result<Self,AdapterError> {
-        let identity=Self::observe_release(executable,cancellation)?;
-        let version=capture_with_cancellation(executable,&[OsString::from("--version")],SHORT_DEADLINE,cancellation)?;
-        if version.code!=Some(0)||version.stdout!=b"optiflow 0.1.1\n"||!version.stderr.is_empty(){return Err(AdapterError::Incompatible);}
-        if Self::observe_release(executable,cancellation)?!=identity{return Err(AdapterError::Incompatible);}
-        Ok(Self {executable:executable.to_owned(),identity})
+    pub fn probe_with_cancellation(
+        executable: &Path,
+        cancellation: &dyn crate::CancellationSignal,
+    ) -> Result<Self, AdapterError> {
+        let identity = Self::observe_release(executable, cancellation)?;
+        let version = capture_with_cancellation(
+            executable,
+            &[OsString::from("--version")],
+            SHORT_DEADLINE,
+            cancellation,
+        )?;
+        if version.code != Some(0)
+            || version.stdout != b"optiflow 0.1.1\n"
+            || !version.stderr.is_empty()
+        {
+            return Err(AdapterError::Incompatible);
+        }
+        if Self::observe_release(executable, cancellation)? != identity {
+            return Err(AdapterError::Incompatible);
+        }
+        Ok(Self {
+            executable: executable.to_owned(),
+            identity,
+        })
     }
 
     #[must_use]
@@ -796,11 +833,16 @@ impl OptiflowReadOnlyAdapter {
         source_root: &Path,
         state_directory: &Path,
     ) -> Result<(ReadOnlyReceipt, PathBuf), AdapterError> {
-        self.inspect_with_cancellation(source_root,state_directory,&crate::NeverCancelled)
+        self.inspect_with_cancellation(source_root, state_directory, &crate::NeverCancelled)
     }
 
     /// Same native attempt owner, now with explicit caller cancellation.
-    pub fn inspect_with_cancellation(&self,source_root:&Path,state_directory:&Path,cancellation:&dyn crate::CancellationSignal)->Result<(ReadOnlyReceipt,PathBuf),AdapterError> {
+    pub fn inspect_with_cancellation(
+        &self,
+        source_root: &Path,
+        state_directory: &Path,
+        cancellation: &dyn crate::CancellationSignal,
+    ) -> Result<(ReadOnlyReceipt, PathBuf), AdapterError> {
         check_cancelled(cancellation)?;
         let source = SourceIdentity::observe(source_root)?;
         let root = source.root.path()?;
@@ -855,10 +897,20 @@ impl OptiflowReadOnlyAdapter {
             failure: None,
         };
         persist(&path, &receipt, true)?;
-        let result = self.inspect_steps(&state, &source, &attempt_id, &path, &mut receipt, cancellation);
+        let result = self.inspect_steps(
+            &state,
+            &source,
+            &attempt_id,
+            &path,
+            &mut receipt,
+            cancellation,
+        );
         if let Err(error) = result {
             receipt.status = ReceiptStatus::Refused;
-            receipt.recovery = if matches!(error, AdapterError::Timeout | AdapterError::Cancelled | AdapterError::Io(_)) {
+            receipt.recovery = if matches!(
+                error,
+                AdapterError::Timeout | AdapterError::Cancelled | AdapterError::Io(_)
+            ) {
                 "inspect-provider-state-before-retry".to_owned()
             } else {
                 "no-source-mutation".to_owned()
@@ -1096,7 +1148,9 @@ impl OptiflowReadOnlyAdapter {
         deadline: Duration,
         cancellation: &dyn crate::CancellationSignal,
     ) -> Result<NativeResult, AdapterError> {
-        if sha256_file_with_cancellation(&self.executable, 536_870_912, cancellation)? != self.identity.executable_sha256 {
+        if sha256_file_with_cancellation(&self.executable, 536_870_912, cancellation)?
+            != self.identity.executable_sha256
+        {
             return Err(AdapterError::Incompatible);
         }
         let mut args = vec![
@@ -1516,20 +1570,60 @@ fn sha256(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
 
-fn check_cancelled(cancellation:&dyn crate::CancellationSignal)->Result<(),AdapterError>{if cancellation.is_cancelled(){Err(AdapterError::Cancelled)}else{Ok(())}}
-fn same_regular_file(before:&fs::Metadata,current:&fs::Metadata)->bool {
-    if !current.is_file()||current.file_type().is_symlink()||current.len()!=before.len()||current.modified().ok()!=before.modified().ok(){return false;}
-    #[cfg(unix)] {use std::os::unix::fs::MetadataExt;if current.dev()!=before.dev()||current.ino()!=before.ino()||current.nlink()!=1||current.ctime()!=before.ctime()||current.ctime_nsec()!=before.ctime_nsec(){return false;}}
+fn check_cancelled(cancellation: &dyn crate::CancellationSignal) -> Result<(), AdapterError> {
+    if cancellation.is_cancelled() {
+        Err(AdapterError::Cancelled)
+    } else {
+        Ok(())
+    }
+}
+fn same_regular_file(before: &fs::Metadata, current: &fs::Metadata) -> bool {
+    if !current.is_file()
+        || current.file_type().is_symlink()
+        || current.len() != before.len()
+        || current.modified().ok() != before.modified().ok()
+    {
+        return false;
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        if current.dev() != before.dev()
+            || current.ino() != before.ino()
+            || current.nlink() != 1
+            || current.ctime() != before.ctime()
+            || current.ctime_nsec() != before.ctime_nsec()
+        {
+            return false;
+        }
+    }
     true
 }
-fn sha256_file_with_cancellation(path:&Path,limit:u64,cancellation:&dyn crate::CancellationSignal)->Result<String,AdapterError>{
+fn sha256_file_with_cancellation(
+    path: &Path,
+    limit: u64,
+    cancellation: &dyn crate::CancellationSignal,
+) -> Result<String, AdapterError> {
     check_cancelled(cancellation)?;
-    let before=fs::symlink_metadata(path)?;
-    if !same_regular_file(&before,&before)||before.len()>limit{return Err(AdapterError::InvalidEvidence("bounded regular provider file required"));}
-    let mut options=OpenOptions::new();options.read(true);
-    #[cfg(unix)] {use std::os::unix::fs::OpenOptionsExt;options.custom_flags(nix::libc::O_NOFOLLOW|nix::libc::O_CLOEXEC|nix::libc::O_NONBLOCK);}
-    let mut file=options.open(path)?;
-    if !same_regular_file(&before,&file.metadata()?){return Err(AdapterError::InvalidEvidence("provider file changed while opening"));}
+    let before = fs::symlink_metadata(path)?;
+    if !same_regular_file(&before, &before) || before.len() > limit {
+        return Err(AdapterError::InvalidEvidence(
+            "bounded regular provider file required",
+        ));
+    }
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.custom_flags(nix::libc::O_NOFOLLOW | nix::libc::O_CLOEXEC | nix::libc::O_NONBLOCK);
+    }
+    let mut file = options.open(path)?;
+    if !same_regular_file(&before, &file.metadata()?) {
+        return Err(AdapterError::InvalidEvidence(
+            "provider file changed while opening",
+        ));
+    }
     let mut hash = Sha256::new();
     let mut total = 0_u64;
     let mut chunk = [0_u8; 8192];
@@ -1546,21 +1640,44 @@ fn sha256_file_with_cancellation(path:&Path,limit:u64,cancellation:&dyn crate::C
         hash.update(&chunk[..count]);
     }
     check_cancelled(cancellation)?;
-    if total!=before.len()||!same_regular_file(&before,&file.metadata()?)||!same_regular_file(&before,&fs::symlink_metadata(path)?){return Err(AdapterError::InvalidEvidence("provider file changed during observation"));}
+    if total != before.len()
+        || !same_regular_file(&before, &file.metadata()?)
+        || !same_regular_file(&before, &fs::symlink_metadata(path)?)
+    {
+        return Err(AdapterError::InvalidEvidence(
+            "provider file changed during observation",
+        ));
+    }
     Ok(format!("{:x}", hash.finalize()))
 }
 
 type Captured = crate::runner::NativeCapture;
 
-fn capture_with_cancellation(executable:&Path,args:&[OsString],deadline:Duration,cancellation:&dyn crate::CancellationSignal)->Result<Captured,AdapterError>{
-    crate::runner::capture_native(executable,args,&[],deadline.as_millis().try_into().map_err(|_|AdapterError::Limit("deadline"))?,MAX_STDOUT as u64,MAX_STDERR as u64,cancellation)
-        .map_err(|error|match error {
-            crate::runner::ProcessRunnerError::Cancelled {..}=>AdapterError::Cancelled,
-            crate::runner::ProcessRunnerError::TimedOut {..}=>AdapterError::Timeout,
-            crate::runner::ProcessRunnerError::Launch {..}=>AdapterError::Unavailable,
-            crate::runner::ProcessRunnerError::NativeCaptureLimit=>AdapterError::Limit("output"),
-            _=>AdapterError::InvalidEvidence("native process supervision failed; preserve state"),
-        })
+fn capture_with_cancellation(
+    executable: &Path,
+    args: &[OsString],
+    deadline: Duration,
+    cancellation: &dyn crate::CancellationSignal,
+) -> Result<Captured, AdapterError> {
+    crate::runner::capture_native(
+        executable,
+        args,
+        &[],
+        deadline
+            .as_millis()
+            .try_into()
+            .map_err(|_| AdapterError::Limit("deadline"))?,
+        MAX_STDOUT as u64,
+        MAX_STDERR as u64,
+        cancellation,
+    )
+    .map_err(|error| match error {
+        crate::runner::ProcessRunnerError::Cancelled { .. } => AdapterError::Cancelled,
+        crate::runner::ProcessRunnerError::TimedOut { .. } => AdapterError::Timeout,
+        crate::runner::ProcessRunnerError::Launch { .. } => AdapterError::Unavailable,
+        crate::runner::ProcessRunnerError::NativeCaptureLimit => AdapterError::Limit("output"),
+        _ => AdapterError::InvalidEvidence("native process supervision failed; preserve state"),
+    })
 }
 
 fn persist(path: &Path, receipt: &ReadOnlyReceipt, first: bool) -> Result<(), AdapterError> {
@@ -1601,27 +1718,56 @@ mod tests {
     // Source-review regressions: synthetic bytes only; authored/uncompiled/unrun.
     #[test]
     fn provider_hash_cancellation_precedes_selected_path_access() {
-        let result=super::sha256_file_with_cancellation(std::path::Path::new("/synthetic/absent/provider"),1024,&||true);
-        assert!(matches!(result,Err(AdapterError::Cancelled)));
+        let result = super::sha256_file_with_cancellation(
+            std::path::Path::new("/synthetic/absent/provider"),
+            1024,
+            &|| true,
+        );
+        assert!(matches!(result, Err(AdapterError::Cancelled)));
     }
 
     #[cfg(unix)]
     #[test]
     fn provider_hash_refuses_aliases_and_replacement_during_observation() {
-        use std::{cell::Cell,os::unix::fs::symlink};
-        let suffix=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
-        let root=std::env::temp_dir().join(format!("flow-provider-observation-{}-{suffix}",std::process::id()));
+        use std::{cell::Cell, os::unix::fs::symlink};
+        let suffix = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let root = std::env::temp_dir().join(format!(
+            "flow-provider-observation-{}-{suffix}",
+            std::process::id()
+        ));
         fs::create_dir(&root).unwrap();
-        let selected=root.join("provider.bin");let alias=root.join("alias.bin");let replacement=root.join("replacement.bin");
-        fs::write(&selected,b"original synthetic provider").unwrap();
-        symlink(&selected,&alias).unwrap();
-        assert!(super::sha256_file_with_cancellation(&alias,1024,&crate::NeverCancelled).is_err());
-        fs::remove_file(&alias).unwrap();fs::hard_link(&selected,&alias).unwrap();
-        assert!(super::sha256_file_with_cancellation(&selected,1024,&crate::NeverCancelled).is_err());
-        fs::remove_file(&alias).unwrap();fs::write(&replacement,b"different synthetic provider").unwrap();
-        let calls=Cell::new(0usize);let during_read=||{let current=calls.get();calls.set(current+1);if current==1{fs::rename(&replacement,&selected).unwrap();}false};
-        assert!(super::sha256_file_with_cancellation(&selected,1024,&during_read).is_err());
-        assert_eq!(fs::read(&selected).unwrap(),b"different synthetic provider");
+        let selected = root.join("provider.bin");
+        let alias = root.join("alias.bin");
+        let replacement = root.join("replacement.bin");
+        fs::write(&selected, b"original synthetic provider").unwrap();
+        symlink(&selected, &alias).unwrap();
+        assert!(
+            super::sha256_file_with_cancellation(&alias, 1024, &crate::NeverCancelled).is_err()
+        );
+        fs::remove_file(&alias).unwrap();
+        fs::hard_link(&selected, &alias).unwrap();
+        assert!(
+            super::sha256_file_with_cancellation(&selected, 1024, &crate::NeverCancelled).is_err()
+        );
+        fs::remove_file(&alias).unwrap();
+        fs::write(&replacement, b"different synthetic provider").unwrap();
+        let calls = Cell::new(0usize);
+        let during_read = || {
+            let current = calls.get();
+            calls.set(current + 1);
+            if current == 1 {
+                fs::rename(&replacement, &selected).unwrap();
+            }
+            false
+        };
+        assert!(super::sha256_file_with_cancellation(&selected, 1024, &during_read).is_err());
+        assert_eq!(
+            fs::read(&selected).unwrap(),
+            b"different synthetic provider"
+        );
         fs::remove_dir_all(root).unwrap();
     }
 
