@@ -1,0 +1,160 @@
+{
+  "assets": [
+    {
+      "byte_count": 1068,
+      "kind": "product-license",
+      "name": "LICENSE",
+      "sha256": "1deb55b00af813e1c8f086e851d0e1ed2084ea942a54996f069df05cd0561372"
+    },
+    {
+      "byte_count": 1506,
+      "kind": "dependency-notices",
+      "name": "THIRD_PARTY_NOTICES.txt",
+      "sha256": "7ab6159a96242b209a60bda06fa78915522da99a0039bb443d6f40905cc1478f"
+    },
+    {
+      "byte_count": 806563,
+      "kind": "library-source",
+      "name": "flow-0.1.0-source.tar.gz",
+      "sha256": "16b5ae26b143db7e1b1d9197daf1dc4f8085a752fe2679dfc6de348af37cbd38"
+    },
+    {
+      "byte_count": 8027,
+      "kind": "compiled-contract",
+      "name": "flow-release-contract-v1.json",
+      "sha256": "bc3b58373f19ff8b9bd849e39cc80585676c85177c74cd9dba3b596f26ce5db0"
+    },
+    {
+      "byte_count": 25431,
+      "kind": "spdx-sbom",
+      "name": "flow-sbom.spdx.json",
+      "sha256": "13a304ecb8a56027bbe4a5cf20fb6c6918b719ef67b9f78c755d5db5c115e5d5"
+    },
+    {
+      "byte_count": 6539600,
+      "kind": "cli-binary",
+      "name": "flow-x86_64-unknown-linux-gnu",
+      "sha256": "aa03c1eb6a85316446edbed4d1127deee4e594f8b214d3080d34bac19b998eb4"
+    },
+    {
+      "byte_count": 39959,
+      "kind": "library-source-inventory",
+      "name": "library-source-members.json",
+      "sha256": "d2af0b0440601645f132e07050656f9340281c6faf19acc512ebeaef0ce522fa"
+    },
+    {
+      "byte_count": 2624,
+      "kind": "provider-cohort",
+      "name": "provider-cohort.json",
+      "sha256": "0c3bd1e087e5c2f102519eaccd3a0012507e9119bdf7a100376bc68aab828081"
+    }
+  ],
+  "binaries": [
+    {
+      "build": 1,
+      "byte_count": 6539600,
+      "descriptor_sha256": "bc3b58373f19ff8b9bd849e39cc80585676c85177c74cd9dba3b596f26ce5db0",
+      "sha256": "aa03c1eb6a85316446edbed4d1127deee4e594f8b214d3080d34bac19b998eb4"
+    },
+    {
+      "build": 2,
+      "byte_count": 6539600,
+      "descriptor_sha256": "bc3b58373f19ff8b9bd849e39cc80585676c85177c74cd9dba3b596f26ce5db0",
+      "sha256": "aa03c1eb6a85316446edbed4d1127deee4e594f8b214d3080d34bac19b998eb4"
+    }
+  ],
+  "command_cwd_outside_checkout": true,
+  "controls": [
+    {
+      "accepted": true,
+      "case": "original-package",
+      "exit_code": 0,
+      "expected_reason": null,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c02fa34ff16d490eff9641eb8260e2eeaf8edd20eac41390346e058dbda1b9f5"
+    },
+    {
+      "accepted": false,
+      "case": "wrong-manifest-pin",
+      "exit_code": 1,
+      "expected_reason": "exact manifest pin differs",
+      "stderr_sha256": "045a5d492c16fb7fadab94a1bb77203309f347497ce410800507f64995976703",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "accepted": false,
+      "case": "changed-executable",
+      "exit_code": 1,
+      "expected_reason": "package asset changed",
+      "stderr_sha256": "72e2aeb7754aebe40ce5188362ce431e8c1c57e78f8068023c58b565124d9175",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "accepted": false,
+      "case": "unknown-package-member",
+      "exit_code": 1,
+      "expected_reason": "package has missing or unreferenced members",
+      "stderr_sha256": "497c4b419dd13e2f846e5928cc160fd051887ddd9c16a4c6337b6f38fbb5afb4",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "accepted": false,
+      "case": "scope-promotion",
+      "exit_code": 1,
+      "expected_reason": "package cannot assert publication/qualification",
+      "stderr_sha256": "494f3288fb9b491b66b589f9db09eb73e9570772891df609d7bbc173e8a281e9",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "accepted": true,
+      "case": "original-package-preserved",
+      "exit_code": 0,
+      "expected_reason": null,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c02fa34ff16d490eff9641eb8260e2eeaf8edd20eac41390346e058dbda1b9f5"
+    }
+  ],
+  "host": {
+    "libc": [
+      "glibc",
+      "2.41"
+    ],
+    "machine": "x86_64",
+    "system": "Linux"
+  },
+  "hosted_ci_dispatched": false,
+  "independent_target_artifacts": true,
+  "installed_smoke": [
+    {
+      "command": "version",
+      "exit_code": 0,
+      "stdout_sha256": "fddad2cc5fae1177274ff357925a89a37fd8ede37a1583f46aea2be0d342d958"
+    },
+    {
+      "command": "help",
+      "exit_code": 0,
+      "stdout_sha256": "3822ad92c38a453b35f2896acf00d3611aa7fa3d62377f74140da707200f34c4"
+    },
+    {
+      "command": "release-contract",
+      "exit_code": 0,
+      "stdout_sha256": "a840485145c25f6a7441b2a5eaba4ddb8bc4698a51fd1f9e958c87be1b7e63f5"
+    }
+  ],
+  "limits": "same-host isolated executable/descriptor reproducibility; package timestamp/SBOM metadata is not a cross-run bit-reproducible or authenticated release claim",
+  "manifest_sha256": "b3d2b328a16f4905b2a4852fce1afbbff7bdf50b2766c3507e1e8e984d2ad941",
+  "native_matrix_qualified": false,
+  "observed_at": "2026-11-14T19:41:52.439691+00:00",
+  "original_package_preserved": true,
+  "publisher_authenticated": false,
+  "registry_channel": "unavailable",
+  "release_published": false,
+  "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n",
+  "schema_version": "flow.local-package-candidate-proof/v1",
+  "source_members_verified_against_git": 355,
+  "source_revision": "71d034263da17c8755cb2c7202cf68ca5b5df6fd",
+  "source_uncompressed_bytes": 4176338,
+  "spdx_lock_packages": 40,
+  "status": "passed",
+  "target": "x86_64-unknown-linux-gnu"
+}

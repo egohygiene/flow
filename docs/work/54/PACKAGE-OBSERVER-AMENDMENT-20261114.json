@@ -1,0 +1,48 @@
+{
+  "hosted_ci_dispatched": false,
+  "new_builds": 0,
+  "new_product_execution": false,
+  "new_provider_execution": false,
+  "observed_at": "2026-11-14T19:48:53.379341+00:00",
+  "original_driver_commit": "29c227b71a2717d3543ad2e140ae18ee2580616a",
+  "original_driver_sha256": "aaf936a066f5ecf1c3a69e87ccaa361116a81d627925411910e149a999dadddc",
+  "original_observation_preserved": true,
+  "original_private_observation_sha256": "1ce2e064331af641555911902ddcdae80484f1919a45b485e0efb53ceb796601",
+  "original_public_observation_sha256": "1346f599afd325535e4a62d466f50abf664e51bbff4e0ea94893620179e84419",
+  "retained_captures_revalidated": [
+    {
+      "case": "wrong-manifest-pin",
+      "exit_code": 1,
+      "final_stderr_line": "ValueError: exact manifest pin differs\n",
+      "stderr_sha256": "045a5d492c16fb7fadab94a1bb77203309f347497ce410800507f64995976703",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "changed-executable",
+      "exit_code": 1,
+      "final_stderr_line": "ValueError: package asset changed\n",
+      "stderr_sha256": "72e2aeb7754aebe40ce5188362ce431e8c1c57e78f8068023c58b565124d9175",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "unknown-package-member",
+      "exit_code": 1,
+      "final_stderr_line": "ValueError: package has missing or unreferenced members\n",
+      "stderr_sha256": "497c4b419dd13e2f846e5928cc160fd051887ddd9c16a4c6337b6f38fbb5afb4",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "case": "scope-promotion",
+      "exit_code": 1,
+      "final_stderr_line": "ValueError: package cannot assert publication/qualification\n",
+      "stderr_sha256": "494f3288fb9b491b66b589f9db09eb73e9570772891df609d7bbc173e8a281e9",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "schema_version": "flow.package-observer-amendment/v1",
+  "scope": "stronger observers applied to retained actual captures; original measurement and driver binding remain historical",
+  "synthetic_observer_tests_passed": 7,
+  "unique_assets": 8,
+  "unique_spdx_lock_packages": 40,
+  "updated_driver_sha256": "54102e0dfa45ac53f5ae480a3a91051e4078d2c1e435ef2d037ad3488221ff44"
+}
