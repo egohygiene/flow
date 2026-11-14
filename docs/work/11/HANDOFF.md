@@ -1,3 +1,18 @@
+## Remaining CI repair source sprint — November 13, 2026
+
+The maintainer expanded [Flow #137](https://github.com/egohygiene/flow/issues/137)
+to checkpoints 5–12 as stacked draft PRs. Begin with the
+[current source sprint and reconciliation order](../137/05-12-source-sprint.md)
+and [CI budget/evidence boundary](../137/12-ci-budget.md), then re-query live
+PR heads before review or merge. No PR is merged by this sprint.
+
+The primary stack preserves Optiflow Rust 1.85 and its unresolved SQLite
+advisory. Optional Optiflow #215 is a concrete Rust 1.89 proposal for a separate
+compatibility decision; it is not an automatic merge dependency. Focused Python,
+workflow-source and local static-site observations do not establish product,
+platform, package or release qualification. #137 retains its acceptance gates;
+#88's original final-pass ledger remains unchanged and last.
+
 ## Current CI repair continuation — November 13, 2026
 
 The maintainer selected checkpoints 3 and 4 of [Flow #137](https://github.com/egohygiene/flow/issues/137).
