@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.51.1
+version: 0.51.2
 status: draft
 owners:
   - egohygiene
@@ -362,6 +362,14 @@ authentication and native qualification. Activation uses a caller-selected point
 and expected previous digest; rollback reselects a retained installation. Removal
 requires an exact receipt pin, complete unchanged membership and an external
 create-new removal record; originals and unknown files are never removed.
+
+Local acceptance observers may join a prepared package's exact provider rows to
+the installed cohort's derived Flow self row. They reobserve installed bytes and
+delegate current membership validation to installation status before using the
+installed executable through existing publishing and read-only routes. Explicit
+package, source, contract and candidate-observation pins remain distinct from
+publisher authentication and release or native qualification. These observers do
+not become package, installation, execution or domain-validation owners.
 
 ## Flow artifact preparation
 

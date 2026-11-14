@@ -1,0 +1,75 @@
+{
+  "assets": [
+    {
+      "byte_count": 1068,
+      "kind": "product-license",
+      "name": "LICENSE",
+      "sha256": "1deb55b00af813e1c8f086e851d0e1ed2084ea942a54996f069df05cd0561372"
+    },
+    {
+      "byte_count": 1506,
+      "kind": "dependency-notices",
+      "name": "THIRD_PARTY_NOTICES.txt",
+      "sha256": "7ab6159a96242b209a60bda06fa78915522da99a0039bb443d6f40905cc1478f"
+    },
+    {
+      "byte_count": 982536,
+      "kind": "library-source",
+      "name": "flow-0.1.0-source.tar.gz",
+      "sha256": "8d94e5fe7e350a62d14371fb6ff2884293739ddcb7546299c9adbf41dbd725c6"
+    },
+    {
+      "byte_count": 8027,
+      "kind": "compiled-contract",
+      "name": "flow-release-contract-v1.json",
+      "sha256": "592e52e39c9d1e77e9efd3b819b0fa8e48f9f8aa03178443f63383535d08ebbb"
+    },
+    {
+      "byte_count": 25431,
+      "kind": "spdx-sbom",
+      "name": "flow-sbom.spdx.json",
+      "sha256": "4c8c32a9fcc3176eb7f87f5790bfcefcce9f909560e29ec46f85983e31badfe3"
+    },
+    {
+      "byte_count": 6578208,
+      "kind": "cli-binary",
+      "name": "flow-x86_64-unknown-linux-gnu",
+      "sha256": "0de124114f96cab0256f09735b68ca56eecab646d608c051f1651892c20585e4"
+    },
+    {
+      "byte_count": 42486,
+      "kind": "library-source-inventory",
+      "name": "library-source-members.json",
+      "sha256": "d58984a60976a5ab86f34a340d24856e657289029c9c2cdb207f1eedb57b21f7"
+    },
+    {
+      "byte_count": 2625,
+      "kind": "provider-cohort",
+      "name": "provider-cohort.json",
+      "sha256": "b9c1295f2b2e194051c16db8dc58513c7bd4e53a0cdd2af76039b5c2127ff711"
+    }
+  ],
+  "compiled_descriptor": "flow-release-contract-v1.json",
+  "library_source": "flow-0.1.0-source.tar.gz",
+  "native_build": {
+    "host_target": "x86_64-unknown-linux-gnu",
+    "isolated_builds": 2,
+    "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n"
+  },
+  "primary_binary": "flow-x86_64-unknown-linux-gnu",
+  "provider_cohort": "provider-cohort.json",
+  "publication": "not_performed",
+  "qualification": "not_established_by_preparation",
+  "registry_channel": "unavailable",
+  "repository": "egohygiene/flow",
+  "retained_target_objectives": [
+    "x86_64-unknown-linux-gnu",
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+    "x86_64-pc-windows-msvc"
+  ],
+  "schema_version": "flow.release-manifest/v1",
+  "source_revision": "69eafaf74af8891bde1c7a769fb57dbca815476c",
+  "target": "x86_64-unknown-linux-gnu",
+  "version": "0.1.0"
+}

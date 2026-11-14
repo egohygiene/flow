@@ -11,17 +11,27 @@ from pathlib import Path
 import check_native_publication as native
 
 
-def run_check(flow, build, prior, output):
-    build = native.public_candidate_build(build)
+def run_check(flow, build, prior, output, installed=None):
+    build = native.public_candidate_build(build, installed)
     binary = native.build_binary(flow)
     native.require({"sha256":native.sha(binary),"bytes":len(binary)} == build["binary"], "selected build differs")
     native.require(output.is_absolute() and output.parent.resolve(strict=True) == output.parent, "canonical fresh output parent required")
     output.mkdir(mode=0o700)
-    selected = output/'flow'; selected.write_bytes(binary); selected.chmod(0o700)
+    if installed is None:
+        selected = output/'flow'; selected.write_bytes(binary); selected.chmod(0o700)
+    else:
+        native.require(flow == installed.flow, 'installed staging executable differs')
+        selected = flow
     logs = output/'commands'; logs.mkdir(mode=0o700)
     prior_report = native.document(native.OWNER_IO.regular(prior/'report.json',1048576))
     native.require(prior_report['schema_version']=='flow.static-publication-cli-pilot/v1' and prior_report['status']=='passed', "existing scoped static pilot required")
     project = native.document(native.OWNER_IO.regular(prior/'epub-project.json',1048576))
+    if installed is not None:
+        native.require(prior_report['execution_subject']=='installed_packaged_cli'
+            and prior_report['flow_build']==build and project['installation']=={
+                'root':native.native_path(installed.root),
+                'receipt_sha256':installed.selection['installation_receipt_sha256']},
+            'prior static project belongs to another installed candidate')
     sources = [Path(s['file']['path']['value']) for s in project['branches'][0]['sources']]
     originals = [native.pin(p) for p in sources]
     native.require(len(originals)==2 and sum(p['byte_count'] for p in originals)==438
@@ -70,6 +80,8 @@ def run_check(flow, build, prior, output):
     native.require(status['all_required_artifacts_observed'] is False and status['branches'][0]['state']=='not_started'
         and status['creative_review_pending'] is True,'preparation became native/review acceptance')
     native.require([native.pin(p) for p in sources]==originals,'original source bytes changed')
+    native.require(native.build_binary(flow)==binary,'selected Flow bytes changed')
+    if installed is not None: installed.reobserve()
     return {'schema_version':'flow.static-staging-budget-check/v1','status':'passed','flow_build':build,
         'driver_sha256':native.pin(Path(__file__).resolve())['sha256'],'prior_static_report_sha256':native.pin(prior/'report.json')['sha256'],
         'commands':observations,'default_budget_bytes':268435456,'maximum_budget_bytes':68719476736,
@@ -77,7 +89,8 @@ def run_check(flow, build, prior, output):
         'over_budget_workspace_created':False,'repeated_workspace_created':False,'exact_budget_staged_bytes':438,
         'originals_unchanged':True,'retained_default_record_compatible':True,'provider_invoked':False,
         'native_qualified':False,'creative_approval_inferred':False,'publication_authority':False,
-        'scope':'targeted aggregate staging guard and private preparation; original22-call native proof preserved'}
+        'execution_subject':'captured_dev_cli' if installed is None else 'installed_packaged_cli',
+        'scope':'targeted aggregate staging guard and private preparation; prior native proof preserved'}
 
 
 def main():

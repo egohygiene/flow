@@ -313,21 +313,35 @@ def prepare_release(bundle, destination):
                          "embedded_provenance_checked": True, "signature_verification_performed": False}
 
 
-def run_pilot(flow, bundle, output, flow_provenance):
+def run_pilot(flow, bundle, output, flow_provenance, installed=None):
     require(platform.system() == "Linux" and platform.machine() in {"x86_64", "amd64"}, "selected real release requires Linux x86-64")
     require(output.is_absolute() and output.parent.resolve(strict=True) == output.parent, "canonical fresh evidence parent required")
-    flow_provenance = public_build_identity(flow_provenance)
+    if installed is None:
+        flow_provenance = public_build_identity(flow_provenance)
+    else:
+        from installed_candidate_subjects import InstalledCandidate
+        require(type(installed) is InstalledCandidate, "admitted installed candidate required")
+        installed.reobserve()
+        require(flow == installed.flow and bundle == installed.optiflow_bundle
+            and (flow_provenance is None or flow_provenance == installed.flow_identity),
+            "installed read-only subject differs")
+        flow_provenance = copy.deepcopy(installed.flow_identity)
     supplied_flow = flow
     flow_bytes = build_binary(flow)
     flow_identity = {"sha256": sha(flow_bytes), "bytes": len(flow_bytes)}
     require(flow_identity == flow_provenance["binary"], "Flow binary differs from supplied build evidence")
     output.mkdir(mode=0o700)
     logs = output / "commands"; logs.mkdir(mode=0o700)
-    flow = output / "flow"
-    with flow.open("xb") as stream:
-        stream.write(flow_bytes)
-    flow.chmod(0o700)
+    if installed is None:
+        flow = output / "flow"
+        with flow.open("xb") as stream:
+            stream.write(flow_bytes)
+        flow.chmod(0o700)
     provider, release = prepare_release(bundle, output / "provider")
+    if installed is not None:
+        require(OWNER_IO.regular(installed.optiflow, 16_777_216) == OWNER_IO.regular(provider, 16_777_216),
+                "installed Optiflow differs from verified immutable release bytes")
+        provider = installed.optiflow
     source = output / "source 作品 with spaces"; source.mkdir(mode=0o700)
     for name, data in FIXTURE.items():
         (source / name).write_bytes(data)
@@ -455,9 +469,12 @@ def run_pilot(flow, bundle, output, flow_provenance):
             and sha(build_binary(supplied_flow)) == flow_identity["sha256"]
             and sha(OWNER_IO.regular(provider, 16_777_216)) == PROVIDER_SHA, "selected executable changed during the pilot")
     cases.append("originals-and-selected-binaries-unchanged")
+    if installed is not None:
+        installed.reobserve()
     return {"schema_version": "flow.released-read-only-cli-pilot/v1", "status": "passed",
             "observed_utc": datetime.now(timezone.utc).isoformat(),
-            "scope": "Linux synthetic read-only public CLI route; not installed-suite qualification",
+            "scope": "Linux synthetic read-only public CLI route; not full installed-suite qualification",
+            "execution_subject": "captured_dev_cli" if installed is None else "installed_packaged_cli",
             "flow_build": flow_provenance, "provider_release": release,
             "driver_sha256": sha(OWNER_IO.regular(Path(__file__).resolve(), 131_072)),
             "elapsed_seconds": round(time.monotonic() - started, 6),

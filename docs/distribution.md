@@ -1,5 +1,12 @@
 # Pinned suite installation
 
+The [combined-source candidate observation](work/54/COMBINED-SOURCE-CANDIDATE-20261114.md)
+records an actual retained Linux installation and movable offline suite directory
+using the current merged-source Flow package, fresh Renderflow candidate and
+actual Optiflow 0.1.1. It includes exact receipt/cohort/source identities and
+links the independent installed-runtime proof; publisher/native-matrix and
+other-platform gates remain separate.
+
 The public `distribution` SDK and `suite-*` product commands copy explicitly
 selected independent binaries and contract/support files into a fresh private
 installation. They do not launch providers, fetch dependencies, infer publisher

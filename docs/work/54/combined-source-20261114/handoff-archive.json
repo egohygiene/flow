@@ -1,0 +1,80 @@
+{
+  "schema_version": "flow.candidate-handoff-archive/v1",
+  "archive": "flow-suite-linux-x86_64-candidate-20261114.tar.gz",
+  "sha256": "43c9a9a44fdba0d69cf9c10fec96e8ab4c16641a7917ac564264bb17c382e82f",
+  "bytes": 15700509,
+  "members": {
+    "flow-suite-linux-x86_64-candidate-20261114/README.txt": {
+      "sha256": "78dd6122a3481b63e385953fcd71beb329c3c13fec8440106d4c1047dac144af",
+      "bytes": 2345,
+      "mode": 420
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/bundle/bundle.json": {
+      "sha256": "0d8ee0535582e11ed36d90102ad40a90063fd3c4be565fe99a78e13b2e06629d",
+      "bytes": 313,
+      "mode": 384
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/bundle/files/0000": {
+      "sha256": "965ed55237926224055b65f361e9411ed891bf172d9d4c9f5cb0ab5856d7ef30",
+      "bytes": 3614,
+      "mode": 384
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/bundle/files/0001": {
+      "sha256": "0de124114f96cab0256f09735b68ca56eecab646d608c051f1651892c20585e4",
+      "bytes": 6578208,
+      "mode": 384
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/bundle/files/0002": {
+      "sha256": "592e52e39c9d1e77e9efd3b819b0fa8e48f9f8aa03178443f63383535d08ebbb",
+      "bytes": 8027,
+      "mode": 384
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/bundle/files/0003": {
+      "sha256": "b8262204141e5317ea38f2e7ea25974e57e8e33794ca9bd83c071914a7683078",
+      "bytes": 19969352,
+      "mode": 384
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/bundle/files/0004": {
+      "sha256": "9ff99a410bcf98a82801eeadf3e35fdc40539c36d192ce066365769c98e9aa74",
+      "bytes": 372295,
+      "mode": 384
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/bundle/files/0005": {
+      "sha256": "46af9399f3785607f835d9a805a8daa42c93597772c6ee812911615ea4b76280",
+      "bytes": 11098688,
+      "mode": 384
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/bundle/install-request.json": {
+      "sha256": "e0c4695fd63049749a61926b325a390d6b06f0b9debbc3a9ece60f631a0c7965",
+      "bytes": 2973,
+      "mode": 384
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/examples/page-001.png": {
+      "sha256": "b3b421ea63b0e9fa3c1469c5e3141e96ad9aaec01997d75137a5953b3a91d008",
+      "bytes": 219,
+      "mode": 420
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/examples/page-002.png": {
+      "sha256": "3c91b1e9c06dfbc0fe9ff8428333046b3c07f4c69470c71b430184e9b4b3e24d",
+      "bytes": 219,
+      "mode": 420
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/examples/two-pages.epub": {
+      "sha256": "96bef187d48e01bb7ad70a32e55d2c18ede2c8d41d1b843bd10d6f4724e0a5c5",
+      "bytes": 4951,
+      "mode": 420
+    },
+    "flow-suite-linux-x86_64-candidate-20261114/examples/two-pages.pdf": {
+      "sha256": "0ed5830ed858876a4bf2a7dc690181a1540a4995e797817bfbb5df952b522416",
+      "bytes": 2226,
+      "mode": 420
+    }
+  },
+  "offline_bundle_sha256": "0d8ee0535582e11ed36d90102ad40a90063fd3c4be565fe99a78e13b2e06629d",
+  "bundle_original_members_preserved": true,
+  "source_and_installed_bytes_mutated": false,
+  "scope": "archive transport of the existing private candidate bundle plus actual synthetic examples; no new install/runtime qualification",
+  "release_authenticated": false,
+  "publication_performed": false,
+  "native_matrix_qualified": false
+}

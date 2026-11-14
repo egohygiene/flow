@@ -1,0 +1,113 @@
+{
+  "assets": [
+    {
+      "byte_count": 1068,
+      "kind": "product-license",
+      "name": "LICENSE",
+      "sha256": "1deb55b00af813e1c8f086e851d0e1ed2084ea942a54996f069df05cd0561372"
+    },
+    {
+      "byte_count": 1506,
+      "kind": "dependency-notices",
+      "name": "THIRD_PARTY_NOTICES.txt",
+      "sha256": "7ab6159a96242b209a60bda06fa78915522da99a0039bb443d6f40905cc1478f"
+    },
+    {
+      "byte_count": 982536,
+      "kind": "library-source",
+      "name": "flow-0.1.0-source.tar.gz",
+      "sha256": "8d94e5fe7e350a62d14371fb6ff2884293739ddcb7546299c9adbf41dbd725c6"
+    },
+    {
+      "byte_count": 8027,
+      "kind": "compiled-contract",
+      "name": "flow-release-contract-v1.json",
+      "sha256": "592e52e39c9d1e77e9efd3b819b0fa8e48f9f8aa03178443f63383535d08ebbb"
+    },
+    {
+      "byte_count": 25431,
+      "kind": "spdx-sbom",
+      "name": "flow-sbom.spdx.json",
+      "sha256": "4c8c32a9fcc3176eb7f87f5790bfcefcce9f909560e29ec46f85983e31badfe3"
+    },
+    {
+      "byte_count": 6578208,
+      "kind": "cli-binary",
+      "name": "flow-x86_64-unknown-linux-gnu",
+      "sha256": "0de124114f96cab0256f09735b68ca56eecab646d608c051f1651892c20585e4"
+    },
+    {
+      "byte_count": 42486,
+      "kind": "library-source-inventory",
+      "name": "library-source-members.json",
+      "sha256": "d58984a60976a5ab86f34a340d24856e657289029c9c2cdb207f1eedb57b21f7"
+    },
+    {
+      "byte_count": 2625,
+      "kind": "provider-cohort",
+      "name": "provider-cohort.json",
+      "sha256": "b9c1295f2b2e194051c16db8dc58513c7bd4e53a0cdd2af76039b5c2127ff711"
+    }
+  ],
+  "authority": "supplied dated local build observation; no authenticated build/release or independent build-machine source verification",
+  "binary": {
+    "byte_count": 6578208,
+    "kind": "cli-binary",
+    "name": "flow-x86_64-unknown-linux-gnu",
+    "sha256": "0de124114f96cab0256f09735b68ca56eecab646d608c051f1651892c20585e4"
+  },
+  "compiled_descriptor": {
+    "byte_count": 8027,
+    "kind": "compiled-contract",
+    "name": "flow-release-contract-v1.json",
+    "sha256": "592e52e39c9d1e77e9efd3b819b0fa8e48f9f8aa03178443f63383535d08ebbb"
+  },
+  "derived_flow_row_bound_to_package": true,
+  "installation_cohort_sha256": "965ed55237926224055b65f361e9411ed891bf172d9d4c9f5cb0ab5856d7ef30",
+  "installation_receipt_sha256": "29b5b16dfff0a507aa8c0e287dbfbb348b02bfa932198ab7275a844bedf1b2f0",
+  "installation_report_sha256": "3a2344308fb5b68f5b4627bc6fac4ab9a4b3b75949d01cc43756b6e41d0f5bf3",
+  "manifest_sha256": "62ba25f3dd056b48fdfaf75a83b7f0dbdd3f29524b5ddc471b514246b85ccdbb",
+  "native_build": {
+    "binary_equal": true,
+    "cargo_argv": [
+      "cargo",
+      "build",
+      "--frozen",
+      "--release",
+      "--bin",
+      "flow",
+      "--target",
+      "x86_64-unknown-linux-gnu"
+    ],
+    "descriptor_equal": true,
+    "incremental": false,
+    "independent_target_artifacts": true,
+    "isolated_builds": 2,
+    "jobs": 2,
+    "offline": true,
+    "profile": "release",
+    "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)\nbinary: rustc\ncommit-hash: 4d91de4e48198da2e33413efdcd9cd2cc0c46688\ncommit-date: 2025-02-17\nhost: x86_64-unknown-linux-gnu\nrelease: 1.85.0\nLLVM version: 19.1.7\n",
+    "source_and_target_path_remapping": true
+  },
+  "native_matrix_qualified": false,
+  "observed_at": "2026-11-14T20:48:58.655842+00:00",
+  "package_observer_report_sha256": "b80da904b8573b4444577d554ea851d939922269e1b9cbca32b507e88180c4cb",
+  "package_observer_sha256": "54102e0dfa45ac53f5ae480a3a91051e4078d2c1e435ef2d037ad3488221ff44",
+  "package_owner_sha256": "fa3182cfea81e7c085e9ced838a8fa3b38d425231228e16bc15a0bb26e0186c4",
+  "package_provider_cohort_sha256": "b9c1295f2b2e194051c16db8dc58513c7bd4e53a0cdd2af76039b5c2127ff711",
+  "provider_rows_preserved_in_installed_projection": true,
+  "publisher_authenticated": false,
+  "registry_channel": "unavailable",
+  "release_published": false,
+  "schema_version": "flow.combined-package-build-observation/v1",
+  "source": {
+    "cargo_lock_sha256": "b7a16689cb7ec533bb4a50bf14e1035a2bf5d123e0491f5f63d6cb675891c1ac",
+    "clean_after": true,
+    "clean_before": true,
+    "revision": "69eafaf74af8891bde1c7a769fb57dbca815476c",
+    "tree": "376f175971da85fa7e894efc06a3ac836ce8b519"
+  },
+  "source_members_verified_against_git": 376,
+  "spdx_lock_packages": 40,
+  "target": "x86_64-unknown-linux-gnu"
+}
