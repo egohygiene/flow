@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.51.2
+version: 0.51.3
 status: draft
 owners:
   - egohygiene
@@ -20,6 +20,19 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Explicit four-tool installed candidate observation
+
+The music-publishing observer selects three provider rows in a separately pinned
+candidate supplement and the existing installer derives one Flow self row. The
+unchanged Flow package remains its own exact executable, descriptor and local
+build subject; its historical sealed two-provider cohort is neither edited nor
+claimed to cover the new candidates. A separately pinned product-input comparison
+records reuse of the actual older Flow build when only documentation/observers
+changed. The explicit v2 observer joins supplement, intent, receipt and all four
+installed byte identities; historical v1 admission remains closed to its original
+three tools. This is local supplied evidence without publisher authentication,
+release publication, native-matrix qualification or human review authority.
 
 ## Reusable publishing project presets
 
