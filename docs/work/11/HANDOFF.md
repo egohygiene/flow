@@ -1,3 +1,44 @@
+## Ordinary-input publishing sprint — November 15, 2026
+
+The eight-checkpoint sprint started November 14 and continued past midnight UTC.
+It is delivered as separate draft PRs for review; no sprint PR was merged.
+Re-query [the live roadmap](https://github.com/egohygiene/flow/issues/11) for final
+heads and per-repository order. The source candidates below remain distinct from
+later observer/documentation tips and immutable releases.
+
+- Aniflow #243 → #244 → #245 admits the bounded H.264 coded/display rectangle
+  and observed 48 kHz AAC terminal-block profile, preserving every decoded sample
+  and original packet identity. Actual ordinary-MP4/manual-SRT, metadata finishing,
+  exact-final QC and separately scoped resumable-QC observations pass. Human lyric
+  review and presented-loudness goals remain unverified.
+- Renderflow #525 → #526 repairs held lyric input, required native lyric-format
+  validation, manual-only atomic no-replace publication and ALAC container suffixes.
+  The final captured CLI passes all eight lyric formats and five audio derivatives
+  across four formats. Selected FLAC/ALAC decoded samples match exactly; lossy
+  clocks, native signature warnings and conservative fidelity labels stay visible.
+- Flow #152 → #153 → the [AMV handoff checkpoint](../78/AMV-PROJECT-HANDOFF-20261115.md)
+  prepares the Mac trial kit, observes a fresh four-tool installation and executes
+  the existing preset/project/pilot/private-delivery path. The final installed
+  observations cover 18 direct Flow calls, 21 project Flow calls and five installed
+  Aniflow QC/policy calls. The 15-payload moved private package retains fresh QC
+  for its exact video; all five human reviews remain awaiting and readiness is
+  correctly partial. [Installed-candidate details](../../integrations/installed-music-candidate.md)
+  preserve the original Flow package and separately pinned provider supplement.
+
+The measured Flow executable remains its earlier `69eafaf…` package build.
+Aniflow is the actual published-source `e73d35cf…` optimized-dev capture;
+Renderflow is the `848984ab…` Debian-host release capture; Optiflow remains the
+actual immutable v0.1.1 release. No new Flow package, provider release or whole
+platform qualification is inferred from these installed observations.
+
+[Mac plan/preflight](../../MACOS-NATIVE-TRIAL.md) is prepared and its Linux
+preflights truthfully refuse native-Mac/reviewed-successor prerequisites. Actual
+Mac execution, broader supported-host/native qualification, presented-window
+metering, legacy alignment/descendant cancellation and human/content review
+remain separate gates. No hosted workflow was dispatched, private Akashic asset
+or model used, release signed/published, content uploaded or Pages deployed.
+Parent issues retain their full acceptance. Flow #88 stays unchanged and last.
+
 ## Combined installed publishing candidate — November 14, 2026
 
 The maintainer authorized the next milestone: merge the 13 reviewed checkpoints,

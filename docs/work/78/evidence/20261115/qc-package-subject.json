@@ -1,0 +1,48 @@
+{
+  "accepted_native_assembly_manifest_sha256": "8ca561405acac83e66f72d2ccb320107aea3ec7b57ff0fd4b8e0089bbc03242b",
+  "accepted_native_assembly_plan_sha256": "0d8ae4793b2f91753b1e5c80beea41144a7d9a71794146b7ef655547f81c5477",
+  "accepted_native_completion_id": "14ef2ea3d5755dde71faf36a9b57ec6d3af3876588f91a2f2c299d3d44f667ac",
+  "all_five_human_reviews": "awaiting",
+  "artifact_id": "h264_delivery",
+  "copied_qc_attachment": {
+    "byte_count": 12792,
+    "sha256": "6d91c07d9910fd4f22186b33c20ba11d3f5fcf1e4ea222d7d3599999f3d89ef1"
+  },
+  "decoded_wav": {
+    "byte_count": 770106,
+    "channels": 2,
+    "sample_frames": 96256,
+    "sample_rate_hz": 48000,
+    "sha256": "f742c0a9afac0f92ee8df9e65873d2217fc61b4d942f83a6be3bcf77de63c707"
+  },
+  "delivery_manifest_sha256": "832c02f2ce80902590f2fbb979a3d043c93397af838415986baa92377362afce",
+  "exact_final_delivery": {
+    "byte_count": 119135,
+    "sha256": "087b61acddbd04ceed40cf66ef28539cdea0b7a742d170dabbb1315989ee2722"
+  },
+  "fresh_qc_receipt": {
+    "byte_count": 12792,
+    "sha256": "6d91c07d9910fd4f22186b33c20ba11d3f5fcf1e4ea222d7d3599999f3d89ef1"
+  },
+  "measurement": {
+    "decoded_sample_frames": 96256,
+    "human_review_performed": false,
+    "measurements": {
+      "integrated_loudness": -21.8,
+      "true_peak": -20.8
+    },
+    "metric_scope": "complete_decoded_pcm_including_nonpresented_tail",
+    "native_meter_qualified": false,
+    "nonpresented_tail_sample_frames": 256,
+    "normalization": "none",
+    "presented_delivery_loudness_verified": false,
+    "presented_sample_frames": 96000,
+    "source_bytes": 119135,
+    "source_sha256": "087b61acddbd04ceed40cf66ef28539cdea0b7a742d170dabbb1315989ee2722"
+  },
+  "publication_authority": false,
+  "schema_version": "flow.fresh-final-qc-package-observation/v1",
+  "scope": "fresh exact Flow-native file observation and private retained byte attachment; no destination policy, meter/native qualification or human approval inferred",
+  "selected_installed_aniflow_sha256": "e1c6f8ac229cf54d1b921dd521f692b1c420fccbb2a9b6d3213f173eb1539a17",
+  "status": "passed"
+}
