@@ -1,5 +1,10 @@
 # Scenario showcase source checkpoint
 
+The six original documentation criteria are reconciled in the
+[November 15 acceptance closeout](ACCEPTANCE-CLOSEOUT-20261115.md). It binds
+current source to the retained actual browser observation and records fresh
+model/source/local-serving checks; the source-only account below remains history.
+
 Current local browser/source observations are recorded in
 [BROWSER-OBSERVATIONS.md](BROWSER-OBSERVATIONS.md). The source-only account below
 is preserved as history.

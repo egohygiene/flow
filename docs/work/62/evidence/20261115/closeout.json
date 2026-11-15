@@ -1,0 +1,370 @@
+{
+  "schema": "flow.scenario-showcase-closeout/v1",
+  "base_revision": "80127ca4f9ad14ebb8e8c5a8f7321f242aa36607",
+  "base_tree": "e50ff08a3828b7c5febc6ded5fb3d131aed7a9f2",
+  "documentation_acceptance_satisfied": true,
+  "closeout_recommendation": "Close Flow #62 after review of this documentation/navigation checkpoint; retain all unrelated #88 gates.",
+  "criteria": [
+    {
+      "id": 1,
+      "criterion": "Readers can browse all current catalog scenarios and understand representative success and refusal cases without opening Rust source.",
+      "state": "satisfied",
+      "owners": [
+        "docs/integrations/showcase/explanations.mjs",
+        "docs/integrations/showcase/view.mjs",
+        "tools/test_scenario_showcase.mjs"
+      ],
+      "retained_browser_checks": [
+        "canonical_ids_and_success_refusal_explanations",
+        "lifecycle_trace_has_readable_exact_expected_data",
+        "keyboard_search_family_and_link_navigation"
+      ]
+    },
+    {
+      "id": 2,
+      "criterion": "Every displayed scenario maps to a stable canonical ID; IDs, counts, and expected outcomes stay synchronized through generation or a drift check.",
+      "state": "satisfied",
+      "owners": [
+        "docs/integrations/showcase/model.mjs",
+        "tools/test_scenario_showcase.mjs",
+        "tools/generate_scenario_sources.py"
+      ],
+      "retained_browser_checks": [
+        "canonical_ids_and_success_refusal_explanations",
+        "served_viewer_catalog_manifest_and_guide_bytes_match_checkout"
+      ]
+    },
+    {
+      "id": 3,
+      "criterion": "The presentation distinguishes expected behavior, observed verification, and known coverage gaps.",
+      "state": "satisfied",
+      "owners": [
+        "docs/integrations/showcase/model.mjs",
+        "docs/integrations/scenario-showcase.md"
+      ],
+      "retained_browser_checks": [
+        "initial_unavailable_and_explicit_keyboard_load",
+        "matching_synthetic_report_stays_unconfirmed",
+        "different_catalog_report_is_mismatched",
+        "incomplete_report_stays_incomplete",
+        "conflicting_report_stays_conflicting"
+      ]
+    },
+    {
+      "id": 4,
+      "criterion": "Evidence links identify what revision was tested; unavailable or stale evidence is clearly labeled.",
+      "state": "satisfied",
+      "owners": [
+        "docs/integrations/showcase/model.mjs",
+        "docs/integrations/showcase/view.mjs",
+        "docs/integrations/scenario-showcase.md"
+      ],
+      "retained_browser_checks": [
+        "matching_synthetic_report_stays_unconfirmed",
+        "different_catalog_report_is_mismatched",
+        "incomplete_report_stays_incomplete"
+      ],
+      "limit": "Recorded tested-source SHA-256 and report SHA-256 are displayed; authenticated Git revision/time or current native verification is never invented."
+    },
+    {
+      "id": 5,
+      "criterion": "Diagrams have readable text equivalents; status does not rely on color alone.",
+      "state": "satisfied",
+      "owners": [
+        "docs/integrations/scenario-showcase.md",
+        "docs/integrations/showcase/index.html",
+        "docs/integrations/showcase/style.css"
+      ],
+      "retained_browser_checks": [
+        "narrow_view_and_keyboard_details_keep_text_and_focus"
+      ],
+      "limit": "Two diagram text equivalents, explicit textual evidence states and retained desktop/narrow screenshot readback; no assistive-technology qualification asserted."
+    },
+    {
+      "id": 6,
+      "criterion": "The showcase builds locally using the existing docs tooling, with documented refresh instructions and no new paid CI dependency.",
+      "state": "satisfied",
+      "owners": [
+        "docs/integrations/scenario-showcase.md",
+        "tools/generate_scenario_sources.py"
+      ],
+      "current_checks": [
+        "12 Node model/guide cases",
+        "5 deterministic source recipes",
+        "19 current loopback Python-stdlib GETs"
+      ],
+      "limit": "Static viewer requires no frontend build/install. The browser proof is retained prior execution over byte-identical viewer sources, not a new browser run."
+    }
+  ],
+  "current_catalog_counts": {
+    "acceptance": 81,
+    "lifecycle": 49
+  },
+  "retained_browser_report": {
+    "path": "docs/work/62/evidence/20261114/browser-proof.json",
+    "bytes": 9474,
+    "sha256": "9972b58a46f584d51607cb816bfd2e327d5ccbe762457683d4cd1da0e9a176a1"
+  },
+  "retained_browser_subject_sha256": "c2e2df39c089a28118d214e7a9ec9578664e3ad52ee229cb04d0cda6861b29ec",
+  "retained_browser_subject_files": [
+    {
+      "path": "contracts/examples/scenario-manifest.v1.example.json",
+      "bytes": 3625,
+      "sha256": "039cbcb0774b06da2d8098d46ebacd1e21bdab175c0d169fdc14e334ea052dd7"
+    },
+    {
+      "path": "contracts/fixtures/scenarios/canonical-digests.v1.json",
+      "bytes": 945,
+      "sha256": "ce90eb908a5ceccc8a13a6ba32c8ca502746c5a5dbb12eaa07791b7463d0cbed"
+    },
+    {
+      "path": "contracts/fixtures/scenarios/interrupted.v1.fixture.json",
+      "bytes": 3746,
+      "sha256": "2e0fe2cb20ffca7ae9592bae6658963a3310a4246dffe6eb336e5d76b5181b11"
+    },
+    {
+      "path": "contracts/fixtures/scenarios/multi-provider.v1.fixture.json",
+      "bytes": 5225,
+      "sha256": "cd3fa4119811f2aceceb08ef2e0615a0d73feca82e605812b570b7f5329eb542"
+    },
+    {
+      "path": "contracts/fixtures/scenarios/observed-empty.v1.fixture.json",
+      "bytes": 3469,
+      "sha256": "33c75cbf3f8fc8e361f01d3fc14cf904f145f69e6cc120cb41841f0f94ad67eb"
+    },
+    {
+      "path": "contracts/fixtures/scenarios/unavailable.v1.fixture.json",
+      "bytes": 3707,
+      "sha256": "877d6bba5657ff4f74983d27d323567838fc01753f9600f9c38b9106912718ad"
+    },
+    {
+      "path": "docs/integrations/showcase/explanations.mjs",
+      "bytes": 3492,
+      "sha256": "c6690aed06d19f1f357dbe371293d7d741102695747ece448e492cee58bd9a59"
+    },
+    {
+      "path": "docs/integrations/showcase/index.html",
+      "bytes": 3340,
+      "sha256": "48e47c5d5d78f57c2949ef6e6e9ac91a60593f27ef679601f9292072fa7f43c3"
+    },
+    {
+      "path": "docs/integrations/showcase/model.mjs",
+      "bytes": 7479,
+      "sha256": "6a4a03538a404430996414a5499c2866bbdf8eeee5e066f907147205ee4b1c1d"
+    },
+    {
+      "path": "docs/integrations/showcase/style.css",
+      "bytes": 1375,
+      "sha256": "3a6687b42f3133fbd68038c5ca89da9643dde052977841c95d97cfd7da7afd77"
+    },
+    {
+      "path": "docs/integrations/showcase/view.mjs",
+      "bytes": 9928,
+      "sha256": "8b4128a24f8f30e3c10d8820c88d453047be83b86ab88108985283bb6d4d3025"
+    },
+    {
+      "path": "docs/integrations/showcase/workflow-view.mjs",
+      "bytes": 2185,
+      "sha256": "cfdc7289e17b5030795fd9b71e8599c99b1efa2a718a75860e445cecc72b4552"
+    },
+    {
+      "path": "docs/integrations/showcase/workflows.json",
+      "bytes": 11843,
+      "sha256": "f618e33bcd8c827fcc144f8df77520934ce1902fadcd47e48373069f83022dbe"
+    },
+    {
+      "path": "docs/integrations/showcase/workflows.mjs",
+      "bytes": 3431,
+      "sha256": "dd8633fcce7eed85677f158b44d29179c9324a15cfc56c35c97ad269a9f03fc3"
+    },
+    {
+      "path": "docs/integrations/showcase/workflows.schema.json",
+      "bytes": 2070,
+      "sha256": "22b57c089eeeb83d381521f162c99b661f87d2815d4858805b6f650ad2c90418"
+    },
+    {
+      "path": "tests/fixtures/acceptance-scenarios.v1.json",
+      "bytes": 29203,
+      "sha256": "c21d52bf5ea26abd449d10278c433bfcb74615791a04d5fcde09900d358153a8"
+    },
+    {
+      "path": "tests/fixtures/lifecycle-scenarios.v1.json",
+      "bytes": 212247,
+      "sha256": "a025cf67b28ce1d636b18e54f344635cd706b7114d9685ca2e286f6b05d22107"
+    },
+    {
+      "path": "tools/prove_scenario_browser.mjs",
+      "bytes": 19072,
+      "sha256": "3d7ce32b08767eee20a8959d782a57d0808fb048e3c4099539b5cf30b4177230"
+    }
+  ],
+  "retained_browser_checks": 16,
+  "retained_served_bodies": 16,
+  "retained_screenshots": [
+    {
+      "path": "desktop-unconfirmed.png",
+      "bytes": 97676,
+      "sha256": "d1ed5fd8f7c7bce2137048d6e6ffadf655399f117eb93fe2147754d8e3f667ee"
+    },
+    {
+      "path": "narrow-linked-expectation.png",
+      "bytes": 47920,
+      "sha256": "92e60f7daf0f27973ecc0485fbd0e04ff8a46a86f78d3302bc6cfc84da453c54"
+    }
+  ],
+  "retained_browser_subject_equals_current_files": true,
+  "browser_executed_this_audit": false,
+  "current_source_files": {
+    "README.md": {
+      "bytes": 13739,
+      "sha256": "243286f1a9ee355c3e2d6067e92511894d6e97c1bbdf17738ff3fe8992802eb9"
+    },
+    "docs/integrations/README.md": {
+      "bytes": 9663,
+      "sha256": "ecdb759de7a60e1a229c39a1fce9600d91a129b461ba2fa0bccf48044099dfef"
+    },
+    "docs/integrations/scenario-showcase.md": {
+      "bytes": 11112,
+      "sha256": "67e413380e278faa3233c2695615eea5e77a562f11c893d5b2749e4a7808ab9c"
+    },
+    "tools/test_scenario_showcase.mjs": {
+      "bytes": 5839,
+      "sha256": "f2bd6ac644140926e46b9bfbf15c9274f8cc753685ef7f6dca8606e24045b94e"
+    },
+    "tools/test_workflow_guides.mjs": {
+      "bytes": 2175,
+      "sha256": "f15881b741446e137f926616fc9172ba619dbdf9caa57d64a8b14fb6b044aa02"
+    },
+    "tools/generate_scenario_sources.py": {
+      "bytes": 5282,
+      "sha256": "f740c41015ce4fc03d7a868e4e6ccd4b9328babf68d0393e81f86c635921e333"
+    }
+  },
+  "current_local_http": {
+    "requests": 19,
+    "all_loopback_get": true,
+    "responses": [
+      {
+        "path": "contracts/examples/scenario-manifest.v1.example.json",
+        "bytes": 3625,
+        "sha256": "039cbcb0774b06da2d8098d46ebacd1e21bdab175c0d169fdc14e334ea052dd7"
+      },
+      {
+        "path": "contracts/fixtures/scenarios/canonical-digests.v1.json",
+        "bytes": 945,
+        "sha256": "ce90eb908a5ceccc8a13a6ba32c8ca502746c5a5dbb12eaa07791b7463d0cbed"
+      },
+      {
+        "path": "contracts/fixtures/scenarios/interrupted.v1.fixture.json",
+        "bytes": 3746,
+        "sha256": "2e0fe2cb20ffca7ae9592bae6658963a3310a4246dffe6eb336e5d76b5181b11"
+      },
+      {
+        "path": "contracts/fixtures/scenarios/multi-provider.v1.fixture.json",
+        "bytes": 5225,
+        "sha256": "cd3fa4119811f2aceceb08ef2e0615a0d73feca82e605812b570b7f5329eb542"
+      },
+      {
+        "path": "contracts/fixtures/scenarios/observed-empty.v1.fixture.json",
+        "bytes": 3469,
+        "sha256": "33c75cbf3f8fc8e361f01d3fc14cf904f145f69e6cc120cb41841f0f94ad67eb"
+      },
+      {
+        "path": "contracts/fixtures/scenarios/unavailable.v1.fixture.json",
+        "bytes": 3707,
+        "sha256": "877d6bba5657ff4f74983d27d323567838fc01753f9600f9c38b9106912718ad"
+      },
+      {
+        "path": "docs/integrations/showcase/explanations.mjs",
+        "bytes": 3492,
+        "sha256": "c6690aed06d19f1f357dbe371293d7d741102695747ece448e492cee58bd9a59"
+      },
+      {
+        "path": "docs/integrations/showcase/index.html",
+        "bytes": 3340,
+        "sha256": "48e47c5d5d78f57c2949ef6e6e9ac91a60593f27ef679601f9292072fa7f43c3"
+      },
+      {
+        "path": "docs/integrations/showcase/model.mjs",
+        "bytes": 7479,
+        "sha256": "6a4a03538a404430996414a5499c2866bbdf8eeee5e066f907147205ee4b1c1d"
+      },
+      {
+        "path": "docs/integrations/showcase/style.css",
+        "bytes": 1375,
+        "sha256": "3a6687b42f3133fbd68038c5ca89da9643dde052977841c95d97cfd7da7afd77"
+      },
+      {
+        "path": "docs/integrations/showcase/view.mjs",
+        "bytes": 9928,
+        "sha256": "8b4128a24f8f30e3c10d8820c88d453047be83b86ab88108985283bb6d4d3025"
+      },
+      {
+        "path": "docs/integrations/showcase/workflow-view.mjs",
+        "bytes": 2185,
+        "sha256": "cfdc7289e17b5030795fd9b71e8599c99b1efa2a718a75860e445cecc72b4552"
+      },
+      {
+        "path": "docs/integrations/showcase/workflows.json",
+        "bytes": 11843,
+        "sha256": "f618e33bcd8c827fcc144f8df77520934ce1902fadcd47e48373069f83022dbe"
+      },
+      {
+        "path": "docs/integrations/showcase/workflows.mjs",
+        "bytes": 3431,
+        "sha256": "dd8633fcce7eed85677f158b44d29179c9324a15cfc56c35c97ad269a9f03fc3"
+      },
+      {
+        "path": "tests/fixtures/acceptance-scenarios.v1.json",
+        "bytes": 29203,
+        "sha256": "c21d52bf5ea26abd449d10278c433bfcb74615791a04d5fcde09900d358153a8"
+      },
+      {
+        "path": "tests/fixtures/lifecycle-scenarios.v1.json",
+        "bytes": 212247,
+        "sha256": "a025cf67b28ce1d636b18e54f344635cd706b7114d9685ca2e286f6b05d22107"
+      },
+      {
+        "path": "README.md",
+        "bytes": 13739,
+        "sha256": "243286f1a9ee355c3e2d6067e92511894d6e97c1bbdf17738ff3fe8992802eb9"
+      },
+      {
+        "path": "docs/integrations/README.md",
+        "bytes": 9663,
+        "sha256": "ecdb759de7a60e1a229c39a1fce9600d91a129b461ba2fa0bccf48044099dfef"
+      },
+      {
+        "path": "docs/integrations/scenario-showcase.md",
+        "bytes": 11112,
+        "sha256": "67e413380e278faa3233c2695615eea5e77a562f11c893d5b2749e4a7808ab9c"
+      }
+    ]
+  },
+  "local_check_logs": {
+    "model-tests.stdout": {
+      "bytes": 1165,
+      "sha256": "8805484696e592d37430e67437d06a7930231b2f0aa97db3121c62980a4d42b2"
+    },
+    "model-tests.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-drift.stdout": {
+      "bytes": 51,
+      "sha256": "97e431bc81b3874cf8112cbfc456d934d6e4d501d67f986ff629abd1b72419d3"
+    },
+    "source-drift.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "audit_observer_sha256": "ac67eb00faf5bd380b9ee7de0ca75ff1427a942876f4c0e983dde0d54434bd57",
+  "native_or_provider_qualification": false,
+  "current_report_authentication_or_freshness": false,
+  "assistive_technology_qualification": false,
+  "pages_deployment_performed": false,
+  "hosted_ci_dispatched": false,
+  "full_flow88_qualification": false,
+  "publication_authority": false
+}
