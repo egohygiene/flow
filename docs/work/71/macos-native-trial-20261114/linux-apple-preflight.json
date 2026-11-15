@@ -1,0 +1,82 @@
+{
+  "action": "preflight",
+  "artifacts": {},
+  "build_performed": false,
+  "checks": [
+    {
+      "check": "native_host",
+      "next_action": "run_on_selected_mac_architecture",
+      "reason": "native_matching_mac_required",
+      "state": "blocked"
+    },
+    {
+      "check": "flow_source",
+      "state": "passed"
+    },
+    {
+      "check": "renderflow_source",
+      "state": "passed"
+    },
+    {
+      "check": "aniflow_source",
+      "next_action": "prepare_and_review_successor_in_aniflow_then_replace_source_lock",
+      "reason": "aniflow_reviewed_successor_required",
+      "state": "blocked"
+    }
+  ],
+  "download_performed": false,
+  "host_target": null,
+  "installation_performed": false,
+  "native_execution": "not_executed_by_this_helper",
+  "native_qualification": "not_established",
+  "provider_invoked": false,
+  "publication_performed": false,
+  "remaining_unobserved": [
+    "cargo_cache_completeness",
+    "free_build_disk_capacity",
+    "native_external_tools_and_profiles",
+    "build_reproducibility",
+    "installed_owner_status_and_workloads",
+    "publisher_authentication",
+    "native_domain_qualification"
+  ],
+  "request_sha256": "ce116ae0948d0dfdecc034ee23c5b6821ace1b0fce89988e38cc44bf879f869a",
+  "retained_targets": [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin"
+  ],
+  "schema_version": "flow.macos-native-trial-report/v1",
+  "source_locks": {
+    "aniflow": {
+      "cargo_lock_sha256": "be80e8916afa10968da936ddc47544840297b58f00c0b433554f8e7ca173f13a",
+      "revision": "10df7c09ab1c10749788b4fe2bf77400442f8d32",
+      "tree": "01126c3156807d94303af66f5b951fcd09c7f8dd"
+    },
+    "flow": {
+      "cargo_lock_sha256": "b7a16689cb7ec533bb4a50bf14e1035a2bf5d123e0491f5f63d6cb675891c1ac",
+      "revision": "2b18f11e8820cfb117c26651e28837e624cb6ef6",
+      "tree": "b2f190f55556d78477e98dfea7c409dc8cb0bbc2"
+    },
+    "renderflow": {
+      "cargo_lock_sha256": "409dbf8fa45ea228bce21c7f961784fcd95d8704e82417bf08d27e73f967bc94",
+      "revision": "fe1054a87648f294c2fc8c58f75b26e87200685c",
+      "tree": "ff6a718004be916d5ddc45ef7d97ddfa2a00c531"
+    }
+  },
+  "sources": {
+    "flow": {
+      "cargo_lock_sha256": "b7a16689cb7ec533bb4a50bf14e1035a2bf5d123e0491f5f63d6cb675891c1ac",
+      "revision": "2b18f11e8820cfb117c26651e28837e624cb6ef6",
+      "tree": "b2f190f55556d78477e98dfea7c409dc8cb0bbc2",
+      "version": "0.1.0"
+    },
+    "renderflow": {
+      "cargo_lock_sha256": "409dbf8fa45ea228bce21c7f961784fcd95d8704e82417bf08d27e73f967bc94",
+      "revision": "fe1054a87648f294c2fc8c58f75b26e87200685c",
+      "tree": "ff6a718004be916d5ddc45ef7d97ddfa2a00c531",
+      "version": "0.3.0-rc.1"
+    }
+  },
+  "state": "blocked",
+  "target": "aarch64-apple-darwin"
+}
