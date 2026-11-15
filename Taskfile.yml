@@ -76,6 +76,29 @@ tasks:
     cmds:
       - cargo +1.85.0 fmt --all -- --check
 
+  ci:clippy:
+    desc: Enforce the hosted strict Clippy policy at the declared compiler (currently has recorded findings)
+    cmds:
+      - cargo +1.85.0 clippy --all-targets --all-features --locked --offline --jobs 2 -- -D warnings
+
+  ci:validators:
+    desc: Run the existing nine required repository validators with pinned Python dependencies prepared
+    cmds:
+      - python3 -B tools/validate_contracts.py
+      - python3 -B tools/test_optiflow_receipts.py
+      - python3 -B tools/generate_scenario_sources.py --check
+      - python3 -B tools/test_acceptance_report.py
+      - python3 -B tools/test_lifecycle_report.py
+      - python3 -B tools/test_durable_contracts.py
+      - python3 -B .agents/specs/validate-specs.py
+      - python3 -B .agents/skills/validate-skills.py
+      - python3 -B .agents/agents/validate-agents.py
+
+  ci:validators:test:
+    desc: Check exact manifest/Task/hosted joins and refusal of omitted or weakened validation
+    cmds:
+      - python3 -B -m unittest discover --start-directory tools --pattern test_local_validation_selection.py
+
   ci:lock:
     desc: Resolve owning dependency metadata without permitting lockfile changes
     cmds:
