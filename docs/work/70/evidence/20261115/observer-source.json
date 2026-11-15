@@ -1,0 +1,23 @@
+{
+  "actual_cli_source_revision": "69eafaf74af8891bde1c7a769fb57dbca815476c",
+  "actual_observer_revision": "4a05a4912a3182cd38d968138890f3e0a229cf7b",
+  "actual_observer_tree": "a5d47777ed1982a6cd942926f955b3aa117e4e96",
+  "current_source_equivalence_sha256": "089b38cc773dfc7084076f01aa1fe1dd62bc1b4c68014709c33f365cdcb903dc",
+  "files": {
+    "scripts/release/package.py": "fa3182cfea81e7c085e9ced838a8fa3b38d425231228e16bc15a0bb26e0186c4",
+    "tools/check_installed_local_inputs.py": "f8ba5bd0463e5c855e6dd0b284c3793337ceacc7da8f9c08df7eb9dfed77fcaf",
+    "tools/check_installed_music_video.py": "158156d903a04caa53e3e5b61981f63cba1a1ecd812d283a543766a3fab8aa12",
+    "tools/check_native_publication.py": "7b76fd42b418b026d9d25aa08ec0f240fed2be6cbb696449030ef28cf436b2e1",
+    "tools/check_released_read_only.py": "a9474b835d9e54b8a6b0dcfe17e0b371907220377fa2834070d2786634799925",
+    "tools/installed_candidate_subjects.py": "2e021bf91b12ff11bb616742efdd14afef3ec7cff1e6f9e5b9dc920b2d993950",
+    "tools/installed_music_candidate_subjects.py": "1ce95f5b6d3ca340d0caecbc42ffbc24e5d59dd762da96ff1e8e8f09ea5bbb2c",
+    "tools/test_installed_local_inputs.py": "874519262b7a40962ee241edb61a29dfcddf5bb468a8c47faf52aed4b010db80"
+  },
+  "focused_observer_cases_passed": 3,
+  "new_installation_performed": false,
+  "new_product_build_performed": false,
+  "report_sha256": "5b1291788b0ff1827a3a228ec5d7ff46887ddcf4ed1de5dd1d5f85521577724b",
+  "schema_version": "flow.local-input-observer-source/v1",
+  "scope": "actual existing installed binaries; new observer/doc checkpoint only",
+  "selected_product_context_revision": "80127ca4f9ad14ebb8e8c5a8f7321f242aa36607"
+}
