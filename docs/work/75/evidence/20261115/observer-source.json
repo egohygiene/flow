@@ -1,0 +1,24 @@
+{
+  "actual_observer_revision": "fe56eb71ba6213821ea81a0b879d6119502c6b86",
+  "actual_observer_tree": "be17619824da1c2b4b20edcd04d4a3eb5150245f",
+  "files": {
+    "scripts/release/package.py": "fa3182cfea81e7c085e9ced838a8fa3b38d425231228e16bc15a0bb26e0186c4",
+    "tools/check_installed_music_video.py": "158156d903a04caa53e3e5b61981f63cba1a1ecd812d283a543766a3fab8aa12",
+    "tools/check_native_publication.py": "7b76fd42b418b026d9d25aa08ec0f240fed2be6cbb696449030ef28cf436b2e1",
+    "tools/check_released_read_only.py": "a9474b835d9e54b8a6b0dcfe17e0b371907220377fa2834070d2786634799925",
+    "tools/installed_candidate_subjects.py": "2e021bf91b12ff11bb616742efdd14afef3ec7cff1e6f9e5b9dc920b2d993950",
+    "tools/installed_music_candidate_subjects.py": "1ce95f5b6d3ca340d0caecbc42ffbc24e5d59dd762da96ff1e8e8f09ea5bbb2c",
+    "tools/prepare_music_candidate_installation.py": "77dfc1db476574d240a601c0efc510592326a4e3a1d61919a806631f3d582618"
+  },
+  "final_direct_report_sha256": "dde28963f3b5f4a516db3cc6c51c9210c3e5063af7700566a32b873b1c225859",
+  "final_installation_report_sha256": "e18ea333b96000cd48d5934c5a57eaf1be77f4a1077ae86a64f33c6459fdbd49",
+  "focused_observer_cases_passed": {
+    "native_completion": 4,
+    "native_publication_including_optional_inventory_limits": 9,
+    "unchanged_v1_installed_subject": 15,
+    "v2_installed_subject": 9
+  },
+  "product_build_performed": false,
+  "schema_version": "flow.installed-music-observer-source/v1",
+  "source_only_observer_and_receipt_checkpoint": true
+}

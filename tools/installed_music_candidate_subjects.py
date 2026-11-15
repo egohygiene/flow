@@ -73,7 +73,7 @@ def captured_provider(observation, tool, value, binary, descriptor, version):
         and observation["binary"] == previous.pin(binary)
         and observation["contract"] == {"identifier": tool + ".release-contract/" + ("v1" if tool == "aniflow" else "v2"),
             **previous.pin(descriptor)}
-        and observation["version"] == version and observation["profile"] in ["release", "dev"]
+        and observation["version"] == version and observation["profile"] in ["release", "dev", "optimized-dev"]
         and type(observation["build_command"]) is list and observation["build_command"]
         and all(type(item) is str and item for item in observation["build_command"])
         and type(observation["rustc"]) is str and observation["rustc"].startswith("rustc ")

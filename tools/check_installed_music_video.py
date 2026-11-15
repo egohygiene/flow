@@ -13,12 +13,36 @@ import signal
 import subprocess
 import time
 
-from check_native_publication import inventory, pin, put, refusal
+from check_native_publication import pin, put, refusal
+from check_native_publication import inventory as native_inventory
 from check_released_read_only import OWNER_IO, canonical, command, document, envelope, native_path, require, sha
 from installed_music_candidate_subjects import InstalledMusicCandidate
 
 LIMITS = {"timeout_ms": 120000, "max_input_bytes": 2000000, "max_output_bytes": 16000000,
     "max_total_output_bytes": 32000000, "max_artifacts": 8}
+
+
+def inventory(root):
+    # Native Ani state retains its 41 MB pinned executable. This finite bound
+    # belongs to proof observation, separate from requested final-output limits.
+    return native_inventory(root, maximum_member_bytes=67108864,
+        maximum_total_bytes=536870912, maximum_entries=4096)
+
+
+def direct_children(parent):
+    # This sandbox omits Linux's task/*/children interface. PPid in the bounded
+    # public stat record still locates only children of our own selected Flow.
+    children = []; entries = 0
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isascii() or not entry.name.isdigit(): continue
+        entries += 1; require(entries <= 4096, "process discovery entry bound exceeded")
+        try:
+            with (entry / "stat").open("rb") as stream: raw = stream.read(4097)
+            require(len(raw) <= 4096, "process identity record bound exceeded")
+            fields = raw.rsplit(b")", 1)[1].split()
+            if len(fields) >= 2 and int(fields[1]) == parent: children.append(int(entry.name))
+        except (FileNotFoundError, ProcessLookupError, PermissionError): pass
+    return children
 
 
 def accepted(value, root, source, provider):
@@ -84,15 +108,16 @@ def cancel_actual_child(flow, plan, approval, root, logs, cwd):
                     require(stdout_path.stat().st_size <= 16777216 and stderr_path.stat().st_size <= 1048576,
                         "bounded cancellation output exceeded")
                     if marker.exists():
-                        children = Path(f"/proc/{process.pid}/task/{process.pid}/children")
-                        child_seen = [int(n) for n in children.read_text().split()] if children.exists() else []
+                        child_seen = direct_children(process.pid)
                         if child_seen:
                             # Require an actual selected Aniflow executable, not
                             # only a transform marker preceding child creation.
                             live = []
                             for pid in child_seen:
                                 try:
-                                    if Path(f"/proc/{pid}/exe").resolve(strict=True) == flow.parent / "aniflow": live.append(pid)
+                                    actual = os.stat(f"/proc/{pid}/exe")
+                                    expected = (flow.parent / "aniflow").stat()
+                                    if (actual.st_dev, actual.st_ino) == (expected.st_dev, expected.st_ino): live.append(pid)
                                 except FileNotFoundError: pass
                             if live:
                                 child_seen = live; process.send_signal(signal.SIGINT); signalled = True; break
@@ -177,7 +202,7 @@ def run(selection_path, source_input, recipe_input, tool_directories, output):
     require(inventory(root) == before, "restored controls changed completed native state")
     cancel_root, cancel_plan, cancel_approval = planning("cancel")
     cases.append(cancel_actual_child(subject.flow, cancel_plan, cancel_approval, cancel_root, logs, output))
-    partial = invoke("cancelled-retained-status", ["status", "--run-directory", cancel_root], outcome="recovery_required")
+    partial = invoke("cancelled-retained-status", ["status", "--run-directory", cancel_root], code=7, outcome="recovery_required")
     require(partial["state"] == "recovery_required" and partial["receipt"] is None
         and partial["domain_evidence"] == "no_committed_domain_acceptance", "cancelled state claimed native completion")
     require(accepted(invoke("final-complete-status", ["status", "--run-directory", root]), root, source, subject.aniflow) == receipt,
