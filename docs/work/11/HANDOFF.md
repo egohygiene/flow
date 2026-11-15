@@ -1,3 +1,76 @@
+## Five-checkpoint publishing continuation — November 15, 2026
+
+The previous eight checkpoints are merged: Aniflow #243–245, Renderflow
+#525–526 and Flow #152–154. This continuation is delivered as five draft PRs;
+none of these five has been merged. Flow review order is
+[#155](https://github.com/egohygiene/flow/pull/155) →
+[#156](https://github.com/egohygiene/flow/pull/156) →
+[#157](https://github.com/egohygiene/flow/pull/157).
+[Aniflow #246](https://github.com/egohygiene/aniflow/pull/246) and
+[Renderflow #527](https://github.com/egohygiene/renderflow/pull/527) are independent
+of that documentation/observer stack. Re-query the live roadmap for final heads
+before review or merge.
+
+- [Showcase closeout](../62/ACCEPTANCE-CLOSEOUT-20261115.md) maps all six original
+  Flow #62 criteria to actual source and evidence. Twelve current Node cases,
+  five drift recipes and 19 loopback HTTP reads pass. The earlier 16 Chromium
+  observations, exact served-source identities and two screenshots remain
+  retained and applicable; this checkpoint does not claim a browser rerun.
+  Draft #155 closes #62 only when subsequently merged. Pages, additional
+  browsers, assistive technology and native provider qualification are separate.
+- [Local validation](../137/LOCAL-VALIDATORS-20261115.md) exposes the formatter
+  and nine existing required repository validators through canonical Task aliases
+  and the existing pinned Realm local-CI owner. All ten selected checks pass;
+  four observer methods cover 73 negative mutations. The retained strict Clippy
+  invocation still fails with 305 library findings and 276 overlapping lib-test
+  findings. No warnings were allowed away. Only this exact ten-row subset was
+  executed, not the full 18-row manifest or hosted CI; Task itself was not run.
+- [Installed local-input proof](../70/LOCAL-INPUT-ENTRY-20261115.md) passes 31 Flow
+  calls with 12 exact refusal/unavailable controls: a spaced/Unicode MP4 through
+  Aniflow, ordered PNGs into independently inspected Renderflow EPUB, and released
+  Optiflow's explicit recursive read-only scope. Original input bytes, installation
+  and completed status/resume remain unchanged. This uses the existing measured
+  Flow `69eafaf…` package, not a newly compiled Flow executable. A separate exact
+  57-path comparison records unchanged runtime compilation inputs through the
+  selected `80127ca…` main context; the older installed-v2 selection is preserved.
+- Aniflow #246 adds explicitly selected exact presented-window audio analysis
+  through the existing source/final/resumable QC and policy owners. The fresh
+  public-source candidate passes 48 CLI calls, including 12 intended refusals.
+  Its separate analysis WAV proves the exact 96,000-frame prefix while retaining
+  all 96,256 complete decoded frames, the 256-frame nonzero tail, original packets
+  and full meter. Missing selection retains legacy behavior. Numeric policy
+  comparison does not confer human or mastering approval; padded-tail gain and
+  broader native meter/host qualification remain open under #212.
+- Renderflow #527 adds selected mandatory pinned native validation for direct
+  original PCM16/24 WAV into supported FLAC/ALAC/MP3/AAC profiles. The fresh CLI
+  passes 15 cases across 40 calls, including exact matching PCM, conservative
+  lossy conversion, cache revalidation, tool policy, missing features and loss
+  gates. The same candidate passes the existing manual-lyrics regression: 21
+  calls, eight formats and 17 intended refusals. Matching decoded PCM can justify
+  artifact-specific Lossless; lossy or intentionally converted samples remain
+  Lossy. The existing encoder can retain 24-bit depth for a requested 16-bit
+  `alac_cd` profile; native validation correctly refuses that mismatch and does
+  not publish it. That encoder-profile repair remains under #367. Matching
+  16-bit ALAC is supported. Container metadata, perceptual quality, mastering,
+  unattested encoder identity and broader native/release qualification are not
+  inferred from pinned verifier evidence.
+
+The new measured Aniflow executable is SHA-256 `961985e4…`, compiled from actual
+published source `e1ce9b37…`; its initial identical-tree local compile and later
+fresh-cache public-head invocation are retained separately, with no independent
+rebuild claim. Renderflow is `391814f4…` from `67742e44…`. Later observer/docs
+commits are distinct from these compiled sources. The local-input
+proof instead retains the existing older installed provider captures. These
+observations do not create a newly packaged combined suite or an all-platform
+green compatibility matrix. Each owning guide retains full source, binary,
+contract, command and artifact identities and independent review boundaries.
+
+No hosted CI was dispatched, native Mac/physical volume or private song/model
+used, release signed/published, media uploaded or Pages deployed. The larger
+issues retain their remaining acceptance gates. Flow #88 remains exactly
+unchanged and scheduled last; strict Clippy debt is visible rather than deferred
+by an asserted pass.
+
 ## Ordinary-input publishing sprint — November 15, 2026
 
 The eight-checkpoint sprint started November 14 and continued past midnight UTC.
