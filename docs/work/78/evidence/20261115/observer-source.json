@@ -1,0 +1,18 @@
+{
+  "actual_observer_revision": "fe56eb71ba6213821ea81a0b879d6119502c6b86",
+  "actual_observer_tree": "be17619824da1c2b4b20edcd04d4a3eb5150245f",
+  "files": {
+    "scripts/release/package.py": "fa3182cfea81e7c085e9ced838a8fa3b38d425231228e16bc15a0bb26e0186c4",
+    "tools/check_installed_music_video.py": "158156d903a04caa53e3e5b61981f63cba1a1ecd812d283a543766a3fab8aa12",
+    "tools/check_music_project_handoff.py": "469ef3c0e3d88bf74db545dbf32d7427a5c9053df00aae410bf255867d3959e3",
+    "tools/check_native_publication.py": "7b76fd42b418b026d9d25aa08ec0f240fed2be6cbb696449030ef28cf436b2e1",
+    "tools/check_released_read_only.py": "a9474b835d9e54b8a6b0dcfe17e0b371907220377fa2834070d2786634799925",
+    "tools/installed_candidate_subjects.py": "2e021bf91b12ff11bb616742efdd14afef3ec7cff1e6f9e5b9dc920b2d993950",
+    "tools/installed_music_candidate_subjects.py": "1ce95f5b6d3ca340d0caecbc42ffbc24e5d59dd762da96ff1e8e8f09ea5bbb2c"
+  },
+  "focused_project_observer_cases_passed": 2,
+  "product_build_performed": false,
+  "project_report_sha256": "2f7698d5131b050a3364ea3064c58297c3a0de8aac71c0db81b938a45f266164",
+  "qc_package_subject_sha256": "d3833b8ea042dca6c804ded9cd1388fdf4b0b5b438bca3ba8cc66140266963dd",
+  "schema_version": "flow.music-project-observer-source/v1"
+}
