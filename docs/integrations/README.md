@@ -36,6 +36,8 @@ Aniflow/Renderflow adapters and complete installed workflows remain separate.
 - [Scenario fixtures](scenario-fixtures.md) define stable scenario identity,
   immutable topology, typed expectations, resource tiers, canonicalization,
   and honest coverage boundaries.
+- [Scenario showcase](scenario-showcase.md) browses canonical recipes, expected
+  outcomes, supplied evidence identities and declared gaps without running providers.
 - [Hermetic provider kit](hermetic-provider-kit.md) defines the immutable
   synthetic packages, stable capability IDs, closed behavior catalog,
   deterministic compositions, exact digest/finalization workflow, and the
