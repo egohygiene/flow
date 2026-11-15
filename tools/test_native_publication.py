@@ -11,6 +11,15 @@ import check_native_publication as pilot
 
 
 class ObserverCases(unittest.TestCase):
+    def test_optional_music_inventory_limits_preserve_default_hashes_and_refuse_bounds(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);(root/'a').write_bytes(b'abc');(root/'b').write_bytes(b'def')
+            expected={'a':pilot.sha(b'abc'),'b':pilot.sha(b'def')}
+            self.assertEqual(pilot.inventory(root),expected)
+            self.assertEqual(pilot.inventory(root,maximum_member_bytes=3,maximum_total_bytes=6,maximum_entries=2),expected)
+            for limits in [{'maximum_member_bytes':2},{'maximum_total_bytes':5},{'maximum_entries':1}]:
+                with self.assertRaises(ValueError):pilot.inventory(root,**limits)
+
     def test_epub_spine_checks_exact_original_bytes_and_order(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary); sources = [root/'one.png', root/'two.png']

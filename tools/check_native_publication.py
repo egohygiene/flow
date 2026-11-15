@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 from datetime import datetime, timezone
 import io
 import json
@@ -44,23 +45,35 @@ def pin(path):
     return {"path": native_path(path), "sha256": sha(data), "byte_count": len(data)}
 
 
-def inventory(root):
+def inventory(root, *, maximum_member_bytes=16777216, maximum_total_bytes=None, maximum_entries=None):
     result = {}
-    for path in sorted(root.rglob("*")):
+    total = 0; entries = 0
+    for path in root.rglob("*"):
+        entries += 1
+        require(maximum_entries is None or entries <= maximum_entries, "native state entry bound exceeded")
         before = path.lstat()
         require(not stat.S_ISLNK(before.st_mode), "native state contains a symlink")
         if stat.S_ISDIR(before.st_mode):
             continue
-        require(stat.S_ISREG(before.st_mode) and before.st_nlink == 1 and before.st_size <= 16777216,
+        total += before.st_size
+        require(stat.S_ISREG(before.st_mode) and before.st_nlink == 1 and before.st_size <= maximum_member_bytes
+                and (maximum_total_bytes is None or total <= maximum_total_bytes),
                 "bounded regular native state required")
         # Empty lock/stderr files are valid state. The held descriptor still
         # prevents following a substituted path while comparing content.
         with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK), "rb") as stream:
-            opened = os.fstat(stream.fileno()); data = stream.read(16777217); after = os.fstat(stream.fileno())
+            opened = os.fstat(stream.fileno()); digest = hashlib.sha256(); count = 0
+            while True:
+                chunk = stream.read(1048576)
+                if not chunk: break
+                count += len(chunk)
+                require(count <= maximum_member_bytes, "native state grew beyond observation bound")
+                digest.update(chunk)
+            after = os.fstat(stream.fileno())
         identity = lambda s: (s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns)
-        require(len(data) == before.st_size and identity(before) == identity(opened) == identity(after) == identity(path.lstat()),
+        require(count == before.st_size and identity(before) == identity(opened) == identity(after) == identity(path.lstat()),
                 "native state changed during observation")
-        result[path.relative_to(root).as_posix()] = sha(data)
+        result[path.relative_to(root).as_posix()] = digest.hexdigest()
     return result
 
 
