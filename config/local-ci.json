@@ -18,6 +18,120 @@
       ]
     },
     {
+      "id": "canonical-format",
+      "kind": "direct",
+      "required": true,
+      "timeout_seconds": 120,
+      "command": [
+        "cargo",
+        "+1.85.0",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ]
+    },
+    {
+      "id": "contract-schemas",
+      "kind": "direct",
+      "required": true,
+      "timeout_seconds": 120,
+      "command": [
+        "python3",
+        "-B",
+        "tools/validate_contracts.py"
+      ]
+    },
+    {
+      "id": "native-optiflow-receipts",
+      "kind": "direct",
+      "required": true,
+      "timeout_seconds": 120,
+      "command": [
+        "python3",
+        "-B",
+        "tools/test_optiflow_receipts.py"
+      ]
+    },
+    {
+      "id": "deterministic-scenario-sources",
+      "kind": "direct",
+      "required": true,
+      "timeout_seconds": 120,
+      "command": [
+        "python3",
+        "-B",
+        "tools/generate_scenario_sources.py",
+        "--check"
+      ]
+    },
+    {
+      "id": "acceptance-report-regressions",
+      "kind": "direct",
+      "required": true,
+      "timeout_seconds": 120,
+      "command": [
+        "python3",
+        "-B",
+        "tools/test_acceptance_report.py"
+      ]
+    },
+    {
+      "id": "lifecycle-report-regressions",
+      "kind": "direct",
+      "required": true,
+      "timeout_seconds": 120,
+      "command": [
+        "python3",
+        "-B",
+        "tools/test_lifecycle_report.py"
+      ]
+    },
+    {
+      "id": "durable-contract-regressions",
+      "kind": "direct",
+      "required": true,
+      "timeout_seconds": 120,
+      "command": [
+        "python3",
+        "-B",
+        "tools/test_durable_contracts.py"
+      ]
+    },
+    {
+      "id": "architecture-specifications",
+      "kind": "direct",
+      "required": true,
+      "timeout_seconds": 120,
+      "command": [
+        "python3",
+        "-B",
+        ".agents/specs/validate-specs.py"
+      ]
+    },
+    {
+      "id": "repository-skills",
+      "kind": "direct",
+      "required": true,
+      "timeout_seconds": 120,
+      "command": [
+        "python3",
+        "-B",
+        ".agents/skills/validate-skills.py"
+      ]
+    },
+    {
+      "id": "repository-agents",
+      "kind": "direct",
+      "required": true,
+      "timeout_seconds": 120,
+      "command": [
+        "python3",
+        "-B",
+        ".agents/agents/validate-agents.py"
+      ]
+    },
+    {
       "id": "workflow-budget-regressions",
       "kind": "direct",
       "required": true,
