@@ -1,0 +1,160 @@
+{
+  "actual_commands": {
+    "current_owner_checks_matching": 2,
+    "current_owner_checks_outside_target": 2,
+    "direct_captured_streams": 122,
+    "exact_refusal_controls": 15,
+    "flow_workload": 61,
+    "retained_inventory_files": 411,
+    "suite_status": 2
+  },
+  "candidate_sources": {
+    "aniflow": {
+      "binary_sha256": "d776fd120ad0a77b21271c162815546062434f10e4df93e2f9686c664d1a666c",
+      "contract_sha256": "939cfc732fed34775a4bb1b8618b73009f42dc29e92e83fcc649123f2aaa3027",
+      "source_revision": "f851f9cc0f68291329ebc34acc36b16c07b9f82e",
+      "source_tree": "5a4570ee90fe8bcd50ef9557aff327da75e7d3f1"
+    },
+    "renderflow": {
+      "binary_sha256": "d7b2f03670ed1262c9dfab67c9cf64a0314c7c9fb190d0ffc4a14e87ca96ca54",
+      "contract_sha256": "199bf790b2d78e7706b1e24b3e0fdb189b8286eb231f8be1c8da503d82922f58",
+      "source_revision": "4fb2539fa686e966143be69b711ffeeccc59d3b4",
+      "source_tree": "22d8809c8386050bd1734280c69561562aef8d11"
+    }
+  },
+  "cp4_closed_source_helper_revision": "232070df7deee4ac213b63e36a414ddbf5f5a2e2",
+  "cp4_handoff_schema": "flow.installed-presented-qc-handoff/v1",
+  "cp4_handoff_sha256": "529c10a0b170d26a207dabdd6e66a3a8c53a507ad0b462ae11d102b0bfbdda9a",
+  "executed_at_utc": "2026-11-16T05:21:58.189806+00:00",
+  "executed_observer_local_revision": "7e733f538c2c2495ac4b151818db055ab98ff492",
+  "measured_flow": {
+    "actual_build_revision": "69eafaf74af8891bde1c7a769fb57dbca815476c",
+    "actual_build_tree": "376f175971da85fa7e894efc06a3ac836ce8b519",
+    "binary": {
+      "bytes": 6578208,
+      "sha256": "0de124114f96cab0256f09735b68ca56eecab646d608c051f1651892c20585e4"
+    },
+    "cohort_sha256": "16b6661a15c74efb0c3ec9fd9fc8147162786ba562653dbf0c6327b8910e3611",
+    "installation_receipt_sha256": "367477c1408ab4bf003cffb83f1376d3aa03bb467427e513838028a95df319c4",
+    "package_build_observation_sha256": "9473da259a95026100b87b4c609832b09f13c7e64913b1bfd21499a7a0ceddf0",
+    "package_manifest_sha256": "62ba25f3dd056b48fdfaf75a83b7f0dbdd3f29524b5ddc471b514246b85ccdbb",
+    "product_equivalence_sha256": "c0a6a25430e7664d54028e1bda8b65dc60753b89f41ece5031de3039335d475c",
+    "profile": "release",
+    "provider_supplement_sha256": "d955fffec422242f224b9a9006d78256439e2da05222e3159650dd224195b9ad",
+    "schema_version": "flow.installed-package-observation/v1",
+    "scope": "unchanged old Flow package bytes with separately selected new provider candidates; no repackaging or qualification transfer",
+    "selected_product_source_revision": "2b18f11e8820cfb117c26651e28837e624cb6ef6",
+    "selected_product_source_tree": "b2f190f55556d78477e98dfea7c409dc8cb0bbc2"
+  },
+  "observed_report": {
+    "bytes": 76458,
+    "path": "docs/work/78/audio-readiness-observed-20261115.json",
+    "sha256": "3d1c203023a242a4a4064f803082848d126a45bef4905707526da67ac4bf9bc6"
+  },
+  "observer": {
+    "byte_count": 38393,
+    "path": "tools/check_installed_audio_readiness.py",
+    "sha256": "f06f8085383c143e37add2ae4dcfa3e9cb0d245794331bdc964beb1dbc027649"
+  },
+  "observer_revision_scope": "Local observer capture; no GitHub URL or executable build identity inferred. Final proof/docs tips must retain exact executed helper bytes.",
+  "qualification": {
+    "all_five_human_reviews_awaiting": true,
+    "content_published": false,
+    "full_parent_issue_closed": false,
+    "meter_native_qualified": false,
+    "platform_compliance_verified": false,
+    "provider_release_qualified": false,
+    "upload_authority": false
+  },
+  "raw_private_reports": {
+    "match-audio-summary.json": {
+      "bytes": 5862,
+      "sha256": "a54b56c0b84f4169c8bde67c508139b4ede8d661817f9beea86afd92d22192d2"
+    },
+    "match-publishing-report.json": {
+      "bytes": 9684,
+      "sha256": "992c4d74311b55bcbb8c1764d6f323cf7423346fc657cf8a6ceaa659558c4b94"
+    },
+    "outside-audio-summary.json": {
+      "bytes": 5865,
+      "sha256": "61b063e3f38a0095e2cd76245538e8f2e9bb37a8b8844db75bf0617ac30d6c92"
+    },
+    "outside-publishing-report.json": {
+      "bytes": 10333,
+      "sha256": "75d9cbe0b4a7e59b4f13cb37e3848706bd83747083aeddad09f5e30306b1d863"
+    },
+    "report.json": {
+      "bytes": 78763,
+      "sha256": "a4b7030a955ef3703821cef2e57cb48a42d386da349b6b1d443adbf9d448f67e"
+    }
+  },
+  "repository_helper_files": {
+    "scripts/owner_reports.py": {
+      "byte_count": 20801,
+      "sha256": "8742dd8c98e4fc4fb74354bea325b4d006efbbd2d6802d94cb6af35e6abceb33"
+    },
+    "scripts/release/package.py": {
+      "byte_count": 16946,
+      "sha256": "fa3182cfea81e7c085e9ced838a8fa3b38d425231228e16bc15a0bb26e0186c4"
+    },
+    "tools/check_installed_audio_readiness.py": {
+      "byte_count": 38393,
+      "sha256": "f06f8085383c143e37add2ae4dcfa3e9cb0d245794331bdc964beb1dbc027649"
+    },
+    "tools/check_installed_music_video.py": {
+      "byte_count": 15945,
+      "sha256": "158156d903a04caa53e3e5b61981f63cba1a1ecd812d283a543766a3fab8aa12"
+    },
+    "tools/check_native_publication.py": {
+      "byte_count": 25769,
+      "sha256": "7b76fd42b418b026d9d25aa08ec0f240fed2be6cbb696449030ef28cf436b2e1"
+    },
+    "tools/check_released_read_only.py": {
+      "byte_count": 31399,
+      "sha256": "a9474b835d9e54b8a6b0dcfe17e0b371907220377fa2834070d2786634799925"
+    },
+    "tools/installed_audio_candidate_subjects.py": {
+      "byte_count": 9031,
+      "sha256": "8f6d4a775a93d17fdd00a20cadc243aef75b4ebc9a178be2d9cd3b748a083645"
+    },
+    "tools/installed_candidate_subjects.py": {
+      "byte_count": 19582,
+      "sha256": "2e021bf91b12ff11bb616742efdd14afef3ec7cff1e6f9e5b9dc920b2d993950"
+    },
+    "tools/installed_music_candidate_subjects.py": {
+      "byte_count": 17288,
+      "sha256": "0058219477e0175bb799b0e2f49a0627f6bc110d36c8b93daf3ed452df7d06fa"
+    }
+  },
+  "retained_iterations": [
+    {
+      "accepted_final_receipt": false,
+      "id": "01",
+      "limit": "sys.modules-only helper list missed explicitly loaded OWNER_IO and PACKAGE modules; historical captured bytes retained.",
+      "semantic_result": "passed"
+    },
+    {
+      "accepted_final_receipt": false,
+      "id": "02",
+      "limit": "Explicit OWNER_IO added; dynamically held PACKAGE still omitted; historical captured bytes retained.",
+      "semantic_result": "passed"
+    },
+    {
+      "accepted_final_receipt": true,
+      "id": "03",
+      "scope": "Complete nine-source module closure pinned before/after; consumes the new separately pinned CP4 handoff04 and new exact subject.",
+      "semantic_result": "passed"
+    }
+  ],
+  "schema_version": "flow.installed-audio-readiness-bindings/v1",
+  "scope": "Selected synthetic local operator path over existing installed owners; actual current policy checks are distinct from the later historical publishing snapshot. No runtime source/build or hosted CI changed.",
+  "separate_current_source_context": {
+    "actual_build_revision": "69eafaf74af8891bde1c7a769fb57dbca815476c",
+    "actual_build_tree": "376f175971da85fa7e894efc06a3ac836ce8b519",
+    "observation_sha256": "6242879358d01eae68925c8427807f03435faa160f8c85ee188034cafaad8cf5",
+    "runtime_inputs_equal": true,
+    "scope": "separate complete local Git input comparison; not a rebuild, package reseal or source authentication",
+    "selected_revision": "a6f01b9b0bfdf985027f3bcd8e0d729c20e1691f",
+    "selected_tree": "de1a2b1938a91409e7bbf54b518e7dfc7777419f"
+  }
+}

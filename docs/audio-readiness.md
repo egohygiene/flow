@@ -1,5 +1,11 @@
 # Publishing audio readiness
 
+The [installed operator observation](work/78/AUDIO-READINESS-20261115.md) now
+executes the complete setup/bind/readiness path. Four actual current policy
+checks cover a selected synthetic numeric match and outside-target result for
+the exact final video assigned to Archive and TikTok. Both remain partial:
+matching a supplied goal does not qualify the meter/provider or approve music.
+
 [Installed check setup](audio-check-setup.md) resolves the selected package and
 owner requests before separate preparation, approval and execution.
 
@@ -86,11 +92,10 @@ replay/state engine adopts or overwrites them. Reports and verifier output must
 stay outside packages, originals, provider/configuration, native workspaces and
 the selected Aniflow QC/native evidence directories.
 
-All focused protocol/source/scope/archive/parser cases and contracts are
-authored, uncompiled/unrun. No tests/compiler/build/package/dependencies/lint/
-format/schema/docs/drift/product validators, CLI/SDK/native/media/provider/model/
-browser/container/CI, acquisition, actual source replacement/disposal, signing/
-timestamps or publication ran. Provider release, clean-install/interoperability,
-native/reference-meter and musical qualification remain unfinished under the
-existing owners. Flow #88 stays last and unchanged; known alignment cancellation/
-start-marker failure unresolved, cause unproven. ADR-0019 remains proposed.
+The earlier authored protocol/source/scope/archive/parser cases were not an
+execution claim. The linked checkpoint now records the selected actual installed
+operator workload and exact source/capture identities. Broader provider release,
+supported-host/interoperability, native/reference-meter and musical qualification
+remain unfinished under their existing owners. No hosted CI or content
+publication occurred. Flow #88 stays last and unchanged; the historical alignment
+startup cause remains unproven. ADR-0019 remains proposed.
