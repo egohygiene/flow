@@ -1,5 +1,26 @@
 # Four-tool installed music candidate
 
+## Current selected audio-profile checkpoint
+
+The [installed presented-window QC checkpoint](../work/75/INSTALLED-PRESENTED-QC-20261115.md)
+adds a separate explicit `flow.installed-candidate-selection/v3` observation.
+Four physical executables have six exact cohort rows: Flow, Renderflow,
+Optiflow and Aniflow's source-video, final-video-QC and read-only policy profiles.
+The three Aniflow rows share the same source, executable and descriptor pins.
+Unknown/duplicated profile rows or conflicting alias identities refuse before
+installation. This does not widen the historical v1/v2 observers below.
+
+The refreshed local installation uses newer captured providers and preserves the
+original Flow package. Its older v2 product projection and the separate exact
+current-source comparison retain distinct identities. Native source-candidate
+execution is explicitly acknowledged; no release, meter/host qualification,
+musical approval or publication is inferred. The actual new project includes
+manually supplied lyrics and preserves both complete decoded AAC and the
+explicitly selected presented sample view. Full operator readiness is a later
+separate [audio setup](../audio-check-setup.md) and owner-check step.
+
+## Preserved earlier v2 checkpoint
+
 The music observer uses the existing `suite-install`, native Aniflow adapter and
 explicit candidate acknowledgements. It adds no installer, media engine, release
 or permission to publish. Its first measured [checkpoint](../work/75/INSTALLED-MUSIC-CANDIDATE-20261115.md)

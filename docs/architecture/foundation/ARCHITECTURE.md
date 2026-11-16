@@ -3,12 +3,12 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.51.3
+version: 0.52.0
 status: draft
 owners:
   - egohygiene
 created: 2026-08-13
-updated: 2026-11-14
+updated: 2026-11-15
 governed_by:
   - architecture-architecture
 depends_on:
@@ -20,6 +20,31 @@ supersedes: []
 ---
 
 # Flow Architecture
+
+## Explicit installed audio-profile observation
+
+A separate closed v3 observer selects four physical tools with six cohort rows:
+Flow, released Optiflow, Renderflow and three Aniflow profiles for source video,
+final-video QC and selected-policy comparison. The Aniflow rows share exactly
+one captured executable/source/descriptor identity; profile declarations do not
+imply another binary, implementation or qualification. Existing installation,
+native planning, explicit approval and domain readback remain the owners of
+effects and acceptance. V1 and v2 observers retain their earlier closed scopes.
+
+The original measured Flow package remains unchanged. Its historical v2 source
+projection is retained separately from a complete current-context Git comparison
+with finite noncompiled exceptions. That observation binds unchanged tracked
+inputs and included bytes without rebuilding, resealing or authenticating the
+package. Exact newer provider captures form a distinct unsealed supplement.
+
+The existing native final-video facade preserves the explicitly selected nested
+presented-window request. Aniflow owns full decoded PCM, the separate exact
+analysis view, loudness observations and current QC. Flow correlates exact
+requests, source bytes, intents, supporting artifacts and retained attempts.
+Completed status/resume reuses accepted work; it does not refresh current owner
+QC. Numeric policy comparison, native meter/platform qualification, human review
+and upload authority remain separate. The bounded installed observation is
+recorded in the [checkpoint guide](../../work/75/INSTALLED-PRESENTED-QC-20261115.md).
 
 ## Explicit four-tool installed candidate observation
 
