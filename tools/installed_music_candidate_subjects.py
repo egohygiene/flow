@@ -82,8 +82,12 @@ def captured_provider(observation, tool, value, binary, descriptor, version):
 
 
 class InstalledMusicCandidate(previous.InstalledCandidate):
+    SELECTION_SCHEMA = "flow.installed-candidate-selection/v2"
+    selection_parser = staticmethod(selection)
+    projection_checker = staticmethod(provider_projection)
+
     def __init__(self, value):
-        self.selection = selection(value)
+        self.selection = self.selection_parser(value)
         self.selection_path = self.selection_sha256 = None
         self.root = previous.directory(value["installation_root"])
         self.flow, self.provider, self.aniflow, self.optiflow = [self.root / "bin" / name
@@ -134,7 +138,7 @@ class InstalledMusicCandidate(previous.InstalledCandidate):
             and intent["install_directory"] == cli.native_path(self.root), "selected installation intent differs")
         self.cohort = previous.read(self.cohort_path, intent["cohort"]["sha256"], 1048576)
         supplement = previous.read(Path(value["provider_supplement"]), value["provider_supplement_sha256"], 1048576)
-        provider_projection(supplement, self.cohort)
+        self.projection_checker(supplement, self.cohort)
         cli.require(self.cohort["flow_version"] == manifest["version"] and len(intent["tools"]) == 4
             and {t["tool"] for t in intent["tools"]} == {"flow", *PROVIDERS}, "exact four-tool installed intent required")
         self.tools = {}

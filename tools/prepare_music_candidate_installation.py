@@ -14,7 +14,7 @@ from installed_music_candidate_subjects import (ANI_ROW, RENDER_ROW, TARGET,
     InstalledMusicCandidate, PROVIDERS, PACKAGE)
 
 
-def prepare(config, output):
+def prepare(config, output, *, candidate_type=InstalledMusicCandidate, extra_provider_rows=()):
     require(output.is_absolute() and output.parent.resolve() == output.parent and not output.exists(),
         "fresh canonical installation evidence root required")
     output.mkdir(mode=0o700)
@@ -45,6 +45,7 @@ def prepare(config, output):
         original_paths[name] = binary
         provider_rows.append(row)
         tools.append({"tool": name, "row_id": row["id"], "executable": pin(binary), "contracts": contracts, "extras": []})
+    provider_rows.extend(copy.deepcopy(list(extra_provider_rows)))
     supplement = {"schema_version": "flow.release-cohort/v1", "id": "music-video-candidate-providers",
         "flow_version": manifest["version"], "targets": [TARGET],
         "retained_rows": [row["id"] for row in provider_rows], "rows": provider_rows}
@@ -62,6 +63,7 @@ def prepare(config, output):
         "next_action": "old packaged Flow identity; independently selected candidate providers; unqualified/unpublished"}
     cohort = {**supplement, "id": "installed-music-video-candidate", "rows": [row, *provider_rows],
         "retained_rows": [row["id"], *supplement["retained_rows"]]}
+    candidate_type.projection_checker(supplement, cohort)
     cohort_path = output / "selected-cohort.json"; put(cohort_path, cohort)
     tools.insert(0, {"tool": "flow", "row_id": row["id"], "executable": pin(flow),
         "contracts": [{"identifier": "flow.release-contract/v1", "file": pin(descriptor)}], "extras": []})
@@ -86,11 +88,12 @@ def prepare(config, output):
     require(not installation.exists(), "refused installation created destination")
     result = invoke("install", "suite-install", ["--request", request_path, "--acknowledge-unqualified-candidate"])
     for key in ["provider_rows", "provider_files"]: selections.pop(key)
-    selections.update({"schema_version": "flow.installed-candidate-selection/v2", "target": TARGET,
+    selections.update({"schema_version": candidate_type.SELECTION_SCHEMA, "target": TARGET,
         "installation_root": str(installation), "installation_receipt_sha256": result["receipt_sha256"],
         "provider_supplement": str(supplement_path), "provider_supplement_sha256": pin(supplement_path)["sha256"]})
-    selection_path = output / "selection-v2.json"; put(selection_path, selections)
-    subject = InstalledMusicCandidate.load(selection_path)
+    selection_path = output / ("selection-" + candidate_type.SELECTION_SCHEMA.rsplit("/", 1)[1] + ".json")
+    put(selection_path, selections)
+    subject = candidate_type.load(selection_path)
     status = subject.observe_status(output, "installed-four-tool-status")
     require(status["current_copied_bytes"] is True, "four-tool installation is not current")
     require(not list(cwd.iterdir()), "installation command working directory changed")
