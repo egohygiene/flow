@@ -1,5 +1,12 @@
 # Prepare audio checks from an installed provider
 
+The [installed operator checkpoint](work/78/AUDIO-READINESS-20261115.md) now
+executes this path with a separately admitted six-row/four-tool source-candidate
+installation. Its 61-call workload covers preview, preparation, status, separate
+exact approvals, binding, current owner checks and later publishing readback.
+Numeric match and outside-target cases remain partial with human review and
+qualification pending; the package and all selected originals remain unchanged.
+
 `delivery::audio_setup::preview` resolves the existing delivery package, its
 original final-file locators, the selected installation and supplied Aniflow
 QC/policy requests. It reads local files only. It creates no directories,
@@ -75,9 +82,10 @@ no new process supervisor or acceptance database.
 
 ## Commands
 
-These examples describe a later explicitly selected local workflow. Paths and
-digests come from the operator's real files and command results; no sample pin
-or review is evidence. None of these commands was executed for this source work.
+These examples describe the existing explicitly selected local workflow. Paths
+and digests come from the operator's real files and command results; no sample
+pin or review is evidence. The linked checkpoint records the bounded actual
+execution separately from the original source-authoring history.
 
 ```bash
 flow audio-setup-preview --request "$AUDIO_SETUP_REQUEST" --format json
@@ -108,8 +116,8 @@ Equivalent task aliases are `audio:setup:preview` / `audio:setup:prepare` with
 `audio:setup:bind` with those two plus `APPROVALS` and `OUTPUT`. Each delegates
 to the same Flow command, without installing anything or running extra checks.
 
-These source checkpoints and their focused coverage/scope, archive-only roundtrip
-and stale-pin-before-write cases are authored,
-uncompiled/unrun. No tests, product validators, provider/native/media execution
-or CI were run. Release/native/reference-meter/platform and musical qualification
-remain with their existing owners. ADR-0019 remains proposed; Flow #88 stays last.
+The earlier source-authoring checkpoints did not execute the full operator path.
+The linked observation now supplies bounded installed/native evidence and exact
+scope/authority refusals; it does not qualify every authored case, host, provider
+or release. Reference-meter, platform and musical qualification remain with
+their existing owners. ADR-0019 remains proposed; Flow #88 stays last.

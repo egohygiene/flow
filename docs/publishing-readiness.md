@@ -1,5 +1,11 @@
 # Inspect the publishing handoff
 
+The [installed audio-readiness checkpoint](work/78/AUDIO-READINESS-20261115.md)
+now measures this final handoff after actual setup, exact approvals and current
+owner checks. Matching and outside-target summaries are separately correlated
+with the exact package. This report still reads retained snapshots: it returns
+partial exit 9 with human review, qualification and publication work explicit.
+
 `flow publishing-readiness` reports the exact delivery package files, supplied
 review state, missing metadata/destination copies and optional recorded audio
 checks. It lists remaining operator actions without running a provider,
@@ -73,11 +79,11 @@ metadata and review notes remain private local output.
    evidence. Actual account publication is a later separate authorized operation;
    record its real URL/receipt only after it occurs.
 
-The source drafts describe this journey; it has not been executed or qualified.
-The new focused report/preview/argv and setup scope/roundtrip cases are authored,
-uncompiled/unrun. No tests/compiler/build/dependencies/validators/native/media/
-provider/model/SDK/CLI/task/installer/CI ran. No real media, approval, acquisition,
-original replacement/disposal, signing, timestamping or publication occurred.
-Existing release/native/reference/platform and creative review gates stay open.
-Flow #88 remains last; known alignment cancellation/start-marker failure remains
-unresolved with unproven cause. ADR-0019 remains proposed.
+The linked observation executes this selected journey over authored synthetic
+media and preserves its actual command, source, package and owner-record pins.
+It does not qualify every earlier authored test or the broader release matrix.
+Candidate execution acknowledgements are separate from genuine human review.
+Release/native/reference/platform and creative gates stay open; no signing,
+timestamp networking or content publication occurred. Flow #88 remains last and
+unchanged; the historical alignment startup cause remains unproven. ADR-0019
+remains proposed.

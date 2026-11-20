@@ -3,7 +3,7 @@ schema: aether.architecture-document/v1
 id: flow-architecture
 title: Flow Architecture
 kind: architecture-document
-version: 0.52.0
+version: 0.52.1
 status: draft
 owners:
   - egohygiene
@@ -239,7 +239,9 @@ Local preparation readback verifies retained scope and byte identity, without
 refreshing Aniflow QC or granting execution/release authority. Package, source,
 tool, installation and QC evidence namespaces remain outside the writable bundle.
 The existing native supervisor and Aniflow domain owners retain execution and
-audio acceptance. This is a proposed ADR-0019 extension, uncompiled/unrun.
+audio acceptance. The [bounded installed journey](../../work/78/AUDIO-READINESS-20261115.md)
+now observes this path through those owners. ADR-0019 remains proposed; local
+execution does not add release, meter, human or publication authority.
 
 Preparation retains exact request/configuration bytes and native plans, with the
 prepared record written last. Reserved approval and native-run directories have
@@ -269,8 +271,10 @@ neither a historical record nor this report reruns current QC or release admissi
 The report lists remaining operator actions and keeps numeric goals, recorded
 qualification, human review, platform preflight and actual publication distinct.
 It never generates approval, transforms media or grants upload authority. Output
-is confined outside the package and every selected evidence namespace. Execution
-and native/reference/platform qualification remain unobserved in this source work.
+is confined outside the package and every selected evidence namespace. The
+installed journey exercises local setup and current owner checks; this report
+still reads snapshots without refreshing them. Native/reference/platform and
+human qualification remain separate.
 
 ## Exact-file audio delivery readiness
 

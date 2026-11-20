@@ -1,3 +1,81 @@
+## Audio precision and operator readiness — November 15, 2026
+
+The previous five checkpoints are merged: Flow #155–157, Aniflow #246 and
+Renderflow #527. Flow #62 closed on merge. This continuation delivers five
+separate draft checkpoints; none of these five is merged. Review order is
+[Renderflow #528](https://github.com/egohygiene/renderflow/pull/528) →
+[#529](https://github.com/egohygiene/renderflow/pull/529), independent
+[Aniflow #247](https://github.com/egohygiene/aniflow/pull/247), then
+[Flow #158](https://github.com/egohygiene/flow/pull/158) →
+[#159](https://github.com/egohygiene/flow/pull/159). Re-query the live roadmap for
+current heads before review or merge. Installed provider capture identities are
+separate from the later source/proof tips and immutable releases.
+
+- Renderflow #528 enforces explicitly selected ALAC precision through the existing
+  profile builder. Six canonical builds and 15 independent commands pass.
+  Actual 24→16-bit output meets its profile and remains Lossy; matching 16→16
+  preserves every decoded PCM byte and can earn Lossless. The independent integer
+  projection, distinct AAC/ALAC identities, existing loss gate and actual
+  precision-omitting producer refusal are retained. The current user guide is
+  corrected; #527's dated failure stays historical.
+- Renderflow #529 adds seven builds and 27 independent commands over authored
+  48-kHz mono24 and 96-kHz stereo24 inputs. Four matching FLAC/ALAC outputs have
+  exact PCM; AAC priming/decoded extents and selected 44.1-kHz MP3 conversion stay
+  explicit and lossy. Required precision/rate/one-frame/sample-mismatch refusals
+  and integer32 Unavailable are observed. Both checkpoints reuse one captured
+  executable; neither codec labels nor verifier hashes attest unknown history,
+  container metadata, encoder identity, mastering or human approval.
+- Aniflow #247 records a pass of the unchanged exact Rust cancellation target
+  and eight paired process/recovery cases across 32 CLI calls. The historical
+  missing-marker failure was not reproduced; its cause remains unknown. Product
+  stopping, fixture-owned waits and external adoptive waits are separate. This
+  container's PID1 can leave stopped adopted zombies. A temporary fixture-only
+  supervisor waits for exact adoptees only after product return and confirmed
+  stopped identities, without helper kills. Universal product reaping,
+  escaped-group containment, live SIGKILL fallback and native/model qualification
+  remain open. No product Rust or process-wide subreaper policy changed.
+- [Installed presented-window QC](../75/INSTALLED-PRESENTED-QC-20261115.md)
+  executes a new two-stage Flow video/manual-lyrics project and the selected
+  final-video facade. The fresh v3 installation has six exact profile rows over
+  four physical binaries; all three Aniflow profiles share one captured subject.
+  All 27 Flow calls and 30 focused observer cases pass. Every presented sample
+  matches the exact 96,000-frame prefix of 96,256 decoded frames; the retained
+  256-frame tail contains 512 nonzero values and the full meter is unchanged.
+  Stale-selection/media/QC controls restore, and completed resume retains state.
+- [The installed audio-readiness journey](../78/AUDIO-READINESS-20261115.md)
+  passes 61 workload calls plus two suite-status calls. It covers every assigned
+  Archive/TikTok media/destination pair through setup, separate execution approval
+  binding, fresh owner checks and publishing snapshot readback. Fifteen outer
+  controls and three exact inner refusals cover coverage, authority, stale QC,
+  wrong artifact, legacy selection, repeated attempts and package/summary identity.
+  Four actual policy evaluations yield two selected numeric matches and two
+  outside-target results. These are explicit fixture goals, not platform/mastering
+  recommendations. All five human reviews and meter/provider qualification remain
+  pending/false; both outcomes are partial and upload authority stays false.
+
+The new measured Renderflow binary is `d7b2f036…` from actual published source
+`4fb2539f…`; Aniflow is `d776fd12…` from `f851f9cc…`. Its original raw descriptor
+envelope, first extracted result and separately canonicalized descriptor have
+different physical hashes and equal parsed meaning; no raw record was rewritten.
+Later observer/documentation tips are not rebuilt executable identities. Flow
+remains its measured `0de12411…` package from `69eafaf…`, and Optiflow remains the
+actual v0.1.1 release. A separate closed comparison records unchanged current
+compilation inputs through selected main `a6f01b9b…`: 73 noncompiled changes,
+493 remaining tracked objects and 122 include references. The original package,
+historical v2 projection and older installations remain unchanged; no new combined
+package, immutable provider release or whole-platform green matrix is inferred.
+
+Final Flow observations bind all nine executed repository helpers, including the
+two dynamically loaded owners. Earlier semantic passes with incomplete helper
+inventories remain retained and superseded. The accepted CP4 handoff04 and CP5
+run03 share the exact new delivery subject. Independent byte/source/process/sample
+and capture reviews preserve these limits without repeating product workloads.
+
+No hosted CI was manually dispatched, private song/model or native Mac/physical
+volume used, release signed/published, content uploaded or Pages deployed.
+Broader parent/release/platform/human gates remain open. Strict Clippy debt is
+unchanged; Flow #88 remains exactly unchanged and scheduled last.
+
 ## Five-checkpoint publishing continuation — November 15, 2026
 
 The previous eight checkpoints are merged: Aniflow #243–245, Renderflow
